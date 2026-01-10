@@ -1,0 +1,31 @@
+{
+  "name": "Novel Writer - Self-Learning Prose System",
+  "nodes": [
+    {"parameters": {}, "id": "manual-trigger", "name": "Manual Trigger", "type": "n8n-nodes-base.manualTrigger", "typeVersion": 1, "position": [250, 300]},
+    {"parameters": {"operation": "executeQuery", "query": "SELECT id, name FROM style_profiles WHERE active = true LIMIT 1"}, "id": "get-style-profile", "name": "Get Active Style Profile", "type": "n8n-nodes-base.postgres", "typeVersion": 2.4, "position": [450, 300]},
+    {"parameters": {"operation": "executeQuery", "query": "SELECT get_active_prompt('{{ $json.id }}'::uuid) as prompt"}, "id": "get-active-prompt", "name": "Get Active Prompt", "type": "n8n-nodes-base.postgres", "typeVersion": 2.4, "position": [650, 300]},
+    {"parameters": {"operation": "executeQuery", "query": "SELECT COALESCE(MAX(chapter_number), 0) + 1 as next_chapter FROM chapters WHERE style_profile_id = '{{ $node[\"Get Active Style Profile\"].json.id }}'::uuid"}, "id": "get-next-chapter-num", "name": "Get Next Chapter Number", "type": "n8n-nodes-base.postgres", "typeVersion": 2.4, "position": [850, 300]},
+    {"parameters": {"model": "gpt-4o", "messages": {"values": [{"content": "={{ $node[\"Get Active Prompt\"].json.prompt }}\n\nWrite chapter {{ $node[\"Get Next Chapter Number\"].json.next_chapter }}. Target: 2000-3000 words."}]}}, "id": "generate-chapter", "name": "Generate Chapter", "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi", "typeVersion": 1, "position": [1050, 300]},
+    {"parameters": {"jsCode": "const content = $input.item.json.output;\nconst words = content.trim().split(/\\s+/);\nreturn {content, word_count: words.length, chapter_number: $node['Get Next Chapter Number'].json.next_chapter};"}, "id": "process-chapter", "name": "Process Chapter", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [1250, 300]},
+    {"parameters": {"operation": "insert", "table": "chapters", "columns": "style_profile_id,chapter_number,title,content,word_count", "returnFields": "id"}, "id": "save-chapter", "name": "Save Chapter", "type": "n8n-nodes-base.postgres", "typeVersion": 2.4, "position": [1450, 300]},
+    {"parameters": {"model": "gpt-4o-mini", "messages": {"values": [{"content": "Evaluate this prose on clarity, engagement, pacing, voice_consistency, technical_quality (1-5 each). Chapter:\n{{ $node[\"Process Chapter\"].json.content }}\n\nRespond JSON only: {clarity_score, engagement_score, pacing_score, voice_consistency_score, technical_quality_score, evaluation_notes}"}]}}, "id": "evaluate-prose", "name": "Evaluate Prose Quality", "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi", "typeVersion": 1, "position": [1650, 300]},
+    {"parameters": {"jsCode": "const evaluation = JSON.parse($input.item.json.output);\nreturn {chapter_id: $node['Save Chapter'].json.id, ...evaluation};"}, "id": "parse-evaluation", "name": "Parse Evaluation", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [1850, 300]},
+    {"parameters": {"operation": "insert", "table": "prose_evaluations", "columns": "chapter_id,clarity_score,engagement_score,pacing_score,voice_consistency_score,technical_quality_score,evaluation_notes"}, "id": "save-evaluation", "name": "Save Evaluation", "type": "n8n-nodes-base.postgres", "typeVersion": 2.4, "position": [2050, 300]},
+    {"parameters": {"operation": "executeQuery", "query": "SELECT should_update_prompt('{{ $node[\"Get Active Style Profile\"].json.id }}'::uuid) as should_update"}, "id": "check-should-update", "name": "Check If Update Needed", "type": "n8n-nodes-base.postgres", "typeVersion": 2.4, "position": [2250, 300]},
+    {"parameters": {"conditions": {"boolean": [{"value1": "={{ $json.should_update }}", "value2": true}]}}, "id": "if-update-needed", "name": "If Update Needed", "type": "n8n-nodes-base.if", "typeVersion": 2, "position": [2450, 300]}
+  ],
+  "connections": {
+    "Manual Trigger": {"main": [[{"node": "Get Active Style Profile", "type": "main", "index": 0}]]},
+    "Get Active Style Profile": {"main": [[{"node": "Get Active Prompt", "type": "main", "index": 0}]]},
+    "Get Active Prompt": {"main": [[{"node": "Get Next Chapter Number", "type": "main", "index": 0}]]},
+    "Get Next Chapter Number": {"main": [[{"node": "Generate Chapter", "type": "main", "index": 0}]]},
+    "Generate Chapter": {"main": [[{"node": "Process Chapter", "type": "main", "index": 0}]]},
+    "Process Chapter": {"main": [[{"node": "Save Chapter", "type": "main", "index": 0}]]},
+    "Save Chapter": {"main": [[{"node": "Evaluate Prose Quality", "type": "main", "index": 0}]]},
+    "Evaluate Prose Quality": {"main": [[{"node": "Parse Evaluation", "type": "main", "index": 0}]]},
+    "Parse Evaluation": {"main": [[{"node": "Save Evaluation", "type": "main", "index": 0}]]},
+    "Save Evaluation": {"main": [[{"node": "Check If Update Needed", "type": "main", "index": 0}]]},
+    "Check If Update Needed": {"main": [[{"node": "If Update Needed", "type": "main", "index": 0}]]}
+  },
+  "settings": {"executionOrder": "v1"}
+}

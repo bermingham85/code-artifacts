@@ -1,0 +1,114 @@
+{
+  "version": "2.0",
+  "last_updated": "2026-01-10T00:15:00Z",
+  "token_estimate": 4500,
+  
+  "code_artifacts": {
+    "location": "C:\\Users\\bermi\\Projects\\CODE_ARTIFACTS\\",
+    "categories": {
+      "n8n_workflows": {
+        "Novel_Writer_Full_Validation_Stack.json": "Complete self-learning prose system with 3 parallel validation gates",
+        "status": "production-ready"
+      },
+      "sql_schemas": {
+        "COMPLETE_SUPABASE_SCHEMA.sql": "All tables for ylcepmvbjjnwmzvevxid - core, novel writer, asset vault",
+        "status": "verified"
+      },
+      "python_scripts": {
+        "orchestrator.py": "Multi-agent file organizer with watchdog, dedup, classification",
+        "status": "production-ready"
+      },
+      "prompt_library": {
+        "MASTER_PROMPT_LIBRARY.md": "10 shortcuts: [build], [n8n], [mcp], [agent], [novel], [review], [gpt2sys], [governance], [warp], [memory]",
+        "status": "active"
+      }
+    }
+  },
+
+  "infrastructure": {
+    "n8n": {
+      "local": "http://192.168.50.246:5678",
+      "cloud": "https://bermech.app.n8n.cloud",
+      "mcp_endpoint": "http://localhost:5678/mcp-server/http",
+      "mcp_auth": "Bearer token"
+    },
+    "supabase": {
+      "project_id": "ylcepmvbjjnwmzvevxid",
+      "url": "https://ylcepmvbjjnwmzvevxid.supabase.co",
+      "tables": ["users", "sessions", "messages", "system_prompts", "reflection_logs", "suggestions", "system_config", "books", "chapters", "style_profiles", "literary_feedback", "evaluations", "chapter_manifest", "characters", "world_settings", "song_placements", "phrase_tracker", "story_memory", "asset_projects", "asset_characters", "reference_images", "generated_assets", "generation_jobs"]
+    },
+    "apis": {
+      "gemini": "4 keys",
+      "fal_ai": "active",
+      "flux_ai": "active",
+      "groq": "active",
+      "elevenlabs": "configured"
+    },
+    "local_services": {
+      "context_api": "http://localhost:8765",
+      "media_toolkit": "http://127.0.0.1:8001",
+      "postgresql": "192.168.50.246:5432 (agent_system)"
+    }
+  },
+
+  "repositories": {
+    "tier1_foundation": ["agent-agency-mcp", "bermech-n8n-workflows", "autonomous-empire"],
+    "tier2_orchestration": ["n8n-mcp", "chatgpt-mcp-server", "prompt-engineer-agent", "auto-agent-creator"],
+    "tier3_execution": ["mcp-puppet-pipeline", "midjourney-automation", "hourly-autopilot-system"],
+    "tier4_revenue": ["balding-pig-automation", "jesse-novel-factory", "asset-vault", "AutoDesign-POD-Empire"],
+    "tier5_production": ["gremlos-world-puppet", "taleweaver", "ai-orchestrator-platform"]
+  },
+
+  "active_projects": {
+    "novel_writer": {
+      "status": "validation-stack-complete",
+      "workflow": "Novel_Writer_Full_Validation_Stack.json",
+      "gates": ["LLM Pattern Detector", "Continuity Validator", "Style & Humor Checker"],
+      "next": "populate chapter_manifest and characters tables"
+    },
+    "triple_rinse": {
+      "status": "phase3-pending",
+      "completed": "89 vendor rules extracted, webhook categorizer functional"
+    },
+    "asset_vault": {
+      "status": "github-ready",
+      "repo": "https://github.com/bermingham85/asset-vault"
+    }
+  },
+
+  "tool_knowledge": {
+    "desktop_commander": {
+      "powershell": "use semicolons for chaining commands",
+      "git_sequences": "chain with semicolons, not &&"
+    },
+    "fal_ai": {
+      "flux_dev": "$0.03/megapixel",
+      "flux_schnell": "$0.003/megapixel",
+      "latentsync": "$0.20/40sec"
+    }
+  },
+
+  "workflows_enabled": [
+    "Claude-Warp Bridge",
+    "TikTok Anime Wallpapers (Flux+Fal)",
+    "MuseTalk lip-sync",
+    "Jesse Novel Factory",
+    "Novel Writer - Self-Learning Prose System"
+  ],
+
+  "file_locations": {
+    "projects": "C:\\Users\\bermi\\Projects\\",
+    "github": "C:\\Users\\bermi\\Documents\\GitHub\\",
+    "blueprints": "C:\\Users\\bermi\\Projects\\BLUEPRINTS\\",
+    "prompt_library": "C:\\Users\\bermi\\Projects\\MASTER_PROMPT_LIBRARY.md",
+    "code_artifacts": "C:\\Users\\bermi\\Projects\\CODE_ARTIFACTS\\"
+  },
+
+  "session_start_protocol": [
+    "1. Check http://localhost:8765/context for memory + playbook",
+    "2. Load PROJECT_MEMORY_BANK.json if context API unavailable",
+    "3. Check for [shortcut] triggers in MASTER_PROMPT_LIBRARY.md",
+    "4. Use playbook pathways before researching",
+    "5. Save skill when multi-step procedure works"
+  ]
+}
