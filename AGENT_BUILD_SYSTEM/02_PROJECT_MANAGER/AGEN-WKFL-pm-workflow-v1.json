@@ -1,0 +1,21 @@
+{
+  "name": "Project Manager Agent",
+  "nodes": [
+    {"id": "wh1", "name": "Webhook", "type": "n8n-nodes-base.webhook", "typeVersion": 2.1, "position": [200, 400], "parameters": {"path": "project-manager", "httpMethod": "POST", "responseMode": "responseNode", "options": {}}, "onError": "continueRegularOutput"},
+    {"id": "router1", "name": "Router", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [500, 400], "parameters": {"jsCode": "SEE FULL CODE IN n8n WORKFLOW fbsjuiji61RErVfJ"}},
+    {"id": "if1", "name": "Has Query", "type": "n8n-nodes-base.if", "typeVersion": 2.3, "position": [780, 400]},
+    {"id": "pg1", "name": "Execute Query", "type": "n8n-nodes-base.postgres", "typeVersion": 2.6, "position": [1060, 300], "parameters": {"operation": "executeQuery", "query": "={{ $json.query }}"}},
+    {"id": "fmt1", "name": "Format Response", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [1340, 300]},
+    {"id": "err1", "name": "Error Response", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [1060, 500]},
+    {"id": "resp1", "name": "Respond OK", "type": "n8n-nodes-base.respondToWebhook", "typeVersion": 1.5, "position": [1620, 300]},
+    {"id": "resp2", "name": "Respond Error", "type": "n8n-nodes-base.respondToWebhook", "typeVersion": 1.5, "position": [1340, 500]}
+  ],
+  "connections": {
+    "Webhook": {"main": [[{"node": "Router", "type": "main", "index": 0}]]},
+    "Router": {"main": [[{"node": "Has Query", "type": "main", "index": 0}]]},
+    "Has Query": {"main": [[{"node": "Execute Query", "type": "main", "index": 0}], [{"node": "Error Response", "type": "main", "index": 0}]]},
+    "Execute Query": {"main": [[{"node": "Format Response", "type": "main", "index": 0}]]},
+    "Format Response": {"main": [[{"node": "Respond OK", "type": "main", "index": 0}]]},
+    "Error Response": {"main": [[{"node": "Respond Error", "type": "main", "index": 0}]]}
+  }
+}
