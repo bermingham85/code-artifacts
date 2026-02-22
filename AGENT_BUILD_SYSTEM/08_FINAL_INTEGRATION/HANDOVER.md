@@ -8,7 +8,7 @@
 ## FILE LOCATIONS
 
 | File | Location | Purpose |
-|------|----------|---------|
+|------|----------|--------|
 | This file | `GitHub: bermingham85/code-artifacts/AGENT_BUILD_SYSTEM/08_FINAL_INTEGRATION/HANDOVER.md` | Upload as Claude Project knowledge document |
 | Project Instructions | `GitHub: bermingham85/code-artifacts/AGENT_BUILD_SYSTEM/08_FINAL_INTEGRATION/PROJECT_INSTRUCTIONS.md` | Paste into Claude Project Custom Instructions |
 | Governance | `GitHub: bermingham85/code-artifacts/AGENT_BUILD_SYSTEM/GOVERNANCE.md` | Upload as Claude Project knowledge document (same in every project) |
@@ -20,7 +20,7 @@
 | Output | Destination |
 |--------|-------------|
 | Combined Supabase migration | Run on Supabase project `ylcepmvbjjnwmzvevxid` |
-| Master Orchestrator workflow | Import into n8n `http://192.168.50.246:5678` |
+| Master Orchestrator workflow | Import into n8n `http://localhost:5678` |
 | Deployment runbook | Store in Notion + GitHub `bermingham85/code-artifacts` |
 | Test results | Notion Document Control |
 
@@ -113,7 +113,7 @@ POST /webhook/verification-agent  → { "request": "ping" }
 ## Document Control
 
 All integration artifacts registered at:
-- Webhook: http://192.168.50.246:5678/webhook/log-entry
+- Webhook: http://localhost:5678/webhook/log-entry
 - Notion DB: https://www.notion.so/22674ec0311480a7b76cc22a158c1fd4
 
 ## Notion References

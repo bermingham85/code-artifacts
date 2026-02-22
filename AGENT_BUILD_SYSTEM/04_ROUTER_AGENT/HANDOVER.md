@@ -8,7 +8,7 @@
 ## FILE LOCATIONS
 
 | File | Location | Purpose |
-|------|----------|---------|
+|------|----------|--------|
 | This file | `GitHub: bermingham85/code-artifacts/AGENT_BUILD_SYSTEM/04_ROUTER_AGENT/HANDOVER.md` | Upload as Claude Project knowledge document |
 | Project Instructions | `GitHub: bermingham85/code-artifacts/AGENT_BUILD_SYSTEM/04_ROUTER_AGENT/PROJECT_INSTRUCTIONS.md` | Paste into Claude Project Custom Instructions |
 | Governance | `GitHub: bermingham85/code-artifacts/AGENT_BUILD_SYSTEM/GOVERNANCE.md` | Upload as Claude Project knowledge document (same in every project) |
@@ -20,7 +20,7 @@
 | Output | Destination |
 |--------|-------------|
 | Supabase SQL | Run directly on Supabase project `ylcepmvbjjnwmzvevxid` |
-| n8n workflow JSON | Import into n8n `http://192.168.50.246:5678` |
+| n8n workflow JSON | Import into n8n `http://localhost:5678` |
 | System prompt | Store in Notion + GitHub `bermingham85/code-artifacts` |
 | Code artifacts | GitHub `bermingham85/code-artifacts` |
 | Test results | Notion Document Control |

@@ -34,7 +34,7 @@ The file `GOVERNANCE.md` is uploaded as a knowledge document in this project. Re
 
 ## INFRASTRUCTURE
 
-- n8n: http://192.168.50.246:5678 (local) or https://bermech.app.n8n.cloud
+- n8n: http://localhost:5678 (local) or https://bermech.app.n8n.cloud
 - Supabase: ylcepmvbjjnwmzvevxid
 - Claude API available
 - **Memory Agent already built** — can call POST /webhook/memory-agent

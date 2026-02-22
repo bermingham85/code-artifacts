@@ -32,7 +32,7 @@ Specification Agent → **ARCHITECTURE AGENT** → Builder Agent (for each task)
 
 ## INFRASTRUCTURE
 
-- n8n: http://192.168.50.246:5678 (local) or https://bermech.app.n8n.cloud
+- n8n: http://localhost:5678 (local) or https://bermech.app.n8n.cloud
 - Supabase: ylcepmvbjjnwmzvevxid
 - Claude API available
 - **Already built:** Memory Agent, Project Manager, Specification Agent, Router Agent

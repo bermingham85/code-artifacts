@@ -31,7 +31,7 @@ Builder Agent → **VERIFICATION AGENT** → Pass: Mark Done | Fail: Return to B
 
 ## INFRASTRUCTURE
 
-- n8n: http://192.168.50.246:5678 (local) or https://bermech.app.n8n.cloud
+- n8n: http://localhost:5678 (local) or https://bermech.app.n8n.cloud
 - Supabase: ylcepmvbjjnwmzvevxid
 - Claude API available
 - **Already built:** Memory, PM, Spec, Router, Architecture, Builder Agents

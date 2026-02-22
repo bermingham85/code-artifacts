@@ -31,7 +31,7 @@ User Request → Router Agent → **SPECIFICATION AGENT** → Architecture Agent
 
 ## INFRASTRUCTURE
 
-- n8n: http://192.168.50.246:5678 (local) or https://bermech.app.n8n.cloud
+- n8n: http://localhost:5678 (local) or https://bermech.app.n8n.cloud
 - Supabase: ylcepmvbjjnwmzvevxid
 - Claude API available
 - **Memory Agent already built** — POST /webhook/memory-agent

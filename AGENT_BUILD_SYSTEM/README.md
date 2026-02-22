@@ -21,7 +21,7 @@ Open `PROJECT_INSTRUCTIONS.md` from the agent's folder.
 Upload these files into the project's knowledge documents:
 
 | File | Location | Same every time? |
-|------|----------|-----------------|
+|------|----------|------------------|
 | `GOVERNANCE.md` | Root folder | ✅ Yes — same file in every project |
 | `MASTER_HANDOVER.md` | Root folder | ✅ Yes — same file in every project |
 | `HANDOVER.md` | Agent's own folder (e.g. `01_MEMORY_AGENT/`) | ❌ No — different per agent |
@@ -103,7 +103,7 @@ AGENT_BUILD_SYSTEM/                          ← GitHub: bermingham85/code-artif
 | What | Primary Location | Backup |
 |------|-----------------|--------|
 | This folder | GitHub `bermingham85/code-artifacts/AGENT_BUILD_SYSTEM/` | QNAP NAS |
-| Built n8n workflows | n8n local `http://192.168.50.246:5678` | GitHub export |
+| Built n8n workflows | n8n local `http://localhost:5678` | GitHub export |
 | Built Supabase tables | Supabase `ylcepmvbjjnwmzvevxid` | — |
 | Specs & docs | Notion + GitHub | — |
 | Code artifacts | GitHub `bermingham85/code-artifacts` | QNAP NAS |
