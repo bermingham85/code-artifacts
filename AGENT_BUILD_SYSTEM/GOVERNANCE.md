@@ -2,7 +2,7 @@
 ## Applies to EVERY subproject, EVERY session, EVERY artifact. No exceptions.
 
 **Document ID:** AGEN-GOVN-001  
-**Version:** 3.0  
+**Version:** 3.1  
 **Date:** 2026-02-22  
 **Status:** APPROVED  
 **Owner:** Michael Bermingham
@@ -13,6 +13,23 @@
 
 This file is uploaded as a **knowledge document** into every Claude Project in this system.  
 Every agent build session MUST obey these rules. If a rule conflicts with the agent-specific handover, this document wins.
+
+---
+
+## RULE 0: AUDIT EXISTING INFRASTRUCTURE FIRST — NEVER ASSUME CLEAN SLATE
+
+Before creating ANY table, function, workflow, or other infrastructure:
+
+1. **Check Supabase** for existing tables, functions, and data related to this agent
+2. **Check n8n** for existing workflows related to this agent
+3. **Check GitHub** for existing code related to this agent
+4. **Document what exists** — tables, row counts, functions, workflows, data
+5. **Only create what's missing** — never recreate what already exists
+6. **Never delete or overwrite existing data** — weeks of work may already be stored
+
+**CRITICAL: Do NOT execute any SQL from handover documents without first checking if those tables/functions already exist. Use SELECT/information_schema queries to audit, not CREATE/INSERT.**
+
+**If infrastructure exists, your job is to AUDIT → GAP-FILL → COMPLETE, not rebuild.**
 
 ---
 
@@ -30,6 +47,7 @@ Before writing ANY code, workflow, or prompt:
 **If an existing solution covers 70%+ of the requirement, ADAPT it. Do NOT rebuild from scratch.**
 
 **Before any build, complete this checklist:**
+- [ ] Audited existing infrastructure (Rule 0)
 - [ ] Searched knowledge base / conversation history
 - [ ] Searched GitHub bermingham85/code-artifacts
 - [ ] Searched n8n community for similar workflows
@@ -58,7 +76,7 @@ Every component MUST:
 3. Filed in the correct location
 4. Searchable with metadata tags
 
-**Webhook:** `http://192.168.50.246:5678/webhook/log-entry`  
+**Webhook:** `http://localhost:5678/webhook/log-entry`  
 **Notion DB:** `https://www.notion.so/22674ec0311480a7b76cc22a158c1fd4`
 
 ### Naming Convention
@@ -182,6 +200,9 @@ Master Index: `https://www.notion.so/30e74ec031148101a7ddde4b0c7b2769`
 | Don't | Do Instead |
 |-------|------------|
 | Build first, research later | Research first, always |
+| Assume clean slate without checking | Audit existing infrastructure first (Rule 0) |
+| Execute SQL from handover without checking | Query information_schema first |
+| Delete or overwrite existing data | Preserve and extend |
 | Offer multiple options for the user to choose | Pick the best one and build it |
 | Re-research previously completed work | Load from handover / Document Control |
 | Skip document control registration | Register every artifact, every time |
@@ -195,7 +216,7 @@ Master Index: `https://www.notion.so/30e74ec031148101a7ddde4b0c7b2769`
 ## INFRASTRUCTURE REFERENCE
 
 **Supabase:** Project `ylcepmvbjjnwmzvevxid` — `https://ylcepmvbjjnwmzvevxid.supabase.co`  
-**n8n Local:** `http://192.168.50.246:5678`  
+**n8n Local:** `http://localhost:5678` (Docker Desktop)  
 **n8n Cloud:** `https://bermech.app.n8n.cloud`  
 **GitHub:** `bermingham85/code-artifacts`  
 **APIs:** Anthropic (Claude), OpenAI, Gemini x4, Groq, Fal AI, Flux AI, ElevenLabs  
@@ -221,6 +242,7 @@ Master Index: `https://www.notion.so/30e74ec031148101a7ddde4b0c7b2769`
 |---------|------|--------|
 | 1.0 | 2026-02-21 | Initial rules |
 | 2.0 | 2026-02-21 | Added research-first, document control |
-| 3.0 | 2026-02-22 | Consolidated into single governance doc. Supersedes CORE_RULES v1, v2, v3 and SESSION_HANDOVER v2 rules sections. This is now the single source of truth. |
+| 3.0 | 2026-02-22 | Consolidated into single governance doc |
+| 3.1 | 2026-02-22 | Fixed n8n URL (localhost:5678 not QNAP IP). Added Rule 0 (audit existing infrastructure). Added anti-patterns for data preservation. |
 
 **This document supersedes:** `AGENT_SYSTEM_CORE_RULES.md`, `AGENT_SYSTEM_CORE_RULES_V2.md`, `AGENT_SYSTEM_CORE_RULES_V3.md`, and the rules sections of `SESSION_HANDOVER_2026-02-22_v2.md`.

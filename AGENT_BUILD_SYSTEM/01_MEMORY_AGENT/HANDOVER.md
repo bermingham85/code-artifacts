@@ -1,13 +1,13 @@
 # HANDOVER: Memory Agent — Build Step 1 of 8
 
-**Document ID:** AGEN-HNDV-memory-v2
-**Date:** 2026-02-22
-**Status:** Ready to Build
+**Document ID:** AGEN-HNDV-memory-v3  
+**Date:** 2026-02-22  
+**Status:** Partially Built — Audit and Complete
 
 ## FILE LOCATIONS
 
 | File | Location | Purpose |
-|------|----------|---------|
+|------|----------|----------|
 | This file | `GitHub: bermingham85/code-artifacts/AGENT_BUILD_SYSTEM/01_MEMORY_AGENT/HANDOVER.md` | Upload as Claude Project knowledge document |
 | Project Instructions | `GitHub: bermingham85/code-artifacts/AGENT_BUILD_SYSTEM/01_MEMORY_AGENT/PROJECT_INSTRUCTIONS.md` | Paste into Claude Project Custom Instructions |
 | Governance | `GitHub: bermingham85/code-artifacts/AGENT_BUILD_SYSTEM/GOVERNANCE.md` | Upload as Claude Project knowledge document (same in every project) |
@@ -19,66 +19,64 @@
 | Output | Destination |
 |--------|-------------|
 | Supabase SQL | Run directly on Supabase project `ylcepmvbjjnwmzvevxid` |
-| n8n workflow JSON | Import into n8n `http://192.168.50.246:5678` |
+| n8n workflow JSON | Import into n8n `http://localhost:5678` |
 | System prompt | Store in Notion + GitHub `bermingham85/code-artifacts` |
 | Code artifacts | GitHub `bermingham85/code-artifacts` |
 | Test results | Notion Document Control |
 
 ---
 
-## CONTEXT PROMPT (Paste this into new conversation)
+## CRITICAL: EXISTING INFRASTRUCTURE — DO NOT RECREATE
 
-```
-I'm building a modular autonomous agent system. This conversation focuses on building ONE agent: the Memory Agent.
+A previous build session created infrastructure that MUST be preserved. **Audit first, build only what's missing.**
 
-**What this agent does:**
-- Stores and retrieves context across conversations
-- Persists decisions, preferences, patterns
-- Enables ANY agent to access historical context
-- Full-text search across all stored memories
-- Links memories to projects and agents
+### What Already Exists in Supabase
 
-**Where it sits in the system:**
-- Called by ALL other agents to store/retrieve context
-- Called at session start to load relevant memories
-- Central knowledge authority for the entire system
+**Table: `agent_memories`** — 40 rows of real data, DO NOT DROP OR RECREATE
+- Columns: id (UUID PK), type, category, project_id (FK → agent_projects), agent_source, content, tags (TEXT[]), related_memories (UUID[]), confidence, source, created_at, last_accessed, access_count
+- Types in use: context (35), preference (3), pattern (1), decision (1)
+- Categories in use: business (34), technical (4), workflow (1)
+- Contains: Jesse Beanstalk story bible data, system preferences, infrastructure context, architecture decisions
 
-**What I need you to build:**
-1. Complete n8n workflow callable via webhook
-2. Multiple actions: store, retrieve, search, list
-3. Full-text search in Supabase with relevance ranking
-4. Categorization and tagging of memories
-5. Project and agent linking
+**Table: `agent_projects`** — 10 rows of real data, DO NOT DROP OR RECREATE
+- All project codes populated: AGEN, BERM, BPIG, FINX, GNRL, GOVN, INFR, JESS, MILK, TALE
+- Columns: id (UUID PK), code, name, description, status, created_at, updated_at
 
-**My infrastructure:**
-- n8n: http://192.168.50.246:5678 (local) or https://bermech.app.n8n.cloud
-- Supabase: ylcepmvbjjnwmzvevxid
-- Claude API available
+**Functions that exist:**
+- `search_memories()` — full-text search with filters
+- `search_memories_by_tags()` — tag-based search
+- `touch_memory()` — access tracking
+- `search_v2()`, `search_by_timestamp()`, `search_legacy_v1()`, `search()` — additional variants
 
-**Existing memory sources to integrate:**
-- PROJECT_MEMORY_BANK.json (in code-artifacts repo)
-- MASTER_PROMPT_LIBRARY.md (10 shortcuts)
-- contexts table (33 existing rows)
-- Claude's userMemories
-- planning_conversations table
+**Indexes that exist:** (verify during audit)
+- Full-text search index on content
+- GIN index on tags
+- Indexes on type, category, project_id, created_at
 
-**Integration requirements:**
-- Webhook endpoint: POST /webhook/memory-agent
-- Input: { "action": "store|retrieve|search|list", ... }
-- Output: { "memories": [...], "relevance": [...] }
-- Must support full-text search
-- Must link to projects and agents
+### What Already Exists in n8n
 
-**Deliverables needed:**
-1. Supabase table creation SQL with full-text indexes
-2. Search function SQL
-3. Complete n8n workflow JSON (importable)
-4. System prompt for Claude API (categorization)
-5. Memory schema and tagging system
-6. Test cases to verify it works
+**Workflow: "Memory Agent"** (id: YuY8FL47SB12oy7J)
+- 20 nodes, active, created 2026-02-22
+- May be incomplete or have issues from failed build session
+- **Audit this workflow — it may need fixing or replacing, but check first**
 
-Build this as a complete, working module. No partial solutions.
-```
+### What Needs to Be Verified
+
+During your audit (Step 1 of PROJECT_INSTRUCTIONS), confirm:
+1. Do all required columns exist on agent_memories?
+2. Do the search functions work correctly? (Test them with a query)
+3. Is the n8n workflow functional? (Check node connections, test webhook)
+4. Are there any missing indexes?
+5. Is the webhook endpoint `/webhook/memory-agent` responding?
+
+### What May Need to Be Added
+
+Based on the spec, these items may be missing (verify during audit):
+- RLS policies on agent_memories (if not set up)
+- Error handling in n8n workflow
+- Claude API integration node for categorization
+- Proper response formatting in n8n workflow
+- Test coverage
 
 ---
 
@@ -95,7 +93,6 @@ RULES:
 5. ALWAYS link memories to projects/agents when relevant
 
 MEMORY TYPES:
-
 1. DECISION - Architectural choices, technology selections, trade-offs
 2. PREFERENCE - User preferences, code style, communication style
 3. PATTERN - Solutions that worked, approaches that failed, reusable snippets
@@ -118,9 +115,7 @@ For RETRIEVE operations:
 3. Rank by relevance and recency
 4. Return formatted context
 
-OUTPUT FORMATS:
-
-For STORE:
+OUTPUT FORMAT FOR STORE:
 {
   "action": "store",
   "memory": {
@@ -136,7 +131,7 @@ For STORE:
   "status": "stored"
 }
 
-For RETRIEVE:
+OUTPUT FORMAT FOR RETRIEVE:
 {
   "action": "retrieve",
   "query": "what was searched",
@@ -153,7 +148,7 @@ For RETRIEVE:
   "total_results": 5
 }
 
-For SEARCH:
+OUTPUT FORMAT FOR SEARCH:
 {
   "action": "search",
   "query": "search terms",
@@ -165,145 +160,60 @@ For SEARCH:
 
 ---
 
-## SUPABASE TABLE SQL
+## EXPECTED TABLE SCHEMA (For reference — DO NOT CREATE, verify against existing)
 
-```sql
--- Core memory storage
-CREATE TABLE IF NOT EXISTS agent_memories (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  type TEXT NOT NULL CHECK (type IN ('decision', 'preference', 'pattern', 'context', 'relationship')),
-  category TEXT CHECK (category IN ('technical', 'business', 'workflow', 'personal')),
-  project_id UUID REFERENCES agent_projects(id),
-  agent_source TEXT,
-  content TEXT NOT NULL,
-  tags TEXT[],
-  related_memories UUID[],
-  confidence TEXT DEFAULT 'medium' CHECK (confidence IN ('high', 'medium', 'low')),
-  source TEXT DEFAULT 'conversation' CHECK (source IN ('conversation', 'import', 'explicit', 'derived')),
-  created_at TIMESTAMPTZ DEFAULT now(),
-  last_accessed TIMESTAMPTZ,
-  access_count INTEGER DEFAULT 0
-);
+The `agent_memories` table should have these columns:
 
--- Full-text search index
-CREATE INDEX idx_memories_fts ON agent_memories 
-  USING gin(to_tsvector('english', content));
-
--- Other indexes
-CREATE INDEX idx_memories_tags ON agent_memories USING gin(tags);
-CREATE INDEX idx_memories_type ON agent_memories(type);
-CREATE INDEX idx_memories_category ON agent_memories(category);
-CREATE INDEX idx_memories_project ON agent_memories(project_id);
-CREATE INDEX idx_memories_created ON agent_memories(created_at DESC);
-
--- Full-text search function
-CREATE OR REPLACE FUNCTION search_memories(
-  search_query TEXT,
-  filter_type TEXT DEFAULT NULL,
-  filter_category TEXT DEFAULT NULL,
-  filter_project UUID DEFAULT NULL,
-  limit_count INTEGER DEFAULT 10
-)
-RETURNS TABLE (
-  id UUID,
-  type TEXT,
-  category TEXT,
-  content TEXT,
-  tags TEXT[],
-  project_id UUID,
-  relevance REAL,
-  created_at TIMESTAMPTZ
-) AS $$
-BEGIN
-  RETURN QUERY
-  SELECT 
-    m.id,
-    m.type,
-    m.category,
-    m.content,
-    m.tags,
-    m.project_id,
-    ts_rank(to_tsvector('english', m.content), plainto_tsquery('english', search_query)) as relevance,
-    m.created_at
-  FROM agent_memories m
-  WHERE 
-    (search_query IS NULL OR to_tsvector('english', m.content) @@ plainto_tsquery('english', search_query))
-    AND (filter_type IS NULL OR m.type = filter_type)
-    AND (filter_category IS NULL OR m.category = filter_category)
-    AND (filter_project IS NULL OR m.project_id = filter_project)
-  ORDER BY relevance DESC, m.created_at DESC
-  LIMIT limit_count;
-END;
-$$ LANGUAGE plpgsql;
-
--- Update access tracking
-CREATE OR REPLACE FUNCTION update_memory_access()
-RETURNS TRIGGER AS $$
-BEGIN
-  -- This would be called when memory is retrieved
-  UPDATE agent_memories 
-  SET last_accessed = now(), access_count = access_count + 1
-  WHERE id = NEW.id;
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
--- Tag search function
-CREATE OR REPLACE FUNCTION search_memories_by_tags(
-  search_tags TEXT[],
-  limit_count INTEGER DEFAULT 10
-)
-RETURNS TABLE (
-  id UUID,
-  type TEXT,
-  content TEXT,
-  tags TEXT[],
-  match_count INTEGER
-) AS $$
-BEGIN
-  RETURN QUERY
-  SELECT 
-    m.id,
-    m.type,
-    m.content,
-    m.tags,
-    array_length(m.tags & search_tags, 1) as match_count
-  FROM agent_memories m
-  WHERE m.tags && search_tags
-  ORDER BY match_count DESC, m.created_at DESC
-  LIMIT limit_count;
-END;
-$$ LANGUAGE plpgsql;
-```
+| Column | Type | Notes |
+|--------|------|-------|
+| id | UUID PK | gen_random_uuid() |
+| type | TEXT | CHECK: decision, preference, pattern, context, relationship |
+| category | TEXT | CHECK: technical, business, workflow, personal |
+| project_id | UUID FK | References agent_projects(id) |
+| agent_source | TEXT | Which agent stored this |
+| content | TEXT NOT NULL | The memory content |
+| tags | TEXT[] | Searchable tags array |
+| related_memories | UUID[] | Links to related memories |
+| confidence | TEXT | CHECK: high, medium, low |
+| source | TEXT | CHECK: conversation, import, explicit, derived |
+| created_at | TIMESTAMPTZ | Default now() |
+| last_accessed | TIMESTAMPTZ | Updated on read |
+| access_count | INTEGER | Default 0 |
 
 ---
 
-## N8N WORKFLOW STRUCTURE
+## N8N WORKFLOW STRUCTURE (Target Design)
 
 ```
-Webhook (POST /memory-agent)
+Webhook (POST /webhook/memory-agent)
     ↓
 Switch Node (action?)
     │
-    ├── store → Code Node (extract/categorize)
+    ├── store → Code Node (validate/prepare)
     │            ↓
-    │            HTTP Request (Claude - categorization) [OPTIONAL]
+    │            HTTP Request (Claude API - categorize) [OPTIONAL]
     │            ↓
     │            Supabase Insert (agent_memories)
+    │            ↓
+    │            Respond to Webhook
     │
-    ├── retrieve → Code Node (build query)
-    │               ↓
-    │               Supabase Function (search_memories)
+    ├── retrieve → Supabase Function (search_memories)
     │               ↓
     │               Code Node (format results)
+    │               ↓
+    │               Respond to Webhook
     │
-    ├── search → Same as retrieve with different params
+    ├── search → Supabase Function (search_memories / search_memories_by_tags)
+    │             ↓
+    │             Code Node (format results)
+    │             ↓
+    │             Respond to Webhook
     │
     └── list → Supabase Select (with filters)
                ↓
                Code Node (format list)
-    ↓
-Respond to Webhook (return results)
+               ↓
+               Respond to Webhook
 ```
 
 **Webhook Input Schema:**
@@ -340,73 +250,31 @@ Respond to Webhook (return results)
 
 ---
 
-## MEMORY SCHEMA (Knowledge Doc)
-
-```json
-{
-  "memory": {
-    "id": "uuid",
-    "type": "decision|preference|pattern|context|relationship",
-    "category": "technical|business|workflow|personal",
-    "content": "the actual memory content",
-    "tags": ["searchable", "tags"],
-    "project_id": "uuid or null",
-    "agent_source": "which agent created this",
-    "related_memories": ["uuid1", "uuid2"],
-    "confidence": "high|medium|low",
-    "source": "conversation|import|explicit|derived",
-    "created_at": "timestamp",
-    "last_accessed": "timestamp",
-    "access_count": 0
-  }
-}
-```
-
----
-
-## CORE PREFERENCES TO SEED (Knowledge Doc)
-
-```
-TYPE: preference
-CATEGORY: workflow
-CONTENT: Michael prefers complete solutions, never partial. Step-by-step instructions. No overwhelming information dumps. One-button automation preferred. ADHD-friendly formatting.
-
-TYPE: preference
-CATEGORY: technical
-CONTENT: Use n8n for orchestration (not code-heavy Python). Supabase for database. Desktop Commander MCP for local file ops. Claude for complex reasoning. OpenAI for structured outputs.
-
-TYPE: pattern
-CATEGORY: technical
-CONTENT: Standard pattern: Webhook → n8n → Supabase → Response. File processing: Watch → Process → Store. AI pipeline: Trigger → Multi-AI → Validate → Output.
-
-TYPE: context
-CATEGORY: business
-CONTENT: Active businesses: Bermech Ltd (Airbnb Dublin), Jesse Music (streaming), Taleweaver (book automation), Balding Pig (satirical products). Based in Ireland.
-
-TYPE: decision
-CATEGORY: technical
-CONTENT: Agent system architecture: 7 agents (Spec, Arch, Builder, Verify, PM, Router, Memory). All callable via n8n webhooks. State in Supabase. Modular build approach.
-```
-
----
-
 ## TEST CASES
 
 **Test 1: Store memory**
-Input: `{"action": "store", "content": "We decided to use UUID primary keys", "type": "decision", "tags": ["database", "supabase"]}`
-Expected: Memory stored, ID returned
+Input: `POST /webhook/memory-agent` with `{"action": "store", "content": "Test memory from audit session", "type": "context", "tags": ["test", "audit"]}`
+Expected: Memory stored, ID returned, appears in agent_memories table
 
-**Test 2: Search memories**
+**Test 2: Search memories (full-text)**
 Input: `{"action": "search", "query": "database primary keys"}`
-Expected: Returns stored decision with high relevance
+Expected: Returns relevant results with relevance scores
 
 **Test 3: Retrieve by type**
 Input: `{"action": "retrieve", "type": "preference", "limit": 5}`
-Expected: Returns all preferences
+Expected: Returns the 3 existing preference memories
 
 **Test 4: Tag search**
-Input: `{"action": "search", "tags": ["n8n", "webhook"]}`
-Expected: Returns all memories with matching tags
+Input: `{"action": "search", "tags": ["core", "preferences"]}`
+Expected: Returns memories with matching tags
+
+**Test 5: List with project filter**
+Input: `{"action": "list", "project_id": "<JESS project UUID>", "limit": 20}`
+Expected: Returns Jesse-related memories
+
+**Test 6: Verify existing data preserved**
+Input: `SELECT COUNT(*) FROM agent_memories`
+Expected: >= 40 rows (original data intact)
 
 ---
 
@@ -433,35 +301,14 @@ At session start:
 
 ---
 
-## IMPORT EXISTING KNOWLEDGE
+## AFTER COMPLETING THIS BUILD
 
-```sql
--- Import from existing contexts table (if exists)
-INSERT INTO agent_memories (type, category, content, tags, source)
-SELECT 
-  'context',
-  'business',
-  context_value,
-  ARRAY['imported', 'legacy'],
-  'import'
-FROM contexts;
-
--- Import core preferences
-INSERT INTO agent_memories (type, category, content, tags, confidence, source) VALUES
-('preference', 'workflow', 'Complete solutions only, never partial. Step-by-step. No overwhelming info. One-button automation.', ARRAY['adhd', 'style', 'core'], 'high', 'explicit'),
-('preference', 'technical', 'n8n for orchestration, Supabase for database, Desktop Commander for files.', ARRAY['stack', 'tools', 'core'], 'high', 'explicit'),
-('pattern', 'technical', 'Webhook → n8n → Supabase → Response', ARRAY['pattern', 'n8n', 'workflow'], 'high', 'explicit');
-```
-
----
-
-## AFTER BUILDING
-
-Return to Master Handover with:
-- [ ] Supabase table and functions created
-- [ ] n8n workflow JSON (exportable)
-- [ ] Core preferences seeded
-- [ ] Full-text search working
-- [ ] Integration tested
+Return with:
+- [ ] Infrastructure audit documented
+- [ ] All gaps identified and filled
+- [ ] n8n workflow complete and tested
+- [ ] All 6 test cases passing
+- [ ] Existing 40 memories preserved
+- [ ] Integration documentation complete
 
 **Notion Reference:** https://www.notion.so/30e74ec031148197be2cf0885b30326b
