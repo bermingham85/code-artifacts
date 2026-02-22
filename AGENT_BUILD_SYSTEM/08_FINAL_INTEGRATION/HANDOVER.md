@@ -1,6 +1,6 @@
 # HANDOVER: Final Integration — Build Step 8 of 8
 
-**Document ID:** AGEN-HNDV-integration-v2  
+**Document ID:** AGEN-HNDV-integration-v3  
 **Date:** 2026-02-22  
 **Status:** Pending (awaiting all 7 agent builds)  
 **Depends on:** ALL previous steps (1-7) must be complete
@@ -12,7 +12,6 @@
 | This file | `GitHub: bermingham85/code-artifacts/AGENT_BUILD_SYSTEM/08_FINAL_INTEGRATION/HANDOVER.md` | Upload as Claude Project knowledge document |
 | Project Instructions | `GitHub: bermingham85/code-artifacts/AGENT_BUILD_SYSTEM/08_FINAL_INTEGRATION/PROJECT_INSTRUCTIONS.md` | Paste into Claude Project Custom Instructions |
 | Governance | `GitHub: bermingham85/code-artifacts/AGENT_BUILD_SYSTEM/GOVERNANCE.md` | Upload as Claude Project knowledge document (same in every project) |
-| Master Handover | `GitHub: bermingham85/code-artifacts/AGENT_BUILD_SYSTEM/MASTER_HANDOVER.md` | Upload as Claude Project knowledge document (same in every project) |
 | Notion Page | https://www.notion.so/30e74ec03114814e8e37f428fc7ec655 | Spec and status tracking |
 
 ## BUILD OUTPUTS GO TO
@@ -20,9 +19,43 @@
 | Output | Destination |
 |--------|-------------|
 | Combined Supabase migration | Run on Supabase project `ylcepmvbjjnwmzvevxid` |
-| Master Orchestrator workflow | Import into n8n `http://localhost:5678` |
+| Master Orchestrator workflow | Import into n8n `http://192.168.50.246:5678` |
 | Deployment runbook | Store in Notion + GitHub `bermingham85/code-artifacts` |
 | Test results | Notion Document Control |
+
+---
+
+## n8n CREDENTIALS (use EXACTLY these in workflow JSON)
+
+| What | Credential Name | Credential ID |
+|------|----------------|---------------|
+| Supabase API | `Supabase account` | `a7fYXsrHUIj3HcnW` |
+| Postgres | `Postgres - Agent System` | `1Prz5GUFcAMM2Dv1` |
+
+---
+
+## AUDIT CHECKLIST (Phase 1 — do this FIRST)
+
+| Check | Action | Expected |
+|-------|--------|----------|
+| All agent tables exist? | `SELECT tablename FROM pg_tables WHERE schemaname='public' AND tablename LIKE 'agent_%' ORDER BY tablename;` | 10 tables (see list below) |
+| All n8n workflows active? | Search n8n for all agent workflows | 7 workflows, all active |
+| All webhooks responding? | POST to each endpoint with test payload | 7 successful responses |
+
+### Expected Supabase Tables
+
+| Table | Owner Agent |
+|-------|------------|
+| `agent_memories` | Memory |
+| `agent_projects` | Project Manager |
+| `agent_tasks` | Project Manager |
+| `agent_task_dependencies` | Project Manager |
+| `agent_sessions` | Project Manager |
+| `agent_specifications` | Specification |
+| `agent_routing_logs` | Router |
+| `agent_architectures` | Architecture |
+| `agent_build_artifacts` | Builder |
+| `agent_verifications` | Verification |
 
 ---
 
@@ -32,15 +65,15 @@ This is the final assembly step. All 7 agents have been built independently as n
 
 ## Agent Registry
 
-| Agent | Webhook Path | Supabase Tables | n8n Workflow |
-|-------|-------------|-----------------|-------------|
-| Memory | /webhook/memory-agent | agent_memories | TBD after build |
-| Project Manager | /webhook/project-manager | agent_projects, agent_tasks, agent_task_dependencies, agent_sessions | TBD |
-| Specification | /webhook/specification-agent | agent_specifications | TBD |
-| Router | /webhook/agent | routing_logs | TBD |
-| Architecture | /webhook/architecture-agent | agent_architectures | TBD |
-| Builder | /webhook/builder-agent | agent_build_artifacts | TBD |
-| Verification | /webhook/verification-agent | agent_verifications | TBD |
+| Agent | Webhook Path | Supabase Tables |
+|-------|-------------|-----------------|
+| Memory | /webhook/memory-agent | agent_memories |
+| Project Manager | /webhook/project-manager | agent_projects, agent_tasks, agent_task_dependencies, agent_sessions |
+| Specification | /webhook/specification-agent | agent_specifications |
+| Router | /webhook/agent | agent_routing_logs |
+| Architecture | /webhook/architecture-agent | agent_architectures |
+| Builder | /webhook/builder-agent | agent_build_artifacts |
+| Verification | /webhook/verification-agent | agent_verifications |
 
 ## Integration Flows
 
@@ -86,16 +119,16 @@ The Master Orchestrator is an n8n workflow that:
 ## Supabase Migration Order
 
 Run tables in this order (respecting foreign key dependencies):
-1. agent_memories (Memory Agent — no dependencies)
-2. agent_projects (PM — no dependencies)
-3. agent_sessions (PM — references agent_projects)
-4. agent_tasks (PM — references agent_projects)
-5. agent_task_dependencies (PM — references agent_tasks)
-6. agent_specifications (Spec — references agent_projects)
-7. routing_logs (Router — no dependencies)
-8. agent_architectures (Arch — references agent_specifications)
-9. agent_build_artifacts (Builder — references agent_tasks)
-10. agent_verifications (Verify — references agent_build_artifacts, agent_specifications)
+1. `agent_memories` (Memory — no dependencies)
+2. `agent_projects` (PM — no dependencies)
+3. `agent_sessions` (PM — references agent_projects)
+4. `agent_tasks` (PM — references agent_projects)
+5. `agent_task_dependencies` (PM — references agent_tasks)
+6. `agent_specifications` (Spec — references agent_projects)
+7. `agent_routing_logs` (Router — no dependencies)
+8. `agent_architectures` (Arch — references agent_specifications)
+9. `agent_build_artifacts` (Builder — references agent_tasks)
+10. `agent_verifications` (Verify — references agent_build_artifacts, agent_specifications)
 
 ## Health Check Endpoints
 
@@ -110,24 +143,15 @@ POST /webhook/builder-agent       → { "request": "ping" }
 POST /webhook/verification-agent  → { "request": "ping" }
 ```
 
-## Document Control
-
-All integration artifacts registered at:
-- Webhook: http://localhost:5678/webhook/log-entry
-- Notion DB: https://www.notion.so/22674ec0311480a7b76cc22a158c1fd4
-
-## Notion References
-
-- Master Index: https://www.notion.so/30e74ec031148101a7ddde4b0c7b2769
-- Integration Page: https://www.notion.so/30e74ec03114814e8e37f428fc7ec655
-
 ## DELIVERABLES
 
-- [ ] Combined Supabase migration SQL (all tables, correct order)
+- [ ] Infrastructure audit (all 7 agents verified)
+- [ ] Gap analysis (what's missing)
 - [ ] Master Orchestrator n8n workflow JSON
-- [ ] End-to-end test plan covering all 3 flows
-- [ ] Deployment runbook (step-by-step)
+- [ ] Combined migration SQL (gaps only)
+- [ ] End-to-end test results for all 3 flows
+- [ ] Deployment runbook
 - [ ] Health check script
-- [ ] Document Control registration for all artifacts
+- [ ] Document Control registration payload
 
 **Build complete, working integration. No partial solutions. No TODOs.**

@@ -6,55 +6,68 @@ You are building ONE agent: the **Verification Agent** — the quality gate for 
 
 ## MANDATORY: READ GOVERNANCE.md FIRST
 
-The file `GOVERNANCE.md` is uploaded as a knowledge document in this project. Read it completely before writing any code. Follow all rules, especially Research First (Rule 1) and Document Control (Rule 3).
+The file `GOVERNANCE.md` is uploaded as a knowledge document in this project. Read it completely before writing any code. Follow **RULE 0 (Audit Before Build)** and the 5-phase sequence: Audit → Gap Analysis → Build Gaps → Test → Document.
+
+## START WITH AUDIT (RULE 0)
+
+**Before writing ANY code, SQL, or workflow:**
+
+1. Check Supabase for existing table `agent_verifications`
+2. Check n8n for existing "Verification Agent" workflow
+3. Report findings to the user
+4. **WAIT for confirmation before building anything**
 
 ## WHAT THIS AGENT DOES
 
-- Checks ALL Builder outputs against the original specification
-- Issues PASS or FAIL with SPECIFIC gap descriptions
-- NEVER fixes anything — sends failures back to Builder with details
-- Verifies Document Control registration is complete
-- Confirms completion criteria from GOVERNANCE.md Rule 4
+- Checks ALL build outputs against the original specification
+- Pass/fail with SPECIFIC gaps listed
+- NEVER fixes anything — sends failures back to Builder Agent
+- Ensures no TODOs, placeholders, or partial implementations pass
+- Marks tasks as complete only when ALL acceptance criteria are met
 
 ## WHERE IT SITS IN THE SYSTEM
 
-Builder Agent → **VERIFICATION AGENT** → Pass: Mark Done | Fail: Return to Builder
+Builder Agent → **VERIFICATION AGENT** → Pass: Mark Complete | Fail: Back to Builder
 
-## WHAT YOU MUST BUILD
+## WHAT YOU MUST DELIVER
 
-1. Supabase tables: `verifications`, `verification_results`
+1. Supabase table `agent_verifications` (verify or create)
 2. Complete n8n workflow JSON (importable)
-3. System prompt for spec-vs-build comparison (strict, never fixes)
-4. Structured pass/fail output with gap detail
-5. Test cases that prove it works
-6. Integration spec
+3. System prompt for verification and deficiency reporting
+4. Test cases that prove it works
+5. Integration spec
 
 ## INFRASTRUCTURE
 
-- n8n: http://localhost:5678 (local) or https://bermech.app.n8n.cloud
+- n8n: http://192.168.50.246:5678 (local) or https://bermech.app.n8n.cloud
 - Supabase: ylcepmvbjjnwmzvevxid
-- Claude API available
 - **Already built:** Memory, PM, Spec, Router, Architecture, Builder Agents
+
+### n8n Credentials (use EXACTLY these)
+
+| What | Credential Name | Credential ID |
+|------|----------------|---------------|
+| Supabase API | `Supabase account` | `a7fYXsrHUIj3HcnW` |
+| Postgres | `Postgres - Agent System` | `1Prz5GUFcAMM2Dv1` |
 
 ## INTEGRATION CONTRACT
 
 - **Webhook:** POST /webhook/verification-agent
-- **Input:** `{ "build_id": "uuid", "spec_id": "uuid", "artifacts": [...] }`
-- **Output:** `{ "verification_id": "uuid", "result": "pass|fail", "gaps": [...], "details": {...} }`
-- Receives builds from Builder Agent
-- On PASS: updates Document Control, notifies PM
-- On FAIL: returns to Builder with specific failure details
+- **Input:** `{ "task_id": "uuid", "spec_id": "uuid", "artifacts": [...] }`
+- **Output:** `{ "verification_id": "uuid", "overall_result": "pass|fail", "checks": [...], "deficiency_list": [...] }`
 
 ## DELIVERABLES CHECKLIST
 
-- [ ] Supabase table SQL (ready to run)
+- [ ] Infrastructure audit documented
+- [ ] Gap analysis completed
+- [ ] Supabase table SQL (if needed)
 - [ ] n8n workflow JSON (ready to import)
 - [ ] System prompt for Claude API
 - [ ] Test cases with expected results
 - [ ] Integration documentation
 - [ ] Document Control registration payload
 
-**Build complete, working module. No partial solutions. No TODOs.**
+**Build ONLY what's missing. Preserve everything that works. No partial solutions. No TODOs.**
 
 ## REFERENCE
 

@@ -6,7 +6,16 @@ You are building ONE agent: the **Router Agent** — the traffic director and en
 
 ## MANDATORY: READ GOVERNANCE.md FIRST
 
-The file `GOVERNANCE.md` is uploaded as a knowledge document in this project. Read it completely before writing any code. Follow all rules, especially Research First (Rule 1) and Document Control (Rule 3).
+The file `GOVERNANCE.md` is uploaded as a knowledge document in this project. Read it completely before writing any code. Follow **RULE 0 (Audit Before Build)** and the 5-phase sequence: Audit → Gap Analysis → Build Gaps → Test → Document.
+
+## START WITH AUDIT (RULE 0)
+
+**Before writing ANY code, SQL, or workflow:**
+
+1. Check Supabase for existing table `agent_routing_logs`
+2. Check n8n for existing "Router Agent" workflow
+3. Report findings to the user
+4. **WAIT for confirmation before building anything**
 
 ## WHAT THIS AGENT DOES
 
@@ -20,9 +29,9 @@ The file `GOVERNANCE.md` is uploaded as a knowledge document in this project. Re
 
 **USER → ROUTER AGENT →** [Specification | Architecture | Builder | Verification | PM | Memory]
 
-## WHAT YOU MUST BUILD
+## WHAT YOU MUST DELIVER
 
-1. Supabase `routing_logs` table SQL
+1. Supabase `agent_routing_logs` table (verify or create)
 2. Complete n8n workflow JSON as the MAIN ENTRY POINT
 3. System prompt for intent classification
 4. Phase enforcement logic
@@ -31,10 +40,16 @@ The file `GOVERNANCE.md` is uploaded as a knowledge document in this project. Re
 
 ## INFRASTRUCTURE
 
-- n8n: http://localhost:5678 (local) or https://bermech.app.n8n.cloud
+- n8n: http://192.168.50.246:5678 (local) or https://bermech.app.n8n.cloud
 - Supabase: ylcepmvbjjnwmzvevxid
-- Claude API available
 - **Already built:** Memory Agent, Project Manager, Specification Agent
+
+### n8n Credentials (use EXACTLY these)
+
+| What | Credential Name | Credential ID |
+|------|----------------|---------------|
+| Supabase API | `Supabase account` | `a7fYXsrHUIj3HcnW` |
+| Postgres | `Postgres - Agent System` | `1Prz5GUFcAMM2Dv1` |
 
 ## AGENT ENDPOINTS THIS ROUTER CONNECTS TO
 
@@ -55,14 +70,16 @@ The file `GOVERNANCE.md` is uploaded as a knowledge document in this project. Re
 
 ## DELIVERABLES CHECKLIST
 
-- [ ] Supabase table SQL (ready to run)
+- [ ] Infrastructure audit documented
+- [ ] Gap analysis completed
+- [ ] Supabase table SQL (if needed)
 - [ ] n8n workflow JSON (ready to import)
 - [ ] System prompt for Claude API
 - [ ] Test cases for all routing paths
 - [ ] Integration documentation
 - [ ] Document Control registration payload
 
-**Build complete, working module. No partial solutions. No TODOs.**
+**Build ONLY what's missing. Preserve everything that works. No partial solutions. No TODOs.**
 
 ## REFERENCE
 

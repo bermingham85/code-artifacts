@@ -6,55 +6,69 @@ You are building ONE agent: the **Architecture Agent** — the task decompositio
 
 ## MANDATORY: READ GOVERNANCE.md FIRST
 
-The file `GOVERNANCE.md` is uploaded as a knowledge document in this project. Read it completely before writing any code. Follow all rules, especially Research First (Rule 1) and Document Control (Rule 3).
+The file `GOVERNANCE.md` is uploaded as a knowledge document in this project. Read it completely before writing any code. Follow **RULE 0 (Audit Before Build)** and the 5-phase sequence: Audit → Gap Analysis → Build Gaps → Test → Document.
+
+## START WITH AUDIT (RULE 0)
+
+**Before writing ANY code, SQL, or workflow:**
+
+1. Check Supabase for existing table `agent_architectures`
+2. Check n8n for existing "Architecture Agent" workflow
+3. Report findings to the user
+4. **WAIT for confirmation before building anything**
 
 ## WHAT THIS AGENT DOES
 
-- Receives COMPLETED specifications from the Specification Agent
-- Decomposes specs into discrete, sequenced tasks (1-2 hours max each)
-- Knows the tech stack and makes technology decisions
-- Creates dependency maps between tasks
-- NEVER accepts vague specs — rejects back to Specification Agent
-- NEVER builds anything — only designs task plans
+- Receives a completed specification from the Specification Agent
+- Decomposes it into ordered, dependency-aware tasks
+- Each task is specific enough to hand directly to the Builder Agent
+- Identifies shared components across tasks
+- Creates build order respecting dependencies
 
 ## WHERE IT SITS IN THE SYSTEM
 
-Specification Agent → **ARCHITECTURE AGENT** → Builder Agent (for each task)
+Specification Agent → **ARCHITECTURE AGENT** → Builder Agent
 
-## WHAT YOU MUST BUILD
+## WHAT YOU MUST DELIVER
 
-1. Supabase tables: `architectures`, `architecture_tasks`, `task_dependencies`
+1. Supabase table `agent_architectures` (verify or create)
 2. Complete n8n workflow JSON (importable)
-3. System prompt for task decomposition and tech stack decisions
-4. Structured output format for architecture documents
+3. System prompt for task decomposition
+4. Task template with required fields
 5. Test cases that prove it works
 6. Integration spec
 
 ## INFRASTRUCTURE
 
-- n8n: http://localhost:5678 (local) or https://bermech.app.n8n.cloud
+- n8n: http://192.168.50.246:5678 (local) or https://bermech.app.n8n.cloud
 - Supabase: ylcepmvbjjnwmzvevxid
-- Claude API available
-- **Already built:** Memory Agent, Project Manager, Specification Agent, Router Agent
+- **Already built:** Memory, PM, Spec, Router Agents
+
+### n8n Credentials (use EXACTLY these)
+
+| What | Credential Name | Credential ID |
+|------|----------------|---------------|
+| Supabase API | `Supabase account` | `a7fYXsrHUIj3HcnW` |
+| Postgres | `Postgres - Agent System` | `1Prz5GUFcAMM2Dv1` |
 
 ## INTEGRATION CONTRACT
 
 - **Webhook:** POST /webhook/architecture-agent
-- **Input:** `{ "spec_id": "uuid" }` or `{ "spec_document": {...} }`
-- **Output:** `{ "architecture_id": "uuid", "tasks": [...], "dependencies": {...} }`
-- Triggered by Specification Agent (when spec is approved)
-- Feeds tasks to Builder Agent one at a time
+- **Input:** `{ "spec_id": "uuid", "project_id": "uuid" }`
+- **Output:** `{ "architecture_id": "uuid", "tasks": [...], "build_order": [...] }`
 
 ## DELIVERABLES CHECKLIST
 
-- [ ] Supabase table SQL (ready to run)
+- [ ] Infrastructure audit documented
+- [ ] Gap analysis completed
+- [ ] Supabase table SQL (if needed)
 - [ ] n8n workflow JSON (ready to import)
 - [ ] System prompt for Claude API
 - [ ] Test cases with expected results
 - [ ] Integration documentation
 - [ ] Document Control registration payload
 
-**Build complete, working module. No partial solutions. No TODOs.**
+**Build ONLY what's missing. Preserve everything that works. No partial solutions. No TODOs.**
 
 ## REFERENCE
 

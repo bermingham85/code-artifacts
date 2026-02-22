@@ -1,8 +1,8 @@
 # AGENT BUILD SYSTEM — MASTER HANDOVER
 
-**Document ID:** AGEN-HNDV-master-v3  
+**Document ID:** AGEN-HNDV-master-v4  
 **Date:** 2026-02-22  
-**Status:** Architecture Complete, Build Pending  
+**Status:** Memory Agent Built, Remaining Agents Pending  
 **Owner:** Michael Bermingham
 
 > **GOVERNANCE:** All rules, naming conventions, and protocols are in `GOVERNANCE.md`.  
@@ -38,26 +38,46 @@ A 7-agent autonomous system where each agent:
 
 ---
 
+## SHARED INFRASTRUCTURE
+
+### n8n Credentials (same across ALL agent workflows)
+
+| What | Credential Name in n8n | Credential ID |
+|------|----------------------|---------------|
+| Supabase API | `Supabase account` | `a7fYXsrHUIj3HcnW` |
+| Postgres (direct SQL) | `Postgres - Agent System` | `1Prz5GUFcAMM2Dv1` |
+
+### Connection Details
+
+| Service | URL |
+|---------|-----|
+| n8n Local | `http://192.168.50.246:5678` |
+| n8n Cloud | `https://bermech.app.n8n.cloud` |
+| Supabase | `https://ylcepmvbjjnwmzvevxid.supabase.co` |
+| GitHub | `bermingham85/code-artifacts` |
+
+---
+
 ## BUILD ORDER (FOLLOW THIS SEQUENCE)
 
 Build each agent in a **separate Claude Project**. Each project gets:
 
 1. `GOVERNANCE.md` — uploaded as knowledge document (same file in every project)
-2. `PROJECT_INSTRUCTIONS.md` — pasted as the Project's custom instructions
-3. `HANDOVER.md` — uploaded as knowledge document (agent-specific)
+2. `HANDOVER.md` — uploaded as knowledge document (agent-specific)
+3. `PROJECT_INSTRUCTIONS.md` — pasted as the Project's custom instructions
 
 ### Sequence:
 
-| Step | Folder | Why This Order |
-|------|--------|----------------|
-| 1 | `01_MEMORY_AGENT/` | Foundational — stores context for all others |
-| 2 | `02_PROJECT_MANAGER/` | State tracking for all projects |
-| 3 | `03_SPECIFICATION_AGENT/` | Entry point for new projects |
-| 4 | `04_ROUTER_AGENT/` | Traffic direction |
-| 5 | `05_ARCHITECTURE_AGENT/` | Task decomposition |
-| 6 | `06_BUILDER_AGENT/` | Code production |
-| 7 | `07_VERIFICATION_AGENT/` | Quality gates |
-| 8 | `08_FINAL_INTEGRATION/` | Joins all agents together |
+| Step | Folder | Status | Why This Order |
+|------|--------|--------|----------------|
+| 1 | `01_MEMORY_AGENT/` | **Built** — workflow active, tables populated | Foundational — stores context for all others |
+| 2 | `02_PROJECT_MANAGER/` | Pending | State tracking for all projects |
+| 3 | `03_SPECIFICATION_AGENT/` | Pending | Entry point for new projects |
+| 4 | `04_ROUTER_AGENT/` | Pending | Traffic direction |
+| 5 | `05_ARCHITECTURE_AGENT/` | Pending | Task decomposition |
+| 6 | `06_BUILDER_AGENT/` | Pending | Code production |
+| 7 | `07_VERIFICATION_AGENT/` | Pending | Quality gates |
+| 8 | `08_FINAL_INTEGRATION/` | Pending | Joins all agents together |
 
 ---
 
@@ -70,7 +90,32 @@ For each agent folder:
    - `GOVERNANCE.md` (from root — same file every time)
    - `HANDOVER.md` (from the agent's folder)
 3. **Set project instructions:** Copy-paste contents of `PROJECT_INSTRUCTIONS.md`
-4. **Start conversation** — the instructions tell Claude exactly what to build
+4. **Start conversation** — the instructions tell Claude to AUDIT FIRST then build gaps
+
+**IMPORTANT:** The agent MUST audit existing infrastructure before building anything. This is enforced by GOVERNANCE.md Rule 0. If the agent starts creating tables or workflows without checking what exists first, stop it and point to Rule 0.
+
+---
+
+## EXISTING INFRASTRUCTURE (as of 2026-02-22)
+
+### Supabase Tables That Already Exist
+
+| Table | Rows | Status |
+|-------|------|--------|
+| `agent_memories` | 40+ | Working — full-text search, tags, indexes |
+| `agent_projects` | 10 | Working — all project codes populated |
+
+### Supabase Functions That Already Exist
+
+- `search_memories(search_query, filter_type, filter_category, filter_project, limit_count)`
+- `search_memories_by_tags(search_tags, filter_type, limit_count)`
+- `touch_memory(memory_id)`
+
+### n8n Workflows That Already Exist
+
+| Workflow | ID | Nodes | Status |
+|----------|----|-------|--------|
+| Memory Agent | `YuY8FL47SB12oy7J` | 20 | Active |
 
 ---
 
@@ -92,7 +137,6 @@ After all 7 agents are built independently:
 
 ```
 AGENT_BUILD_SYSTEM/
-├── README.md                     ← You are here
 ├── GOVERNANCE.md                 ← THE rules (upload to EVERY project)
 ├── MASTER_HANDOVER.md            ← This file (system overview)
 ├── 01_MEMORY_AGENT/
@@ -120,6 +164,17 @@ AGENT_BUILD_SYSTEM/
     ├── PROJECT_INSTRUCTIONS.md
     └── HANDOVER.md
 ```
+
+---
+
+## VERSION CONTROL
+
+| Version | Date | Change |
+|---------|------|--------|
+| 1.0 | 2026-02-22 | Initial master handover |
+| 2.0 | 2026-02-22 | Added folder structure and setup instructions |
+| 3.0 | 2026-02-22 | Consolidated with governance reference |
+| 4.0 | 2026-02-22 | **Post-mortem fix.** Added shared credential reference, existing infrastructure section, build status tracking, audit-first warning. Memory Agent build rebuilt existing infrastructure because handover didn't enforce audit-before-build. |
 
 **SUPERSEDED FILES (do not use):**
 - ~~AGENT_SYSTEM_CORE_RULES.md~~ → replaced by GOVERNANCE.md

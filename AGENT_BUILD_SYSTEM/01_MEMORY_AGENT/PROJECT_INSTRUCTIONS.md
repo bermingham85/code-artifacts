@@ -2,60 +2,28 @@
 
 ## YOUR ROLE IN THIS CONVERSATION
 
-You are completing the **Memory Agent** — the foundational context storage layer for a 7-agent autonomous system. Infrastructure already partially exists. Your job is to AUDIT what's there, identify gaps, and complete the build.
+You are building ONE agent: the **Memory Agent** — the foundational context storage layer for a 7-agent autonomous system.
 
 ## MANDATORY: READ GOVERNANCE.md FIRST
 
 The file `GOVERNANCE.md` is uploaded as a knowledge document in this project. It contains the non-negotiable rules for this build. Before writing any code:
 
-1. Read GOVERNANCE.md completely — especially **Rule 0 (Audit First)** and **Rule 1 (Research First)**
-2. **DO NOT execute any CREATE TABLE or CREATE FUNCTION SQL** until you have audited what already exists
-3. **DO NOT delete or overwrite any existing data** — it represents weeks of work
+1. Read GOVERNANCE.md completely — especially **RULE 0 (Audit Before Build)**
+2. Follow the 5-phase sequence: Audit → Gap Analysis → Build Gaps → Test → Document
+3. Follow RULE 3 (Document Control) — register all artifacts
+4. Follow RULE 9 — use exact table names and credential references
 
-## STEP 1: AUDIT EXISTING INFRASTRUCTURE (DO THIS FIRST)
+## START WITH AUDIT (RULE 0)
 
-Before building anything, audit what already exists using MCP tools:
+**Before writing ANY code, SQL, or workflow:**
 
-### Supabase Audit
-Use the Supabase MCP to run these READ-ONLY queries:
-```sql
--- Check existing tables
-SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_name LIKE 'agent_%';
+1. Check Supabase for existing tables (`agent_memories`, `agent_projects`)
+2. Check n8n for existing "Memory Agent" workflow
+3. Check if search functions exist (`search_memories`, `search_memories_by_tags`, `touch_memory`)
+4. Report findings to the user
+5. **WAIT for confirmation before building anything**
 
--- Check agent_memories structure and data
-SELECT column_name, data_type FROM information_schema.columns WHERE table_name = 'agent_memories';
-SELECT COUNT(*), type, category FROM agent_memories GROUP BY type, category;
-
--- Check existing functions
-SELECT routine_name FROM information_schema.routines WHERE routine_schema = 'public' AND routine_name LIKE '%memor%' OR routine_name LIKE '%search%';
-
--- Check existing indexes
-SELECT indexname FROM pg_indexes WHERE tablename = 'agent_memories';
-```
-
-### n8n Audit
-Check for existing Memory Agent workflow at http://localhost:5678
-
-### Report findings before proceeding
-Tell me what exists, what's missing, and what needs fixing. Do NOT create anything yet.
-
-## STEP 2: GAP ANALYSIS
-
-Compare what exists against the spec in HANDOVER.md. Identify:
-- What's already built and working
-- What's built but needs fixing
-- What's missing entirely
-- What data exists that must be preserved
-
-Present the gap analysis and wait for approval before proceeding.
-
-## STEP 3: BUILD ONLY WHAT'S MISSING
-
-After audit and approval:
-- Add missing columns/indexes (ALTER TABLE, not CREATE TABLE)
-- Add missing functions (CREATE OR REPLACE, not DROP + CREATE)
-- Complete n8n workflow if incomplete
-- Write tests against existing infrastructure
+The HANDOVER.md file documents what already exists. Verify it, don't assume it.
 
 ## WHAT THIS AGENT DOES
 
@@ -72,12 +40,29 @@ After audit and approval:
 - Central knowledge authority for the entire system
 - **This is built FIRST because all other agents depend on it**
 
+## WHAT YOU MUST DELIVER
+
+1. Supabase table `agent_memories` (verify existing or create)
+2. Search function SQL (verify existing or create)
+3. Complete n8n workflow JSON (verify existing or fix/replace)
+4. System prompt for Claude API call (categorization)
+5. Memory schema and tagging system
+6. Test cases that prove it works
+7. Integration spec for other agents to call it
+
 ## INFRASTRUCTURE
 
-- n8n: http://localhost:5678 (Docker Desktop) or https://bermech.app.n8n.cloud
+- n8n: http://192.168.50.246:5678 (local) or https://bermech.app.n8n.cloud
 - Supabase: ylcepmvbjjnwmzvevxid
 - Claude API available
 - GitHub: bermingham85/code-artifacts
+
+### n8n Credentials (use EXACTLY these)
+
+| What | Credential Name | Credential ID |
+|------|----------------|---------------|
+| Supabase API | `Supabase account` | `a7fYXsrHUIj3HcnW` |
+| Postgres | `Postgres - Agent System` | `1Prz5GUFcAMM2Dv1` |
 
 ## INTEGRATION CONTRACT
 
@@ -89,16 +74,18 @@ After audit and approval:
 
 ## DELIVERABLES CHECKLIST
 
-- [ ] Infrastructure audit complete (Step 1)
-- [ ] Gap analysis presented and approved (Step 2)
-- [ ] Any missing Supabase schema added (not recreated)
-- [ ] n8n workflow complete and tested
+Before this conversation ends, you must produce:
+- [ ] Infrastructure audit documented
+- [ ] Gap analysis completed
+- [ ] Supabase table SQL (if needed — may already exist)
+- [ ] Search function SQL (if needed — may already exist)
+- [ ] n8n workflow JSON (verified working or fixed)
 - [ ] System prompt for Claude API categorization
-- [ ] Test cases run against existing infrastructure
+- [ ] Test cases with expected results
 - [ ] Integration documentation
 - [ ] Document Control registration payload
 
-**Complete this as a working module. Preserve all existing data. No partial solutions. No TODOs.**
+**Build ONLY what's missing. Preserve everything that works. No partial solutions. No TODOs.**
 
 ## REFERENCE
 

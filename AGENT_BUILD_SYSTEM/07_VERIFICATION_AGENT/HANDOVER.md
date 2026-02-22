@@ -1,6 +1,6 @@
 # HANDOVER: Verification Agent — Build Step 7 of 8
 
-**Document ID:** AGEN-HNDV-verify-v2  
+**Document ID:** AGEN-HNDV-verify-v3  
 **Date:** 2026-02-22  
 **Status:** Ready to Build  
 **Depends on:** Steps 1-4 built. Can run in parallel with Steps 5 and 6.
@@ -12,7 +12,6 @@
 | This file | `GitHub: bermingham85/code-artifacts/AGENT_BUILD_SYSTEM/07_VERIFICATION_AGENT/HANDOVER.md` | Upload as Claude Project knowledge document |
 | Project Instructions | `GitHub: bermingham85/code-artifacts/AGENT_BUILD_SYSTEM/07_VERIFICATION_AGENT/PROJECT_INSTRUCTIONS.md` | Paste into Claude Project Custom Instructions |
 | Governance | `GitHub: bermingham85/code-artifacts/AGENT_BUILD_SYSTEM/GOVERNANCE.md` | Upload as Claude Project knowledge document (same in every project) |
-| Master Handover | `GitHub: bermingham85/code-artifacts/AGENT_BUILD_SYSTEM/MASTER_HANDOVER.md` | Upload as Claude Project knowledge document (same in every project) |
 | Notion Page | https://www.notion.so/30e74ec0311481609a8ad94546a95b61 | Spec and status tracking |
 
 ## BUILD OUTPUTS GO TO
@@ -20,10 +19,29 @@
 | Output | Destination |
 |--------|-------------|
 | Supabase SQL | Run directly on Supabase project `ylcepmvbjjnwmzvevxid` |
-| n8n workflow JSON | Import into n8n `http://localhost:5678` |
+| n8n workflow JSON | Import into n8n `http://192.168.50.246:5678` |
 | System prompt | Store in Notion + GitHub `bermingham85/code-artifacts` |
-| Code artifacts | GitHub `bermingham85/code-artifacts` |
 | Test results | Notion Document Control |
+
+---
+
+## n8n CREDENTIALS (use EXACTLY these in workflow JSON)
+
+| What | Credential Name | Credential ID |
+|------|----------------|---------------|
+| Supabase API | `Supabase account` | `a7fYXsrHUIj3HcnW` |
+| Postgres | `Postgres - Agent System` | `1Prz5GUFcAMM2Dv1` |
+
+---
+
+## AUDIT CHECKLIST (Phase 1 — do this FIRST)
+
+| Check | SQL / Action | Expected |
+|-------|-------------|----------|
+| Table exists? | `SELECT tablename FROM pg_tables WHERE schemaname='public' AND tablename='agent_verifications';` | May not exist yet |
+| n8n workflow? | Search n8n for "Verification" workflow | May not exist yet |
+
+**This agent has no existing infrastructure. Everything needs to be built fresh.**
 
 ---
 
@@ -107,14 +125,41 @@ STRICTNESS:
 }
 ```
 
-## SUPABASE TABLES NEEDED
+## SUPABASE TABLE: `agent_verifications`
 
-1. **agent_verifications** — stores verification results with per-requirement pass/fail
-2. Links to agent_tasks, agent_specifications, agent_build_artifacts
+| Column | Type | Notes |
+|--------|------|-------|
+| id | UUID PK | gen_random_uuid() |
+| task_id | UUID FK | References agent_tasks(id) |
+| spec_id | UUID FK | References agent_specifications(id) |
+| build_artifact_id | UUID FK | References agent_build_artifacts(id) |
+| overall_result | TEXT | CHECK: pass, fail |
+| checks | JSONB | Array of per-requirement results |
+| deficiency_list | TEXT[] | Specific items to fix |
+| summary | TEXT | Overall assessment |
+| created_at | TIMESTAMPTZ | Default now() |
+
+## TEST CASES
+
+**Test 1: Verify passing build**
+Input: `POST /webhook/verification-agent` with complete task/spec/artifact set
+Expected: Returns overall_result "pass" with all checks passed
+
+**Test 2: Catch TODO in code**
+Input: Artifact containing "// TODO: implement this"
+Expected: Returns overall_result "fail" with deficiency noting the TODO
+
+**Test 3: Catch missing requirement**
+Input: Spec with 3 requirements, artifact only implementing 2
+Expected: Returns "fail" with specific missing requirement listed
+
+**Test 4: Store verification result**
+After any verification, confirm result stored in `agent_verifications` table
 
 ## DELIVERABLES
 
-- [ ] Supabase table creation SQL (ready to run)
+- [ ] Infrastructure audit documented
+- [ ] Supabase table SQL (ready to run)
 - [ ] n8n workflow JSON (ready to import)
 - [ ] System prompt for Claude API
 - [ ] Test cases with expected results

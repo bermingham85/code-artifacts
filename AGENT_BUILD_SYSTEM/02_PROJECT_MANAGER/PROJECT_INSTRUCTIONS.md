@@ -6,7 +6,18 @@ You are building ONE agent: the **Project Manager Agent** — the state tracking
 
 ## MANDATORY: READ GOVERNANCE.md FIRST
 
-The file `GOVERNANCE.md` is uploaded as a knowledge document in this project. Read it completely before writing any code. Follow all rules, especially Research First (Rule 1) and Document Control (Rule 3).
+The file `GOVERNANCE.md` is uploaded as a knowledge document in this project. Read it completely before writing any code. Follow **RULE 0 (Audit Before Build)** and the 5-phase sequence: Audit → Gap Analysis → Build Gaps → Test → Document.
+
+## START WITH AUDIT (RULE 0)
+
+**Before writing ANY code, SQL, or workflow:**
+
+1. Check Supabase for existing tables (`agent_projects`, `agent_tasks`, `agent_task_dependencies`, `agent_sessions`)
+2. Check n8n for existing "Project Manager" workflow
+3. Report findings to the user
+4. **WAIT for confirmation before building anything**
+
+The `agent_projects` table already has 10 rows. DO NOT DROP IT.
 
 ## WHAT THIS AGENT DOES
 
@@ -21,11 +32,10 @@ The file `GOVERNANCE.md` is uploaded as a knowledge document in this project. Re
 - Called at START of every session to load context
 - Called by ALL other agents to update status
 - Called by user for status queries
-- Central state authority for the entire system
 
-## WHAT YOU MUST BUILD
+## WHAT YOU MUST DELIVER
 
-1. Supabase tables: agent_projects, agent_tasks, agent_task_dependencies, agent_sessions
+1. Supabase tables: `agent_projects` (exists — verify), `agent_tasks`, `agent_task_dependencies`, `agent_sessions`
 2. Complete n8n workflow JSON (importable)
 3. Multiple actions: get_status, start_session, end_session, update_task
 4. System prompt for status summarization
@@ -34,10 +44,16 @@ The file `GOVERNANCE.md` is uploaded as a knowledge document in this project. Re
 
 ## INFRASTRUCTURE
 
-- n8n: http://localhost:5678 (local) or https://bermech.app.n8n.cloud
+- n8n: http://192.168.50.246:5678 (local) or https://bermech.app.n8n.cloud
 - Supabase: ylcepmvbjjnwmzvevxid
-- Claude API available
 - **Memory Agent already built** — can call POST /webhook/memory-agent
+
+### n8n Credentials (use EXACTLY these)
+
+| What | Credential Name | Credential ID |
+|------|----------------|---------------|
+| Supabase API | `Supabase account` | `a7fYXsrHUIj3HcnW` |
+| Postgres | `Postgres - Agent System` | `1Prz5GUFcAMM2Dv1` |
 
 ## INTEGRATION CONTRACT
 
@@ -47,14 +63,16 @@ The file `GOVERNANCE.md` is uploaded as a knowledge document in this project. Re
 
 ## DELIVERABLES CHECKLIST
 
-- [ ] Supabase table SQL (ready to run)
+- [ ] Infrastructure audit documented
+- [ ] Gap analysis completed
+- [ ] Supabase table SQL (only for missing tables)
 - [ ] n8n workflow JSON (ready to import)
 - [ ] System prompt for Claude API
 - [ ] Test cases with expected results
 - [ ] Integration documentation
 - [ ] Document Control registration payload
 
-**Build complete, working module. No partial solutions. No TODOs.**
+**Build ONLY what's missing. Preserve everything that works. No partial solutions. No TODOs.**
 
 ## REFERENCE
 
