@@ -1,0 +1,12 @@
+# CODEOWNERS
+# Every file requires review from bermingham85
+# This means every PR to main must be approved before merge
+
+# Global: everything requires owner review
+*                           @bermingham85
+
+# Critical paths — extra attention
+/schema/                    @bermingham85
+/workers/DC/                @bermingham85
+/docs/                      @bermingham85
+/.github/                   @bermingham85
