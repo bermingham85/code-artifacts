@@ -1,8 +1,26 @@
 {
-  "version": "2.0",
-  "last_updated": "2026-01-10T00:15:00Z",
-  "token_estimate": 4500,
-  
+  "version": "2.1",
+  "last_updated": "2026-03-07T22:24:00Z",
+  "token_estimate": 4800,
+
+  "apex_factory": {
+    "spec": "PROJECT_APEX_v2.2.md",
+    "location": "C:\\Users\\bermi\\Projects\\apex\\",
+    "phases": {
+      "PH-01": {"status": "CERTIFIED", "name": "Estate Structure", "note": "All dirs created"},
+      "PH-02": {"status": "CERTIFIED", "name": "Document Control", "note": "doc_controller.py active, 21 docs registered"},
+      "PH-03": {"status": "CERTIFIED", "name": "Work Order Contract", "note": "WorkOrder + DiagnosticTicket templates live"},
+      "PH-04": {"status": "CERTIFIED", "name": "Indexer + Foreman", "note": "Certified 2026-03-07. indexer: 75 skills / 19 files. Foreman: PH04-CERT-001 PASS. Demo WO: PASS.", "certified_at": "2026-03-07T22:24:27Z"},
+      "PH-05": {"status": "COMPLETE", "name": "n8n Blind Postman", "note": "JSON exported to apex/docs/APEX-Blind-Postman-n8n.json — pending import to n8n"},
+      "PH-06": {"status": "COMPLETE", "name": "ClaudeClaw TypeScript", "note": "Built at C:\\Users\\bermi\\Projects\\claudeclaw\\"},
+      "PH-07": {"status": "PENDING", "name": "Supervisor + Demo E2E", "note": "supervisor.py exists; full Telegram bot test pending"}
+    },
+    "manifest": {"skills": 75, "files": 19, "last_indexed": "2026-03-07T22:21:43Z"},
+    "muscles": ["muscle_file_copy", "muscle_text_transform", "muscle_json_merge", "muscle_health_check", "muscle_drop_ticket", "muscle_gdrive_watcher", "muscle_gdrive_download", "muscle_ocr_receipt", "muscle_ocr_batch_submit", "muscle_ocr_batch_retrieve", "muscle_classify_document", "muscle_receipt_dedup", "muscle_sheets_append"],
+    "health": {"overall": "WARN", "n8n": "UNREACHABLE (network)", "disk_free_gb": 181.24, "dead_letter": 1},
+    "next_action": "Import APEX-Blind-Postman-n8n.json to n8n at 192.168.50.246:5678, then test ClaudeClaw bot on Telegram"
+  },
+
   "code_artifacts": {
     "location": "C:\\Users\\bermi\\Projects\\CODE_ARTIFACTS\\",
     "categories": {
@@ -51,15 +69,12 @@
     }
   },
 
-  "repositories": {
-    "tier1_foundation": ["agent-agency-mcp", "bermech-n8n-workflows", "autonomous-empire"],
-    "tier2_orchestration": ["n8n-mcp", "chatgpt-mcp-server", "prompt-engineer-agent", "auto-agent-creator"],
-    "tier3_execution": ["mcp-puppet-pipeline", "midjourney-automation", "hourly-autopilot-system"],
-    "tier4_revenue": ["balding-pig-automation", "jesse-novel-factory", "asset-vault", "AutoDesign-POD-Empire"],
-    "tier5_production": ["gremlos-world-puppet", "taleweaver", "ai-orchestrator-platform"]
-  },
-
   "active_projects": {
+    "apex_factory": {
+      "status": "PH-04-CERTIFIED",
+      "spec": "C:\\Users\\bermi\\Projects\\apex\\PROJECT_APEX_v2.2.md",
+      "next": "Import n8n workflow + test ClaudeClaw on Telegram"
+    },
     "novel_writer": {
       "status": "validation-stack-complete",
       "workflow": "Novel_Writer_Full_Validation_Stack.json",
@@ -70,16 +85,23 @@
       "status": "phase3-pending",
       "completed": "89 vendor rules extracted, webhook categorizer functional"
     },
-    "asset_vault": {
-      "status": "github-ready",
-      "repo": "https://github.com/bermingham85/asset-vault"
+    "berm_receipt_ocr": {
+      "status": "spec-complete-build-pending",
+      "spec": "C:\\Users\\bermi\\Projects\\apex\\hub\\WO-BERM-RECEIPT-OCR-001.json",
+      "muscles_built": ["muscle_gdrive_watcher", "muscle_gdrive_download", "muscle_ocr_receipt", "muscle_receipt_dedup", "muscle_sheets_append"],
+      "next": "Configure credentials (Google SA JSON + Drive folder ID + Sheet ID) and test pipeline"
     }
   },
 
   "tool_knowledge": {
     "desktop_commander": {
+      "windows_cmd": "use cmd shell for python/git; no quotes around paths when calling foreman --ticket",
       "powershell": "use semicolons for chaining commands",
       "git_sequences": "chain with semicolons, not &&"
+    },
+    "foreman": {
+      "invoke": "python foreman.py --ticket C:\\path\\to\\WO-xxx.json (no quotes around path on Windows cmd)",
+      "idempotency": "rejects duplicate job_id already in audit/"
     },
     "fal_ai": {
       "flux_dev": "$0.03/megapixel",
@@ -93,11 +115,14 @@
     "TikTok Anime Wallpapers (Flux+Fal)",
     "MuseTalk lip-sync",
     "Jesse Novel Factory",
-    "Novel Writer - Self-Learning Prose System"
+    "Novel Writer - Self-Learning Prose System",
+    "APEX Blind Postman (pending n8n import)"
   ],
 
   "file_locations": {
     "projects": "C:\\Users\\bermi\\Projects\\",
+    "apex": "C:\\Users\\bermi\\Projects\\apex\\",
+    "claudeclaw": "C:\\Users\\bermi\\Projects\\claudeclaw\\",
     "github": "C:\\Users\\bermi\\Documents\\GitHub\\",
     "blueprints": "C:\\Users\\bermi\\Projects\\BLUEPRINTS\\",
     "prompt_library": "C:\\Users\\bermi\\Projects\\MASTER_PROMPT_LIBRARY.md",
