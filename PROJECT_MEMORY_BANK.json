@@ -1,7 +1,7 @@
 {
   "version": "2.1",
-  "last_updated": "2026-03-07T22:24:00Z",
-  "token_estimate": 4800,
+  "last_updated": "2026-03-12T23:10:00Z",
+  "token_estimate": 5000,
 
   "apex_factory": {
     "spec": "PROJECT_APEX_v2.2.md",
@@ -11,14 +11,14 @@
       "PH-02": {"status": "CERTIFIED", "name": "Document Control", "note": "doc_controller.py active, 21 docs registered"},
       "PH-03": {"status": "CERTIFIED", "name": "Work Order Contract", "note": "WorkOrder + DiagnosticTicket templates live"},
       "PH-04": {"status": "CERTIFIED", "name": "Indexer + Foreman", "note": "Certified 2026-03-07. indexer: 75 skills / 19 files. Foreman: PH04-CERT-001 PASS. Demo WO: PASS.", "certified_at": "2026-03-07T22:24:27Z"},
-      "PH-05": {"status": "COMPLETE", "name": "n8n Blind Postman", "note": "JSON exported to apex/docs/APEX-Blind-Postman-n8n.json — pending import to n8n"},
-      "PH-06": {"status": "COMPLETE", "name": "ClaudeClaw TypeScript", "note": "Built at C:\\Users\\bermi\\Projects\\claudeclaw\\"},
-      "PH-07": {"status": "PENDING", "name": "Supervisor + Demo E2E", "note": "supervisor.py exists; full Telegram bot test pending"}
+      "PH-05": {"status": "CERTIFIED", "name": "n8n Blind Postman", "note": "Imported and ACTIVE in n8n. ID: CHk7hcqn2Kl1abdc. Polls hub/ every 30s.", "certified_at": "2026-03-12T23:00:00Z"},
+      "PH-06": {"status": "CERTIFIED", "name": "ClaudeClaw TypeScript", "note": "Running at PID 11192. @Brianbrainboxbot online. Ticket server on :3000. Annie bot 401 (needs token fix — separate issue).", "certified_at": "2026-03-12T23:00:00Z"},
+      "PH-07": {"status": "IN_PROGRESS", "name": "Supervisor + Demo E2E", "note": "supervisor.py complete. Test ticket DIAG-PH07-CERT-001 dropped into hub/ — awaiting Telegram confirmation. Once confirmed, certify. Annie bot 401 is a known issue (separate from core cert)."}
     },
     "manifest": {"skills": 75, "files": 19, "last_indexed": "2026-03-07T22:21:43Z"},
     "muscles": ["muscle_file_copy", "muscle_text_transform", "muscle_json_merge", "muscle_health_check", "muscle_drop_ticket", "muscle_gdrive_watcher", "muscle_gdrive_download", "muscle_ocr_receipt", "muscle_ocr_batch_submit", "muscle_ocr_batch_retrieve", "muscle_classify_document", "muscle_receipt_dedup", "muscle_sheets_append"],
-    "health": {"overall": "WARN", "n8n": "UNREACHABLE (network)", "disk_free_gb": 181.24, "dead_letter": 1},
-    "next_action": "Import APEX-Blind-Postman-n8n.json to n8n at 192.168.50.246:5678, then test ClaudeClaw bot on Telegram"
+    "health": {"overall": "WARN", "n8n": "REACHABLE (CHk7hcqn2Kl1abdc active)", "disk_free_gb": 181.24, "dead_letter": 1, "annie_bot": "401 UNAUTHORIZED — token invalid"},
+    "next_action": "Check Telegram for DIAG-PH07-CERT-001 message. If received, run: python supervisor\\supervisor.py --check. Then certify PH-07. Fix Annie bot token separately."
   },
 
   "code_artifacts": {
@@ -65,15 +65,17 @@
     "local_services": {
       "context_api": "http://localhost:8765",
       "media_toolkit": "http://127.0.0.1:8001",
-      "postgresql": "192.168.50.246:5432 (agent_system)"
+      "postgresql": "192.168.50.246:5432 (agent_system)",
+      "claudeclaw_ticket_server": "http://localhost:3000",
+      "receipt_api": "http://localhost:5691"
     }
   },
 
   "active_projects": {
     "apex_factory": {
-      "status": "PH-04-CERTIFIED",
+      "status": "PH-07-IN-PROGRESS",
       "spec": "C:\\Users\\bermi\\Projects\\apex\\PROJECT_APEX_v2.2.md",
-      "next": "Import n8n workflow + test ClaudeClaw on Telegram"
+      "next": "Confirm DIAG-PH07-CERT-001 received on Telegram → certify PH-07"
     },
     "novel_writer": {
       "status": "validation-stack-complete",
@@ -93,6 +95,11 @@
     }
   },
 
+  "known_issues": {
+    "annie_bot_401": "Annie receipt bot (@Annieaccountantbot) has invalid/expired Telegram token. Fix: update ANNIE_BOT_TOKEN in claudeclaw/.env and restart claudeclaw.",
+    "hub_dead_letter_1": "1 item in hub/dead_letter/ — review manually"
+  },
+
   "tool_knowledge": {
     "desktop_commander": {
       "windows_cmd": "use cmd shell for python/git; no quotes around paths when calling foreman --ticket",
@@ -107,6 +114,20 @@
       "flux_dev": "$0.03/megapixel",
       "flux_schnell": "$0.003/megapixel",
       "latentsync": "$0.20/40sec"
+    },
+    "blind_postman": {
+      "n8n_id": "CHk7hcqn2Kl1abdc",
+      "polls": "hub/ every 30s",
+      "routes": {
+        "foreman": "Execute Foreman code node",
+        "originator": "Telegram Error Alert node",
+        "claudeclaw": "POST to localhost:3000/internal/ticket"
+      }
+    },
+    "supervisor": {
+      "invoke_check": "python supervisor\\supervisor.py --check",
+      "invoke_daemon": "python supervisor\\supervisor.py",
+      "log": "C:\\Users\\bermi\\Projects\\apex\\logs\\supervisor.log"
     }
   },
 
@@ -116,7 +137,8 @@
     "MuseTalk lip-sync",
     "Jesse Novel Factory",
     "Novel Writer - Self-Learning Prose System",
-    "APEX Blind Postman (pending n8n import)"
+    "APEX Blind Postman (ACTIVE — CHk7hcqn2Kl1abdc)",
+    "APEX Auto-Runner (ACTIVE — ys22kpqJY9xJ4YhF)"
   ],
 
   "file_locations": {
