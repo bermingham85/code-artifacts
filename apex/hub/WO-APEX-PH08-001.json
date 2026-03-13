@@ -1,0 +1,53 @@
+{
+  "schema": "WO-v1",
+  "job_id": "WO-APEX-PH08-001",
+  "phase": "PH-08",
+  "name": "Supervisor Watchdog Build and Certify",
+  "created_at": "2026-03-13T00:00:00Z",
+  "status": "PENDING",
+  "target": "foreman",
+  "steps": [
+    {
+      "step": 1,
+      "action": "Copy apex/watchdog/watchdog.py to C:\\Users\\bermi\\Projects\\apex\\watchdog\\watchdog.py"
+    },
+    {
+      "step": 2,
+      "action": "pip install requests  (skip if already installed)"
+    },
+    {
+      "step": 3,
+      "action": "cd C:\\Users\\bermi\\Projects\\apex && python watchdog\\watchdog.py --check",
+      "expected": "JSON output with all_ok:true and all services OK"
+    },
+    {
+      "step": 4,
+      "action": "Kill supervisor process via Task Manager or: taskkill /F /FI \"WINDOWTITLE eq supervisor*\"",
+      "expected": "supervisor listed as DOWN in next check"
+    },
+    {
+      "step": 5,
+      "action": "python watchdog\\watchdog.py",
+      "expected": "supervisor restarted + Telegram alert received on @Brianbrainboxbot"
+    },
+    {
+      "step": 6,
+      "action": "Register Task Scheduler: schtasks /create /tn \"APEX-Watchdog\" /tr \"C:\\Users\\bermi\\Projects\\apex\\watchdog\\run_watchdog.bat\" /sc MINUTE /mo 5 /f"
+    },
+    {
+      "step": 7,
+      "action": "schtasks /run /tn \"APEX-Watchdog\"  — force first cycle"
+    },
+    {
+      "step": 8,
+      "action": "Verify C:\\Users\\bermi\\Projects\\apex\\logs\\watchdog.log and watchdog_sched.log exist with entries"
+    }
+  ],
+  "cert_criteria": [
+    "watchdog.py --check exits 0 with all services OK",
+    "Killing supervisor.py → watchdog restarts it → Telegram alert received",
+    "Task Scheduler entry 'APEX-Watchdog' exists and fires every 5 min",
+    "watchdog.log written correctly",
+    "watchdog_state.json updated after each cycle"
+  ]
+}
