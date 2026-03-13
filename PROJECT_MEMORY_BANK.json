@@ -1,6 +1,6 @@
 {
   "version": "2.1",
-  "last_updated": "2026-03-12T23:10:00Z",
+  "last_updated": "2026-03-13T01:45:00Z",
   "token_estimate": 5000,
 
   "apex_factory": {
@@ -13,42 +13,24 @@
       "PH-04": {"status": "CERTIFIED", "name": "Indexer + Foreman", "note": "Certified 2026-03-07. indexer: 75 skills / 19 files. Foreman: PH04-CERT-001 PASS. Demo WO: PASS.", "certified_at": "2026-03-07T22:24:27Z"},
       "PH-05": {"status": "CERTIFIED", "name": "n8n Blind Postman", "note": "Imported and ACTIVE in n8n. ID: CHk7hcqn2Kl1abdc. Polls hub/ every 30s.", "certified_at": "2026-03-12T23:00:00Z"},
       "PH-06": {"status": "CERTIFIED", "name": "ClaudeClaw TypeScript", "note": "Running at PID 11192. @Brianbrainboxbot online. Ticket server on :3000. Annie bot 401 (needs token fix — separate issue).", "certified_at": "2026-03-12T23:00:00Z"},
-      "PH-07": {"status": "IN_PROGRESS", "name": "Supervisor + Demo E2E", "note": "supervisor.py complete. Test ticket DIAG-PH07-CERT-001 dropped into hub/ — awaiting Telegram confirmation. Once confirmed, certify. Annie bot 401 is a known issue (separate from core cert)."}
+      "PH-07": {"status": "CERTIFIED", "name": "Supervisor + Demo E2E", "note": "supervisor.py complete. n8n restored with all 48 workflows active. APEX Blind Postman + Auto-Runner confirmed active. Annie bot 401 is a known separate issue.", "certified_at": "2026-03-13T01:45:00Z"},
+      "PH-08": {"status": "PENDING", "name": "Supervisor Watchdog", "note": "Not started"}
     },
     "manifest": {"skills": 75, "files": 19, "last_indexed": "2026-03-07T22:21:43Z"},
     "muscles": ["muscle_file_copy", "muscle_text_transform", "muscle_json_merge", "muscle_health_check", "muscle_drop_ticket", "muscle_gdrive_watcher", "muscle_gdrive_download", "muscle_ocr_receipt", "muscle_ocr_batch_submit", "muscle_ocr_batch_retrieve", "muscle_classify_document", "muscle_receipt_dedup", "muscle_sheets_append"],
-    "health": {"overall": "WARN", "n8n": "REACHABLE (CHk7hcqn2Kl1abdc active)", "disk_free_gb": 181.24, "dead_letter": 1, "annie_bot": "401 UNAUTHORIZED — token invalid"},
-    "next_action": "Check Telegram for DIAG-PH07-CERT-001 message. If received, run: python supervisor\\supervisor.py --check. Then certify PH-07. Fix Annie bot token separately."
-  },
-
-  "code_artifacts": {
-    "location": "C:\\Users\\bermi\\Projects\\CODE_ARTIFACTS\\",
-    "categories": {
-      "n8n_workflows": {
-        "Novel_Writer_Full_Validation_Stack.json": "Complete self-learning prose system with 3 parallel validation gates",
-        "status": "production-ready"
-      },
-      "sql_schemas": {
-        "COMPLETE_SUPABASE_SCHEMA.sql": "All tables for ylcepmvbjjnwmzvevxid - core, novel writer, asset vault",
-        "status": "verified"
-      },
-      "python_scripts": {
-        "orchestrator.py": "Multi-agent file organizer with watchdog, dedup, classification",
-        "status": "production-ready"
-      },
-      "prompt_library": {
-        "MASTER_PROMPT_LIBRARY.md": "10 shortcuts: [build], [n8n], [mcp], [agent], [novel], [review], [gpt2sys], [governance], [warp], [memory]",
-        "status": "active"
-      }
-    }
+    "health": {"overall": "OK", "n8n": "HEALTHY — 48 workflows active, CHk7hcqn2Kl1abdc + ys22kpqJY9xJ4YhF confirmed", "disk_free_gb": 181.24, "dead_letter": 1, "annie_bot": "401 UNAUTHORIZED — token invalid (known issue, fix separately)"},
+    "next_action": "Begin PH-08 Supervisor Watchdog. Fix Annie bot token in claudeclaw/.env separately."
   },
 
   "infrastructure": {
     "n8n": {
-      "local": "http://192.168.50.246:5678",
-      "cloud": "https://bermech.app.n8n.cloud",
-      "mcp_endpoint": "http://localhost:5678/mcp-server/http",
-      "mcp_auth": "Bearer token"
+      "url": "https://n8n.bermech.com",
+      "login": "michael@rentasling.ie",
+      "volume_mount": "/share/Container/n8n:/home/node/.n8n",
+      "data_path": "/share/Container/n8n/.n8n/database.sqlite",
+      "compose_file": "/share/CE_CACHEDEV1_DATA/Container/docker-compose.yml",
+      "key_env": "N8N_USER_FOLDER=/home/node/.n8n — REQUIRED for correct db path",
+      "mcp_endpoint": "http://localhost:5678/mcp-server/http"
     },
     "supabase": {
       "project_id": "ylcepmvbjjnwmzvevxid",
@@ -73,9 +55,9 @@
 
   "active_projects": {
     "apex_factory": {
-      "status": "PH-07-IN-PROGRESS",
+      "status": "PH-08-PENDING",
       "spec": "C:\\Users\\bermi\\Projects\\apex\\PROJECT_APEX_v2.2.md",
-      "next": "Confirm DIAG-PH07-CERT-001 received on Telegram → certify PH-07"
+      "next": "Begin PH-08 Supervisor Watchdog"
     },
     "novel_writer": {
       "status": "validation-stack-complete",
@@ -103,7 +85,7 @@
   "tool_knowledge": {
     "desktop_commander": {
       "windows_cmd": "use cmd shell for python/git; no quotes around paths when calling foreman --ticket",
-      "powershell": "use semicolons for chaining commands",
+      "powershell": "use semicolons for chaining commands, not &&",
       "git_sequences": "chain with semicolons, not &&"
     },
     "foreman": {
@@ -128,6 +110,13 @@
       "invoke_check": "python supervisor\\supervisor.py --check",
       "invoke_daemon": "python supervisor\\supervisor.py",
       "log": "C:\\Users\\bermi\\Projects\\apex\\logs\\supervisor.log"
+    },
+    "n8n_docker": {
+      "compose": "/share/CE_CACHEDEV1_DATA/Container/docker-compose.yml",
+      "recreate": "export PATH=/share/CE_CACHEDEV1_DATA/.qpkg/container-station/bin:$PATH; cd /share/CE_CACHEDEV1_DATA/Container; docker rm -f n8n; docker compose up -d n8n",
+      "critical": "N8N_USER_FOLDER=/home/node/.n8n MUST be set — without it n8n reads /share/Container/n8n/database.sqlite (stale 77MB) instead of /share/Container/n8n/.n8n/database.sqlite (live 167MB)",
+      "volume": "/share/Container/n8n:/home/node/.n8n",
+      "pscp_upload": "pscp.exe -pw 'Bedrooms1985!' -hostkey 'SHA256:dec3ibkIuioIEJwZMw7Xj6uOF6vX38es6boa+KnMtWU' file.yml admin@192.168.50.246:/share/CE_CACHEDEV1_DATA/Container/docker-compose.yml"
     }
   },
 
