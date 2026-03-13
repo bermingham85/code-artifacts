@@ -1,6 +1,6 @@
 {
   "version": "2.1",
-  "last_updated": "2026-03-13T01:45:00Z",
+  "last_updated": "2026-03-13T10:00:00Z",
   "token_estimate": 5000,
 
   "apex_factory": {
@@ -14,12 +14,12 @@
       "PH-05": {"status": "CERTIFIED", "name": "n8n Blind Postman", "note": "Imported and ACTIVE in n8n. ID: CHk7hcqn2Kl1abdc. Polls hub/ every 30s.", "certified_at": "2026-03-12T23:00:00Z"},
       "PH-06": {"status": "CERTIFIED", "name": "ClaudeClaw TypeScript", "note": "Running at PID 11192. @Brianbrainboxbot online. Ticket server on :3000. Annie bot 401 (needs token fix — separate issue).", "certified_at": "2026-03-12T23:00:00Z"},
       "PH-07": {"status": "CERTIFIED", "name": "Supervisor + Demo E2E", "note": "supervisor.py complete. n8n restored with all 48 workflows active. APEX Blind Postman + Auto-Runner confirmed active. Annie bot 401 is a known separate issue.", "certified_at": "2026-03-13T01:45:00Z"},
-      "PH-08": {"status": "PENDING", "name": "Supervisor Watchdog", "note": "Not started"}
+      "PH-08": {"status": "IN_PROGRESS", "name": "Supervisor Watchdog", "note": "watchdog.py + WO-APEX-PH08-001.json pushed to GitHub. Awaiting local install + Task Scheduler registration + cert run.", "started_at": "2026-03-13T10:00:00Z"}
     },
     "manifest": {"skills": 75, "files": 19, "last_indexed": "2026-03-07T22:21:43Z"},
     "muscles": ["muscle_file_copy", "muscle_text_transform", "muscle_json_merge", "muscle_health_check", "muscle_drop_ticket", "muscle_gdrive_watcher", "muscle_gdrive_download", "muscle_ocr_receipt", "muscle_ocr_batch_submit", "muscle_ocr_batch_retrieve", "muscle_classify_document", "muscle_receipt_dedup", "muscle_sheets_append"],
     "health": {"overall": "OK", "n8n": "HEALTHY — 48 workflows active, CHk7hcqn2Kl1abdc + ys22kpqJY9xJ4YhF confirmed", "disk_free_gb": 181.24, "dead_letter": 1, "annie_bot": "401 UNAUTHORIZED — token invalid (known issue, fix separately)"},
-    "next_action": "Begin PH-08 Supervisor Watchdog. Fix Annie bot token in claudeclaw/.env separately."
+    "next_action": "PH-08: copy apex/watchdog/watchdog.py locally → pip install requests → python watchdog\\watchdog.py --check → run cert steps in WO-APEX-PH08-001.json → register Task Scheduler."
   },
 
   "infrastructure": {
@@ -55,9 +55,9 @@
 
   "active_projects": {
     "apex_factory": {
-      "status": "PH-08-PENDING",
+      "status": "PH-08-IN_PROGRESS",
       "spec": "C:\\Users\\bermi\\Projects\\apex\\PROJECT_APEX_v2.2.md",
-      "next": "Begin PH-08 Supervisor Watchdog"
+      "next": "Run WO-APEX-PH08-001.json cert steps"
     },
     "novel_writer": {
       "status": "validation-stack-complete",
@@ -110,6 +110,14 @@
       "invoke_check": "python supervisor\\supervisor.py --check",
       "invoke_daemon": "python supervisor\\supervisor.py",
       "log": "C:\\Users\\bermi\\Projects\\apex\\logs\\supervisor.log"
+    },
+    "watchdog": {
+      "invoke_check": "python watchdog\\watchdog.py --check",
+      "invoke_cycle": "python watchdog\\watchdog.py",
+      "log": "C:\\Users\\bermi\\Projects\\apex\\logs\\watchdog.log",
+      "state": "C:\\Users\\bermi\\Projects\\apex\\watchdog_state.json",
+      "scheduler": "schtasks /create /tn \"APEX-Watchdog\" /tr \"C:\\Users\\bermi\\Projects\\apex\\watchdog\\run_watchdog.bat\" /sc MINUTE /mo 5 /f",
+      "monitors": ["supervisor.py", "claudeclaw node", "n8n health :5678/healthz"]
     },
     "n8n_docker": {
       "compose": "/share/CE_CACHEDEV1_DATA/Container/docker-compose.yml",
