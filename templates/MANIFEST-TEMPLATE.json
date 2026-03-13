@@ -1,0 +1,107 @@
+{
+  "_instructions": {
+    "purpose": "Copy this file to workers/[WORKER_ID]/MANIFEST.json. Fill every _value field. Remove all _instruction blocks before use.",
+    "naming": "Worker ID must be 2-6 uppercase letters. e.g. DC, ORCH, BOT, QA",
+    "ref_code": "Get this from DC Agent BEFORE creating the worker folder"
+  },
+
+  "ref_code": {
+    "_instruction": "Issued by DC Agent. Format: [PROJECT]-[ORIG]-JSON-[SEQ5]. e.g. BRM-DC-JSON-00001",
+    "_required": true,
+    "_value": ""
+  },
+
+  "worker_id": {
+    "_instruction": "2-6 uppercase letters. Unique across all workers. e.g. DC, ORCH, BOT",
+    "_required": true,
+    "_value": ""
+  },
+
+  "worker_name": {
+    "_instruction": "Human-readable full name. e.g. Document Control Agent",
+    "_required": true,
+    "_value": ""
+  },
+
+  "version": {
+    "_instruction": "Current version. Match the GitHub tag for this worker.",
+    "_required": true,
+    "_value": "1.0"
+  },
+
+  "status": {
+    "_instruction": "One of: ACTIVE, INACTIVE, DEPRECATED",
+    "_required": true,
+    "_validation": "one_of:ACTIVE,INACTIVE,DEPRECATED",
+    "_value": "ACTIVE"
+  },
+
+  "project": {
+    "_instruction": "Which project this worker serves. One of: BRM, JESS, TALE, PIG, SYS",
+    "_required": true,
+    "_validation": "one_of:BRM,JESS,TALE,PIG,SYS",
+    "_value": ""
+  },
+
+  "description": {
+    "_instruction": "One sentence. What does this worker do? Used for duplicate detection.",
+    "_required": true,
+    "_value": ""
+  },
+
+  "function_code": {
+    "_instruction": "Controlled vocabulary code from doc_register function_codes table. Must exist in registry before use.",
+    "_required": true,
+    "_value": ""
+  },
+
+  "own_paths": {
+    "_instruction": "All paths this worker owns. Relative to the tasks/ root on the QNAP.",
+    "root":      "/workers/[WORKER_ID]/",
+    "inbox":     "/workers/[WORKER_ID]/inbox/",
+    "outbox":    "/workers/[WORKER_ID]/outbox/",
+    "working":   "/workers/[WORKER_ID]/working/",
+    "completed": "/workers/[WORKER_ID]/completed/",
+    "templates": "/workers/[WORKER_ID]/templates/",
+    "prompts":   "/workers/[WORKER_ID]/prompts/",
+    "logs":      "/workers/[WORKER_ID]/logs/"
+  },
+
+  "naming_convention": {
+    "_instruction": "Replace [WORKER_ID] with actual worker ID. Do not change the structure.",
+    "input_files":  "[WORKER_ID]-IN-{ticket_id}.json",
+    "output_files": "[WORKER_ID]-OUT-{ticket_id}.json",
+    "log_files":    "[WORKER_ID]-LOG-{YYYYMMDD}.log"
+  },
+
+  "input_schema": {
+    "_instruction": "List ALL required fields. Any field not here causes NEEDS_INFO response.",
+    "required_fields": ["ticket_id", "project", "action", "payload"],
+    "payload_required_by_action": {
+      "_instruction": "For each action this worker handles, list the payload fields it needs.",
+      "ACTION_NAME": ["field1", "field2"]
+    }
+  },
+
+  "actions_handled": {
+    "_instruction": "List every action this worker can respond to.",
+    "_value": ["ACTION_ONE", "ACTION_TWO"]
+  },
+
+  "fail_behaviour": {
+    "_instruction": "What happens on failure. RETURN_TO_SENDER sends NEEDS_INFO back to caller.",
+    "_value": "RETURN_TO_SENDER"
+  },
+
+  "issued_by": "",
+  "issued_date": "YYYY-MM-DD",
+
+  "change_log": [
+    {
+      "version": "1.0",
+      "date": "YYYY-MM-DD",
+      "by": "",
+      "reason": "Initial issue"
+    }
+  ]
+}

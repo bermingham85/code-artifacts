@@ -1,0 +1,66 @@
+{
+  "_template_ref": "BRM-SYS-TMP-00001",
+  "_purpose": "Universal ticket. Every message between any two parts of the system uses this shape.",
+  "_filled_by": "Whoever is sending the ticket — orchestrator, agent, bot, Postman",
+  "_sent_to": "n8n ticket intake webhook, or directly to a worker inbox",
+
+  "ticket_id": {
+    "_instruction": "Leave blank. Auto-stamped by ticket intake system. Format: TKT-YYYYMMDD-XXXXXX",
+    "_required": true,
+    "_value": ""
+  },
+
+  "project": {
+    "_instruction": "Which project this ticket belongs to.",
+    "_required": true,
+    "_validation": "one_of:BRM,JESS,TALE,PIG,SYS",
+    "_value": ""
+  },
+
+  "from": {
+    "_instruction": "Who is sending this. Worker ID, bot name, or 'postman' for manual testing.",
+    "_required": true,
+    "_value": ""
+  },
+
+  "to": {
+    "_instruction": "Who this is addressed to. Worker ID or 'orchestrator'.",
+    "_required": true,
+    "_value": ""
+  },
+
+  "action": {
+    "_instruction": "What you are asking the recipient to do. Must match an action in their MANIFEST actions_handled list.",
+    "_required": true,
+    "_value": ""
+  },
+
+  "priority": {
+    "_instruction": "How urgent. Normal flow: normal. Jump the queue: high. System issue: urgent.",
+    "_required": false,
+    "_validation": "one_of:normal,high,urgent",
+    "_value": "normal"
+  },
+
+  "ref_code": {
+    "_instruction": "Optional. If this ticket relates to a specific registered document, put its ref code here.",
+    "_required": false,
+    "_value": ""
+  },
+
+  "payload": {
+    "_instruction": "The actual data the recipient needs to do the job. Fields depend on the action. Check the recipient's MANIFEST for payload_required_by_action.",
+    "_required": true,
+    "_value": {}
+  },
+
+  "created_at": {
+    "_instruction": "Leave blank. Auto-stamped by ticket intake.",
+    "_value": ""
+  },
+
+  "status": {
+    "_instruction": "Leave blank. Set by ticket system: NEW → RECEIVED → PROCESSING → COMPLETE / FAILED / NEEDS_INFO",
+    "_value": "NEW"
+  }
+}
