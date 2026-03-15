@@ -1,8 +1,9 @@
 # Skill: suno-bulk-rename
 
 ## Purpose
-Bulk rename songs in Suno workspaces using Claude-in-Chrome browser automation.
-Handles full rename workflows across one or multiple Suno workspaces without manual UI interaction.
+Bulk rename songs in Suno workspaces using Claude-in-Chrome JavaScript injection against
+the Suno internal API. Does NOT use UI clicking — uses direct API calls injected via
+the browser extension's javascript_tool.
 
 ## Trigger Phrases
 - "rename my suno songs"
@@ -13,58 +14,91 @@ Handles full rename workflows across one or multiple Suno workspaces without man
 
 ## Prerequisites
 - Claude-in-Chrome extension active and connected
-- Logged into Suno in the Chrome browser
-- Target workspace ID known (Jesse in Oz: `027faff0-1afc-4424-92ab-acd81334fcc6`)
+- User logged into Suno in Chrome
+- Target workspace ID known
 
 ## Known Workspace IDs
 | Workspace | ID |
 |---|---|
 | Jesse in Oz | `027faff0-1afc-4424-92ab-acd81334fcc6` |
 
-## Workflow
+## API Endpoints (injected via javascript_tool)
 
-### Step 1 - Navigate to workspace
+### Fetch all songs (paginated)
 ```
-Navigate to: https://suno.com/library
-Switch to target workspace if needed via workspace selector
+POST https://studio-api.prod.suno.com/api/feed/v3
+Body: { page_size: 50, project_id: WID, cursor: "..." }
+```
+**CRITICAL:** This endpoint does NOT filter by project_id server-side.
+Always filter client-side: `songs.filter(s => s.project?.id === WID)`
+
+Use cursor-based pagination — loop until no `next_cursor` returned.
+
+### Rename a song
+```
+POST https://studio-api.prod.suno.com/api/gen/{song_id}/set_metadata/
+Body: { title: "New Name" }
+```
+Note: `/api/clip/set_metadata/` returns 405 — do NOT use that path.
+
+## JavaScript Execution Pattern
+
+Use `.then()` chains with named recursive functions — NOT async/await IIFEs.
+Async/await IIFEs fail silently after extension disconnects.
+
+```javascript
+// Safe pattern
+window._renameIdx = 0;
+window._renameDone = false;
+var songs = [...]; // populated from feed fetch
+
+function renameNext() {
+  if (window._renameIdx >= songs.length) {
+    window._renameDone = true;
+    return;
+  }
+  var s = songs[window._renameIdx];
+  fetch('https://studio-api.prod.suno.com/api/gen/' + s.id + '/set_metadata/', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({title: s.newTitle})
+  }).then(function() {
+    window._renameIdx++;
+    setTimeout(renameNext, 400); // rate limit: ~400ms between calls
+  });
+}
+renameNext();
 ```
 
-### Step 2 - Collect song list
-Use `get_page_text` or `read_page` to extract all visible song titles and their DOM element references.
-Scroll to load all songs (Suno uses infinite scroll - scroll to bottom, wait, repeat until no new items load).
+Window variables (`window._renameDone`, `window._renameIdx`) persist in the tab
+even after extension disconnects — use them to check progress on reconnect.
 
-### Step 3 - Build rename map
-Ask user to provide naming convention OR infer from existing titles.
-Common conventions:
-- `[Project] - [Scene] - [Description]` e.g. `Jesse Oz - S01 - Opening Theme`
-- Sequential numbering: `Track 001 - Title`
+## Naming Logic
 
-Present the full rename map to user for approval before executing.
+For songs with lyrics: derive title from first distinctive lyric line.
+For pure instrumentals (no lyric text): leave as-is, they cannot be renamed meaningfully.
 
-### Step 4 - Execute renames
-For each song:
-1. Use `find` to locate the song's options/kebab menu
-2. Click to open options
-3. Select "Rename" or "Edit title"
-4. Use `form_input` to clear and set new title
-5. Confirm/save
-6. Brief pause before next item to avoid rate limiting
+Check for duplicate songs (same lyrics, different names) — consolidate before renaming.
+Example: "she matters", "Down By The River", "Fabuloso" were all the same song —
+confirmed by searching for a unique word ("fabuloso") within the lyrics.
 
-### Step 5 - Verify
-After all renames, reload the library page and extract titles again to confirm all renames applied correctly.
+## Rate Limiting
+400ms between rename calls is safe. Faster will get rate-limited.
 
-## Error Handling
-- If a rename fails (stale DOM, rate limit): log it, skip, continue, report failures at end
-- If Suno UI changes: use `read_page` to re-map DOM structure before retrying
-- Session timeout: re-navigate to library and resume from last successful rename
+## Liked Songs (different endpoint)
+```
+GET https://studio-api.prod.suno.com/api/feed/v2?page=0&page_size=50
+```
+Uses page-number pagination with query params (not cursor-based).
 
-## Notes
-- Suno does not have a bulk rename API - all operations are UI-driven
-- Works best with songs already loaded in library view (not clips/stems)
-- Rate limit observed: ~1 rename per 2 seconds is safe
-- This skill requires Claude-in-Chrome to be active - cannot run headlessly
+## Skill ZIP Format for claude.ai upload
+If uploading as a skill to claude.ai:
+- ZIP must contain folder: `suno-bulk-rename/SKILL.md`
+- YAML description field must NOT contain unescaped quotes
+- Upload the ZIP, not the bare .md file
 
 ## Status
-- Originally built and tested: Feb/Mar 2026
+- Originally built and fully tested: 2026-03-11
+- Confirmed working on: Jesse in Oz workspace (578 songs), Brilliant workspace (114 songs)
 - Recovered and committed to code-artifacts: 2026-03-15
-- Needs: re-test against current Suno UI (may have changed)
+- Last known issue: extension disconnect mid-run on "Decommissioned Nets" batch (resume via window._renameIdx check)
