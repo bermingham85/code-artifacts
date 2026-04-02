@@ -965,11 +965,11 @@ function buildFreqTable(sendCcy, recvCcy, currentRate){
     const plan = document.querySelector('input[name="wl-plan"]:checked')?.value || 'standard';
     const channels = [...document.querySelectorAll('.wl-check input:checked')].map(c=>c.value);
     try {
-      await fetch('https://ylcepmvbjjnwmzvevxid.supabase.co/rest/v1/waitlist', {
+      await fetch('https://vntnfljukhshzwvlrlud.supabase.co/rest/v1/waitlist', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          apikey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlsY2VwbXZiampud216dmV2eGlkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY0NTU0NzAsImV4cCI6MjA4MjAzMTQ3MH0.TRXQcy6yqirieOieniav58nPjM8GnseU67TG07KskeQ',
+          apikey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZudG5mbGp1a2hzaHp3dmxybHVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNjc1NzAsImV4cCI6MjA5MDc0MzU3MH0.Jq70R73IeWjCfwVqe5fuM_MtaPKAjRmIMmkI2arpKvM',
           Prefer: 'return=minimal'
         },
         body: JSON.stringify({
