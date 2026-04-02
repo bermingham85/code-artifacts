@@ -189,12 +189,46 @@ footer .bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:24px;displa
 .ticker-inner span{display:flex;align-items:center;gap:6px}
 @keyframes scroll-ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
+/* SCROLL REVEAL */
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .8s cubic-bezier(.22,1,.36,1),transform .8s cubic-bezier(.22,1,.36,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-scale{opacity:0;transform:scale(.95);transition:opacity .6s cubic-bezier(.22,1,.36,1),transform .6s cubic-bezier(.34,1.56,.64,1)}
+.reveal-scale.visible{opacity:1;transform:scale(1)}
+.stagger-children>.reveal:nth-child(1){transition-delay:.1s}
+.stagger-children>.reveal:nth-child(2){transition-delay:.2s}
+.stagger-children>.reveal:nth-child(3){transition-delay:.3s}
+
+/* HERO BADGE */
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;background:rgba(26,107,58,.08);border:1px solid rgba(26,107,58,.15);border-radius:100px;font-size:.875rem;font-weight:500;color:var(--forest);margin-bottom:24px;animation:fadeInDown .6s cubic-bezier(.22,1,.36,1) .2s both}
+.pulse-dot{width:8px;height:8px;background:var(--forest);border-radius:50%;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+@keyframes fadeInDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* ANIMATED COUNTERS */
+.proof .item strong{font-variant-numeric:tabular-nums}
+
+/* HAMBURGER NAV */
+.nav-toggle{display:none;flex-direction:column;gap:5px;padding:8px;background:none;border:none;cursor:pointer}
+.nav-toggle span{display:block;width:24px;height:2px;background:var(--ink);transition:all .3s cubic-bezier(.34,1.56,.64,1)}
+.mobile-menu{position:fixed;top:65px;left:0;right:0;background:rgba(250,248,244,.98);backdrop-filter:blur(20px);border-bottom:1px solid rgba(0,0,0,.06);padding:20px 24px;transform:translateY(-100%);opacity:0;visibility:hidden;transition:all .4s cubic-bezier(.22,1,.36,1);z-index:99}
+.mobile-menu.open{transform:translateY(0);opacity:1;visibility:visible}
+.mobile-menu a{display:block;padding:12px 0;font-size:1rem;font-weight:500;color:var(--ink);border-bottom:1px solid rgba(0,0,0,.04)}
+
 @media(max-width:768px){
   nav .links{display:none}
+  .nav-toggle{display:flex}
   .calc-row{flex-direction:column}
   .proof .container{gap:24px}
   .plans-grid{grid-template-columns:1fr}
   .mockup-grid{grid-template-columns:1fr}
+}
+
+/* REDUCED MOTION */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
+  html{scroll-behavior:auto}
+  .reveal,.reveal-scale{opacity:1;transform:none}
 }
 </style>
 </head>
@@ -216,14 +250,25 @@ footer .bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:24px;displa
     <a href="#faq">FAQ</a>
     <a href="#start" class="btn btn-primary">Start watching free</a>
   </div>
+  <button class="nav-toggle" aria-label="Toggle menu" onclick="document.getElementById('mobile-menu').classList.toggle('open')">
+    <span></span><span></span><span></span>
+  </button>
 </div>
 </nav>
+<div class="mobile-menu" id="mobile-menu">
+  <a href="#how" onclick="document.getElementById('mobile-menu').classList.remove('open')">How it works</a>
+  <a href="#calc-section" onclick="document.getElementById('mobile-menu').classList.remove('open')">Calculator</a>
+  <a href="#plans" onclick="document.getElementById('mobile-menu').classList.remove('open')">Plans</a>
+  <a href="#faq" onclick="document.getElementById('mobile-menu').classList.remove('open')">FAQ</a>
+  <a href="#start" onclick="document.getElementById('mobile-menu').classList.remove('open')">Start watching free</a>
+</div>
 
 <!-- HERO -->
 <section class="hero" id="start">
 <div class="container">
+  <div class="hero-badge"><span class="pulse-dot"></span> Live — checking rates now</div>
   <canvas id="logo-canvas" width="600" height="140"></canvas>
-  <h1>You missed your best rate 18 times last month. We would have told you.</h1>
+  <h1 style="animation:fadeInUp 1s cubic-bezier(.22,1,.36,1) .4s both">You missed your best rate 18 times last month. We would have told you.</h1>
   <p>Shegoo watches exchange rates every 15 minutes and sends you a message the moment your target rate arrives.</p>
   <a href="#calc-section" class="btn btn-primary">Start watching free</a>
   <div class="trust-badges">
@@ -236,34 +281,34 @@ footer .bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:24px;displa
 </section>
 
 <!-- PROOF STRIP -->
-<div class="proof">
+<div class="proof reveal">
 <div class="container">
-  <div class="item"><strong>15 min</strong>Rate checks</div>
-  <div class="item"><strong>ECB</strong>Source rates</div>
-  <div class="item"><strong>Free</strong>To start</div>
-  <div class="item"><strong>10</strong>Money routes</div>
+  <div class="item"><strong data-count="15">0</strong>Min rate checks</div>
+  <div class="item"><strong data-count="96">0</strong>Checks per day</div>
+  <div class="item"><strong data-count="2880">0</strong>Checks per month</div>
+  <div class="item"><strong data-count="10">0</strong>Money routes</div>
 </div>
 </div>
 
 <!-- HOW IT WORKS -->
 <section id="how">
 <div class="container">
-  <div class="section-title">
+  <div class="section-title reveal">
     <h2>How Shegoo works</h2>
     <p>Three simple steps. No bank access needed. No money touches Shegoo.</p>
   </div>
-  <div class="steps">
-    <div class="step">
+  <div class="steps stagger-children">
+    <div class="step reveal">
       <div class="num">1</div>
       <h3>Set your target rate</h3>
       <p>Tell us what exchange rate you are waiting for. Pick from EUR, GBP, USD to BRL, NGN, INR, MXN, and more.</p>
     </div>
-    <div class="step">
+    <div class="step reveal">
       <div class="num">2</div>
       <h3>We watch every 15 minutes</h3>
       <p>Shegoo checks the European Central Bank rate feed continuously. You do not need to keep checking.</p>
     </div>
-    <div class="step">
+    <div class="step reveal">
       <div class="num">3</div>
       <h3>You get a message instantly</h3>
       <p>The moment your target rate arrives, we send you a message on Telegram, email, or WhatsApp. You decide when to send money.</p>
@@ -293,7 +338,7 @@ footer .bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:24px;displa
       <button type="submit" class="btn btn-primary">Show me</button>
     </form>
   </div>
-  <div class="calculator" id="calculator">
+  <div class="calculator reveal-scale" id="calculator">
     <h2 style="text-align:center;margin-bottom:24px">Rate Calculator</h2>
     <div class="calc-row">
       <div class="calc-field">
@@ -349,12 +394,12 @@ footer .bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:24px;displa
 <!-- NUDGE MOCKUPS -->
 <section class="mockups" id="mockups">
 <div class="container">
-  <div class="section-title">
+  <div class="section-title reveal">
     <h2>What you will receive</h2>
     <p>A simple message. No noise. Just the rate you asked for.</p>
   </div>
-  <div class="mockup-grid">
-    <div class="mockup">
+  <div class="mockup-grid stagger-children">
+    <div class="mockup reveal">
       <div class="channel">Telegram</div>
       <div class="msg">Shegoo.
 
@@ -368,7 +413,7 @@ Not financial advice.
 
 shegoo.money</div>
     </div>
-    <div class="mockup">
+    <div class="mockup reveal">
       <div class="channel">Email</div>
       <div class="msg">Shegoo.
 
@@ -387,7 +432,7 @@ Not financial advice.
 
 shegoo.money</div>
     </div>
-    <div class="mockup">
+    <div class="mockup reveal">
       <div class="channel">WhatsApp <span class="pro-badge">Pro</span></div>
       <div class="msg">EUR/BRL hit 6.42
 EUR 500 → ~R$3,145
@@ -401,7 +446,7 @@ shegoo.money</div>
 <!-- PLANS -->
 <section class="plans-section" id="plans">
 <div class="container">
-  <div class="section-title">
+  <div class="section-title reveal">
     <h2>Simple plans</h2>
     <p>Start free. Upgrade when you need more.</p>
   </div>
@@ -412,7 +457,7 @@ shegoo.money</div>
     </div>
   </div>
   <div class="plans-grid">
-    <div class="plan-card">
+    <div class="plan-card reveal">
       <h3>Free</h3>
       <div class="price">Free</div>
       <div class="price-note">forever</div>
@@ -424,7 +469,7 @@ shegoo.money</div>
       </ul>
       <a href="#start" class="btn btn-primary" style="width:100%">Start free</a>
     </div>
-    <div class="plan-card featured">
+    <div class="plan-card featured reveal">
       <h3>Standard</h3>
       <div class="price" data-monthly="2" data-annual="20"><span class="currency-sym">€</span><span class="price-value">2</span></div>
       <div class="price-note"><span class="price-interval">/ month</span></div>
@@ -436,7 +481,7 @@ shegoo.money</div>
       </ul>
       <a href="#waitlist" class="btn btn-gold" style="width:100%">Join the waitlist</a>
     </div>
-    <div class="plan-card">
+    <div class="plan-card reveal">
       <h3>Pro</h3>
       <div class="price" data-monthly="10" data-annual="75"><span class="currency-sym">€</span><span class="price-value">10</span></div>
       <div class="price-note"><span class="price-interval">/ month</span></div>
@@ -455,11 +500,11 @@ shegoo.money</div>
 <!-- WAITLIST -->
 <section class="waitlist-section" id="waitlist">
 <div class="container">
-  <div class="section-title">
+  <div class="section-title reveal">
     <h2>Standard and Pro are coming soon</h2>
     <p>We are finishing the paid plans now. Join the waitlist and we will let you know the moment they go live.</p>
   </div>
-  <div class="waitlist-card" id="waitlist-card">
+  <div class="waitlist-card reveal-scale" id="waitlist-card">
     <form id="waitlist-form">
       <div class="wl-row">
         <div class="wl-field">
@@ -501,11 +546,11 @@ shegoo.money</div>
 <!-- MONEY ROUTES -->
 <section class="routes" id="routes">
 <div class="container">
-  <div class="section-title">
+  <div class="section-title reveal">
     <h2>Every money route</h2>
     <p>Send from Europe, UK, or US to family back home.</p>
   </div>
-  <div class="route-pills">
+  <div class="route-pills reveal">
     <div class="route-pill"><span class="flag">🇪🇺</span>EUR → <span class="flag">🇧🇷</span>BRL</div>
     <div class="route-pill"><span class="flag">🇪🇺</span>EUR → <span class="flag">🇳🇬</span>NGN</div>
     <div class="route-pill"><span class="flag">🇪🇺</span>EUR → <span class="flag">🇮🇳</span>INR</div>
@@ -523,19 +568,19 @@ shegoo.money</div>
 <!-- TRUST -->
 <section class="trust">
 <div class="container">
-  <div class="section-title">
+  <div class="section-title reveal">
     <h2>Built on trust</h2>
   </div>
-  <div class="trust-grid">
-    <div class="trust-item">
+  <div class="trust-grid stagger-children">
+    <div class="trust-item reveal">
       <h3>Information only</h3>
       <p>Shegoo never touches your money. We tell you the rate. You choose when and how to send.</p>
     </div>
-    <div class="trust-item">
+    <div class="trust-item reveal">
       <h3>ECB source rates</h3>
       <p>Every rate comes from the European Central Bank. The same rates banks use.</p>
     </div>
-    <div class="trust-item">
+    <div class="trust-item reveal">
       <h3>Irish company, GDPR</h3>
       <p>Bermech Limited, Dublin, Ireland. Your data is protected under European GDPR rules. Delete your account any time.</p>
     </div>
@@ -546,8 +591,8 @@ shegoo.money</div>
 <!-- FAQ -->
 <section class="faq" id="faq">
 <div class="container">
-  <div class="section-title"><h2>Questions</h2></div>
-  <div class="faq-list">
+  <div class="section-title reveal"><h2>Questions</h2></div>
+  <div class="faq-list reveal">
     <details class="faq-item">
       <summary>Does Shegoo handle my money?</summary>
       <p>No. Shegoo is an information service only. We watch exchange rates and tell you when your target rate arrives. You decide when and how to send money using your own provider.</p>
@@ -983,6 +1028,34 @@ function buildFreqTable(sendCcy, recvCcy, currentRate){
     document.getElementById('waitlist-card').querySelector('form').style.display = 'none';
     document.getElementById('wl-success').style.display = 'block';
   });
+})();
+
+// ====== SCROLL REVEAL + COUNTERS ======
+(function(){
+  const els = document.querySelectorAll('.reveal, .reveal-scale, .stagger-children');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        entry.target.querySelectorAll('[data-count]').forEach(el => {
+          const target = parseInt(el.dataset.count);
+          const duration = 2000;
+          const start = performance.now();
+          function update(now) {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            const ease = 1 - Math.pow(1 - progress, 3);
+            el.textContent = Math.floor(ease * target).toLocaleString();
+            if (progress < 1) requestAnimationFrame(update);
+            else el.textContent = target.toLocaleString();
+          }
+          requestAnimationFrame(update);
+        });
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+  els.forEach(el => observer.observe(el));
 })();
 
 // ====== PARALLAX 18 ======
