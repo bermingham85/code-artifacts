@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src https://vntnfljukhshzwvlrlud.supabase.co;">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Shegoo — Login</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -51,14 +52,14 @@ input[type=email]::placeholder{color:rgba(255,255,255,.3)}
 <body>
 
 <div class="login-card">
-  <canvas id="logo-canvas" width="400" height="100"></canvas>
+  <canvas id="logo-canvas" role="img" aria-label="Shegoo animated logo" width="400" height="100"></canvas>
 
   <!-- STATE 1: Email entry -->
   <div class="state active" id="state-email">
     <h1>Sign in to your Shegoo account</h1>
     <form id="login-form">
       <label for="email">Email address</label>
-      <input type="email" id="email" placeholder="you@email.com" required autocomplete="email">
+      <input type="email" id="email" aria-label="Email address" placeholder="you@email.com" required autocomplete="email">
       <button type="submit" class="btn btn-primary">Send magic link</button>
     </form>
     <a href="/" class="link">Back to shegoo.money</a>

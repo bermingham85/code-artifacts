@@ -3,433 +3,987 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shegoo — Dashboard</title>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src https://vntnfljukhshzwvlrlud.supabase.co https://api.frankfurter.app https://www.revolut.com;">
+<title>Dashboard &mdash; Shegoo.</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@400;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
+/* ===== RESET & BASE ===== */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--forest:#1a6b3a;--forest-dark:#0a3d1f;--cream:#faf8f4;--ink:#1a1a18;--gold:#c9a84c;--white:#fff;--red:#d9534f;--green:#2d8a52}
-body{font-family:'DM Sans',sans-serif;color:var(--ink);background:var(--cream);min-height:100vh}
-h1,h2,h3{font-family:'Playfair Display',serif}
+:root{
+  --forest:#1a6b3a;--forest-dark:#0a3d1f;--cream:#faf8f4;--ink:#1a1a18;
+  --gold:#c9a84c;--white:#fff;--red:#d9534f;--green:#2d8a52;
+  --font-display:'Playfair Display',Georgia,serif;
+  --font-body:'DM Sans',system-ui,-apple-system,sans-serif;
+  --radius:8px;--radius-lg:12px;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.06);
+  --shadow-md:0 4px 6px rgba(0,0,0,.07),0 2px 4px rgba(0,0,0,.06);
+  --transition:200ms ease;
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important}
+}
+html{font-size:16px;scroll-behavior:smooth}
+body{font-family:var(--font-body);color:var(--ink);background:var(--cream);line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh}
+h1,h2,h3{font-family:var(--font-display);font-weight:600;line-height:1.3}
 a{color:var(--forest);text-decoration:none}
+a:hover{text-decoration:underline}
+button,input,select,textarea{font-family:inherit;font-size:inherit}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px;border-radius:2px}
 
-/* TOP BAR */
-.topbar{background:var(--white);border-bottom:1px solid rgba(0,0,0,.06);padding:14px 0;position:sticky;top:0;z-index:50}
-.topbar .inner{max-width:960px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between}
-.topbar .logo{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:900;color:var(--forest)}
-.topbar .user-menu{display:flex;align-items:center;gap:16px}
-.topbar .plan-badge{background:rgba(26,107,58,.08);color:var(--forest);padding:4px 12px;border-radius:100px;font-size:.8rem;font-weight:600}
-.topbar .avatar{width:32px;height:32px;border-radius:50%;background:var(--forest);color:var(--white);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;cursor:pointer}
-.btn{display:inline-block;padding:10px 20px;border-radius:8px;font-weight:700;font-size:.9rem;border:none;cursor:pointer;font-family:inherit;transition:all .2s}
+/* ===== TOP BAR ===== */
+.topbar{background:var(--forest-dark);color:var(--white);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.logo{font-family:var(--font-display);font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em}
+.plan-badge{background:var(--gold);color:var(--ink);font-size:.7rem;font-weight:600;padding:2px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.04em}
+.topbar-right{display:flex;align-items:center;gap:16px}
+.topbar-link{color:rgba(255,255,255,.85);font-size:.85rem;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+.topbar-link:hover{color:var(--white)}
+.avatar-btn{width:36px;height:36px;border-radius:50%;background:var(--gold);color:var(--ink);border:none;cursor:pointer;font-weight:600;font-size:.85rem;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+.signout-btn{background:none;border:1px solid rgba(255,255,255,.3);color:var(--white);padding:6px 14px;border-radius:var(--radius);cursor:pointer;font-size:.8rem;min-height:44px;display:inline-flex;align-items:center}
+.signout-btn:hover{background:rgba(255,255,255,.1)}
+
+.main-wrap{max-width:960px;margin:0 auto;padding:24px 20px 80px}
+
+/* ===== STATS ROW ===== */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px}
+.stat-card{background:var(--white);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow)}
+.stat-label{font-size:.78rem;color:#666;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+.stat-value{font-family:var(--font-display);font-size:1.6rem;font-weight:700;color:var(--ink)}
+.stat-sub{font-size:.78rem;color:#888;margin-top:2px}
+
+/* ===== SECTION CARD ===== */
+.section-card{background:var(--white);border-radius:var(--radius-lg);padding:24px;box-shadow:var(--shadow);margin-bottom:24px}
+.section-title{font-size:1.15rem;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+
+/* ===== BUTTONS ===== */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 20px;border-radius:var(--radius);border:none;cursor:pointer;font-weight:500;font-size:.875rem;min-height:44px;min-width:44px;transition:background var(--transition),transform var(--transition)}
+.btn:active{transform:scale(.97)}
 .btn-primary{background:var(--forest);color:var(--white)}
-.btn-primary:hover{background:var(--green)}
-.btn-sm{padding:8px 16px;font-size:.8rem}
-.btn-outline{border:2px solid var(--forest);color:var(--forest);background:transparent}
+.btn-primary:hover{background:var(--forest-dark)}
+.btn-secondary{background:var(--cream);color:var(--ink);border:1px solid #ddd}
+.btn-secondary:hover{background:#f0ede7}
 .btn-danger{background:var(--red);color:var(--white)}
+.btn-danger:hover{background:#c9302c}
+.btn-sm{padding:6px 14px;font-size:.8rem;min-height:38px}
+.btn-gold{background:var(--gold);color:var(--ink)}
+.btn-gold:hover{background:#b8953e}
 
-/* MAIN */
-.main{max-width:960px;margin:0 auto;padding:32px 24px}
+/* ===== TABLE ===== */
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:.875rem}
+th{text-align:left;padding:10px 12px;border-bottom:2px solid #eee;font-weight:600;color:#555;font-size:.75rem;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+td{padding:10px 12px;border-bottom:1px solid #f0f0f0;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+.status-badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:.75rem;font-weight:500}
+.status-looking{background:#e8f5e9;color:var(--green)}
+.status-on_hold{background:#fff3e0;color:#e65100}
+.status-paused_limit{background:#fce4ec;color:var(--red)}
 
-/* STATS */
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:32px}
-.stat-card{background:var(--white);border-radius:12px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
-.stat-card .label{font-size:.8rem;opacity:.5;margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px}
-.stat-card .value{font-size:1.6rem;font-weight:700;font-family:'Playfair Display',serif;color:var(--forest)}
-.stat-card .sub{font-size:.8rem;opacity:.4;margin-top:2px}
+/* ===== FORMS ===== */
+.form-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px;align-items:flex-end}
+.form-group{display:flex;flex-direction:column;gap:4px;flex:1;min-width:120px}
+.form-group label{font-size:.75rem;font-weight:500;color:#555}
+.form-group input,.form-group select,.form-group textarea{padding:10px 12px;border:1px solid #ddd;border-radius:var(--radius);font-size:.875rem;min-height:44px;background:var(--white);transition:border-color var(--transition)}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--forest);outline:none;box-shadow:0 0 0 3px rgba(26,107,58,.15)}
+.inline-form{background:var(--cream);border-radius:var(--radius);padding:16px;margin-top:12px;border:1px solid #e8e5df}
 
-/* SECTIONS */
-.section{margin-bottom:32px}
-.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
-.section-header h2{font-size:1.2rem}
+/* ===== MESSAGE LOG ===== */
+.msg-item{display:flex;justify-content:space-between;align-items:flex-start;padding:12px 0;border-bottom:1px solid #f0f0f0;gap:12px;flex-wrap:wrap}
+.msg-item:last-child{border-bottom:none}
+.msg-pair{font-weight:600;font-size:.875rem}
+.msg-rate{color:#666;font-size:.85rem}
+.msg-channels{display:flex;gap:6px;flex-wrap:wrap}
+.channel-tag{font-size:.7rem;padding:2px 8px;border-radius:10px;background:#e8f5e9;color:var(--green);font-weight:500}
+.msg-time{font-size:.75rem;color:#999;white-space:nowrap}
 
-/* WATCHES TABLE */
-.watches{background:var(--white);border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.04)}
-.watch-row{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:16px;padding:16px 20px;border-bottom:1px solid rgba(0,0,0,.04);align-items:center}
-.watch-row:last-child{border:none}
-.watch-row.header{font-size:.75rem;text-transform:uppercase;letter-spacing:.5px;opacity:.4;font-weight:600;background:rgba(0,0,0,.01)}
-.watch-pair{font-weight:700;font-size:1rem}
-.watch-target{font-size:.95rem}
-.watch-status{font-size:.8rem;font-weight:600;padding:4px 10px;border-radius:100px;display:inline-block;text-align:center}
-.watch-status.looking{background:rgba(45,138,82,.1);color:var(--green)}
-.watch-status.paused_limit{background:rgba(201,168,76,.15);color:#856404}
-.watch-status.on_hold{background:rgba(0,0,0,.05);color:var(--ink);opacity:.5}
-.watch-actions .btn{padding:6px 12px;font-size:.75rem}
-.empty{text-align:center;padding:40px;opacity:.4;font-size:.95rem}
+/* ===== TOGGLES ===== */
+.channel-list{display:flex;flex-direction:column;gap:16px}
+.channel-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f0f0f0}
+.channel-row:last-child{border-bottom:none}
+.channel-info{display:flex;flex-direction:column;gap:2px}
+.channel-name{font-weight:600;font-size:.9rem}
+.channel-desc{font-size:.78rem;color:#888}
+.toggle{position:relative;width:52px;height:28px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#ccc;border-radius:28px;transition:var(--transition);min-width:44px;min-height:28px}
+.toggle-slider::before{content:'';position:absolute;height:22px;width:22px;left:3px;bottom:3px;background:var(--white);border-radius:50%;transition:var(--transition)}
+.toggle input:checked+.toggle-slider{background:var(--forest)}
+.toggle input:checked+.toggle-slider::before{transform:translateX(24px)}
+.toggle input:focus-visible+.toggle-slider{outline:3px solid var(--gold);outline-offset:2px}
+.toggle input:disabled+.toggle-slider{opacity:.5;cursor:not-allowed}
+.pro-tag{font-size:.65rem;background:var(--gold);color:var(--ink);padding:1px 6px;border-radius:8px;margin-left:6px;font-weight:600}
 
-/* ADD WATCH FORM */
-.add-form{background:var(--white);border-radius:12px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,.04);display:none}
-.add-form.visible{display:block}
-.form-row{display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap}
-.form-field{flex:1;min-width:140px}
-.form-field label{display:block;font-size:.8rem;font-weight:500;margin-bottom:4px;opacity:.6}
-.form-field select,.form-field input{width:100%;padding:10px;border:2px solid rgba(0,0,0,.08);border-radius:8px;font-size:.95rem;font-family:inherit;background:var(--cream)}
-.form-field select:focus,.form-field input:focus{outline:none;border-color:var(--forest)}
+/* ===== ACCOUNT SECTION ===== */
+.account-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.account-field{display:flex;flex-direction:column;gap:2px}
+.account-label{font-size:.75rem;color:#888;text-transform:uppercase;letter-spacing:.03em}
+.account-value{font-weight:500;font-size:.9rem}
+.account-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px;padding-top:16px;border-top:1px solid #eee}
+.consent-section{margin-top:20px;padding-top:16px;border-top:1px solid #eee}
+.consent-section h3{font-size:.9rem;margin-bottom:8px}
+.consent-item{font-size:.8rem;color:#666;padding:4px 0;display:flex;align-items:center;gap:8px}
+.consent-check{color:var(--green);font-weight:700}
 
-/* NUDGE HISTORY */
-.nudge-list{background:var(--white);border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.04)}
-.nudge-item{padding:14px 20px;border-bottom:1px solid rgba(0,0,0,.04);display:flex;justify-content:space-between;align-items:center}
-.nudge-item:last-child{border:none}
-.nudge-pair{font-weight:600}
-.nudge-rate{font-size:.9rem;opacity:.7}
-.nudge-time{font-size:.8rem;opacity:.4}
-.nudge-channels{display:flex;gap:4px}
-.nudge-channels span{font-size:.7rem;background:rgba(26,107,58,.08);color:var(--forest);padding:2px 8px;border-radius:4px}
+/* ===== NPS ===== */
+.nps-wrap{text-align:center;padding:12px 0}
+.nps-question{font-family:var(--font-display);font-size:1.05rem;margin-bottom:16px}
+.nps-scores{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.nps-btn{width:44px;height:44px;border-radius:var(--radius);border:2px solid #ddd;background:var(--white);cursor:pointer;font-weight:600;font-size:.9rem;transition:all var(--transition)}
+.nps-btn:hover{border-color:var(--forest);color:var(--forest)}
+.nps-btn.selected{background:var(--forest);color:var(--white);border-color:var(--forest)}
+.nps-btn.detractor{border-color:var(--red)}
+.nps-btn.detractor.selected{background:var(--red);border-color:var(--red)}
+.nps-btn.passive{border-color:var(--gold)}
+.nps-btn.passive.selected{background:var(--gold);border-color:var(--gold);color:var(--ink)}
+.nps-btn.promoter{border-color:var(--green)}
+.nps-btn.promoter.selected{background:var(--green);border-color:var(--green)}
+.nps-comment{margin-top:12px}
+.nps-comment textarea{width:100%;max-width:400px;min-height:60px;resize:vertical}
+.nps-thanks{padding:20px;text-align:center;color:var(--green);font-weight:600}
+.feature-link{display:inline-block;margin-top:12px;font-size:.85rem;color:var(--forest);cursor:pointer;font-weight:500}
+.feature-form{margin-top:12px;display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap}
+.feature-form .form-group{flex:1;min-width:200px}
 
-/* CHANNEL SELECTOR */
-.channels{background:var(--white);border-radius:12px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
-.channel-option{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(0,0,0,.04)}
-.channel-option:last-child{border:none}
-.channel-option .info{display:flex;align-items:center;gap:12px}
-.channel-option .icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.2rem}
-.channel-option .name{font-weight:600;font-size:.95rem}
-.channel-option .desc{font-size:.8rem;opacity:.4}
-.toggle-switch{position:relative;width:44px;height:24px}
-.toggle-switch input{display:none}
-.toggle-switch .slider{position:absolute;inset:0;background:rgba(0,0,0,.1);border-radius:24px;cursor:pointer;transition:.2s}
-.toggle-switch .slider::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:var(--white);border-radius:50%;transition:.2s}
-.toggle-switch input:checked+.slider{background:var(--forest)}
-.toggle-switch input:checked+.slider::before{transform:translateX(20px)}
+/* ===== COOKIE BANNER ===== */
+.cookie-banner{position:fixed;bottom:0;left:0;right:0;background:var(--forest-dark);color:var(--white);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;z-index:200;flex-wrap:wrap;box-shadow:0 -2px 10px rgba(0,0,0,.15)}
+.cookie-text{font-size:.85rem;flex:1;min-width:200px;line-height:1.5}
+.cookie-actions{display:flex;gap:10px}
+.cookie-accept{background:var(--gold);color:var(--ink);border:none;padding:10px 20px;border-radius:var(--radius);cursor:pointer;font-weight:600;font-size:.85rem;min-height:44px}
+.cookie-decline{background:transparent;color:var(--white);border:1px solid rgba(255,255,255,.4);padding:10px 20px;border-radius:var(--radius);cursor:pointer;font-size:.85rem;min-height:44px}
 
-/* SETTINGS */
-.settings{background:var(--white);border-radius:12px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
-.setting-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid rgba(0,0,0,.04)}
-.setting-row:last-child{border:none}
-.setting-label{font-weight:500}
-.setting-value{opacity:.5;font-size:.9rem}
+/* ===== MODAL ===== */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;visibility:hidden;transition:opacity var(--transition)}
+.modal-overlay.active{opacity:1;visibility:visible}
+.modal-box{background:var(--white);border-radius:var(--radius-lg);padding:28px;max-width:440px;width:100%;box-shadow:0 20px 40px rgba(0,0,0,.15);transform:translateY(10px);transition:transform var(--transition)}
+.modal-overlay.active .modal-box{transform:translateY(0)}
+.modal-title{font-family:var(--font-display);font-size:1.1rem;margin-bottom:12px}
+.modal-text{font-size:.875rem;color:#666;margin-bottom:16px;line-height:1.6}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
 
-/* LOADING / NO SESSION */
-.loading{text-align:center;padding:80px 24px}
-.loading h2{margin-bottom:12px}
-.loading p{opacity:.5}
+/* ===== LOADING ===== */
+.loading-spinner{display:inline-block;width:20px;height:20px;border:2px solid #ddd;border-top-color:var(--forest);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.skeleton{background:linear-gradient(90deg,#eee 25%,#e0e0e0 50%,#eee 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:var(--radius);height:20px}
+@keyframes shimmer{0%{background-position:200% 0}to{background-position:-200% 0}}
 
-@media(max-width:640px){
-  .watch-row{grid-template-columns:1fr 1fr;gap:8px}
-  .watch-row.header{display:none}
+/* ===== TOAST ===== */
+.toast-container{position:fixed;top:72px;right:20px;z-index:250;display:flex;flex-direction:column;gap:8px}
+.toast{padding:12px 20px;border-radius:var(--radius);color:var(--white);font-size:.85rem;font-weight:500;box-shadow:var(--shadow-md);transform:translateX(120%);transition:transform .3s ease;max-width:320px}
+.toast.show{transform:translateX(0)}
+.toast-success{background:var(--green)}
+.toast-error{background:var(--red)}
+.toast-info{background:var(--forest)}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:768px){
+  .stats-row{grid-template-columns:1fr}
+  .account-grid{grid-template-columns:1fr}
   .form-row{flex-direction:column}
-  .stats{grid-template-columns:1fr 1fr}
+  .form-group{min-width:100%}
+  .topbar{padding:0 16px}
+  .main-wrap{padding:16px 12px 80px}
+  .section-card{padding:16px}
+  .section-title{font-size:1.05rem}
+}
+@media(max-width:375px){
+  .topbar{height:54px}
+  .logo{font-size:1.15rem}
+  .stat-value{font-size:1.3rem}
+  .nps-btn{width:38px;height:38px;font-size:.8rem}
+  .nps-scores{gap:4px}
+}
+@media(max-width:320px){
+  .topbar-link span{display:none}
+  .signout-btn span{display:none}
+  .signout-btn::after{content:'\2192'}
 }
 </style>
 </head>
 <body>
 
-<!-- LOADING STATE (shown until auth check) -->
-<div id="loading" class="loading">
-  <h2>Shegoo.</h2>
-  <p>Checking your session...</p>
-</div>
-
-<!-- MAIN APP (hidden until authenticated) -->
-<div id="app" style="display:none">
-
-<div class="topbar">
-<div class="inner">
-  <a href="/" class="logo">Shegoo.</a>
-  <div class="user-menu">
-    <span class="plan-badge" id="plan-badge">Free</span>
-    <div class="avatar" id="avatar" title="Account">?</div>
+<!-- ===== TOP BAR ===== -->
+<nav class="topbar" role="navigation" aria-label="Main navigation">
+  <div class="topbar-left">
+    <a href="/app/" class="logo" aria-label="Shegoo dashboard home">Shegoo.</a>
+    <span class="plan-badge" id="plan-badge" aria-label="Current plan">free</span>
   </div>
-</div>
-</div>
+  <div class="topbar-right">
+    <a href="/help/" class="topbar-link" aria-label="Help and support"><span>Help</span></a>
+    <button class="avatar-btn" id="avatar-btn" aria-label="User profile">?</button>
+    <button class="signout-btn" id="signout-btn" aria-label="Sign out"><span>Sign out</span></button>
+  </div>
+</nav>
 
-<div class="main">
+<!-- ===== MAIN CONTENT ===== -->
+<main class="main-wrap" id="main-content" role="main">
+  <h1 style="font-size:1.5rem;margin-bottom:20px" id="page-heading">Your Dashboard</h1>
 
-  <!-- STATS -->
-  <div class="stats">
+  <!-- STATS ROW -->
+  <div class="stats-row" aria-label="Account statistics">
     <div class="stat-card">
-      <div class="label">Active watches</div>
-      <div class="value" id="stat-watches">0</div>
-      <div class="sub" id="stat-watch-limit">of 1</div>
+      <div class="stat-label">Active Watches</div>
+      <div class="stat-value" id="stat-watches"><span class="skeleton" style="width:60px;display:inline-block">&nbsp;</span></div>
+      <div class="stat-sub" id="stat-watches-limit">of -- limit</div>
     </div>
     <div class="stat-card">
-      <div class="label">Messages this month</div>
-      <div class="value" id="stat-nudges">0</div>
-      <div class="sub" id="stat-nudge-limit">of 3</div>
+      <div class="stat-label">Messages This Month</div>
+      <div class="stat-value" id="stat-msgs-month"><span class="skeleton" style="width:60px;display:inline-block">&nbsp;</span></div>
+      <div class="stat-sub" id="stat-msgs-limit">of -- limit</div>
     </div>
     <div class="stat-card">
-      <div class="label">Total messages sent</div>
-      <div class="value" id="stat-total">0</div>
+      <div class="stat-label">Total Messages Sent</div>
+      <div class="stat-value" id="stat-msgs-total"><span class="skeleton" style="width:60px;display:inline-block">&nbsp;</span></div>
+      <div class="stat-sub">all time</div>
     </div>
   </div>
 
-  <!-- WATCHES -->
-  <div class="section">
-    <div class="section-header">
-      <h2>Rate watches</h2>
-      <button class="btn btn-primary btn-sm" id="add-watch-btn">+ Add watch</button>
+  <!-- SECTION 1: RATE WATCHES -->
+  <section class="section-card" aria-labelledby="watches-heading">
+    <div class="section-title">
+      <h2 id="watches-heading">Rate Watches</h2>
+      <button class="btn btn-primary btn-sm" id="add-watch-btn" aria-label="Add a new rate watch">+ Add Watch</button>
     </div>
-
-    <div class="add-form" id="add-form">
-      <form id="watch-form">
-        <div class="form-row">
-          <div class="form-field">
-            <label>From currency</label>
-            <select id="w-from">
-              <option value="EUR">EUR - Euro</option>
-              <option value="GBP">GBP - British Pound</option>
-              <option value="USD">USD - US Dollar</option>
-            </select>
-          </div>
-          <div class="form-field">
-            <label>To currency</label>
-            <select id="w-to">
-              <option value="BRL">BRL - Brazilian Real</option>
-              <option value="NGN">NGN - Nigerian Naira</option>
-              <option value="INR">INR - Indian Rupee</option>
-              <option value="MXN">MXN - Mexican Peso</option>
-              <option value="UAH">UAH - Ukrainian Hryvnia</option>
-              <option value="PLN">PLN - Polish Zloty</option>
-              <option value="GBP">GBP - British Pound</option>
-            </select>
-          </div>
+    <div class="inline-form" id="add-watch-form" style="display:none" role="form" aria-label="Add rate watch form">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="watch-from">From Currency</label>
+          <input type="text" id="watch-from" placeholder="GBP" maxlength="3" autocomplete="off" aria-required="true">
         </div>
-        <div class="form-row">
-          <div class="form-field">
-            <label>Target rate (notify when rate reaches this)</label>
-            <input type="number" id="w-rate" step="0.01" min="0" placeholder="e.g. 6.50" required>
-          </div>
-          <div class="form-field">
-            <label>Send amount (optional)</label>
-            <input type="number" id="w-amount" step="1" min="0" placeholder="e.g. 500">
-          </div>
+        <div class="form-group">
+          <label for="watch-to">To Currency</label>
+          <input type="text" id="watch-to" placeholder="EUR" maxlength="3" autocomplete="off" aria-required="true">
         </div>
-        <div style="display:flex;gap:12px;margin-top:8px">
-          <button type="submit" class="btn btn-primary btn-sm">Create watch</button>
-          <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('add-form').classList.remove('visible')">Cancel</button>
+        <div class="form-group">
+          <label for="watch-rate">Target Rate</label>
+          <input type="number" id="watch-rate" placeholder="1.20" step="0.0001" aria-required="true">
         </div>
-      </form>
+        <div class="form-group">
+          <label for="watch-amount">Send Amount</label>
+          <input type="number" id="watch-amount" placeholder="1000" step="1">
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-end;padding-bottom:2px">
+          <button class="btn btn-primary btn-sm" id="save-watch-btn" aria-label="Save watch">Save</button>
+          <button class="btn btn-secondary btn-sm" id="cancel-watch-btn" aria-label="Cancel adding watch">Cancel</button>
+        </div>
+      </div>
+      <div id="watch-form-error" style="color:var(--red);font-size:.8rem;margin-top:8px" role="alert"></div>
     </div>
-
-    <div class="watches" id="watches-list">
-      <div class="empty">No rate watches yet. Add one above to get started.</div>
+    <div class="table-wrap" id="watches-table-wrap">
+      <table aria-label="Rate watches table">
+        <thead>
+          <tr><th>Pair</th><th>Target Rate</th><th>Status</th><th>Actions</th></tr>
+        </thead>
+        <tbody id="watches-tbody">
+          <tr><td colspan="4" style="text-align:center;padding:24px;color:#999"><div class="loading-spinner" aria-label="Loading watches"></div></td></tr>
+        </tbody>
+      </table>
     </div>
-  </div>
+  </section>
 
-  <!-- NUDGE HISTORY -->
-  <div class="section">
-    <div class="section-header"><h2>Message history</h2></div>
-    <div class="nudge-list" id="nudge-list">
-      <div class="empty">No messages sent yet.</div>
+  <!-- SECTION 2: MESSAGE HISTORY -->
+  <section class="section-card" aria-labelledby="messages-heading">
+    <div class="section-title">
+      <h2 id="messages-heading">Message History</h2>
     </div>
-  </div>
+    <div id="messages-list">
+      <div style="text-align:center;padding:24px"><div class="loading-spinner" aria-label="Loading messages"></div></div>
+    </div>
+  </section>
 
-  <!-- CHANNELS -->
-  <div class="section">
-    <div class="section-header"><h2>Notification channels</h2></div>
-    <div class="channels">
-      <div class="channel-option">
-        <div class="info">
-          <div class="icon" style="background:rgba(0,136,204,.1)">&#9993;</div>
-          <div><div class="name">Email</div><div class="desc">Included with all plans</div></div>
+  <!-- SECTION 3: NOTIFICATION CHANNELS -->
+  <section class="section-card" aria-labelledby="channels-heading">
+    <div class="section-title">
+      <h2 id="channels-heading">Notification Channels</h2>
+    </div>
+    <div class="channel-list" id="channels-list">
+      <div class="channel-row">
+        <div class="channel-info">
+          <span class="channel-name">Email</span>
+          <span class="channel-desc">Receive rate alerts to your email address</span>
         </div>
-        <label class="toggle-switch"><input type="checkbox" checked id="ch-email"><span class="slider"></span></label>
+        <label class="toggle" aria-label="Toggle email notifications">
+          <input type="checkbox" id="ch-email" data-channel="email">
+          <span class="toggle-slider"></span>
+        </label>
       </div>
-      <div class="channel-option">
-        <div class="info">
-          <div class="icon" style="background:rgba(0,136,204,.1)">&#9992;</div>
-          <div><div class="name">Telegram</div><div class="desc" id="tg-desc">Connect your Telegram</div></div>
+      <div class="channel-row">
+        <div class="channel-info">
+          <span class="channel-name">Telegram</span>
+          <span class="channel-desc">Get instant alerts via Telegram bot</span>
         </div>
-        <label class="toggle-switch"><input type="checkbox" checked id="ch-telegram"><span class="slider"></span></label>
+        <label class="toggle" aria-label="Toggle Telegram notifications">
+          <input type="checkbox" id="ch-telegram" data-channel="telegram">
+          <span class="toggle-slider"></span>
+        </label>
       </div>
-      <div class="channel-option">
-        <div class="info">
-          <div class="icon" style="background:rgba(37,211,102,.1)">&#128172;</div>
-          <div><div class="name">WhatsApp</div><div class="desc" id="wa-desc">Pro plan only</div></div>
+      <div class="channel-row">
+        <div class="channel-info">
+          <span class="channel-name">WhatsApp<span class="pro-tag">PRO</span></span>
+          <span class="channel-desc">WhatsApp alerts &mdash; available on Pro plan</span>
         </div>
-        <label class="toggle-switch"><input type="checkbox" disabled id="ch-whatsapp"><span class="slider"></span></label>
+        <label class="toggle" aria-label="Toggle WhatsApp notifications, requires Pro plan">
+          <input type="checkbox" id="ch-whatsapp" data-channel="whatsapp" disabled>
+          <span class="toggle-slider"></span>
+        </label>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- SETTINGS -->
-  <div class="section">
-    <div class="section-header"><h2>Account</h2></div>
-    <div class="settings">
-      <div class="setting-row">
-        <span class="setting-label">Email</span>
-        <span class="setting-value" id="user-email">—</span>
+  <!-- SECTION 4: ACCOUNT & PRIVACY -->
+  <section class="section-card" aria-labelledby="account-heading">
+    <div class="section-title">
+      <h2 id="account-heading">Account &amp; Privacy</h2>
+    </div>
+    <div class="account-grid" id="account-grid">
+      <div class="account-field">
+        <span class="account-label">Email</span>
+        <span class="account-value" id="acct-email">--</span>
       </div>
-      <div class="setting-row">
-        <span class="setting-label">Plan</span>
-        <span class="setting-value" id="user-plan">Free</span>
+      <div class="account-field">
+        <span class="account-label">Plan</span>
+        <span class="account-value" id="acct-plan">--</span>
       </div>
-      <div class="setting-row">
-        <span class="setting-label">Member since</span>
-        <span class="setting-value" id="user-joined">—</span>
+      <div class="account-field">
+        <span class="account-label">Member Since</span>
+        <span class="account-value" id="acct-since">--</span>
       </div>
-      <div class="setting-row">
-        <span class="setting-label">Language</span>
-        <select id="user-lang" style="padding:6px 10px;border:1px solid rgba(0,0,0,.1);border-radius:6px;font-family:inherit">
+      <div class="account-field">
+        <span class="account-label">Language</span>
+        <select id="acct-lang" aria-label="Select language" style="padding:8px 10px;border:1px solid #ddd;border-radius:var(--radius);min-height:44px">
           <option value="en">English</option>
-          <option value="pt">Português</option>
-          <option value="es">Español</option>
+          <option value="es">Espa&#241;ol</option>
+          <option value="fr">Fran&#231;ais</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Portugu&#234;s</option>
+          <option value="ar">&#1575;&#1604;&#1593;&#1585;&#1576;&#1610;&#1577;</option>
         </select>
       </div>
-      <div class="setting-row">
-        <span class="setting-label"></span>
-        <div style="display:flex;gap:8px">
-          <a href="/" class="btn btn-outline btn-sm">Upgrade plan</a>
-          <button class="btn btn-sm" style="background:rgba(0,0,0,.05);color:var(--ink)" id="logout-btn">Sign out</button>
+    </div>
+    <div class="account-actions">
+      <button class="btn btn-gold btn-sm" id="billing-btn" aria-label="Manage billing">Manage Billing</button>
+      <button class="btn btn-secondary btn-sm" id="export-btn" aria-label="Download my data">Download My Data</button>
+      <button class="btn btn-danger btn-sm" id="delete-acct-btn" aria-label="Delete my account">Delete My Account</button>
+    </div>
+    <div class="consent-section">
+      <h3>Your Consent</h3>
+      <div class="consent-item"><span class="consent-check" aria-hidden="true">&#10003;</span> Terms of Service agreed at sign-up</div>
+      <div class="consent-item"><span class="consent-check" aria-hidden="true">&#10003;</span> Privacy Policy accepted</div>
+      <div class="consent-item"><span class="consent-check" aria-hidden="true">&#10003;</span> Rate alert notifications (can be changed above)</div>
+      <div class="consent-item"><span class="consent-check" aria-hidden="true">&#10003;</span> Functional localStorage for preferences</div>
+    </div>
+  </section>
+
+  <!-- SECTION 5: NPS & FEEDBACK -->
+  <section class="section-card" aria-labelledby="feedback-heading" id="nps-section">
+    <div class="section-title">
+      <h2 id="feedback-heading">Feedback</h2>
+    </div>
+    <div id="nps-container">
+      <div class="nps-wrap" id="nps-form-wrap">
+        <p class="nps-question">How likely are you to recommend Shegoo to a friend?</p>
+        <div class="nps-scores" id="nps-scores" role="radiogroup" aria-label="Net Promoter Score from 1 to 10"></div>
+        <div class="nps-comment" id="nps-comment-wrap" style="display:none">
+          <div class="form-group" style="align-items:center">
+            <label for="nps-comment">Any feedback? (optional)</label>
+            <textarea id="nps-comment" rows="2" style="max-width:400px;width:100%" placeholder="Tell us more..."></textarea>
+          </div>
+          <button class="btn btn-primary btn-sm" id="nps-submit" style="margin-top:8px" aria-label="Submit NPS feedback">Submit Feedback</button>
         </div>
       </div>
+      <div class="nps-thanks" id="nps-thanks" style="display:none">Thank you for your feedback!</div>
+    </div>
+    <div style="text-align:center;border-top:1px solid #eee;padding-top:16px;margin-top:12px">
+      <span class="feature-link" id="feature-toggle" role="button" tabindex="0" aria-label="Suggest a feature">Suggest a feature</span>
+      <div class="feature-form" id="feature-form" style="display:none" role="form" aria-label="Feature suggestion form">
+        <div class="form-group">
+          <label for="feature-text">Your suggestion</label>
+          <input type="text" id="feature-text" placeholder="I wish Shegoo could..." maxlength="500">
+        </div>
+        <button class="btn btn-primary btn-sm" id="feature-submit" aria-label="Submit feature suggestion">Send</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ===== DELETE ACCOUNT MODAL ===== -->
+<div class="modal-overlay" id="delete-modal" role="dialog" aria-modal="true" aria-labelledby="delete-modal-title">
+  <div class="modal-box">
+    <h2 class="modal-title" id="delete-modal-title">Delete Your Account</h2>
+    <p class="modal-text">This action is permanent and cannot be undone. All your watches, message history, and personal data will be removed. Please tell us why you are leaving:</p>
+    <div class="form-group">
+      <label for="delete-reason">Reason (optional)</label>
+      <textarea id="delete-reason" rows="3" placeholder="Help us improve..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary btn-sm" id="delete-cancel" aria-label="Cancel account deletion">Cancel</button>
+      <button class="btn btn-danger btn-sm" id="delete-confirm" aria-label="Confirm account deletion">Yes, Delete My Account</button>
     </div>
   </div>
-
-</div>
 </div>
 
+<!-- ===== COOKIE BANNER ===== -->
+<div class="cookie-banner" id="cookie-banner" style="display:none" role="dialog" aria-label="Cookie consent">
+  <p class="cookie-text">Shegoo uses localStorage to remember your preferences. No tracking cookies.</p>
+  <div class="cookie-actions">
+    <button class="cookie-accept" id="cookie-accept" aria-label="Accept cookies">Accept</button>
+    <button class="cookie-decline" id="cookie-decline" aria-label="Decline cookies">Decline</button>
+  </div>
+</div>
+
+<!-- ===== TOAST CONTAINER ===== -->
+<div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+<!-- ===== FOOTER ===== -->
+<footer style="text-align:center;padding:20px;font-size:.75rem;color:#999" role="contentinfo">
+  &copy; 2026 Shegoo. All rights reserved.
+</footer>
+
+<!-- ===== SUPABASE CDN ===== -->
 <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
 <script>
-const SUPABASE_URL = 'https://vntnfljukhshzwvlrlud.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZudG5mbGp1a2hzaHp3dmxybHVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNjc1NzAsImV4cCI6MjA5MDc0MzU3MH0.Jq70R73IeWjCfwVqe5fuM_MtaPKAjRmIMmkI2arpKvM'; // Set from env at deploy time
-let sb, user, member;
+/* ==========================================================
+   SHEGOO MEMBER DASHBOARD - Production JS
+   ========================================================== */
+(function(){
+  'use strict';
 
-const limits = { free: {watches:1,nudges:3}, standard: {watches:3,nudges:10}, pro: {watches:10,nudges:30} };
+  /* ---------- CONFIG ---------- */
+  var SUPABASE_URL = 'https://vntnfljukhshzwvlrlud.supabase.co';
+  var SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZudG5mbGp1a2hzaHp3dmxybHVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNjc1NzAsImV4cCI6MjA5MDc0MzU3MH0.Jq70R73IeWjCfwVqe5fuM_MtaPKAjRmIMmkI2arpKvM';
+  var EDGE_BASE = SUPABASE_URL + '/functions/v1';
+  var PLAN_LIMITS = {free:{watches:2,messages:10},starter:{watches:5,messages:50},pro:{watches:20,messages:500}};
+  var SESSION_ID = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now().toString(36);
 
-async function init(){
-  if(!SUPABASE_ANON_KEY){
-    document.getElementById('loading').innerHTML = '<h2>Shegoo.</h2><p>App not configured yet. Set SUPABASE_ANON_KEY.</p>';
-    return;
+  var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+  var currentUser = null;
+  var memberData = null;
+
+  /* ---------- HELPERS ---------- */
+  function qs(sel){ return document.querySelector(sel); }
+  function qsa(sel){ return document.querySelectorAll(sel); }
+
+  function safeText(el, text){ if(el) el.textContent = text; }
+
+  function showToast(msg, type){
+    type = type || 'info';
+    var container = qs('#toast-container');
+    var t = document.createElement('div');
+    t.className = 'toast toast-' + type;
+    t.textContent = msg;
+    t.setAttribute('role','status');
+    container.appendChild(t);
+    requestAnimationFrame(function(){ t.classList.add('show'); });
+    setTimeout(function(){
+      t.classList.remove('show');
+      setTimeout(function(){ if(t.parentNode) t.parentNode.removeChild(t); }, 400);
+    }, 3500);
   }
-  sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  const { data: { session } } = await sb.auth.getSession();
-  if(!session){
-    window.location.href = '/login/';
-    return;
+
+  function edgeFn(name, body, token){
+    return fetch(EDGE_BASE + '/' + name, {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer ' + token,'apikey':SUPABASE_ANON},
+      body: JSON.stringify(body || {})
+    });
   }
-  user = session.user;
-  document.getElementById('loading').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
 
-  await loadMember();
-  await loadWatches();
-  await loadNudges();
-  setupEvents();
-}
-
-async function loadMember(){
-  const { data } = await sb.from('members').select('*').eq('id', user.id).single();
-  if(!data) return;
-  member = data;
-  const plan = member.plan || 'free';
-  const lim = limits[plan];
-  document.getElementById('plan-badge').textContent = plan.charAt(0).toUpperCase() + plan.slice(1);
-  document.getElementById('avatar').textContent = (member.name || member.email || '?')[0].toUpperCase();
-  document.getElementById('user-email').textContent = member.email;
-  document.getElementById('user-plan').textContent = plan.charAt(0).toUpperCase() + plan.slice(1);
-  document.getElementById('user-joined').textContent = member.joined_at ? new Date(member.joined_at).toLocaleDateString() : '—';
-  document.getElementById('stat-nudges').textContent = member.nudges_this_month || 0;
-  document.getElementById('stat-nudge-limit').textContent = `of ${lim.nudges}`;
-  document.getElementById('stat-watch-limit').textContent = `of ${lim.watches}`;
-  if(plan === 'pro'){
-    document.getElementById('ch-whatsapp').disabled = false;
-    document.getElementById('wa-desc').textContent = member.whatsapp_number || 'Add your number';
+  function trackEvent(action, extra){
+    var payload = {page:'/app',action:action,session_id:SESSION_ID};
+    if(extra) Object.assign(payload, extra);
+    try{
+      fetch(EDGE_BASE + '/collect-event', {
+        method:'POST',
+        headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON},
+        body:JSON.stringify(payload)
+      }).catch(function(){});
+    }catch(e){}
   }
-  if(member.telegram_user_id){
-    document.getElementById('tg-desc').textContent = 'Connected';
+
+  function formatDate(d){
+    if(!d) return '--';
+    var dt = new Date(d);
+    return dt.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
   }
-}
 
-async function loadWatches(){
-  const { data: watches } = await sb.from('rate_watches').select('*').neq('status','removed').order('created_at',{ascending:false});
-  const list = document.getElementById('watches-list');
-  if(!watches || watches.length === 0){
-    list.innerHTML = '<div class="empty">No rate watches yet. Add one above to get started.</div>';
-    document.getElementById('stat-watches').textContent = '0';
-    return;
+  function formatDateTime(d){
+    if(!d) return '--';
+    var dt = new Date(d);
+    return dt.toLocaleDateString('en-GB',{day:'numeric',month:'short'}) + ' ' + dt.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
   }
-  const active = watches.filter(w => w.status === 'looking').length;
-  document.getElementById('stat-watches').textContent = active;
-  let total = watches.reduce((s,w) => s + (w.total_nudges||0), 0);
-  document.getElementById('stat-total').textContent = total;
 
-  let html = '<div class="watch-row header"><span>Pair</span><span>Target rate</span><span>Status</span><span></span></div>';
-  watches.forEach(w => {
-    const statusCls = w.status.replace('_','-');
-    html += `<div class="watch-row">
-      <span class="watch-pair">${w.from_ccy}/${w.to_ccy}</span>
-      <span class="watch-target">${parseFloat(w.target_rate).toFixed(4)}${w.send_amount ? ` (${w.send_ccy||w.from_ccy} ${w.send_amount})` : ''}</span>
-      <span><span class="watch-status ${w.status}">${w.status.replace('_',' ')}</span></span>
-      <span class="watch-actions">
-        <button class="btn btn-sm btn-outline" onclick="removeWatch(${w.id})">Remove</button>
-      </span>
-    </div>`;
-  });
-  list.innerHTML = html;
-}
-
-async function loadNudges(){
-  const { data: nudges } = await sb.from('nudge_log').select('*').order('fired_at',{ascending:false}).limit(20);
-  const list = document.getElementById('nudge-list');
-  if(!nudges || nudges.length === 0){
-    list.innerHTML = '<div class="empty">No messages sent yet.</div>';
-    return;
-  }
-  let html = '';
-  nudges.forEach(n => {
-    const channels = (n.channels_fired||[]).map(c => `<span>${c}</span>`).join('');
-    html += `<div class="nudge-item">
-      <div><span class="nudge-pair">${n.from_ccy}/${n.to_ccy}</span> <span class="nudge-rate">at ${parseFloat(n.rate_at_nudge).toFixed(4)}</span></div>
-      <div class="nudge-channels">${channels}</div>
-      <div class="nudge-time">${new Date(n.fired_at).toLocaleString()}</div>
-    </div>`;
-  });
-  list.innerHTML = html;
-}
-
-function setupEvents(){
-  document.getElementById('add-watch-btn').addEventListener('click', () => {
-    document.getElementById('add-form').classList.toggle('visible');
-  });
-
-  document.getElementById('watch-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const plan = (member && member.plan) || 'free';
-    const lim = limits[plan];
-    const { count } = await sb.from('rate_watches').select('*',{count:'exact',head:true}).eq('status','looking');
-    if(count >= lim.watches){
-      alert(`Your ${plan} plan allows ${lim.watches} active watch${lim.watches>1?'es':''}. Upgrade to add more.`);
+  /* ---------- AUTH CHECK ---------- */
+  async function init(){
+    var sess = await sb.auth.getSession();
+    if(!sess.data.session){
+      window.location.href = '/login/';
       return;
     }
-    const { error } = await sb.from('rate_watches').insert({
-      user_id: user.id,
-      from_ccy: document.getElementById('w-from').value,
-      to_ccy: document.getElementById('w-to').value,
-      target_rate: parseFloat(document.getElementById('w-rate').value),
-      send_amount: document.getElementById('w-amount').value ? parseFloat(document.getElementById('w-amount').value) : null,
-      send_ccy: document.getElementById('w-from').value
+    currentUser = sess.data.session.user;
+    trackEvent('dashboard_view');
+    await loadMember();
+    loadWatches();
+    loadMessages();
+    initNPS();
+    initCookieBanner();
+  }
+
+  /* ---------- LOAD MEMBER ---------- */
+  async function loadMember(){
+    var res = await sb.from('members').select('*').eq('id', currentUser.id).single();
+    if(res.error){
+      showToast('Failed to load account data','error');
+      return;
+    }
+    memberData = res.data;
+    var plan = (memberData.plan || 'free').toLowerCase();
+    var limits = PLAN_LIMITS[plan] || PLAN_LIMITS.free;
+
+    /* Top bar */
+    safeText(qs('#plan-badge'), plan.toUpperCase());
+    var initials = '';
+    if(currentUser.email){
+      initials = currentUser.email.charAt(0).toUpperCase();
+    }
+    safeText(qs('#avatar-btn'), initials);
+
+    /* Stats - active watches */
+    var activeWatches = await sb.from('rate_watches').select('id',{count:'exact',head:true}).eq('member_id',currentUser.id).in('status',['looking','on_hold','paused_limit']);
+    var watchCount = activeWatches.count || 0;
+    safeText(qs('#stat-watches'), String(watchCount));
+    safeText(qs('#stat-watches-limit'), 'of ' + limits.watches + ' limit');
+
+    /* Stats - messages this month */
+    var now = new Date();
+    var monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+    var msgsMonth = await sb.from('nudge_log').select('id',{count:'exact',head:true}).eq('member_id',currentUser.id).gte('created_at',monthStart);
+    var monthCount = msgsMonth.count || 0;
+    safeText(qs('#stat-msgs-month'), String(monthCount));
+    safeText(qs('#stat-msgs-limit'), 'of ' + limits.messages + ' limit');
+
+    /* Stats - total messages */
+    var msgsTotal = await sb.from('nudge_log').select('id',{count:'exact',head:true}).eq('member_id',currentUser.id);
+    safeText(qs('#stat-msgs-total'), String(msgsTotal.count || 0));
+
+    /* Account section */
+    safeText(qs('#acct-email'), currentUser.email || '--');
+    safeText(qs('#acct-plan'), plan.charAt(0).toUpperCase() + plan.slice(1));
+    safeText(qs('#acct-since'), formatDate(memberData.created_at));
+
+    /* Language */
+    if(memberData.language){
+      qs('#acct-lang').value = memberData.language;
+    }
+
+    /* Channels */
+    var channels = memberData.preferred_channels || [];
+    if(channels.indexOf('email') >= 0) qs('#ch-email').checked = true;
+    if(channels.indexOf('telegram') >= 0) qs('#ch-telegram').checked = true;
+    if(plan === 'pro'){
+      qs('#ch-whatsapp').disabled = false;
+      if(channels.indexOf('whatsapp') >= 0) qs('#ch-whatsapp').checked = true;
+    }
+  }
+
+  /* ---------- RATE WATCHES ---------- */
+  async function loadWatches(){
+    var res = await sb.from('rate_watches').select('*').eq('member_id',currentUser.id).neq('status','removed').order('created_at',{ascending:false});
+    var tbody = qs('#watches-tbody');
+    tbody.innerHTML = '';
+    if(res.error || !res.data || res.data.length === 0){
+      var emptyRow = document.createElement('tr');
+      var emptyCell = document.createElement('td');
+      emptyCell.setAttribute('colspan','4');
+      emptyCell.style.cssText = 'text-align:center;padding:24px;color:#999';
+      emptyCell.textContent = 'No watches yet. Add one to get started.';
+      emptyRow.appendChild(emptyCell);
+      tbody.appendChild(emptyRow);
+      return;
+    }
+    res.data.forEach(function(w){
+      var tr = document.createElement('tr');
+
+      var tdPair = document.createElement('td');
+      tdPair.style.fontWeight = '600';
+      tdPair.textContent = (w.from_ccy || '') + '/' + (w.to_ccy || '');
+      tr.appendChild(tdPair);
+
+      var tdRate = document.createElement('td');
+      tdRate.textContent = w.target_rate != null ? Number(w.target_rate).toFixed(4) : '--';
+      tr.appendChild(tdRate);
+
+      var tdStatus = document.createElement('td');
+      var badge = document.createElement('span');
+      badge.className = 'status-badge status-' + (w.status || 'looking');
+      badge.textContent = (w.status || 'looking').replace('_',' ');
+      tdStatus.appendChild(badge);
+      tr.appendChild(tdStatus);
+
+      var tdActions = document.createElement('td');
+      var removeBtn = document.createElement('button');
+      removeBtn.className = 'btn btn-secondary btn-sm';
+      removeBtn.textContent = 'Remove';
+      removeBtn.setAttribute('aria-label','Remove watch for ' + (w.from_ccy||'') + '/' + (w.to_ccy||''));
+      removeBtn.addEventListener('click', function(){ removeWatch(w.id); });
+      tdActions.appendChild(removeBtn);
+      tr.appendChild(tdActions);
+
+      tbody.appendChild(tr);
     });
-    if(error){ alert('Could not create watch: ' + error.message); return; }
-    document.getElementById('add-form').classList.remove('visible');
-    document.getElementById('watch-form').reset();
-    await loadWatches();
+  }
+
+  async function removeWatch(id){
+    var res = await sb.from('rate_watches').update({status:'removed'}).eq('id',id);
+    if(res.error){
+      showToast('Failed to remove watch','error');
+      return;
+    }
+    showToast('Watch removed','success');
+    loadWatches();
+    loadMember();
+  }
+
+  async function addWatch(){
+    var fromCcy = qs('#watch-from').value.trim().toUpperCase();
+    var toCcy = qs('#watch-to').value.trim().toUpperCase();
+    var rate = parseFloat(qs('#watch-rate').value);
+    var amount = qs('#watch-amount').value ? parseFloat(qs('#watch-amount').value) : null;
+    var errEl = qs('#watch-form-error');
+
+    if(!fromCcy || !toCcy || isNaN(rate)){
+      safeText(errEl, 'Please fill in currencies and target rate.');
+      return;
+    }
+    if(fromCcy.length !== 3 || toCcy.length !== 3){
+      safeText(errEl, 'Currency codes must be 3 letters.');
+      return;
+    }
+
+    /* Validate against plan watch limit */
+    var plan = (memberData.plan || 'free').toLowerCase();
+    var limits = PLAN_LIMITS[plan] || PLAN_LIMITS.free;
+    var activeCount = await sb.from('rate_watches').select('id',{count:'exact',head:true}).eq('member_id',currentUser.id).in('status',['looking','on_hold','paused_limit']);
+    if((activeCount.count || 0) >= limits.watches){
+      safeText(errEl, 'You have reached your ' + plan + ' plan limit of ' + limits.watches + ' watches. Upgrade to add more.');
+      return;
+    }
+    safeText(errEl, '');
+
+    var ins = {member_id:currentUser.id,from_ccy:fromCcy,to_ccy:toCcy,target_rate:rate,status:'looking'};
+    if(amount) ins.send_amount = amount;
+
+    var res = await sb.from('rate_watches').insert(ins);
+    if(res.error){
+      safeText(errEl, 'Failed to create watch: ' + (res.error.message || 'Unknown error'));
+      return;
+    }
+    showToast('Watch created for ' + fromCcy + '/' + toCcy,'success');
+    trackEvent('watch_created');
+    qs('#watch-from').value = '';
+    qs('#watch-to').value = '';
+    qs('#watch-rate').value = '';
+    qs('#watch-amount').value = '';
+    qs('#add-watch-form').style.display = 'none';
+    loadWatches();
+    loadMember();
+  }
+
+  /* ---------- MESSAGE HISTORY ---------- */
+  async function loadMessages(){
+    var res = await sb.from('nudge_log').select('*').eq('member_id',currentUser.id).order('created_at',{ascending:false}).limit(20);
+    var container = qs('#messages-list');
+    container.innerHTML = '';
+    if(res.error || !res.data || res.data.length === 0){
+      var empty = document.createElement('p');
+      empty.style.cssText = 'text-align:center;padding:24px;color:#999;font-size:.875rem';
+      empty.textContent = 'No messages sent yet. They will appear here when your rate targets are hit.';
+      container.appendChild(empty);
+      return;
+    }
+    res.data.forEach(function(m){
+      var item = document.createElement('div');
+      item.className = 'msg-item';
+
+      var left = document.createElement('div');
+
+      var pairSpan = document.createElement('span');
+      pairSpan.className = 'msg-pair';
+      pairSpan.textContent = (m.from_ccy || '') + '/' + (m.to_ccy || m.pair || '');
+      left.appendChild(pairSpan);
+
+      var rateSpan = document.createElement('span');
+      rateSpan.className = 'msg-rate';
+      rateSpan.textContent = ' at ' + (m.rate != null ? Number(m.rate).toFixed(4) : '--');
+      left.appendChild(rateSpan);
+
+      var chDiv = document.createElement('div');
+      chDiv.className = 'msg-channels';
+      var channels = m.channels_fired || m.channels || [];
+      if(typeof channels === 'string'){
+        try{ channels = JSON.parse(channels); }catch(e){ channels = [channels]; }
+      }
+      channels.forEach(function(c){
+        var tag = document.createElement('span');
+        tag.className = 'channel-tag';
+        tag.textContent = c;
+        chDiv.appendChild(tag);
+      });
+      left.appendChild(chDiv);
+      item.appendChild(left);
+
+      var timeSpan = document.createElement('span');
+      timeSpan.className = 'msg-time';
+      timeSpan.textContent = formatDateTime(m.created_at);
+      item.appendChild(timeSpan);
+
+      container.appendChild(item);
+    });
+  }
+
+  /* ---------- NOTIFICATION CHANNELS ---------- */
+  async function saveChannels(){
+    var channels = [];
+    if(qs('#ch-email').checked) channels.push('email');
+    if(qs('#ch-telegram').checked) channels.push('telegram');
+    if(qs('#ch-whatsapp').checked && !qs('#ch-whatsapp').disabled) channels.push('whatsapp');
+
+    var res = await sb.from('members').update({preferred_channels:channels}).eq('id',currentUser.id);
+    if(res.error){
+      showToast('Failed to save channels','error');
+      return;
+    }
+    showToast('Notification preferences saved','success');
+  }
+
+  qs('#ch-email').addEventListener('change', saveChannels);
+  qs('#ch-telegram').addEventListener('change', saveChannels);
+  qs('#ch-whatsapp').addEventListener('change', saveChannels);
+
+  /* ---------- LANGUAGE ---------- */
+  qs('#acct-lang').addEventListener('change', async function(){
+    var lang = this.value;
+    var res = await sb.from('members').update({language:lang}).eq('id',currentUser.id);
+    if(res.error){
+      showToast('Failed to update language','error');
+    } else {
+      showToast('Language updated','success');
+    }
   });
 
-  // Channel toggles
-  ['email','telegram','whatsapp'].forEach(ch => {
-    document.getElementById('ch-'+ch).addEventListener('change', async function(){
-      if(!member) return;
-      const channels = [];
-      if(document.getElementById('ch-email').checked) channels.push('email');
-      if(document.getElementById('ch-telegram').checked) channels.push('telegram');
-      if(document.getElementById('ch-whatsapp').checked) channels.push('whatsapp');
-      await sb.from('members').update({preferred_channels: channels}).eq('id', user.id);
-    });
+  /* ---------- BILLING ---------- */
+  qs('#billing-btn').addEventListener('click', async function(){
+    this.disabled = true;
+    safeText(this, 'Loading...');
+    try{
+      var sess = await sb.auth.getSession();
+      var resp = await edgeFn('stripe-portal', {}, sess.data.session.access_token);
+      var data = await resp.json();
+      if(data.url){
+        window.open(data.url,'_blank','noopener');
+      } else {
+        showToast('Could not open billing portal','error');
+      }
+    }catch(e){
+      showToast('Billing portal error','error');
+    }
+    this.disabled = false;
+    safeText(this, 'Manage Billing');
   });
 
-  document.getElementById('logout-btn').addEventListener('click', async () => {
+  /* ---------- EXPORT DATA ---------- */
+  qs('#export-btn').addEventListener('click', async function(){
+    this.disabled = true;
+    safeText(this, 'Exporting...');
+    try{
+      var sess = await sb.auth.getSession();
+      var resp = await edgeFn('export-data', {}, sess.data.session.access_token);
+      var data = await resp.json();
+      var blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'shegoo-data-export.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('Data exported','success');
+    }catch(e){
+      showToast('Export failed','error');
+    }
+    this.disabled = false;
+    safeText(this, 'Download My Data');
+  });
+
+  /* ---------- DELETE ACCOUNT MODAL ---------- */
+  qs('#delete-acct-btn').addEventListener('click', function(){
+    qs('#delete-modal').classList.add('active');
+    qs('#delete-reason').focus();
+  });
+  qs('#delete-cancel').addEventListener('click', function(){
+    qs('#delete-modal').classList.remove('active');
+  });
+  qs('#delete-modal').addEventListener('click', function(e){
+    if(e.target === this) this.classList.remove('active');
+  });
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && qs('#delete-modal').classList.contains('active')){
+      qs('#delete-modal').classList.remove('active');
+    }
+  });
+  qs('#delete-confirm').addEventListener('click', async function(){
+    this.disabled = true;
+    safeText(this, 'Deleting...');
+    try{
+      var sess = await sb.auth.getSession();
+      var reason = qs('#delete-reason').value.trim();
+      await edgeFn('delete-account', {reason:reason}, sess.data.session.access_token);
+      await sb.auth.signOut();
+      window.location.href = '/login/';
+    }catch(e){
+      showToast('Deletion failed','error');
+      this.disabled = false;
+      safeText(this, 'Yes, Delete My Account');
+    }
+  });
+
+  /* ---------- SIGN OUT ---------- */
+  qs('#signout-btn').addEventListener('click', async function(){
     await sb.auth.signOut();
     window.location.href = '/login/';
   });
-}
 
-window.removeWatch = async function(id){
-  if(!confirm('Remove this watch?')) return;
-  await sb.from('rate_watches').update({status:'removed'}).eq('id', id);
-  await loadWatches();
-};
+  /* ---------- ADD WATCH FORM ---------- */
+  qs('#add-watch-btn').addEventListener('click', function(){
+    var form = qs('#add-watch-form');
+    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    if(form.style.display === 'block') qs('#watch-from').focus();
+  });
+  qs('#cancel-watch-btn').addEventListener('click', function(){
+    qs('#add-watch-form').style.display = 'none';
+    safeText(qs('#watch-form-error'), '');
+  });
+  qs('#save-watch-btn').addEventListener('click', addWatch);
 
-init();
+  /* ---------- NPS ---------- */
+  function initNPS(){
+    var lastNps = localStorage.getItem('shegoo_last_nps_date');
+    if(lastNps){
+      var last = new Date(lastNps);
+      var now = new Date();
+      var diffDays = (now - last) / (1000*60*60*24);
+      if(diffDays < 30){
+        qs('#nps-form-wrap').style.display = 'none';
+        qs('#nps-thanks').style.display = 'block';
+        safeText(qs('#nps-thanks'), 'You submitted feedback recently. Thank you!');
+        return;
+      }
+    }
+
+    var scoresDiv = qs('#nps-scores');
+    var selectedScore = null;
+    for(var i = 1; i <= 10; i++){
+      (function(score){
+        var btn = document.createElement('button');
+        btn.className = 'nps-btn';
+        if(score <= 6) btn.classList.add('detractor');
+        else if(score <= 8) btn.classList.add('passive');
+        else btn.classList.add('promoter');
+        btn.textContent = String(score);
+        btn.setAttribute('role','radio');
+        btn.setAttribute('aria-checked','false');
+        btn.setAttribute('aria-label','Score ' + score + ' out of 10');
+        btn.addEventListener('click', function(){
+          qsa('.nps-btn').forEach(function(b){
+            b.classList.remove('selected');
+            b.setAttribute('aria-checked','false');
+          });
+          btn.classList.add('selected');
+          btn.setAttribute('aria-checked','true');
+          selectedScore = score;
+          qs('#nps-comment-wrap').style.display = 'block';
+        });
+        scoresDiv.appendChild(btn);
+      })(i);
+    }
+
+    qs('#nps-submit').addEventListener('click', async function(){
+      if(!selectedScore) return;
+      this.disabled = true;
+      var comment = qs('#nps-comment').value.trim();
+      var res = await sb.from('feedback').insert({
+        member_id: currentUser.id,
+        type: 'nps',
+        score: selectedScore,
+        comment: comment || null
+      });
+      if(res.error){
+        showToast('Failed to submit feedback','error');
+        this.disabled = false;
+        return;
+      }
+      localStorage.setItem('shegoo_last_nps_date', new Date().toISOString());
+      qs('#nps-form-wrap').style.display = 'none';
+      qs('#nps-thanks').style.display = 'block';
+      showToast('Thank you for your feedback!','success');
+    });
+  }
+
+  /* ---------- FEATURE REQUEST ---------- */
+  qs('#feature-toggle').addEventListener('click', function(){
+    var form = qs('#feature-form');
+    form.style.display = form.style.display === 'none' ? 'flex' : 'none';
+    if(form.style.display === 'flex') qs('#feature-text').focus();
+  });
+  qs('#feature-toggle').addEventListener('keydown', function(e){
+    if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); this.click(); }
+  });
+  qs('#feature-submit').addEventListener('click', async function(){
+    var text = qs('#feature-text').value.trim();
+    if(!text){
+      showToast('Please enter your suggestion','error');
+      return;
+    }
+    this.disabled = true;
+    var res = await sb.from('feedback').insert({
+      member_id: currentUser.id,
+      type: 'feature_request',
+      comment: text
+    });
+    if(res.error){
+      showToast('Failed to submit suggestion','error');
+      this.disabled = false;
+      return;
+    }
+    showToast('Suggestion sent, thank you!','success');
+    qs('#feature-text').value = '';
+    qs('#feature-form').style.display = 'none';
+    this.disabled = false;
+  });
+
+  /* ---------- COOKIE BANNER ---------- */
+  function initCookieBanner(){
+    var consent = localStorage.getItem('shegoo_cookie_consent');
+    if(!consent){
+      qs('#cookie-banner').style.display = 'flex';
+    }
+    qs('#cookie-accept').addEventListener('click', function(){
+      localStorage.setItem('shegoo_cookie_consent','accepted');
+      qs('#cookie-banner').style.display = 'none';
+    });
+    qs('#cookie-decline').addEventListener('click', function(){
+      localStorage.setItem('shegoo_cookie_consent','declined');
+      qs('#cookie-banner').style.display = 'none';
+    });
+  }
+
+  /* ---------- BOOT ---------- */
+  init();
+
+})();
 </script>
 </body>
 </html>

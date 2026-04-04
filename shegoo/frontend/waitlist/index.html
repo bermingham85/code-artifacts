@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src https://vntnfljukhshzwvlrlud.supabase.co;">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Shegoo — Join the Waitlist</title>
 <meta name="description" content="Standard and Pro plans are coming soon. Join the waitlist and be first to know when upgrade plans go live.">
@@ -91,7 +92,7 @@ input[type=email]::placeholder{color:rgba(255,255,255,.3)}
     <form id="wl-form">
       <div class="field">
         <label>Your email</label>
-        <input type="email" id="wl-email" placeholder="you@email.com" required>
+        <input type="email" id="wl-email" aria-label="Email address for waitlist" placeholder="you@email.com" required>
       </div>
       <div class="field">
         <label>Which plan are you interested in?</label>
