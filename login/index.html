@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src https://vntnfljukhshzwvlrlud.supabase.co;">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shegoo — Login</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--forest:#1a6b3a;--forest-dark:#0a3d1f;--cream:#faf8f4;--ink:#1a1a18;--gold:#c9a84c;--white:#fff}
+body{font-family:'DM Sans',sans-serif;background:var(--forest-dark);color:var(--white);min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+/* Grain texture */
+body::before{content:'';position:fixed;inset:0;opacity:.06;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+.login-card{position:relative;z-index:1;width:100%;max-width:420px;padding:48px 36px;text-align:center}
+canvas{display:block;margin:0 auto 32px;cursor:pointer}
+h1{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:400;opacity:.7;margin-bottom:36px}
+
+/* States */
+.state{display:none}
+.state.active{display:block}
+
+/* Form */
+label{display:block;text-align:left;font-size:.85rem;font-weight:500;margin-bottom:6px;opacity:.7}
+input[type=email]{width:100%;padding:14px 18px;border:2px solid rgba(255,255,255,.15);border-radius:8px;background:rgba(255,255,255,.05);color:var(--white);font-size:1rem;font-family:inherit;margin-bottom:20px;transition:border-color .2s}
+input[type=email]:focus{outline:none;border-color:var(--gold)}
+input[type=email]::placeholder{color:rgba(255,255,255,.3)}
+.btn{display:inline-block;width:100%;padding:14px;border:none;border-radius:8px;font-size:1rem;font-weight:700;font-family:inherit;cursor:pointer;transition:all .2s}
+.btn-primary{background:var(--forest);color:var(--white)}
+.btn-primary:hover{background:#2d8a52}
+.link{display:block;margin-top:16px;color:var(--gold);font-size:.9rem;text-decoration:none;opacity:.7}
+.link:hover{opacity:1}
+
+/* Sent state */
+.sent-icon{width:64px;height:64px;border-radius:50%;background:rgba(26,107,58,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:2rem}
+.sent-msg{font-size:1.1rem;margin-bottom:8px}
+.sent-sub{opacity:.5;font-size:.9rem;margin-bottom:24px}
+
+/* Preview state */
+.preview-card{background:rgba(255,255,255,.05);border-radius:12px;padding:24px;text-align:left;margin-top:20px}
+.preview-card h3{font-size:.9rem;opacity:.5;margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px}
+.preview-item{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.preview-item:last-child{border:none}
+.preview-item .lbl{opacity:.5;font-size:.85rem}
+.preview-item .val{font-weight:600;font-size:.95rem}
+
+.footer{position:fixed;bottom:20px;left:0;right:0;text-align:center;font-size:.75rem;opacity:.3;z-index:1}
+</style>
+</head>
+<body>
+
+<div class="login-card">
+  <canvas id="logo-canvas" role="img" aria-label="Shegoo animated logo" width="400" height="100"></canvas>
+
+  <!-- STATE 1: Email entry -->
+  <div class="state active" id="state-email">
+    <h1>Sign in to your Shegoo account</h1>
+    <form id="login-form">
+      <label for="email">Email address</label>
+      <input type="email" id="email" aria-label="Email address" placeholder="you@email.com" required autocomplete="email">
+      <button type="submit" class="btn btn-primary">Send magic link</button>
+    </form>
+    <a href="/" class="link">Back to shegoo.money</a>
+  </div>
+
+  <!-- STATE 2: Link sent -->
+  <div class="state" id="state-sent">
+    <div class="sent-icon">&#9993;</div>
+    <div class="sent-msg">Check your inbox</div>
+    <div class="sent-sub">We sent a login link to <strong id="sent-email"></strong></div>
+    <p style="opacity:.5;font-size:.85rem;margin-bottom:24px">Click the link in the email to sign in. No password needed.</p>
+    <button class="btn btn-primary" onclick="showState('state-email')">Try a different email</button>
+  </div>
+
+  <!-- STATE 3: Dashboard preview (shown briefly after auth) -->
+  <div class="state" id="state-preview">
+    <h1>Welcome back</h1>
+    <div class="preview-card">
+      <h3>Your watches</h3>
+      <div class="preview-item"><span class="lbl">EUR/BRL</span><span class="val">Looking...</span></div>
+      <div class="preview-item"><span class="lbl">Messages this month</span><span class="val">0 / 3</span></div>
+    </div>
+    <p style="margin-top:20px;opacity:.5;font-size:.85rem">Redirecting to dashboard...</p>
+  </div>
+</div>
+
+<div class="footer">Bermech Limited &middot; Dublin &middot; Ireland</div>
+
+<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+// Canvas logo animation (compact version)
+(function(){
+  const canvas = document.getElementById('logo-canvas');
+  const ctx = canvas.getContext('2d');
+  const letters = 'Shegoo.'.split('');
+  const pos = letters.map((c,i) => ({c, x:50+i*50, y:65-i*3, glow:0, lit:false}));
+  let fx=-20,fy=55,fi=0,done=false,sparkles=[],start=null,snd=false;
+  const ac = new (window.AudioContext||window.webkitAudioContext)();
+
+  function sound(){
+    if(snd)return;snd=true;
+    const o=ac.createOscillator(),g=ac.createGain();
+    o.connect(g);g.connect(ac.destination);g.gain.value=0.25;
+    o.frequency.setValueAtTime(392,ac.currentTime);
+    o.frequency.linearRampToValueAtTime(784,ac.currentTime+1);
+    o.start();o.stop(ac.currentTime+1.2);
+    setTimeout(()=>{const o2=ac.createOscillator(),g2=ac.createGain();o2.connect(g2);g2.connect(ac.destination);g2.gain.value=0.2;o2.frequency.value=1200;o2.start();o2.stop(ac.currentTime+.1)},1150);
+    setTimeout(()=>{const o3=ac.createOscillator(),g3=ac.createGain();o3.connect(g3);g3.connect(ac.destination);g3.gain.value=0.15;o3.frequency.value=2400;o3.start();o3.stop(ac.currentTime+.05)},1470);
+  }
+
+  function anim(ts){
+    if(!start)start=ts;const el=ts-start;
+    ctx.clearRect(0,0,400,100);
+    pos.forEach((p,i)=>{
+      ctx.save();ctx.font=(i===0?'900 44px':'700 40px')+' "Playfair Display",serif';ctx.textAlign='center';
+      if(p.glow>0){ctx.shadowColor='#1a6b3a';ctx.shadowBlur=p.glow*16;ctx.fillStyle=`rgba(26,107,58,${.5+p.glow*.5})`}
+      else ctx.fillStyle='rgba(255,255,255,0.12)';
+      ctx.fillText(p.c,p.x,p.y);ctx.restore();
+      if(p.lit&&p.glow<1)p.glow=Math.min(1,p.glow+.05);
+    });
+    if(!done&&el>800){
+      const t=pos[fi];if(t){
+        const dx=t.x-fx,dy=(t.y-22)-fy,d=Math.sqrt(dx*dx+dy*dy);
+        if(d<6){t.lit=true;fi++;if(fi>=pos.length){done=true;for(let s=0;s<15;s++)sparkles.push({x:t.x,y:t.y-15,vx:(Math.random()-.5)*3,vy:(Math.random()-.5)*3,life:1})}}
+        else{fx+=dx*.12;fy+=dy*.12}
+        ctx.save();ctx.beginPath();ctx.arc(fx,fy,3,0,Math.PI*2);ctx.fillStyle='#c9a84c';ctx.shadowColor='#c9a84c';ctx.shadowBlur=12;ctx.fill();ctx.restore();
+      }
+    }
+    sparkles=sparkles.filter(s=>s.life>0);
+    sparkles.forEach(s=>{s.x+=s.vx;s.y+=s.vy;s.life-=.02;ctx.save();ctx.beginPath();ctx.arc(s.x,s.y,2*s.life,0,Math.PI*2);ctx.fillStyle=`rgba(201,168,76,${s.life})`;ctx.fill();ctx.restore()});
+    if(el<3000||sparkles.length>0)requestAnimationFrame(anim);
+  }
+  setTimeout(()=>{sound();requestAnimationFrame(anim)},800);
+  canvas.addEventListener('click',()=>{fx=-20;fy=55;fi=0;done=false;snd=false;sparkles=[];start=null;pos.forEach(p=>{p.glow=0;p.lit=false});sound();requestAnimationFrame(anim)});
+})();
+
+// State management
+function showState(id){
+  document.querySelectorAll('.state').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// Supabase auth
+const SUPABASE_URL = 'https://vntnfljukhshzwvlrlud.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZudG5mbGp1a2hzaHp3dmxybHVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNjc1NzAsImV4cCI6MjA5MDc0MzU3MH0.Jq70R73IeWjCfwVqe5fuM_MtaPKAjRmIMmkI2arpKvM'; // Set from env at deploy time
+let supabase;
+
+if(window.supabase && SUPABASE_ANON_KEY){
+  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // Check if returning from magic link
+  supabase.auth.onAuthStateChange((event, session) => {
+    if(event === 'SIGNED_IN' && session){
+      showState('state-preview');
+      setTimeout(() => { window.location.href = '/app/'; }, 2000);
+    }
+  });
+}
+
+// Login form
+document.getElementById('login-form').addEventListener('submit', async function(e){
+  e.preventDefault();
+  const email = document.getElementById('email').value;
+  if(!email) return;
+
+  if(supabase){
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: { emailRedirectTo: window.location.origin + '/app/' }
+    });
+    if(error){
+      alert('Could not send login link. Please try again.');
+      return;
+    }
+  }
+
+  document.getElementById('sent-email').textContent = email;
+  showState('state-sent');
+});
+</script>
+</body>
+</html>
