@@ -29,3 +29,4 @@
 | Migration | Date | Tables |
 |-----------|------|--------|
 | `create_conv_proc_tables` | 2026-04-04 | `conv_raw`, `conv_processed`, `conv_routing_log` |
+| `fix_conv_proc_constraints` | 2026-04-05 | `conv_routing_log`, `conv_processed` (expanded check constraints) |
