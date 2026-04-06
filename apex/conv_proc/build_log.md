@@ -54,6 +54,20 @@
 - [x] Scheduled task `conv-proc-orchestrator` created — runs every 6 hours via Claude Code scheduled tasks
 - [x] Pipeline is now fully self-contained: n8n is optional, Supabase fallback handles all routing
 
+## Phase 8 — Governance Compliance & Bug Fixes (2026-04-05)
+- [x] Extract function: fixed conv_raw status from `"processed"` (not in constraint) to `"extracted"` (valid)
+- [x] Router v7: deployed with 5-second AbortController timeout on `postWebhook()` — prevents n8n webhook hangs from blocking pipeline
+- [x] Extract v7: redeployed with status fix
+- [x] Smoke test end-to-end verified: ingest → extract (560 tokens, 1 memory_update) → route (direct insert to agent_memories) → expand
+- [x] Cleaned up duplicate routing log and agent_memories entries from double router invocation
+- [x] conv_raw smoke test record status corrected: `processing` → `routed`
+- [x] Telegram secrets confirmed: TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID (2085046714) set in Supabase
+- [x] ANTHROPIC_API_KEY rotated to new key after first key had billing issues
+- [x] Model confirmed: `claude-sonnet-4-5-20250929` (claude-sonnet-4-6 does not exist)
+- [x] Build log updated per AGEN-GOVN-001 Rule 3 & 4
+- [x] Document Register updated
+- [x] All changes committed to GitHub
+
 ## Decisions Made
 1. **Supabase changes routed to review queue, not auto-applied** — DDL from conversation extraction is too risky to auto-apply
 2. **NAS artifacts deferred** — NAS not accessible from this host; all artifacts in GitHub repo for sync later

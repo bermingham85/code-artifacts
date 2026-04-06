@@ -31,7 +31,7 @@ Return ONLY valid JSON. Schema:
 
 If a category has no items, return an empty array for it.`;
 
-const EXTRACTION_MODEL = "claude-sonnet-4-6-20250514";
+const EXTRACTION_MODEL = "claude-sonnet-4-5-20250929";
 const MAX_BATCH_SIZE = 5;
 
 async function callClaude(
@@ -148,10 +148,10 @@ Deno.serve(async (req: Request) => {
 
         if (insertErr) throw new Error(insertErr.message);
 
-        // Mark raw as processed
+        // Mark raw as extracted
         await supabase
           .from("conv_raw")
-          .update({ status: "processed" })
+          .update({ status: "extracted" })
           .eq("id", row.id);
 
         results.push({

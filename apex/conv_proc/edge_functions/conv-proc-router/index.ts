@@ -23,11 +23,15 @@ async function postWebhook(
   payload: unknown,
 ): Promise<{ ok: boolean; body: unknown }> {
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
     const res = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
+      signal: controller.signal,
     });
+    clearTimeout(timeoutId);
     const body = await res.json().catch(() => res.statusText);
     return { ok: res.ok, body };
   } catch (err) {

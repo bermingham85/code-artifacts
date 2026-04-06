@@ -1,6 +1,6 @@
 # APEX Document Register
 
-**Last Updated:** 2026-04-04
+**Last Updated:** 2026-04-05
 **Maintained By:** APEX Governance System
 
 ---
@@ -30,3 +30,12 @@
 |-----------|------|--------|
 | `create_conv_proc_tables` | 2026-04-04 | `conv_raw`, `conv_processed`, `conv_routing_log` |
 | `fix_conv_proc_constraints` | 2026-04-05 | `conv_routing_log`, `conv_processed` (expanded check constraints) |
+
+## Edge Function Versions
+
+| Function | Current Version | Last Deployed | Key Changes |
+|----------|----------------|---------------|-------------|
+| `conv-proc-ingest` | v5 | 2026-04-05 | SHA-256 dedup, multi-format support |
+| `conv-proc-extract` | v7 | 2026-04-05 | Model: claude-sonnet-4-5-20250929, status fix (extracted not processed) |
+| `conv-proc-router` | v7 | 2026-04-05 | 5s webhook timeout, direct Supabase fallback, type mapping |
+| `conv-proc-expand` | v5 | 2026-04-05 | Pattern detection threshold 3+, auto skill/n8n stub generation |
