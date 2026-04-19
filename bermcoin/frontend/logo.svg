@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" fill="none">
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#00e5ff"/>
+      <stop offset="100%" stop-color="#00bcd4"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <!-- Key icon -->
+  <g filter="url(#glow)" transform="translate(10,8)">
+    <!-- Key head (circle) -->
+    <circle cx="18" cy="18" r="14" stroke="url(#g1)" stroke-width="2.5" fill="none"/>
+    <!-- Arrow/house shape inside -->
+    <path d="M18 8 L26 16 L23 16 L23 24 L13 24 L13 16 L10 16 Z" fill="url(#g1)" opacity="0.7"/>
+    <!-- Key shaft -->
+    <rect x="16" y="30" width="4" height="14" rx="1" fill="url(#g1)"/>
+    <!-- Wings left -->
+    <path d="M4 18 Q-4 8 2 2 Q8 6 12 12" stroke="url(#g1)" stroke-width="1.5" fill="none" opacity="0.6"/>
+    <path d="M6 22 Q-6 14 0 6 Q6 10 10 16" stroke="url(#g1)" stroke-width="1" fill="none" opacity="0.4"/>
+    <!-- Wings right -->
+    <path d="M32 18 Q40 8 34 2 Q28 6 24 12" stroke="url(#g1)" stroke-width="1.5" fill="none" opacity="0.6"/>
+    <path d="M30 22 Q42 14 36 6 Q30 10 26 16" stroke="url(#g1)" stroke-width="1" fill="none" opacity="0.4"/>
+  </g>
+  <!-- Text -->
+  <text x="58" y="28" font-family="'Playfair Display',Georgia,serif" font-size="24" font-weight="700" fill="#00e5ff" filter="url(#glow)">Bermcoin</text>
+  <text x="58" y="44" font-family="'DM Sans',sans-serif" font-size="9" fill="#c9a84c" letter-spacing="3">EXCHANGE RATES</text>
+</svg>

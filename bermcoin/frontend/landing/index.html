@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src https://vntnfljukhshzwvlrlud.supabase.co https://api.frankfurter.app https://www.revolut.com; img-src 'self' data:;">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="theme-color" content="#0a1628">
 <title>Bermcoin — it arrived</title>
 <meta name="description" content="Bermcoin watches exchange rates and tells you the moment your target rate arrives. Free to start.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,28 +14,28 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --forest:#1a6b3a;--forest-dark:#0a3d1f;--cream:#faf8f4;--ink:#1a1a18;
-  --gold:#c9a84c;--forest-light:#2d8a52;--white:#ffffff;
+  --forest:#00bcd4;--forest-dark:#0a1628;--cream:#0d1f3c;--ink:#e0f7fa;
+  --gold:#c9a84c;--forest-light:#00e5ff;--white:#ffffff;
 }
 html{scroll-behavior:smooth}
-body{font-family:'DM Sans',sans-serif;color:var(--ink);background:var(--cream);line-height:1.6;overflow-x:hidden}
+body{font-family:'DM Sans',sans-serif;color:var(--white);background:var(--forest-dark);line-height:1.6;overflow-x:hidden}
 h1,h2,h3,h4{font-family:'Playfair Display',serif;font-weight:700}
 a{color:var(--forest);text-decoration:none}
 .container{max-width:1140px;margin:0 auto;padding:0 24px}
 
 /* NAV */
-nav{position:fixed;top:0;width:100%;background:var(--cream);border-bottom:1px solid rgba(26,107,58,.1);z-index:100;padding:16px 0}
+nav{position:fixed;top:0;width:100%;background:var(--forest-dark);border-bottom:1px solid rgba(26,107,58,.1);z-index:100;padding:16px 0}
 nav .container{display:flex;align-items:center;justify-content:space-between}
 nav .logo{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;color:var(--forest)}
 nav .links{display:flex;gap:28px;align-items:center}
-nav .links a{font-size:.9rem;font-weight:500;color:var(--ink);opacity:.7;transition:opacity .2s}
+nav .links a{font-size:.9rem;font-weight:500;color:var(--white);opacity:.7;transition:opacity .2s}
 nav .links a:hover{opacity:1}
 .btn{display:inline-block;padding:12px 28px;border-radius:8px;font-weight:700;font-size:.95rem;transition:all .2s;cursor:pointer;border:none}
 .btn-primary{background:var(--forest);color:var(--white)}
 .btn-primary:hover{background:var(--forest-light)}
 .btn-outline{border:2px solid var(--forest);color:var(--forest);background:transparent}
 .btn-outline:hover{background:var(--forest);color:var(--white)}
-.btn-gold{background:var(--gold);color:var(--ink)}
+.btn-gold{background:var(--gold);color:var(--white)}
 
 /* HERO */
 .hero{padding:140px 0 80px;text-align:center}
@@ -57,7 +59,7 @@ section{padding:80px 0}
 
 /* HOW IT WORKS */
 .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:40px}
-.step{text-align:center;padding:40px 24px;background:var(--white);border-radius:16px;box-shadow:0 2px 20px rgba(0,0,0,.04)}
+.step{text-align:center;padding:40px 24px;background:rgba(255,255,255,0.05);border-radius:16px;box-shadow:0 2px 20px rgba(0,0,0,.04)}
 .step .num{width:48px;height:48px;border-radius:50%;background:var(--forest);color:var(--white);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.2rem;margin:0 auto 20px}
 .step h3{margin-bottom:8px;font-size:1.15rem}
 .step p{opacity:.6;font-size:.95rem}
@@ -70,7 +72,7 @@ section{padding:80px 0}
 .video-wrap .play::after{content:'';border-left:24px solid var(--forest);border-top:14px solid transparent;border-bottom:14px solid transparent;margin-left:4px}
 
 /* CALCULATOR GATE */
-.calc-section{background:var(--white);border-top:1px solid rgba(0,0,0,.06)}
+.calc-section{background:rgba(255,255,255,0.05);border-top:1px solid rgba(0,0,0,.06)}
 .email-gate{text-align:center;max-width:480px;margin:0 auto;padding:40px 0}
 .email-gate h2{margin-bottom:12px}
 .email-gate p{opacity:.6;margin-bottom:24px}
@@ -81,10 +83,10 @@ section{padding:80px 0}
 .calculator.visible{display:block}
 .calc-row{display:flex;gap:16px;margin-bottom:16px;align-items:end}
 .calc-row label{font-weight:500;font-size:.85rem;display:block;margin-bottom:6px}
-.calc-row select,.calc-row input[type=number]{width:100%;padding:12px;border:2px solid rgba(0,0,0,.1);border-radius:8px;font-size:1rem;font-family:inherit;background:var(--cream)}
+.calc-row select,.calc-row input[type=number]{width:100%;padding:12px;border:2px solid rgba(0,0,0,.1);border-radius:8px;font-size:1rem;font-family:inherit;background:var(--forest-dark)}
 .calc-row select:focus,.calc-row input:focus{outline:none;border-color:var(--forest)}
 .calc-field{flex:1}
-.calc-results{background:var(--cream);border-radius:16px;padding:32px;margin-top:24px}
+.calc-results{background:var(--forest-dark);border-radius:16px;padding:32px;margin-top:24px}
 .calc-results h3{margin-bottom:16px;color:var(--forest)}
 .result-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(0,0,0,.06)}
 .result-row:last-child{border:none}
@@ -106,18 +108,18 @@ section{padding:80px 0}
 .the-18 p{position:relative;z-index:1;opacity:.7;max-width:500px;margin:0 auto}
 
 /* NUDGE MOCKUPS */
-.mockups{background:var(--cream)}
+.mockups{background:var(--forest-dark)}
 .mockup-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:32px}
-.mockup{background:var(--white);border-radius:16px;padding:28px;box-shadow:0 4px 24px rgba(0,0,0,.06)}
+.mockup{background:rgba(255,255,255,0.05);border-radius:16px;padding:28px;box-shadow:0 4px 24px rgba(0,0,0,.06)}
 .mockup .channel{font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--forest);margin-bottom:12px}
-.mockup .msg{font-size:.9rem;line-height:1.7;white-space:pre-line;color:var(--ink);opacity:.85}
-.mockup .pro-badge{display:inline-block;background:var(--gold);color:var(--ink);padding:2px 10px;border-radius:4px;font-size:.7rem;font-weight:700;margin-left:8px}
+.mockup .msg{font-size:.9rem;line-height:1.7;white-space:pre-line;color:var(--white);opacity:.85}
+.mockup .pro-badge{display:inline-block;background:var(--gold);color:var(--white);padding:2px 10px;border-radius:4px;font-size:.7rem;font-weight:700;margin-left:8px}
 
 /* PLANS */
-.plans-section{background:var(--white)}
+.plans-section{background:rgba(255,255,255,0.05)}
 .toggle-wrap{text-align:center;margin-bottom:40px}
-.toggle{display:inline-flex;background:var(--cream);border-radius:100px;padding:4px}
-.toggle button{padding:10px 24px;border:none;background:none;border-radius:100px;font-family:inherit;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s;color:var(--ink);opacity:.5}
+.toggle{display:inline-flex;background:var(--forest-dark);border-radius:100px;padding:4px}
+.toggle button{padding:10px 24px;border:none;background:none;border-radius:100px;font-family:inherit;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s;color:var(--white);opacity:.5}
 .toggle button.active{background:var(--forest);color:var(--white);opacity:1}
 .plans-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;max-width:960px;margin:0 auto}
 .plan-card{border:2px solid rgba(0,0,0,.06);border-radius:16px;padding:36px;text-align:center;transition:all .2s}
@@ -154,20 +156,20 @@ section{padding:80px 0}
 .wl-success p{opacity:.6;font-size:.95rem}
 
 /* ROUTES */
-.routes{background:var(--cream)}
+.routes{background:var(--forest-dark)}
 .route-pills{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
-.route-pill{display:flex;align-items:center;gap:8px;background:var(--white);padding:10px 18px;border-radius:100px;font-size:.9rem;font-weight:500;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.route-pill{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.05);padding:10px 18px;border-radius:100px;font-size:.9rem;font-weight:500;box-shadow:0 1px 4px rgba(0,0,0,.05)}
 .flag{font-size:1.3rem}
 
 /* TRUST */
-.trust{background:var(--white)}
+.trust{background:rgba(255,255,255,0.05)}
 .trust-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:32px}
 .trust-item{text-align:center;padding:24px}
 .trust-item h3{font-size:1rem;margin-bottom:8px;color:var(--forest)}
 .trust-item p{font-size:.9rem;opacity:.6}
 
 /* FAQ */
-.faq{background:var(--cream)}
+.faq{background:var(--forest-dark)}
 .faq-list{max-width:680px;margin:0 auto}
 .faq-item{border-bottom:1px solid rgba(0,0,0,.08);padding:20px 0}
 .faq-item summary{font-weight:600;cursor:pointer;font-size:1rem;list-style:none;display:flex;justify-content:space-between;align-items:center}
@@ -214,7 +216,7 @@ footer .bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:24px;displa
 .nav-toggle span{display:block;width:24px;height:2px;background:var(--ink);transition:all .3s cubic-bezier(.34,1.56,.64,1)}
 .mobile-menu{position:fixed;top:65px;left:0;right:0;background:rgba(250,248,244,.98);backdrop-filter:blur(20px);border-bottom:1px solid rgba(0,0,0,.06);padding:20px 24px;transform:translateY(-100%);opacity:0;visibility:hidden;transition:all .4s cubic-bezier(.22,1,.36,1);z-index:99}
 .mobile-menu.open{transform:translateY(0);opacity:1;visibility:visible}
-.mobile-menu a{display:block;padding:12px 0;font-size:1rem;font-weight:500;color:var(--ink);border-bottom:1px solid rgba(0,0,0,.04)}
+.mobile-menu a{display:block;padding:12px 0;font-size:1rem;font-weight:500;color:var(--white);border-bottom:1px solid rgba(0,0,0,.04)}
 
 @media(max-width:768px){
   nav .links{display:none}
@@ -728,7 +730,7 @@ bermcoin.com</div>
       ctx.font = (i === 0 ? '900 64px' : '700 58px') + ' "Playfair Display", serif';
       ctx.textAlign = 'center';
       if (p.glow > 0) {
-        ctx.shadowColor = '#1a6b3a';
+        ctx.shadowColor = '#00bcd4';
         ctx.shadowBlur = p.glow * 20;
         ctx.fillStyle = `rgba(26,107,58,${0.5 + p.glow * 0.5})`;
       } else {
