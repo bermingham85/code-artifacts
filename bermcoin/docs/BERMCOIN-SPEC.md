@@ -1,7 +1,7 @@
 # BERMCOIN  Exchange Rate Notification Service
 
 **Owner:** Bermech Limited, Dublin, Ireland
-**Domain:** bermcoin.money / bermcoin.com
+**Domain:** bermcoin.com / bermcoin.com
 **Pronunciation:** sheh-GOO (from Portuguese "chegou"  it arrived)
 **Session:** BERMCOIN-BCK-SES-00001
 **Date:** 2026-04-11

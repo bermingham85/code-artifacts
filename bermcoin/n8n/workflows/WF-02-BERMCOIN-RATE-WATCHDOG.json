@@ -301,7 +301,7 @@
     {
       "parameters": {
         "chatId": "={{ $json.telegram_chat_id }}",
-        "text": "=Bermcoin.\n\n{{ $json.from_ccy }}/{{ $json.to_ccy }} reached {{ $json.current_rate }}\n\nOn {{ $json.send_sym }}{{ $json.send_amount }} your family receives approx {{ $json.recv_sym }}{{ $json.estimated_receive }}\n\nVerify before sending.\nNot financial advice.\n\nbermcoin.money",
+        "text": "=Bermcoin.\n\n{{ $json.from_ccy }}/{{ $json.to_ccy }} reached {{ $json.current_rate }}\n\nOn {{ $json.send_sym }}{{ $json.send_amount }} your family receives approx {{ $json.recv_sym }}{{ $json.estimated_receive }}\n\nVerify before sending.\nNot financial advice.\n\nbermcoin.com",
         "additionalFields": { "parse_mode": "HTML" }
       },
       "id": "send-telegram",
@@ -350,7 +350,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"sender\": { \"name\": \"Bermcoin\", \"email\": \"{{ $env.BERMCOIN_FROM_EMAIL }}\" },\n  \"to\": [{ \"email\": \"{{ $json.email }}\" }],\n  \"subject\": \"{{ $json.from_ccy }}/{{ $json.to_ccy }} reached {{ $json.current_rate }}\",\n  \"htmlContent\": \"<p>Bermcoin.</p><p>{{ $json.from_ccy }}/{{ $json.to_ccy }} reached <strong>{{ $json.current_rate }}</strong></p><p>On {{ $json.send_sym }}{{ $json.send_amount }} your family receives approx <strong>{{ $json.recv_sym }}{{ $json.estimated_receive }}</strong></p><p><a href='https://wise.com/invite/{{ $json.affiliate_ref || '' }}'>Send with Wise</a></p><hr><p style='font-size:11px;color:#888'>Verify before sending. Not financial advice. Rates may change. <a href='https://bermcoin.money'>bermcoin.money</a></p>\"\n}",
+        "jsonBody": "={\n  \"sender\": { \"name\": \"Bermcoin\", \"email\": \"{{ $env.BERMCOIN_FROM_EMAIL }}\" },\n  \"to\": [{ \"email\": \"{{ $json.email }}\" }],\n  \"subject\": \"{{ $json.from_ccy }}/{{ $json.to_ccy }} reached {{ $json.current_rate }}\",\n  \"htmlContent\": \"<p>Bermcoin.</p><p>{{ $json.from_ccy }}/{{ $json.to_ccy }} reached <strong>{{ $json.current_rate }}</strong></p><p>On {{ $json.send_sym }}{{ $json.send_amount }} your family receives approx <strong>{{ $json.recv_sym }}{{ $json.estimated_receive }}</strong></p><p><a href='https://wise.com/invite/{{ $json.affiliate_ref || '' }}'>Send with Wise</a></p><hr><p style='font-size:11px;color:#888'>Verify before sending. Not financial advice. Rates may change. <a href='https://bermcoin.com'>bermcoin.com</a></p>\"\n}",
         "options": { "timeout": 10000 }
       },
       "id": "send-email",
