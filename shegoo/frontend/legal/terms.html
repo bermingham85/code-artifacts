@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service - Shegoo</title>
+    <meta name="description" content="Shegoo Terms of Service. The rules for using shegoo.money, operated by Bermech Limited, Dublin, Ireland.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --forest: #1a6b3a;
+            --cream: #faf8f4;
+            --ink: #1a1a18;
+            --gold: #c9a84c;
+        }
+        body { font-family: "DM Sans", sans-serif; background: var(--cream); color: var(--ink); line-height: 1.7; }
+        h1, h2, h3 { font-family: "Playfair Display", serif; }
+
+        nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: var(--cream); border-bottom: 1px solid rgba(26,107,58,.12); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 64px; }
+        .nav-logo { font-family: "Playfair Display", serif; font-size: 1.5rem; font-weight: 700; color: var(--forest); text-decoration: none; }
+        .nav-logo span { color: var(--gold); }
+        .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+        .nav-links a { text-decoration: none; color: var(--ink); font-size: .95rem; font-weight: 500; transition: color .2s; }
+        .nav-links a:hover { color: var(--forest); }
+        .nav-links .btn-login { background: var(--forest); color: #fff; padding: .45rem 1.2rem; border-radius: 6px; }
+        .nav-links .btn-login:hover { background: #155c30; color: #fff; }
+        .hamburger { display: none; background: none; border: none; cursor: pointer; padding: 4px; }
+        .hamburger svg { width: 28px; height: 28px; stroke: var(--ink); }
+
+        main { max-width: 760px; margin: 0 auto; padding: 100px 1.5rem 4rem; }
+        h1 { font-size: 2.2rem; color: var(--forest); margin-bottom: .5rem; }
+        .meta { color: #777; font-size: .9rem; margin-bottom: 2.5rem; }
+        h2 { font-size: 1.35rem; color: var(--forest); margin-top: 2.5rem; margin-bottom: .75rem; border-bottom: 2px solid var(--gold); padding-bottom: .3rem; }
+        p, li { font-size: 1rem; margin-bottom: .75rem; }
+        ul { padding-left: 1.5rem; margin-bottom: 1rem; }
+        li { margin-bottom: .35rem; }
+        a { color: var(--forest); }
+        strong { font-weight: 600; }
+        .highlight-box { background: #fff; border-left: 4px solid var(--gold); padding: 1rem 1.25rem; border-radius: 0 8px 8px 0; margin: 1.5rem 0; }
+        .warning-box { background: #fff; border-left: 4px solid #d35400; padding: 1rem 1.25rem; border-radius: 0 8px 8px 0; margin: 1.5rem 0; }
+
+        footer { background: var(--ink); color: rgba(255,255,255,.7); padding: 2.5rem 2rem; margin-top: 4rem; }
+        .footer-inner { max-width: 960px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: start; gap: 2rem; }
+        .footer-brand { font-family: "Playfair Display", serif; font-size: 1.3rem; font-weight: 700; color: #fff; margin-bottom: .25rem; }
+        .footer-brand span { color: var(--gold); }
+        .footer-legal { font-size: .85rem; }
+        .footer-links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+        .footer-links a { color: rgba(255,255,255,.7); text-decoration: none; font-size: .85rem; transition: color .2s; }
+        .footer-links a:hover { color: var(--gold); }
+
+        @media (max-width: 640px) {
+            nav { padding: 0 1rem; }
+            .nav-links { display: none; position: absolute; top: 64px; left: 0; right: 0; background: var(--cream); flex-direction: column; padding: 1rem 1.5rem; border-bottom: 1px solid rgba(26,107,58,.12); }
+            .nav-links.open { display: flex; }
+            .hamburger { display: block; }
+            h1 { font-size: 1.6rem; }
+            main { padding-top: 84px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <a href="/" class="nav-logo">Shegoo<span>.</span></a>
+    <button class="hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/help/">Help</a>
+        <a href="/help/contact.html">Contact</a>
+        <a href="/dashboard" class="btn-login">Login</a>
+    </div>
+</nav>
+
+<main>
+    <h1>Terms of Service</h1>
+    <p class="meta">Version 1.0 &mdash; Effective 2 April 2026 &mdash; Bermech Limited, Dublin, Ireland</p>
+
+    <p>By using Shegoo (<a href="https://shegoo.money">shegoo.money</a>), you agree to these terms. If you do not agree, please do not use the service. These terms are a legal agreement between you and Bermech Limited, Dublin, Ireland.</p>
+
+    <h2>1. What Shegoo Is</h2>
+    <p>Shegoo is an <strong>information service</strong>. We watch exchange rates and send you notifications when rates hit levels you care about. That is it.</p>
+
+    <div class="warning-box">
+        <p><strong>Shegoo does NOT:</strong></p>
+        <ul>
+            <li>Handle, transfer, or hold money on your behalf.</li>
+            <li>Provide financial advice of any kind.</li>
+            <li>Act as a regulated financial entity.</li>
+            <li>Recommend when you should or should not exchange currency.</li>
+        </ul>
+        <p>Every notification we send includes a &ldquo;not financial advice&rdquo; disclaimer. We mean it.</p>
+    </div>
+
+    <h2>2. Exchange Rate Data</h2>
+    <p>Our rates are sourced from the <strong>European Central Bank</strong> and <strong>Revolut</strong>. While we do our best to display accurate, up-to-date information, we do not guarantee the accuracy, completeness, or timeliness of any rate data. Rates can change rapidly and the rate you see in a notification may differ from the rate available when you act on it.</p>
+
+    <h2>3. Your Account</h2>
+    <ul>
+        <li>You must provide a valid email address to create an account.</li>
+        <li>One account per person. Do not create multiple accounts.</li>
+        <li>You are responsible for keeping your account secure and for all activity that occurs under your account.</li>
+        <li>You must be at least 18 years old to use Shegoo.</li>
+    </ul>
+
+    <h2>4. Plans &amp; Billing</h2>
+    <ul>
+        <li><strong>Free plan</strong> &mdash; free forever. No credit card required. We will never retroactively charge for the free plan.</li>
+        <li><strong>Paid plans</strong> &mdash; billed monthly or annually via Stripe. Prices are displayed before you subscribe.</li>
+        <li><strong>Cancel any time</strong> &mdash; you can cancel your paid plan at any time from your Dashboard. Your plan remains active until the end of the current billing period.</li>
+        <li><strong>No refunds</strong> &mdash; we do not offer refunds for partial billing periods. If you cancel mid-month, you retain access until the period ends.</li>
+        <li><strong>Price changes</strong> &mdash; if we change pricing, existing subscribers will be given at least 30 days notice before their next billing cycle.</li>
+    </ul>
+
+    <h2>5. Service Availability</h2>
+    <p>We aim to keep Shegoo running reliably, but we provide the service on a <strong>best-effort basis</strong>. There is no SLA (service level agreement), particularly for the free plan. We may be temporarily unavailable for maintenance, updates, or circumstances beyond our control. We will try to give advance notice for planned maintenance.</p>
+
+    <h2>6. Prohibited Use</h2>
+    <p>You agree not to:</p>
+    <ul>
+        <li><strong>Scrape or automate</strong> &mdash; use bots, scrapers, or automated tools to access Shegoo or extract rate data.</li>
+        <li><strong>Resell data</strong> &mdash; republish, redistribute, or resell any rate data obtained from Shegoo.</li>
+        <li><strong>Impersonate</strong> &mdash; pretend to be another person or misrepresent your identity.</li>
+        <li><strong>Abuse the service</strong> &mdash; overload our systems, attempt to gain unauthorised access, or interfere with other users.</li>
+        <li><strong>Use for illegal purposes</strong> &mdash; use Shegoo in connection with any activity that violates applicable laws.</li>
+    </ul>
+
+    <h2>7. Intellectual Property</h2>
+    <p>The Shegoo name, logo, design, and original content are the property of Bermech Limited. You may not copy, modify, or distribute them without our written permission. Exchange rate data itself is sourced from third parties and is subject to their respective terms.</p>
+
+    <h2>8. Limitation of Liability</h2>
+    <div class="highlight-box">
+        <p>To the maximum extent permitted by Irish law, Bermech Limited&rsquo;s total liability to you for any claims arising from or related to your use of Shegoo is limited to the total fees you have paid to us in the <strong>12 months</strong> preceding the claim.</p>
+        <p>We are not liable for any indirect, incidental, special, consequential, or punitive damages, including but not limited to loss of profits, data, or financial losses resulting from actions taken based on rate information provided by Shegoo.</p>
+    </div>
+
+    <h2>9. Termination</h2>
+    <ul>
+        <li><strong>By you</strong> &mdash; you may delete your account at any time from Dashboard &gt; Account. See our <a href="/legal/privacy.html">Privacy Policy</a> for data deletion details.</li>
+        <li><strong>By us</strong> &mdash; we may suspend or terminate accounts that violate these terms, abuse the service, or engage in prohibited activities. We will notify you by email if we take this action, with a reason.</li>
+    </ul>
+
+    <h2>10. Governing Law &amp; Jurisdiction</h2>
+    <p>These terms are governed by the <strong>laws of Ireland</strong>. Any disputes will be subject to the exclusive jurisdiction of the <strong>courts of Ireland</strong>.</p>
+
+    <h2>11. Changes to These Terms</h2>
+    <p>We may update these terms from time to time. If we make material changes, we will notify you by email at least 30 days before the new terms take effect. Continued use of Shegoo after changes take effect constitutes acceptance of the updated terms.</p>
+
+    <h2>12. Contact</h2>
+    <p>Questions about these terms? Email us at <a href="mailto:hello@shegoo.money">hello@shegoo.money</a> or visit our <a href="/help/contact.html">contact page</a>.</p>
+
+</main>
+
+<footer>
+    <div class="footer-inner">
+        <div>
+            <div class="footer-brand">Shegoo<span>.</span></div>
+            <p class="footer-legal">&copy; 2026 Bermech Limited, Dublin, Ireland. All rights reserved.</p>
+        </div>
+        <div class="footer-links">
+            <a href="/legal/privacy.html">Privacy</a>
+            <a href="/legal/terms.html">Terms</a>
+            <a href="/legal/cookies.html">Cookies</a>
+            <a href="/help/">Help</a>
+            <a href="/help/contact.html">Contact</a>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>

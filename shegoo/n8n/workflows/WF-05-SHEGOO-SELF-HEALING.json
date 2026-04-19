@@ -1,0 +1,429 @@
+{
+  "name": "WF-05 Shegoo Self-Healing",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 6 * * *"
+            }
+          ]
+        }
+      },
+      "id": "schedule-daily",
+      "name": "Daily 6am",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "shegoo-heal",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "wh-heal",
+      "name": "Webhook Manual Heal",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 500],
+      "webhookId": "shegoo-heal"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://api.frankfurter.app/latest?from=GBP&to=EUR",
+        "options": { "timeout": 8000 }
+      },
+      "id": "frank-health",
+      "name": "Frankfurter Health Check",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [500, 400],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const resp = $input.first().json;\nconst frankfurterUp = resp?.rates?.EUR ? true : false;\nreturn [{ json: { frankfurter_up: frankfurterUp } }];"
+      },
+      "id": "assess-frank",
+      "name": "Assess Frankfurter",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [720, 400]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/rates_history?recorded_at=gte.{{ $now.startOf('day').toISO() }}&select=id",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_ROLE_KEY }}" },
+            { "name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SERVICE_ROLE_KEY }}" },
+            { "name": "Prefer", "value": "count=exact" }
+          ]
+        },
+        "options": { "timeout": 10000, "fullResponse": true }
+      },
+      "id": "count-today-history",
+      "name": "Count Today Rates History",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [940, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/config?next_check=lt.{{ $now.toISO() }}&select=key,next_check",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_ROLE_KEY }}" },
+            { "name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SERVICE_ROLE_KEY }}" }
+          ]
+        },
+        "options": { "timeout": 10000 }
+      },
+      "id": "check-overdue-config",
+      "name": "Check Overdue Config",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [940, 500]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/rate_cache?is_stale=eq.true&select=from_ccy,to_ccy,fetched_at",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_ROLE_KEY }}" },
+            { "name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SERVICE_ROLE_KEY }}" }
+          ]
+        },
+        "options": { "timeout": 10000 }
+      },
+      "id": "check-stale-cache",
+      "name": "Check Stale Rate Cache",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [940, 700]
+    },
+    {
+      "parameters": {
+        "jsCode": "const staleRows = $('Check Stale Rate Cache').all();\nconst now = new Date();\nconst fourHoursAgo = new Date(now.getTime() - 4 * 60 * 60 * 1000);\n\nconst staleOver4h = staleRows.filter(row => {\n  const fetched = new Date(row.json.fetched_at);\n  return fetched < fourHoursAgo;\n});\n\nreturn [{ json: { stale_count: staleRows.length, stale_over_4h: staleOver4h.length, pairs: staleOver4h.map(r => `${r.json.from_ccy}/${r.json.to_ccy}`) } }];"
+      },
+      "id": "assess-stale",
+      "name": "Assess Stale Rates",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1160, 700]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "stale-4h",
+              "leftValue": "={{ $json.stale_over_4h }}",
+              "rightValue": 0,
+              "operator": { "type": "number", "operation": "gt" }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "if-stale-4h",
+      "name": "IF Stale > 4h",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1380, 700]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Attempt fallback re-fetch for stale pairs\nconst pairs = $json.pairs || [];\nconst results = [];\n\nfor (const pair of pairs) {\n  const [from, to] = pair.split('/');\n  try {\n    const resp = await fetch(`https://open.er-api.com/v6/latest/${from}`);\n    const data = await resp.json();\n    if (data?.rates?.[to]) {\n      results.push({ pair, rate: data.rates[to], source: 'open.er-api', recovered: true });\n    } else {\n      results.push({ pair, recovered: false });\n    }\n  } catch (e) {\n    results.push({ pair, recovered: false, error: e.message });\n  }\n}\n\nconst allDown = results.every(r => !r.recovered);\nreturn [{ json: { results, all_sources_down: allDown } }];"
+      },
+      "id": "fallback-refetch",
+      "name": "Fallback Re-fetch",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1600, 620]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "all-down",
+              "leftValue": "={{ $json.all_sources_down }}",
+              "rightValue": true,
+              "operator": { "type": "boolean", "operation": "true" }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "if-all-down",
+      "name": "IF All Sources Down",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1820, 620]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $env.SHEGOO_OPS_CHAT_ID }}",
+        "text": "=EMERGENCY: All rate sources are down. Stale pairs: {{ $('Assess Stale Rates').item.json.pairs.join(', ') }}. Manual intervention required.",
+        "additionalFields": {}
+      },
+      "id": "tg-emergency",
+      "name": "Telegram Emergency Alert",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [2040, 540],
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-cred",
+          "name": "Shegoo Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const today = new Date();\nconst day = today.getDate();\nconst month = today.getMonth(); // 0-indexed\n\nconst isFirstOfMonth = day === 1;\nconst isQuarterly = isFirstOfMonth && [0, 3, 6, 9].includes(month); // Jan, Apr, Jul, Oct\n\nreturn [{ json: { is_first_of_month: isFirstOfMonth, is_quarterly: isQuarterly } }];"
+      },
+      "id": "check-dates",
+      "name": "Check Date Conditions",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1160, 400]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "1st-month",
+              "leftValue": "={{ $json.is_first_of_month }}",
+              "rightValue": true,
+              "operator": { "type": "boolean", "operation": "true" }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "if-1st-month",
+      "name": "IF 1st of Month",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1380, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/config?key=eq.iof_rate_brl&select=key,value,last_checked",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_ROLE_KEY }}" },
+            { "name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SERVICE_ROLE_KEY }}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "check-iof-brl",
+      "name": "Check IOF Rate BRL",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1600, 220]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "quarterly",
+              "leftValue": "={{ $('Check Date Conditions').item.json.is_quarterly }}",
+              "rightValue": true,
+              "operator": { "type": "boolean", "operation": "true" }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "if-quarterly",
+      "name": "IF Quarterly",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1380, 480]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/config?key=like.wise_fee_*&select=key,value,last_checked",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_ROLE_KEY }}" },
+            { "name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SERVICE_ROLE_KEY }}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "check-wise-fees",
+      "name": "Check Wise Fees",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1600, 480]
+    },
+    {
+      "parameters": {
+        "jsCode": "const frankUp = $('Assess Frankfurter').item.json.frankfurter_up;\nconst historyResp = $('Count Today Rates History').item.json;\n\n// Extract count from content-range header or body length\nconst recordsToday = Array.isArray(historyResp.body) ? historyResp.body.length : (historyResp.headers?.['content-range']?.split('/')[1] || '0');\n\nconst stale = $('Assess Stale Rates').item.json;\nconst overdueConfig = $('Check Overdue Config').all();\n\nconst summary = [\n  'Shegoo health',\n  `Frankfurter: ${frankUp ? 'up' : 'down'}`,\n  `Records today: ${recordsToday}`,\n  `Stale pairs: ${stale.stale_count}`,\n  `Overdue config: ${overdueConfig.length}`\n].join('\\n');\n\nreturn [{ json: { summary } }];"
+      },
+      "id": "build-summary",
+      "name": "Build Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2040, 400]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $env.SHEGOO_OPS_CHAT_ID }}",
+        "text": "={{ $json.summary }}",
+        "additionalFields": {}
+      },
+      "id": "tg-ops-health",
+      "name": "Telegram Daily Health",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [2260, 400],
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-cred",
+          "name": "Shegoo Telegram Bot"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Daily 6am": {
+      "main": [
+        [{ "node": "Frankfurter Health Check", "type": "main", "index": 0 }]
+      ]
+    },
+    "Webhook Manual Heal": {
+      "main": [
+        [{ "node": "Frankfurter Health Check", "type": "main", "index": 0 }]
+      ]
+    },
+    "Frankfurter Health Check": {
+      "main": [
+        [{ "node": "Assess Frankfurter", "type": "main", "index": 0 }]
+      ]
+    },
+    "Assess Frankfurter": {
+      "main": [
+        [
+          { "node": "Count Today Rates History", "type": "main", "index": 0 },
+          { "node": "Check Overdue Config", "type": "main", "index": 0 },
+          { "node": "Check Stale Rate Cache", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Count Today Rates History": {
+      "main": [
+        [{ "node": "Check Date Conditions", "type": "main", "index": 0 }]
+      ]
+    },
+    "Check Overdue Config": {
+      "main": [
+        [{ "node": "Check Date Conditions", "type": "main", "index": 0 }]
+      ]
+    },
+    "Check Stale Rate Cache": {
+      "main": [
+        [{ "node": "Assess Stale Rates", "type": "main", "index": 0 }]
+      ]
+    },
+    "Assess Stale Rates": {
+      "main": [
+        [{ "node": "IF Stale > 4h", "type": "main", "index": 0 }]
+      ]
+    },
+    "IF Stale > 4h": {
+      "main": [
+        [{ "node": "Fallback Re-fetch", "type": "main", "index": 0 }],
+        [{ "node": "Build Summary", "type": "main", "index": 0 }]
+      ]
+    },
+    "Fallback Re-fetch": {
+      "main": [
+        [{ "node": "IF All Sources Down", "type": "main", "index": 0 }]
+      ]
+    },
+    "IF All Sources Down": {
+      "main": [
+        [{ "node": "Telegram Emergency Alert", "type": "main", "index": 0 }],
+        [{ "node": "Build Summary", "type": "main", "index": 0 }]
+      ]
+    },
+    "Telegram Emergency Alert": {
+      "main": [
+        [{ "node": "Build Summary", "type": "main", "index": 0 }]
+      ]
+    },
+    "Check Date Conditions": {
+      "main": [
+        [
+          { "node": "IF 1st of Month", "type": "main", "index": 0 },
+          { "node": "IF Quarterly", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "IF 1st of Month": {
+      "main": [
+        [{ "node": "Check IOF Rate BRL", "type": "main", "index": 0 }],
+        []
+      ]
+    },
+    "Check IOF Rate BRL": {
+      "main": [
+        [{ "node": "Build Summary", "type": "main", "index": 0 }]
+      ]
+    },
+    "IF Quarterly": {
+      "main": [
+        [{ "node": "Check Wise Fees", "type": "main", "index": 0 }],
+        []
+      ]
+    },
+    "Check Wise Fees": {
+      "main": [
+        [{ "node": "Build Summary", "type": "main", "index": 0 }]
+      ]
+    },
+    "Build Summary": {
+      "main": [
+        [{ "node": "Telegram Daily Health", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    { "name": "shegoo" },
+    { "name": "self-healing" }
+  ],
+  "triggerCount": 2,
+  "updatedAt": "2026-04-02T00:00:00.000Z",
+  "versionId": "wf-05-v1"
+}

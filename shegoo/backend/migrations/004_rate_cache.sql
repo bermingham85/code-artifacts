@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS rate_cache (
+  pair TEXT PRIMARY KEY,
+  rate NUMERIC NOT NULL,
+  source TEXT NOT NULL,
+  fetched_at TIMESTAMPTZ DEFAULT NOW(),
+  is_stale BOOLEAN DEFAULT FALSE,
+  stale_since TIMESTAMPTZ
+);

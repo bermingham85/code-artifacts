@@ -1,0 +1,223 @@
+{
+  "name": "WF-04 Shegoo Offboarding",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "shegoo-offboard",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "wh-offboard",
+      "name": "Webhook Stripe Offboard",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 400],
+      "webhookId": "shegoo-offboard"
+    },
+    {
+      "parameters": {
+        "jsCode": "const crypto = require('crypto');\n\nconst payload = $input.first().json.body;\nconst sigHeader = $input.first().json.headers['stripe-signature'];\nconst secret = $env.STRIPE_WH_OFFBOARD_SECRET;\n\nif (!sigHeader || !secret) {\n  throw new Error('Missing signature or secret');\n}\n\nconst parts = {};\nsigHeader.split(',').forEach(p => {\n  const [k, v] = p.split('=');\n  parts[k] = v;\n});\n\nconst signedPayload = parts.t + '.' + JSON.stringify(payload);\nconst expected = crypto.createHmac('sha256', secret).update(signedPayload).digest('hex');\n\nif (expected !== parts.v1) {\n  throw new Error('Invalid Stripe signature');\n}\n\nreturn [{ json: { verified: true, body: payload, timestamp: parts.t } }];"
+      },
+      "id": "verify-sig-offboard",
+      "name": "Verify Stripe Signature",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "const event = $input.first().json.body;\nconst obj = event.data?.object || {};\nconst stripe_customer_id = obj.customer || '';\nreturn [{ json: { stripe_customer_id } }];"
+      },
+      "id": "extract-customer",
+      "name": "Extract Customer ID",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 400]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/members?stripe_customer_id=eq.{{ $json.stripe_customer_id }}&select=id,plan,email&limit=1",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_ROLE_KEY }}" },
+            { "name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SERVICE_ROLE_KEY }}" }
+          ]
+        },
+        "options": { "timeout": 10000 }
+      },
+      "id": "find-member",
+      "name": "Find Member by Stripe ID",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 400]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/members?id=eq.{{ $json[0].id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_ROLE_KEY }}" },
+            { "name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SERVICE_ROLE_KEY }}" },
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "Prefer", "value": "return=representation" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"status\": \"cancelled\",\n  \"cancelled_at\": \"{{ $now.toISO() }}\"\n}",
+        "options": {}
+      },
+      "id": "cancel-member",
+      "name": "Cancel Member",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1120, 400]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/rate_watches?member_id=eq.{{ $('Find Member by Stripe ID').item.json[0].id }}&status=eq.looking",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_ROLE_KEY }}" },
+            { "name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SERVICE_ROLE_KEY }}" },
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "Prefer", "value": "return=representation" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{ \"status\": \"on_hold\" }",
+        "options": {}
+      },
+      "id": "hold-watches",
+      "name": "Hold Watches (Never Delete)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1340, 400]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/churn_log",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_ROLE_KEY }}" },
+            { "name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SERVICE_ROLE_KEY }}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"member_id\": \"{{ $('Find Member by Stripe ID').item.json[0].id }}\",\n  \"plan\": \"{{ $('Find Member by Stripe ID').item.json[0].plan }}\",\n  \"churned_at\": \"{{ $now.toISO() }}\"\n}",
+        "options": {}
+      },
+      "id": "insert-churn",
+      "name": "Insert Churn Log",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1560, 400]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/audit_log",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_ROLE_KEY }}" },
+            { "name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SERVICE_ROLE_KEY }}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"event\": \"member_offboarded\",\n  \"member_id\": \"{{ $('Find Member by Stripe ID').item.json[0].id }}\",\n  \"details\": \"Plan: {{ $('Find Member by Stripe ID').item.json[0].plan }}\",\n  \"created_at\": \"{{ $now.toISO() }}\"\n}",
+        "options": {}
+      },
+      "id": "audit-log-offboard",
+      "name": "Insert Audit Log",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1780, 400]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $env.SHEGOO_OPS_CHAT_ID }}",
+        "text": "=Churn \u00b7 {{ $('Find Member by Stripe ID').item.json[0].plan }}",
+        "additionalFields": {}
+      },
+      "id": "tg-ops-churn",
+      "name": "Telegram Ops Churn",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [2000, 400],
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-cred",
+          "name": "Shegoo Telegram Bot"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook Stripe Offboard": {
+      "main": [
+        [{ "node": "Verify Stripe Signature", "type": "main", "index": 0 }]
+      ]
+    },
+    "Verify Stripe Signature": {
+      "main": [
+        [{ "node": "Extract Customer ID", "type": "main", "index": 0 }]
+      ]
+    },
+    "Extract Customer ID": {
+      "main": [
+        [{ "node": "Find Member by Stripe ID", "type": "main", "index": 0 }]
+      ]
+    },
+    "Find Member by Stripe ID": {
+      "main": [
+        [{ "node": "Cancel Member", "type": "main", "index": 0 }]
+      ]
+    },
+    "Cancel Member": {
+      "main": [
+        [{ "node": "Hold Watches (Never Delete)", "type": "main", "index": 0 }]
+      ]
+    },
+    "Hold Watches (Never Delete)": {
+      "main": [
+        [{ "node": "Insert Churn Log", "type": "main", "index": 0 }]
+      ]
+    },
+    "Insert Churn Log": {
+      "main": [
+        [{ "node": "Insert Audit Log", "type": "main", "index": 0 }]
+      ]
+    },
+    "Insert Audit Log": {
+      "main": [
+        [{ "node": "Telegram Ops Churn", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    { "name": "shegoo" },
+    { "name": "offboarding" }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2026-04-02T00:00:00.000Z",
+  "versionId": "wf-04-v1"
+}
