@@ -1,0 +1,53 @@
+{
+  "phase": "PH-06",
+  "name": "The Blind Postman",
+  "ref_code": "APEX-BP-001",
+  "status": "CERTIFIED_COMPLETE",
+  "certified_at": "2026-03-03T11:26:06Z",
+  "certified_by": "SYS",
+  "evidence": {
+    "workflow_name": "APEX Blind Postman",
+    "n8n_workflow_id": "CHk7hcqn2Kl1abdc",
+    "n8n_url": "http://192.168.50.246:5678",
+    "total_nodes": 12,
+    "trigger_nodes": [
+      "Watch Hub Folder (localFileTrigger)",
+      "Poll Fallback 30s (scheduleTrigger)"
+    ],
+    "routing": "meta.receiver only (zero-knowledge)",
+    "receivers": [
+      "foreman",
+      "originator",
+      "claudeclaw"
+    ],
+    "fallback": "Log Unknown Receiver",
+    "nas_base_path": "/share/CE_CACHEDEV1_DATA/Automations/apex",
+    "paths_updated": true
+  },
+  "tests": [
+    {
+      "test": "Workflow JSON valid",
+      "result": "PASS"
+    },
+    {
+      "test": "12 nodes present",
+      "result": "PASS"
+    },
+    {
+      "test": "Zero-knowledge routing via meta.receiver",
+      "result": "PASS"
+    },
+    {
+      "test": "Paths updated for NAS",
+      "result": "PASS"
+    },
+    {
+      "test": "Imported to n8n (CHk7hcqn2Kl1abdc)",
+      "result": "PASS"
+    },
+    {
+      "test": "Idempotency guard via foreman.py",
+      "result": "PASS"
+    }
+  ]
+}

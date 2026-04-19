@@ -1,0 +1,47 @@
+{
+  "meta": {
+    "job_id": "f54af343-5da4-40b4-bf06-1060d12b2e56",
+    "ref_code": "APEX-SYS-WF-00000",
+    "created_at": "2026-02-27T11:25:55Z",
+    "sender": "human_originator",
+    "receiver": "foreman",
+    "project": "APEX",
+    "chain_next": null,
+    "idempotency_key": null,
+    "retry_count": 0,
+    "max_retries": 3,
+    "priority": "NORMAL"
+  },
+  "sop": {
+    "action": "muscle_file_copy",
+    "inputs": [
+      "C:\\Users\\bermi\\Projects\\apex\\registry\\sources.json",
+      "C:\\Users\\bermi\\Projects\\apex\\audit\\smoke_copy.txt"
+    ],
+    "parameters": {},
+    "requirements": [],
+    "timeout_seconds": 300
+  },
+  "task_folder": "C:\\Users\\bermi\\Projects\\apex\\active_projects\\tasks\\task_f54af343-5da4-40b4-bf06-1060d12b2e56",
+  "qa_gate": {
+    "rule": "FILE_EXISTS",
+    "checks": [
+      {
+        "rule": "FILE_EXISTS",
+        "target": "C:\\Users\\bermi\\Projects\\apex\\audit\\smoke_copy.txt",
+        "min_size_bytes": 0,
+        "expected_string": null
+      }
+    ]
+  },
+  "status": {
+    "state": "FAILED",
+    "started_at": null,
+    "completed_at": null,
+    "duration_seconds": null,
+    "diagnostic": null,
+    "traceback": null,
+    "qa_result": null,
+    "exit_code": null
+  }
+}

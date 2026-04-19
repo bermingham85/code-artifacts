@@ -1,0 +1,58 @@
+{
+  "meta": {
+    "job_id": "PH05-TEST-f65794e6",
+    "ref_code": "APEX-SYS-WF-00000",
+    "created_at": "2026-03-03T11:13:24Z",
+    "sender": "sys_certifier",
+    "receiver": "foreman",
+    "project": "apex_ph05_certification",
+    "chain_next": null,
+    "idempotency_key": "ph05-cert-PH05-TEST-f65794e6",
+    "retry_count": 0,
+    "max_retries": 3,
+    "priority": "NORMAL"
+  },
+  "sop": {
+    "action": "muscle_health_check",
+    "inputs": [],
+    "parameters": {},
+    "requirements": [],
+    "timeout_seconds": 60
+  },
+  "task_folder": "",
+  "qa_gate": {
+    "rule": "MULTI",
+    "checks": [
+      {
+        "rule": "FILE_EXISTS",
+        "target": "\\\\192.168.50.246\\Automations\\apex\\audit\\health\\health_report.json",
+        "min_size_bytes": 10
+      },
+      {
+        "rule": "JSON_VALID",
+        "target": "\\\\192.168.50.246\\Automations\\apex\\audit\\health\\health_report.json"
+      }
+    ]
+  },
+  "status": {
+    "state": "COMPLETE",
+    "started_at": "2026-03-03T11:13:30Z",
+    "completed_at": "2026-03-03T11:13:36Z",
+    "duration_seconds": 5.92,
+    "diagnostic": null,
+    "traceback": null,
+    "qa_result": "PASS",
+    "exit_code": 0,
+    "qa_checks": [
+      {
+        "rule": "FILE_EXISTS",
+        "result": "PASS"
+      },
+      {
+        "rule": "JSON_VALID",
+        "result": "PASS"
+      }
+    ],
+    "output_summary": "\\\\192.168.50.246\\Automations\\apex\\audit\\health\\health_report.json"
+  }
+}

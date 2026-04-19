@@ -1,0 +1,44 @@
+{
+  "meta": {
+    "job_id": "WO-DEMO-001",
+    "ref_code": "APEX-MB-WF-00001",
+    "created_at": "2026-02-27T12:00:00Z",
+    "sender": "human_originator",
+    "receiver": "foreman",
+    "project": "apex_factory_test",
+    "chain_next": null,
+    "idempotency_key": "demo-001-initial",
+    "retry_count": 0,
+    "max_retries": 3,
+    "priority": "NORMAL"
+  },
+  "sop": {
+    "action": "muscle_health_check",
+    "inputs": [],
+    "parameters": {},
+    "requirements": [],
+    "timeout_seconds": 60
+  },
+  "task_folder": "C:\\Users\\bermi\\Projects\\apex\\active_projects\\tasks\\task_WO-DEMO-001\\",
+  "qa_gate": {
+    "rule": "FILE_EXISTS",
+    "checks": [
+      {
+        "rule": "FILE_EXISTS",
+        "target": "C:\\Users\\bermi\\Projects\\apex\\audit\\health\\health_report.json",
+        "min_size_bytes": 10,
+        "expected_string": null
+      }
+    ]
+  },
+  "status": {
+    "state": "COMPLETE",
+    "started_at": "2026-02-27T09:45:32Z",
+    "completed_at": "2026-02-27T09:45:34Z",
+    "duration_seconds": 2.53,
+    "diagnostic": null,
+    "traceback": null,
+    "qa_result": "PASS",
+    "exit_code": 0
+  }
+}

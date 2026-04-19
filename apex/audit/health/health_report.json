@@ -1,0 +1,41 @@
+{
+  "timestamp": "2026-03-03T11:13:31Z",
+  "checks": {
+    "disk_space": {
+      "status": "OK",
+      "free_gb": 199.43,
+      "total_gb": 980.57,
+      "threshold_gb": 5
+    },
+    "python": {
+      "status": "OK",
+      "version": "3.11.9",
+      "executable": "C:\\Program Files\\Python311\\python.exe"
+    },
+    "pip_packages": {
+      "status": "OK",
+      "count": 459
+    },
+    "manifest": {
+      "status": "OK",
+      "skill_count": 69,
+      "last_indexed": "2026-03-03T11:12:27Z",
+      "duplicate_count": 2
+    },
+    "foreman_heartbeat": {
+      "status": "OK",
+      "age_seconds": 6,
+      "threshold_s": 120
+    },
+    "n8n": {
+      "status": "OK",
+      "url": "http://192.168.50.246:5678"
+    },
+    "dead_letter": {
+      "status": "OK",
+      "count": 1,
+      "threshold": 10
+    }
+  },
+  "overall": "OK"
+}

@@ -1,0 +1,31 @@
+{
+  "ref_code": "CERT-APEX-PH-08",
+  "phase": "PH-08",
+  "name": "Supervisor Watchdog",
+  "certifies": "APEX-MB-WF-00003",
+  "status": "CERTIFIED_COMPLETE",
+  "certified_at": "2026-04-19T17:40:00Z",
+  "certified_by": "SYS",
+  "evidence": {
+    "watchdog_ref": "APEX-MB-PY-00011",
+    "watchdog_path": "\\\\192.168.50.246\\Automations\\apex\\watchdog\\watchdog_gpu.py",
+    "wrapper_ref": "APEX-MB-CFG-00001",
+    "task_scheduler_task": "APEX-Watchdog",
+    "task_schedule": "every 5 minutes",
+    "host": "DESKTOP-A2MF76F (GPU, Tailscale 100.95.160.48)",
+    "python_interpreter": "C:\\Users\\Owner\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+    "dependencies_installed": ["psutil 7.2.2", "requests 2.32.5"],
+    "env_vars_present": ["TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_ID"]
+  },
+  "tests": [
+    {"test": "--check reports accurate supervisor+n8n status", "result": "PASS"},
+    {"test": "Scheduled task fires and writes state file", "result": "PASS"},
+    {"test": "Cold-start bootstraps supervisor within one cycle", "result": "PASS"},
+    {"test": "Kill-and-recover: killed supervisor PID 21440, new PID 39196 within 10s of watchdog trigger", "result": "PASS"},
+    {"test": "SyntaxWarning on UNC docstring eliminated", "result": "PASS"}
+  ],
+  "outstanding_items": [
+    "ClaudeClaw (Telegram bridge) auto-start — deferred. ClaudeClaw source is laptop-only; separate WO required once source is recovered. Watchdog currently only manages supervisor + n8n.",
+    "Register canonical QNAP apex/ estate to GitHub bermingham85/code-artifacts — separate WO APEX-MB-WF-00004 recommended."
+  ]
+}
