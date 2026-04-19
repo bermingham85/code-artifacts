@@ -1,0 +1,78 @@
+{
+  "name": "[APEX] N8N Idea Webhook",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "apex-n8n-idea",
+        "httpMethod": "POST",
+        "responseMode": "onReceived"
+      },
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 300],
+      "id": "id-webhook-01",
+      "webhookId": "apex-n8n-idea-hook"
+    },
+    {
+      "parameters": {
+        "resource": "row",
+        "operation": "create",
+        "tableId": "conv_n8n_ideas",
+        "fieldsUi": {
+          "fieldValues": [
+            {"fieldId": "name", "fieldValue": "={{ $json.body.idea.name }}"},
+            {"fieldId": "trigger", "fieldValue": "={{ $json.body.idea.trigger }}"},
+            {"fieldId": "description", "fieldValue": "={{ $json.body.idea.description }}"},
+            {"fieldId": "nodes", "fieldValue": "={{ JSON.stringify($json.body.idea.nodes || []) }}"},
+            {"fieldId": "source", "fieldValue": "={{ $json.body.source }}"},
+            {"fieldId": "conv_processed_id", "fieldValue": "={{ $json.body.processed_id }}"},
+            {"fieldId": "status", "fieldValue": "proposed"}
+          ]
+        }
+      },
+      "name": "Insert Idea",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [500, 300],
+      "id": "id-sb-01",
+      "credentials": {
+        "supabaseApi": {
+          "id": "a7fYXsrHUIj3HcnW",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "2085046714",
+        "text": "=*New APEX n8n Idea Proposed*\n*{{ $json.body.idea.name }}*\nTrigger: {{ $json.body.idea.trigger }}\nSource: {{ $json.body.source }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "name": "Notify Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [750, 300],
+      "id": "id-tg-01",
+      "credentials": {
+        "telegramApi": {
+          "id": "68YtskC3aYC2yRJM",
+          "name": "Telegram account 2"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{"node": "Insert Idea", "type": "main", "index": 0}]]
+    },
+    "Insert Idea": {
+      "main": [[{"node": "Notify Telegram", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

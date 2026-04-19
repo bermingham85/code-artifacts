@@ -54,6 +54,20 @@
 - [x] Scheduled task `conv-proc-orchestrator` created — runs every 6 hours via Claude Code scheduled tasks
 - [x] Pipeline is now fully self-contained: n8n is optional, Supabase fallback handles all routing
 
+## Phase 9 — n8n Workflow Completion (2026-04-19)
+- [x] Disabled runaway `APEX Auto-Runner` workflow (was spamming Telegram every minute, PH-04/05/06 checks)
+- [x] Created missing n8n workflows via REST API:
+  - `[APEX] Skill Register Webhook` (id: C0VeiPNla089c1XX) → `conv_skills` table
+  - `[APEX] N8N Idea Webhook` (id: LWdnAXmKXJcRoAvK) → `conv_n8n_ideas` table
+- [x] Applied migration `create_conv_skills_and_n8n_ideas` for two new tables
+- [x] Switched from Postgres node → Supabase node (credential: `Supabase account` / a7fYXsrHUIj3HcnW)
+  - Root cause: `Postgres - Agent System` credential pointed to a different Postgres DB, not our Supabase project ylcepmvbjjnwmzvevxid
+- [x] End-to-end verified: webhook → Supabase insert → Telegram notification all working
+- [x] Workflow JSONs committed to `apex/conv_proc/n8n_workflows/`
+
+### Known Issue (carried forward)
+- Existing `[APEX] Task Intake Webhook` and `[APEX] Memory Update Webhook` workflows also use the broken Postgres credential — they've been failing silently since 2026-04-11. Recommend migrating them to the Supabase node pattern.
+
 ## Phase 8 — Governance Compliance & Bug Fixes (2026-04-05)
 - [x] Extract function: fixed conv_raw status from `"processed"` (not in constraint) to `"extracted"` (valid)
 - [x] Router v7: deployed with 5-second AbortController timeout on `postWebhook()` — prevents n8n webhook hangs from blocking pipeline
