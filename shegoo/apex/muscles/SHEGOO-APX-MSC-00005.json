@@ -1,5 +1,0 @@
-{
-  "id": "SHEGOO-APX-MSC-00005",
-  "name": "monthly-limit-reset-cron",
-  "description": "Monthly nudge counter reset via WF-03 and DB trigger"
-}

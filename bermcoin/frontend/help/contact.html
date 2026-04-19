@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Support - Bermcoin</title>
+    <meta name="description" content="Get in touch with the Bermcoin team. We aim to respond within 24 hours.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --forest: #1a6b3a;
+            --cream: #faf8f4;
+            --ink: #1a1a18;
+            --gold: #c9a84c;
+        }
+        body { font-family: "DM Sans", sans-serif; background: var(--cream); color: var(--ink); line-height: 1.7; }
+        h1, h2, h3 { font-family: "Playfair Display", serif; }
+
+        nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: var(--cream); border-bottom: 1px solid rgba(26,107,58,.12); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 64px; }
+        .nav-logo { font-family: "Playfair Display", serif; font-size: 1.5rem; font-weight: 700; color: var(--forest); text-decoration: none; }
+        .nav-logo span { color: var(--gold); }
+        .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+        .nav-links a { text-decoration: none; color: var(--ink); font-size: .95rem; font-weight: 500; transition: color .2s; }
+        .nav-links a:hover { color: var(--forest); }
+        .nav-links .btn-login { background: var(--forest); color: #fff; padding: .45rem 1.2rem; border-radius: 6px; }
+        .nav-links .btn-login:hover { background: #155c30; color: #fff; }
+        .hamburger { display: none; background: none; border: none; cursor: pointer; padding: 4px; }
+        .hamburger svg { width: 28px; height: 28px; stroke: var(--ink); }
+
+        main { max-width: 640px; margin: 0 auto; padding: 100px 1.5rem 4rem; }
+        h1 { font-size: 2.2rem; color: var(--forest); margin-bottom: .35rem; }
+        .subtitle { color: #777; font-size: 1.05rem; margin-bottom: 2.5rem; }
+
+        /* FORM */
+        .form-group { margin-bottom: 1.5rem; }
+        label { display: block; font-weight: 600; font-size: .9rem; margin-bottom: .35rem; color: var(--ink); }
+        label .optional { font-weight: 400; color: #999; font-size: .85rem; }
+        input[type="text"],
+        input[type="email"],
+        select,
+        textarea {
+            width: 100%;
+            padding: .75rem 1rem;
+            border: 2px solid rgba(26,107,58,.18);
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: "DM Sans", sans-serif;
+            background: #fff;
+            color: var(--ink);
+            outline: none;
+            transition: border-color .2s;
+        }
+        input:focus, select:focus, textarea:focus { border-color: var(--forest); }
+        textarea { resize: vertical; min-height: 140px; }
+        select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; padding-right: 2.5rem; }
+
+        .btn-submit {
+            display: inline-flex; align-items: center; gap: .5rem;
+            background: var(--forest); color: #fff;
+            padding: .85rem 2rem; border: none; border-radius: 8px;
+            font-size: 1rem; font-weight: 600; font-family: "DM Sans", sans-serif;
+            cursor: pointer; transition: background .2s;
+        }
+        .btn-submit:hover { background: #155c30; }
+        .btn-submit:disabled { opacity: .6; cursor: not-allowed; }
+        .btn-submit svg { width: 18px; height: 18px; }
+
+        .error-text { color: #c0392b; font-size: .85rem; margin-top: .3rem; display: none; }
+        .error-text.show { display: block; }
+
+        /* SUCCESS / ERROR STATE */
+        .form-message {
+            padding: 1.25rem 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            display: none;
+        }
+        .form-message.success {
+            display: block;
+            background: rgba(26,107,58,.08);
+            border: 1px solid rgba(26,107,58,.25);
+            color: var(--forest);
+        }
+        .form-message.error {
+            display: block;
+            background: rgba(192,57,43,.08);
+            border: 1px solid rgba(192,57,43,.25);
+            color: #c0392b;
+        }
+        .form-message h3 { font-size: 1.1rem; margin-bottom: .25rem; }
+        .form-message p { margin: 0; font-size: .95rem; }
+
+        .alt-contact { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(26,107,58,.1); text-align: center; color: #777; font-size: .95rem; }
+        .alt-contact a { color: var(--forest); }
+
+        footer { background: var(--ink); color: rgba(255,255,255,.7); padding: 2.5rem 2rem; margin-top: 4rem; }
+        .footer-inner { max-width: 960px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: start; gap: 2rem; }
+        .footer-brand { font-family: "Playfair Display", serif; font-size: 1.3rem; font-weight: 700; color: #fff; margin-bottom: .25rem; }
+        .footer-brand span { color: var(--gold); }
+        .footer-legal { font-size: .85rem; }
+        .footer-links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+        .footer-links a { color: rgba(255,255,255,.7); text-decoration: none; font-size: .85rem; transition: color .2s; }
+        .footer-links a:hover { color: var(--gold); }
+
+        @media (max-width: 640px) {
+            nav { padding: 0 1rem; }
+            .nav-links { display: none; position: absolute; top: 64px; left: 0; right: 0; background: var(--cream); flex-direction: column; padding: 1rem 1.5rem; border-bottom: 1px solid rgba(26,107,58,.12); }
+            .nav-links.open { display: flex; }
+            .hamburger { display: block; }
+            h1 { font-size: 1.6rem; }
+            main { padding-top: 84px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <a href="/" class="nav-logo">Bermcoin<span>.</span></a>
+    <button class="hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/help/">Help</a>
+        <a href="/help/contact.html">Contact</a>
+        <a href="/dashboard" class="btn-login">Login</a>
+    </div>
+</nav>
+
+<main>
+    <h1>Contact Support</h1>
+    <p class="subtitle">Have a question or found a bug? We aim to respond within 24 hours.</p>
+
+    <div class="form-message" id="formMessage"></div>
+
+    <form id="contactForm" novalidate>
+        <div class="form-group">
+            <label for="name">Name <span class="optional">(optional)</span></label>
+            <input type="text" id="name" name="name" placeholder="Your name" autocomplete="name">
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="you@example.com" required autocomplete="email">
+            <div class="error-text" id="emailError">Please enter a valid email address.</div>
+        </div>
+
+        <div class="form-group">
+            <label for="category">Category</label>
+            <select id="category" name="category" required>
+                <option value="" disabled selected>Choose a category</option>
+                <option value="Account">Account</option>
+                <option value="Billing">Billing</option>
+                <option value="Rate watches">Rate watches</option>
+                <option value="Messages">Messages</option>
+                <option value="Privacy">Privacy</option>
+                <option value="Bug report">Bug report</option>
+                <option value="Other">Other</option>
+            </select>
+            <div class="error-text" id="categoryError">Please select a category.</div>
+        </div>
+
+        <div class="form-group">
+            <label for="subject">Subject</label>
+            <input type="text" id="subject" name="subject" placeholder="Brief description of your issue" required>
+            <div class="error-text" id="subjectError">Please enter a subject.</div>
+        </div>
+
+        <div class="form-group">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" placeholder="Tell us more about what you need help with..." required></textarea>
+            <div class="error-text" id="messageError">Please enter your message.</div>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submitBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            Send Message
+        </button>
+    </form>
+
+    <div class="alt-contact">
+        <p>You can also email us directly at <a href="mailto:hello@bermcoin.money">hello@bermcoin.money</a></p>
+        <p>Check our <a href="/help/">Help Centre</a> &mdash; your answer might already be there.</p>
+    </div>
+</main>
+
+<footer>
+    <div class="footer-inner">
+        <div>
+            <div class="footer-brand">Bermcoin<span>.</span></div>
+            <p class="footer-legal">&copy; 2026 Bermech Limited, Dublin, Ireland. All rights reserved.</p>
+        </div>
+        <div class="footer-links">
+            <a href="/legal/privacy.html">Privacy</a>
+            <a href="/legal/terms.html">Terms</a>
+            <a href="/legal/cookies.html">Cookies</a>
+            <a href="/help/">Help</a>
+            <a href="/help/contact.html">Contact</a>
+        </div>
+    </div>
+</footer>
+
+<script>
+    const SUPABASE_URL = 'https://vntnfljukhshzwvlrlud.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZudG5mbGp1a2hzaHp3dmxybHVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNjc1NzAsImV4cCI6MjA5MDc0MzU3MH0.Jq70R73IeWjCfwVqe5fuM_MtaPKAjRmIMmkI2arpKvM';
+
+    const form = document.getElementById('contactForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const formMessage = document.getElementById('formMessage');
+
+    function showError(id) {
+        document.getElementById(id).classList.add('show');
+    }
+    function clearErrors() {
+        document.querySelectorAll('.error-text').forEach(el => el.classList.remove('show'));
+    }
+
+    function isValidEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        clearErrors();
+        formMessage.className = 'form-message';
+        formMessage.style.display = 'none';
+
+        const email = document.getElementById('email').value.trim();
+        const category = document.getElementById('category').value;
+        const subject = document.getElementById('subject').value.trim();
+        const message = document.getElementById('message').value.trim();
+        const name = document.getElementById('name').value.trim();
+
+        let hasError = false;
+
+        if (!email || !isValidEmail(email)) {
+            showError('emailError');
+            hasError = true;
+        }
+        if (!category) {
+            showError('categoryError');
+            hasError = true;
+        }
+        if (!subject) {
+            showError('subjectError');
+            hasError = true;
+        }
+        if (!message) {
+            showError('messageError');
+            hasError = true;
+        }
+
+        if (hasError) return;
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending...';
+
+        try {
+            const response = await fetch(`${SUPABASE_URL}/rest/v1/support_tickets`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'apikey': SUPABASE_ANON_KEY,
+                    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                    'Prefer': 'return=minimal'
+                },
+                body: JSON.stringify({
+                    name: name || null,
+                    email,
+                    category,
+                    subject,
+                    message
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Server responded with ${response.status}`);
+            }
+
+            formMessage.innerHTML = '<h3>Message received</h3><p>Thank you for getting in touch. We aim to respond within 24 hours. Check your email for a confirmation.</p>';
+            formMessage.className = 'form-message success';
+            form.reset();
+
+        } catch (err) {
+            formMessage.innerHTML = '<h3>Something went wrong</h3><p>We could not send your message right now. Please try again or email us directly at <a href="mailto:hello@bermcoin.money">hello@bermcoin.money</a>.</p>';
+            formMessage.className = 'form-message error';
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:18px;height:18px"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Send Message';
+        }
+    });
+</script>
+
+</body>
+</html>

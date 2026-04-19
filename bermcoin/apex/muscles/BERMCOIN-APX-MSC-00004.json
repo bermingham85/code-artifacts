@@ -1,0 +1,5 @@
+{
+  "id": "BERMCOIN-APX-MSC-00004",
+  "name": "supabase-rls-member-template",
+  "description": "RLS policies for member data isolation"
+}

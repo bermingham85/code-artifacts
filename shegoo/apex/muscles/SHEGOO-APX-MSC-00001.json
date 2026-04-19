@@ -1,5 +1,0 @@
-{
-  "id": "SHEGOO-APX-MSC-00001",
-  "name": "stripe-supabase-magic-link-onboard",
-  "description": "Stripe Checkout webhook triggers member creation and magic-link dispatch"
-}

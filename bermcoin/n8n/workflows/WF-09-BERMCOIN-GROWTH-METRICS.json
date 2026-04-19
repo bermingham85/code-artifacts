@@ -1,0 +1,114 @@
+{
+  "name": "WF-09-BERMCOIN-GROWTH-METRICS",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": { "interval": [{ "field": "cronExpression", "expression": "0 0 1 * *" }] }
+      },
+      "id": "cron",
+      "name": "Monthly 1st Midnight",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://vntnfljukhshzwvlrlud.supabase.co/rest/v1/members?select=count",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_ANON_KEY}}" },
+            { "name": "Authorization", "value": "Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Prefer", "value": "count=exact" }
+          ]
+        },
+        "options": { "fullResponse": true }
+      },
+      "id": "total-members",
+      "name": "Total Members",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [470, 200]
+    },
+    {
+      "parameters": {
+        "url": "https://vntnfljukhshzwvlrlud.supabase.co/rest/v1/rate_watches?select=count&is_active=eq.true",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_ANON_KEY}}" },
+            { "name": "Authorization", "value": "Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Prefer", "value": "count=exact" }
+          ]
+        },
+        "options": { "fullResponse": true }
+      },
+      "id": "active-watches",
+      "name": "Active Watches",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [470, 400]
+    },
+    {
+      "parameters": {
+        "url": "https://vntnfljukhshzwvlrlud.supabase.co/rest/v1/nudge_log?select=count&created_at=gte.{{$now.minus(30,'days').toISO()}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_ANON_KEY}}" },
+            { "name": "Authorization", "value": "Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Prefer", "value": "count=exact" }
+          ]
+        },
+        "options": { "fullResponse": true }
+      },
+      "id": "nudges-sent",
+      "name": "Nudges Sent (30d)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [470, 600]
+    },
+    {
+      "parameters": {
+        "url": "https://api.telegram.org/bot{{$env.TELEGRAM_BOT_TOKEN}}/sendMessage",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"chat_id\":\"{{$env.BERMCOIN_OPS_CHAT_ID}}\",\"text\":\"📊 MONTHLY GROWTH METRICS\\n\\n👥 Total Members: Check Supabase\\n👁️ Active Watches: Check Supabase\\n📬 Nudges Sent (30d): Check Supabase\\n\\nFull dashboard: https://supabase.com/dashboard/project/vntnfljukhshzwvlrlud\"}",
+        "options": {}
+      },
+      "id": "send-metrics",
+      "name": "Send Metrics to Telegram",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [700, 400]
+    },
+    {
+      "parameters": {
+        "url": "https://api.brevo.com/v3/smtp/email",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "api-key", "value": "={{$env.BREVO_API_KEY}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"sender\":{\"name\":\"Bermcoin\",\"email\":\"michael@bermech.com\"},\"to\":[{\"email\":\"michael@bermech.com\"}],\"subject\":\"Bermcoin Monthly Growth - {{$now.format('MMMM yyyy')}}\",\"htmlContent\":\"<h2>📊 Monthly Growth Report</h2><p>Month: {{$now.format('MMMM yyyy')}}</p><p>View full metrics in <a href='https://supabase.com/dashboard/project/vntnfljukhshzwvlrlud'>Supabase Dashboard</a></p>\"}",
+        "options": {}
+      },
+      "id": "email-report",
+      "name": "Email Monthly Report",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [900, 400]
+    }
+  ],
+  "connections": {
+    "Monthly 1st Midnight": { "main": [[{ "node": "Total Members", "type": "main", "index": 0 }, { "node": "Active Watches", "type": "main", "index": 0 }, { "node": "Nudges Sent (30d)", "type": "main", "index": 0 }]] },
+    "Total Members": { "main": [[{ "node": "Send Metrics to Telegram", "type": "main", "index": 0 }]] },
+    "Send Metrics to Telegram": { "main": [[{ "node": "Email Monthly Report", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "tags": [{ "name": "bermcoin" }]
+}

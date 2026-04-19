@@ -1,5 +1,0 @@
-{
-  "id": "SHEGOO-APX-MSC-00002",
-  "name": "rate-fetch-3source-fallback",
-  "description": "ECB primary with ExchangeRate-API and OXR fallback"
-}
