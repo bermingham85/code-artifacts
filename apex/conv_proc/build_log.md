@@ -65,8 +65,13 @@
 - [x] End-to-end verified: webhook → Supabase insert → Telegram notification all working
 - [x] Workflow JSONs committed to `apex/conv_proc/n8n_workflows/`
 
-### Known Issue (carried forward)
-- Existing `[APEX] Task Intake Webhook` and `[APEX] Memory Update Webhook` workflows also use the broken Postgres credential — they've been failing silently since 2026-04-11. Recommend migrating them to the Supabase node pattern.
+### Phase 9.1 — Fixed pre-existing broken workflows (2026-04-19)
+- [x] `[APEX] Task Intake Webhook` rebuilt: Webhook → Code (split tasks[]) → Supabase row insert → Telegram
+- [x] `[APEX] Memory Update Webhook` rebuilt: Webhook → Code (split+map memory_updates[]) → Supabase row insert → Telegram
+- [x] Both now handle array payloads from router (previously expected singular)
+- [x] Memory workflow now maps `name → key`, `content → value` correctly
+- [x] E2E verified: 2 tasks + 1 memory from array payload landed in Supabase
+- [x] All 4 APEX webhooks fully functional (task, memory, skill, n8n idea)
 
 ## Phase 8 — Governance Compliance & Bug Fixes (2026-04-05)
 - [x] Extract function: fixed conv_raw status from `"processed"` (not in constraint) to `"extracted"` (valid)
