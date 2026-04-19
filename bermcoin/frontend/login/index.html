@@ -54,7 +54,7 @@ input[type=email]::placeholder{color:rgba(255,255,255,.3)}
 <body>
 
 <div class="login-card">
-  <canvas id="logo-canvas" role="img" aria-label="Bermcoin animated logo" width="400" height="100"></canvas>
+  <img src="/assets/logo.png" alt="Bermcoin" style="max-width:280px;width:100%;height:auto;margin:0 auto 32px;display:block">
 
   <!-- STATE 1: Email entry -->
   <div class="state active" id="state-email">
@@ -92,51 +92,7 @@ input[type=email]::placeholder{color:rgba(255,255,255,.3)}
 
 <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
-// Canvas logo animation (compact version)
-(function(){
-  const canvas = document.getElementById('logo-canvas');
-  const ctx = canvas.getContext('2d');
-  const letters = 'Bermcoin.'.split('');
-  const pos = letters.map((c,i) => ({c, x:50+i*50, y:65-i*3, glow:0, lit:false}));
-  let fx=-20,fy=55,fi=0,done=false,sparkles=[],start=null,snd=false;
-  const ac = new (window.AudioContext||window.webkitAudioContext)();
-
-  function sound(){
-    if(snd)return;snd=true;
-    const o=ac.createOscillator(),g=ac.createGain();
-    o.connect(g);g.connect(ac.destination);g.gain.value=0.25;
-    o.frequency.setValueAtTime(392,ac.currentTime);
-    o.frequency.linearRampToValueAtTime(784,ac.currentTime+1);
-    o.start();o.stop(ac.currentTime+1.2);
-    setTimeout(()=>{const o2=ac.createOscillator(),g2=ac.createGain();o2.connect(g2);g2.connect(ac.destination);g2.gain.value=0.2;o2.frequency.value=1200;o2.start();o2.stop(ac.currentTime+.1)},1150);
-    setTimeout(()=>{const o3=ac.createOscillator(),g3=ac.createGain();o3.connect(g3);g3.connect(ac.destination);g3.gain.value=0.15;o3.frequency.value=2400;o3.start();o3.stop(ac.currentTime+.05)},1470);
-  }
-
-  function anim(ts){
-    if(!start)start=ts;const el=ts-start;
-    ctx.clearRect(0,0,400,100);
-    pos.forEach((p,i)=>{
-      ctx.save();ctx.font=(i===0?'900 44px':'700 40px')+' "Playfair Display",serif';ctx.textAlign='center';
-      if(p.glow>0){ctx.shadowColor='#00bcd4';ctx.shadowBlur=p.glow*16;ctx.fillStyle=`rgba(26,107,58,${.5+p.glow*.5})`}
-      else ctx.fillStyle='rgba(255,255,255,0.12)';
-      ctx.fillText(p.c,p.x,p.y);ctx.restore();
-      if(p.lit&&p.glow<1)p.glow=Math.min(1,p.glow+.05);
-    });
-    if(!done&&el>800){
-      const t=pos[fi];if(t){
-        const dx=t.x-fx,dy=(t.y-22)-fy,d=Math.sqrt(dx*dx+dy*dy);
-        if(d<6){t.lit=true;fi++;if(fi>=pos.length){done=true;for(let s=0;s<15;s++)sparkles.push({x:t.x,y:t.y-15,vx:(Math.random()-.5)*3,vy:(Math.random()-.5)*3,life:1})}}
-        else{fx+=dx*.12;fy+=dy*.12}
-        ctx.save();ctx.beginPath();ctx.arc(fx,fy,3,0,Math.PI*2);ctx.fillStyle='#c9a84c';ctx.shadowColor='#c9a84c';ctx.shadowBlur=12;ctx.fill();ctx.restore();
-      }
-    }
-    sparkles=sparkles.filter(s=>s.life>0);
-    sparkles.forEach(s=>{s.x+=s.vx;s.y+=s.vy;s.life-=.02;ctx.save();ctx.beginPath();ctx.arc(s.x,s.y,2*s.life,0,Math.PI*2);ctx.fillStyle=`rgba(201,168,76,${s.life})`;ctx.fill();ctx.restore()});
-    if(el<3000||sparkles.length>0)requestAnimationFrame(anim);
-  }
-  setTimeout(()=>{sound();requestAnimationFrame(anim)},800);
-  canvas.addEventListener('click',()=>{fx=-20;fy=55;fi=0;done=false;snd=false;sparkles=[];start=null;pos.forEach(p=>{p.glow=0;p.lit=false});sound();requestAnimationFrame(anim)});
-})();
+// Logo animation removed - using static PNG
 
 // State management
 function showState(id){
