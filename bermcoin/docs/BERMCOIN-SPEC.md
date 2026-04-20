@@ -2,7 +2,7 @@
 
 **Owner:** Bermech Limited, Dublin, Ireland
 **Domain:** bermcoin.com / bermcoin.com
-**Pronunciation:** sheh-GOO (from Portuguese "chegou"  it arrived)
+**Tagline:** Your money, better rates
 **Session:** BERMCOIN-BCK-SES-00001
 **Date:** 2026-04-11
 
@@ -21,7 +21,7 @@ Information service only. Not regulated. Never handles money.
 
 ## Architecture
 
-- **Database:** Supabase (project ylcepmvbjjnwmzvevxid)
+- **Database:** Supabase (project vntnfljukhshzwvlrlud)
 - **Workflows:** n8n on QNAP NAS (192.168.50.246:5678)
 - **Payments:** Stripe (test mode)
 - **Rate Source:** ECB via Frankfurter API (primary)

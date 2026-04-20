@@ -553,7 +553,7 @@ tr:last-child td{border-bottom:none}
     safeText(qs('#avatar-btn'), initials);
 
     /* Stats - active watches */
-    var activeWatches = await sb.from('rate_watches').select('id',{count:'exact',head:true}).eq('member_id',currentUser.id).in('status',['looking','on_hold','paused_limit']);
+    var activeWatches = await sb.from('rate_watches').select('id',{count:'exact',head:true}).eq('user_id',currentUser.id).in('status',['looking','on_hold','paused_limit']);
     var watchCount = activeWatches.count || 0;
     safeText(qs('#stat-watches'), String(watchCount));
     safeText(qs('#stat-watches-limit'), 'of ' + limits.watches + ' limit');
@@ -561,13 +561,13 @@ tr:last-child td{border-bottom:none}
     /* Stats - messages this month */
     var now = new Date();
     var monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-    var msgsMonth = await sb.from('nudge_log').select('id',{count:'exact',head:true}).eq('member_id',currentUser.id).gte('created_at',monthStart);
+    var msgsMonth = await sb.from('nudge_log').select('id',{count:'exact',head:true}).eq('user_id',currentUser.id).gte('fired_at',monthStart);
     var monthCount = msgsMonth.count || 0;
     safeText(qs('#stat-msgs-month'), String(monthCount));
     safeText(qs('#stat-msgs-limit'), 'of ' + limits.messages + ' limit');
 
     /* Stats - total messages */
-    var msgsTotal = await sb.from('nudge_log').select('id',{count:'exact',head:true}).eq('member_id',currentUser.id);
+    var msgsTotal = await sb.from('nudge_log').select('id',{count:'exact',head:true}).eq('user_id',currentUser.id);
     safeText(qs('#stat-msgs-total'), String(msgsTotal.count || 0));
 
     /* Account section */
@@ -592,7 +592,7 @@ tr:last-child td{border-bottom:none}
 
   /* ---------- RATE WATCHES ---------- */
   async function loadWatches(){
-    var res = await sb.from('rate_watches').select('*').eq('member_id',currentUser.id).neq('status','removed').order('created_at',{ascending:false});
+    var res = await sb.from('rate_watches').select('*').eq('user_id',currentUser.id).neq('status','removed').order('created_at',{ascending:false});
     var tbody = qs('#watches-tbody');
     tbody.innerHTML = '';
     if(res.error || !res.data || res.data.length === 0){
@@ -667,14 +667,14 @@ tr:last-child td{border-bottom:none}
     /* Validate against plan watch limit */
     var plan = (memberData.plan || 'free').toLowerCase();
     var limits = PLAN_LIMITS[plan] || PLAN_LIMITS.free;
-    var activeCount = await sb.from('rate_watches').select('id',{count:'exact',head:true}).eq('member_id',currentUser.id).in('status',['looking','on_hold','paused_limit']);
+    var activeCount = await sb.from('rate_watches').select('id',{count:'exact',head:true}).eq('user_id',currentUser.id).in('status',['looking','on_hold','paused_limit']);
     if((activeCount.count || 0) >= limits.watches){
       safeText(errEl, 'You have reached your ' + plan + ' plan limit of ' + limits.watches + ' watches. Upgrade to add more.');
       return;
     }
     safeText(errEl, '');
 
-    var ins = {member_id:currentUser.id,from_ccy:fromCcy,to_ccy:toCcy,target_rate:rate,status:'looking'};
+    var ins = {user_id:currentUser.id,from_ccy:fromCcy,to_ccy:toCcy,target_rate:rate,status:'looking'};
     if(amount) ins.send_amount = amount;
 
     var res = await sb.from('rate_watches').insert(ins);
@@ -695,7 +695,7 @@ tr:last-child td{border-bottom:none}
 
   /* ---------- MESSAGE HISTORY ---------- */
   async function loadMessages(){
-    var res = await sb.from('nudge_log').select('*').eq('member_id',currentUser.id).order('created_at',{ascending:false}).limit(20);
+    var res = await sb.from('nudge_log').select('*').eq('user_id',currentUser.id).order('fired_at',{ascending:false}).limit(20);
     var container = qs('#messages-list');
     container.innerHTML = '';
     if(res.error || !res.data || res.data.length === 0){
@@ -917,7 +917,7 @@ tr:last-child td{border-bottom:none}
       this.disabled = true;
       var comment = qs('#nps-comment').value.trim();
       var res = await sb.from('feedback').insert({
-        member_id: currentUser.id,
+        user_id: currentUser.id,
         type: 'nps',
         score: selectedScore,
         comment: comment || null
@@ -951,7 +951,7 @@ tr:last-child td{border-bottom:none}
     }
     this.disabled = true;
     var res = await sb.from('feedback').insert({
-      member_id: currentUser.id,
+      user_id: currentUser.id,
       type: 'feature_request',
       comment: text
     });

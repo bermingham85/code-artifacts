@@ -47,7 +47,7 @@
 
 ### Architecture
 
-- **Database**: Supabase (ylcepmvbjjnwmzvevxid)
+- **Database**: Supabase (vntnfljukhshzwvlrlud)
 - **Workflows**: n8n on QNAP NAS (192.168.50.246:5678)
 - **Rate Source**: Frankfurter API (ECB) with 3-source fallback
 - **Auth**: Magic link (no passwords)
