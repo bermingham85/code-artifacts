@@ -4,36 +4,38 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src https://vntnfljukhshzwvlrlud.supabase.co https://api.frankfurter.app https://www.revolut.com; img-src 'self' data:;">
-<title>Shegoo — it arrived</title>
-<meta name="description" content="Shegoo watches exchange rates and tells you the moment your target rate arrives. Free to start.">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="theme-color" content="#0a1628">
+<title>Bermcoin — it arrived</title>
+<meta name="description" content="Bermcoin watches exchange rates and tells you the moment your target rate arrives. Free to start.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --forest:#1a6b3a;--forest-dark:#0a3d1f;--cream:#faf8f4;--ink:#1a1a18;
-  --gold:#c9a84c;--forest-light:#2d8a52;--white:#ffffff;
+  --forest:#00bcd4;--forest-dark:#0a1628;--cream:#0d1f3c;--ink:#e0f7fa;
+  --gold:#c9a84c;--forest-light:#00e5ff;--white:#ffffff;
 }
 html{scroll-behavior:smooth}
-body{font-family:'DM Sans',sans-serif;color:var(--ink);background:var(--cream);line-height:1.6;overflow-x:hidden}
+body{font-family:'DM Sans',sans-serif;color:var(--white);background:var(--forest-dark);line-height:1.6;overflow-x:hidden}
 h1,h2,h3,h4{font-family:'Playfair Display',serif;font-weight:700}
 a{color:var(--forest);text-decoration:none}
 .container{max-width:1140px;margin:0 auto;padding:0 24px}
 
 /* NAV */
-nav{position:fixed;top:0;width:100%;background:var(--cream);border-bottom:1px solid rgba(26,107,58,.1);z-index:100;padding:16px 0}
+nav{position:fixed;top:0;width:100%;background:var(--forest-dark);border-bottom:1px solid rgba(26,107,58,.1);z-index:100;padding:16px 0}
 nav .container{display:flex;align-items:center;justify-content:space-between}
 nav .logo{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;color:var(--forest)}
 nav .links{display:flex;gap:28px;align-items:center}
-nav .links a{font-size:.9rem;font-weight:500;color:var(--ink);opacity:.7;transition:opacity .2s}
+nav .links a{font-size:.9rem;font-weight:500;color:var(--white);opacity:.7;transition:opacity .2s}
 nav .links a:hover{opacity:1}
 .btn{display:inline-block;padding:12px 28px;border-radius:8px;font-weight:700;font-size:.95rem;transition:all .2s;cursor:pointer;border:none}
 .btn-primary{background:var(--forest);color:var(--white)}
 .btn-primary:hover{background:var(--forest-light)}
 .btn-outline{border:2px solid var(--forest);color:var(--forest);background:transparent}
 .btn-outline:hover{background:var(--forest);color:var(--white)}
-.btn-gold{background:var(--gold);color:var(--ink)}
+.btn-gold{background:var(--gold);color:var(--white)}
 
 /* HERO */
 .hero{padding:140px 0 80px;text-align:center}
@@ -57,7 +59,7 @@ section{padding:80px 0}
 
 /* HOW IT WORKS */
 .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:40px}
-.step{text-align:center;padding:40px 24px;background:var(--white);border-radius:16px;box-shadow:0 2px 20px rgba(0,0,0,.04)}
+.step{text-align:center;padding:40px 24px;background:rgba(255,255,255,0.05);border-radius:16px;box-shadow:0 2px 20px rgba(0,0,0,.04)}
 .step .num{width:48px;height:48px;border-radius:50%;background:var(--forest);color:var(--white);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.2rem;margin:0 auto 20px}
 .step h3{margin-bottom:8px;font-size:1.15rem}
 .step p{opacity:.6;font-size:.95rem}
@@ -70,7 +72,7 @@ section{padding:80px 0}
 .video-wrap .play::after{content:'';border-left:24px solid var(--forest);border-top:14px solid transparent;border-bottom:14px solid transparent;margin-left:4px}
 
 /* CALCULATOR GATE */
-.calc-section{background:var(--white);border-top:1px solid rgba(0,0,0,.06)}
+.calc-section{background:rgba(255,255,255,0.05);border-top:1px solid rgba(0,0,0,.06)}
 .email-gate{text-align:center;max-width:480px;margin:0 auto;padding:40px 0}
 .email-gate h2{margin-bottom:12px}
 .email-gate p{opacity:.6;margin-bottom:24px}
@@ -81,10 +83,10 @@ section{padding:80px 0}
 .calculator.visible{display:block}
 .calc-row{display:flex;gap:16px;margin-bottom:16px;align-items:end}
 .calc-row label{font-weight:500;font-size:.85rem;display:block;margin-bottom:6px}
-.calc-row select,.calc-row input[type=number]{width:100%;padding:12px;border:2px solid rgba(0,0,0,.1);border-radius:8px;font-size:1rem;font-family:inherit;background:var(--cream)}
+.calc-row select,.calc-row input[type=number]{width:100%;padding:12px;border:2px solid rgba(0,0,0,.1);border-radius:8px;font-size:1rem;font-family:inherit;background:var(--forest-dark)}
 .calc-row select:focus,.calc-row input:focus{outline:none;border-color:var(--forest)}
 .calc-field{flex:1}
-.calc-results{background:var(--cream);border-radius:16px;padding:32px;margin-top:24px}
+.calc-results{background:var(--forest-dark);border-radius:16px;padding:32px;margin-top:24px}
 .calc-results h3{margin-bottom:16px;color:var(--forest)}
 .result-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(0,0,0,.06)}
 .result-row:last-child{border:none}
@@ -106,18 +108,18 @@ section{padding:80px 0}
 .the-18 p{position:relative;z-index:1;opacity:.7;max-width:500px;margin:0 auto}
 
 /* NUDGE MOCKUPS */
-.mockups{background:var(--cream)}
+.mockups{background:var(--forest-dark)}
 .mockup-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:32px}
-.mockup{background:var(--white);border-radius:16px;padding:28px;box-shadow:0 4px 24px rgba(0,0,0,.06)}
+.mockup{background:rgba(255,255,255,0.05);border-radius:16px;padding:28px;box-shadow:0 4px 24px rgba(0,0,0,.06)}
 .mockup .channel{font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--forest);margin-bottom:12px}
-.mockup .msg{font-size:.9rem;line-height:1.7;white-space:pre-line;color:var(--ink);opacity:.85}
-.mockup .pro-badge{display:inline-block;background:var(--gold);color:var(--ink);padding:2px 10px;border-radius:4px;font-size:.7rem;font-weight:700;margin-left:8px}
+.mockup .msg{font-size:.9rem;line-height:1.7;white-space:pre-line;color:var(--white);opacity:.85}
+.mockup .pro-badge{display:inline-block;background:var(--gold);color:var(--white);padding:2px 10px;border-radius:4px;font-size:.7rem;font-weight:700;margin-left:8px}
 
 /* PLANS */
-.plans-section{background:var(--white)}
+.plans-section{background:rgba(255,255,255,0.05)}
 .toggle-wrap{text-align:center;margin-bottom:40px}
-.toggle{display:inline-flex;background:var(--cream);border-radius:100px;padding:4px}
-.toggle button{padding:10px 24px;border:none;background:none;border-radius:100px;font-family:inherit;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s;color:var(--ink);opacity:.5}
+.toggle{display:inline-flex;background:var(--forest-dark);border-radius:100px;padding:4px}
+.toggle button{padding:10px 24px;border:none;background:none;border-radius:100px;font-family:inherit;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s;color:var(--white);opacity:.5}
 .toggle button.active{background:var(--forest);color:var(--white);opacity:1}
 .plans-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;max-width:960px;margin:0 auto}
 .plan-card{border:2px solid rgba(0,0,0,.06);border-radius:16px;padding:36px;text-align:center;transition:all .2s}
@@ -154,20 +156,20 @@ section{padding:80px 0}
 .wl-success p{opacity:.6;font-size:.95rem}
 
 /* ROUTES */
-.routes{background:var(--cream)}
+.routes{background:var(--forest-dark)}
 .route-pills{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
-.route-pill{display:flex;align-items:center;gap:8px;background:var(--white);padding:10px 18px;border-radius:100px;font-size:.9rem;font-weight:500;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.route-pill{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.05);padding:10px 18px;border-radius:100px;font-size:.9rem;font-weight:500;box-shadow:0 1px 4px rgba(0,0,0,.05)}
 .flag{font-size:1.3rem}
 
 /* TRUST */
-.trust{background:var(--white)}
+.trust{background:rgba(255,255,255,0.05)}
 .trust-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:32px}
 .trust-item{text-align:center;padding:24px}
 .trust-item h3{font-size:1rem;margin-bottom:8px;color:var(--forest)}
 .trust-item p{font-size:.9rem;opacity:.6}
 
 /* FAQ */
-.faq{background:var(--cream)}
+.faq{background:var(--forest-dark)}
 .faq-list{max-width:680px;margin:0 auto}
 .faq-item{border-bottom:1px solid rgba(0,0,0,.08);padding:20px 0}
 .faq-item summary{font-weight:600;cursor:pointer;font-size:1rem;list-style:none;display:flex;justify-content:space-between;align-items:center}
@@ -214,7 +216,7 @@ footer .bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:24px;displa
 .nav-toggle span{display:block;width:24px;height:2px;background:var(--ink);transition:all .3s cubic-bezier(.34,1.56,.64,1)}
 .mobile-menu{position:fixed;top:65px;left:0;right:0;background:rgba(250,248,244,.98);backdrop-filter:blur(20px);border-bottom:1px solid rgba(0,0,0,.06);padding:20px 24px;transform:translateY(-100%);opacity:0;visibility:hidden;transition:all .4s cubic-bezier(.22,1,.36,1);z-index:99}
 .mobile-menu.open{transform:translateY(0);opacity:1;visibility:visible}
-.mobile-menu a{display:block;padding:12px 0;font-size:1rem;font-weight:500;color:var(--ink);border-bottom:1px solid rgba(0,0,0,.04)}
+.mobile-menu a{display:block;padding:12px 0;font-size:1rem;font-weight:500;color:var(--white);border-bottom:1px solid rgba(0,0,0,.04)}
 
 @media(max-width:768px){
   nav .links{display:none}
@@ -255,7 +257,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 <!-- NAV -->
 <nav role="navigation" aria-label="Main navigation">
 <div class="container">
-  <a href="#" class="logo">Shegoo.</a>
+  <a href="#" class="logo"><img src="/assets/logo.png" alt="Bermcoin" style="height:36px;width:auto;vertical-align:middle"></a>
   <div class="links">
     <a href="#how">How it works</a>
     <a href="#calc-section">Calculator</a>
@@ -280,9 +282,9 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 <section class="hero" id="start" role="banner">
 <div class="container">
   <div class="hero-badge"><span class="pulse-dot"></span> Live — checking rates now</div>
-  <canvas id="logo-canvas" role="img" aria-label="Shegoo animated logo" width="600" height="140"></canvas>
+  <canvas id="logo-canvas" role="img" aria-label="Bermcoin animated logo" width="600" height="140"></canvas>
   <h1 style="animation:fadeInUp 1s cubic-bezier(.22,1,.36,1) .4s both">You missed your best rate 18 times last month. We would have told you.</h1>
-  <p>Shegoo watches exchange rates every 15 minutes and sends you a message the moment your target rate arrives.</p>
+  <p>Bermcoin watches exchange rates every 15 minutes and sends you a message the moment your target rate arrives.</p>
   <a href="#calc-section" class="btn btn-primary">Start watching free</a>
   <div class="trust-badges">
     <span>Every 15 min</span>
@@ -307,8 +309,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 <section id="how">
 <div class="container">
   <div class="section-title reveal">
-    <h2>How Shegoo works</h2>
-    <p>Three simple steps. No bank access needed. No money touches Shegoo.</p>
+    <h2>How Bermcoin works</h2>
+    <p>Three simple steps. No bank access needed. No money touches Bermcoin.</p>
   </div>
   <div class="steps stagger-children">
     <div class="step reveal">
@@ -319,7 +321,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
     <div class="step reveal">
       <div class="num">2</div>
       <h3>We watch every 15 minutes</h3>
-      <p>Shegoo checks the European Central Bank rate feed continuously. You do not need to keep checking.</p>
+      <p>Bermcoin checks the European Central Bank rate feed continuously. You do not need to keep checking.</p>
     </div>
     <div class="step reveal">
       <div class="num">3</div>
@@ -344,7 +346,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 <section class="calc-section" id="calc-section">
 <div class="container">
   <div class="email-gate" id="email-gate">
-    <h2>Try the Shegoo calculator</h2>
+    <h2>Try the Bermcoin calculator</h2>
     <p>Enter your email to see live exchange rates and what your family would receive.</p>
     <form id="gate-form">
       <input type="email" id="gate-email" aria-label="Email address for calculator access" placeholder="your@email.com" required>
@@ -388,7 +390,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
         <tbody id="freq-body"></tbody>
       </table>
       <div class="aff-disclosure">
-        Shegoo may receive a referral fee if you use the links shown. This does not affect the rates displayed. All rates are from the European Central Bank via Frankfurter. Provider fees are estimates and may vary. Not financial advice. Bermech Limited, Dublin, Ireland.
+        Bermcoin may receive a referral fee if you use the links shown. This does not affect the rates displayed. All rates are from the European Central Bank via Frankfurter. Provider fees are estimates and may vary. Not financial advice. Bermech Limited, Dublin, Ireland.
       </div>
     </div>
   </div>
@@ -400,7 +402,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 <div class="container">
   <div class="big-number" id="parallax-18">18</div>
   <h2>The average person misses their best exchange rate 18 times per month</h2>
-  <p>Because life is busy. Because rates move on weekends. Because nobody checks at 6am. Shegoo checks for you.</p>
+  <p>Because life is busy. Because rates move on weekends. Because nobody checks at 6am. Bermcoin checks for you.</p>
 </div>
 </section>
 
@@ -414,7 +416,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
   <div class="mockup-grid stagger-children">
     <div class="mockup reveal">
       <div class="channel">Telegram</div>
-      <div class="msg">Shegoo.
+      <div class="msg">Bermcoin.
 
 EUR/BRL reached 6.42
 
@@ -424,11 +426,11 @@ receives approx R$3,145
 Verify before sending.
 Not financial advice.
 
-shegoo.money</div>
+bermcoin.com</div>
     </div>
     <div class="mockup reveal">
       <div class="channel">Email</div>
-      <div class="msg">Shegoo.
+      <div class="msg">Bermcoin.
 
 EUR/BRL reached 6.42
 
@@ -443,14 +445,14 @@ Bank: R$3,020 (1.80% fee)
 Verify before sending.
 Not financial advice.
 
-shegoo.money</div>
+bermcoin.com</div>
     </div>
     <div class="mockup reveal">
       <div class="channel">WhatsApp <span class="pro-badge">Pro</span></div>
       <div class="msg">EUR/BRL hit 6.42
 EUR 500 → ~R$3,145
 Check before you send
-shegoo.money</div>
+bermcoin.com</div>
     </div>
   </div>
 </div>
@@ -587,7 +589,7 @@ shegoo.money</div>
   <div class="trust-grid stagger-children">
     <div class="trust-item reveal">
       <h3>Information only</h3>
-      <p>Shegoo never touches your money. We tell you the rate. You choose when and how to send.</p>
+      <p>Bermcoin never touches your money. We tell you the rate. You choose when and how to send.</p>
     </div>
     <div class="trust-item reveal">
       <h3>ECB source rates</h3>
@@ -607,8 +609,8 @@ shegoo.money</div>
   <div class="section-title reveal"><h2>Questions</h2></div>
   <div class="faq-list reveal">
     <details class="faq-item">
-      <summary>Does Shegoo handle my money?</summary>
-      <p>No. Shegoo is an information service only. We watch exchange rates and tell you when your target rate arrives. You decide when and how to send money using your own provider.</p>
+      <summary>Does Bermcoin handle my money?</summary>
+      <p>No. Bermcoin is an information service only. We watch exchange rates and tell you when your target rate arrives. You decide when and how to send money using your own provider.</p>
     </details>
     <details class="faq-item">
       <summary>Where do the rates come from?</summary>
@@ -616,7 +618,7 @@ shegoo.money</div>
     </details>
     <details class="faq-item">
       <summary>How quickly will I get a message?</summary>
-      <p>Shegoo checks rates every 15 minutes. When your target rate is reached, you will receive a message within seconds on your chosen channel — Telegram, email, or WhatsApp (Pro).</p>
+      <p>Bermcoin checks rates every 15 minutes. When your target rate is reached, you will receive a message within seconds on your chosen channel — Telegram, email, or WhatsApp (Pro).</p>
     </details>
     <details class="faq-item">
       <summary>Can I cancel any time?</summary>
@@ -631,17 +633,27 @@ shegoo.money</div>
 </section>
 
 <!-- FOOTER -->
+
+    <!-- VIDEO INTRO -->
+    <section style="padding:40px 0;text-align:center">
+      <div class="container">
+        <video autoplay muted loop playsinline style="max-width:400px;width:100%;border-radius:12px;box-shadow:0 8px 32px rgba(0,229,255,0.15)">
+          <source src="/assets/bermcoin-intro.mp4" type="video/mp4">
+        </video>
+      </div>
+    </section>
+
 <footer role="contentinfo">
 <div class="container">
   <div class="top">
     <div>
-      <div class="brand">Shegoo.<br><small>sheh-GOO · it arrived</small></div>
+      <div class="brand">Bermcoin.<br><small>Your money, better rates</small></div>
     </div>
     <div class="links">
       <a href="#how">How it works</a>
       <a href="#plans">Plans</a>
       <a href="#faq">FAQ</a>
-      <a href="mailto:hello@shegoo.money">Contact</a>
+      <a href="mailto:hello@bermcoin.com">Contact</a>
     </div>
     <div class="links">
       <a href="/login/">Login</a>
@@ -663,7 +675,7 @@ shegoo.money</div>
   const canvas = document.getElementById('logo-canvas');
   const ctx = canvas.getContext('2d');
   const W = 600, H = 140;
-  const letters = 'Shegoo.'.split('');
+  const letters = 'Bermcoin.'.split('');
   const positions = [];
   const baseX = 80;
   const spacing = 70;
@@ -728,7 +740,7 @@ shegoo.money</div>
       ctx.font = (i === 0 ? '900 64px' : '700 58px') + ' "Playfair Display", serif';
       ctx.textAlign = 'center';
       if (p.glow > 0) {
-        ctx.shadowColor = '#1a6b3a';
+        ctx.shadowColor = '#00bcd4';
         ctx.shadowBlur = p.glow * 20;
         ctx.fillStyle = `rgba(26,107,58,${0.5 + p.glow * 0.5})`;
       } else {
@@ -856,7 +868,7 @@ shegoo.money</div>
   const form = document.getElementById('gate-form');
   const gate = document.getElementById('email-gate');
   const calc = document.getElementById('calculator');
-  const stored = localStorage.getItem('shegoo_email');
+  const stored = localStorage.getItem('bermcoin_email');
   if(stored){
     gate.style.display = 'none';
     calc.classList.add('visible');
@@ -866,7 +878,7 @@ shegoo.money</div>
     e.preventDefault();
     const email = document.getElementById('gate-email').value;
     if(email){
-      localStorage.setItem('shegoo_email', email);
+      localStorage.setItem('bermcoin_email', email);
       gate.style.opacity = '0';
       gate.style.transition = 'opacity 0.4s';
       setTimeout(()=>{
@@ -1084,19 +1096,19 @@ window.addEventListener('scroll', function(){
 
 // ====== COOKIE CONSENT ======
 (function(){
-  if(localStorage.getItem('shegoo_cookie_consent')) return;
+  if(localStorage.getItem('bermcoin_cookie_consent')) return;
   const banner = document.createElement('div');
   banner.className = 'cookie-banner';
   banner.setAttribute('role', 'dialog');
   banner.setAttribute('aria-label', 'Cookie consent');
-  banner.innerHTML = '<p>Shegoo uses localStorage to remember your preferences. No tracking cookies are used.</p><div class="cb-btns"><button class="cb-btn cb-accept" onclick="localStorage.setItem(\'shegoo_cookie_consent\',\'accepted\');this.closest(\'.cookie-banner\').remove()">Accept</button><button class="cb-btn cb-decline" onclick="localStorage.setItem(\'shegoo_cookie_consent\',\'declined\');this.closest(\'.cookie-banner\').remove()">Decline</button></div>';
+  banner.innerHTML = '<p>Bermcoin uses localStorage to remember your preferences. No tracking cookies are used.</p><div class="cb-btns"><button class="cb-btn cb-accept" onclick="localStorage.setItem(\'bermcoin_cookie_consent\',\'accepted\');this.closest(\'.cookie-banner\').remove()">Accept</button><button class="cb-btn cb-decline" onclick="localStorage.setItem(\'bermcoin_cookie_consent\',\'declined\');this.closest(\'.cookie-banner\').remove()">Decline</button></div>';
   document.body.appendChild(banner);
 })();
 
 // ====== ANALYTICS (privacy-first, no cookies, no PII) ======
 (function(){
-  var sid = sessionStorage.getItem('shegoo_sid');
-  if(!sid){ sid = Math.random().toString(36).slice(2); sessionStorage.setItem('shegoo_sid', sid); }
+  var sid = sessionStorage.getItem('bermcoin_sid');
+  if(!sid){ sid = Math.random().toString(36).slice(2); sessionStorage.setItem('bermcoin_sid', sid); }
   function track(action, meta){
     try{ fetch('https://vntnfljukhshzwvlrlud.supabase.co/functions/v1/collect-event',{
       method:'POST', headers:{'Content-Type':'application/json'},

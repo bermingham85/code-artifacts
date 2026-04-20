@@ -4,7 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src https://vntnfljukhshzwvlrlud.supabase.co https://api.frankfurter.app https://www.revolut.com;">
-<title>Dashboard &mdash; Shegoo.</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="theme-color" content="#0a1628">
+<title>Dashboard &mdash; Bermcoin.</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
@@ -12,8 +14,8 @@
 /* ===== RESET & BASE ===== */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --forest:#1a6b3a;--forest-dark:#0a3d1f;--cream:#faf8f4;--ink:#1a1a18;
-  --gold:#c9a84c;--white:#fff;--red:#d9534f;--green:#2d8a52;
+  --forest:#00bcd4;--forest-dark:#0a1628;--cream:#0d1f3c;--ink:#e0f7fa;
+  --gold:#c9a84c;--white:#fff;--red:#d9534f;--green:#00e5ff;
   --font-display:'Playfair Display',Georgia,serif;
   --font-body:'DM Sans',system-ui,-apple-system,sans-serif;
   --radius:8px;--radius-lg:12px;
@@ -25,7 +27,7 @@
   *,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important}
 }
 html{font-size:16px;scroll-behavior:smooth}
-body{font-family:var(--font-body);color:var(--ink);background:var(--cream);line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh}
+body{font-family:var(--font-body);color:var(--white);background:var(--forest-dark);line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh}
 h1,h2,h3{font-family:var(--font-display);font-weight:600;line-height:1.3}
 a{color:var(--forest);text-decoration:none}
 a:hover{text-decoration:underline}
@@ -36,11 +38,11 @@ button,input,select,textarea{font-family:inherit;font-size:inherit}
 .topbar{background:var(--forest-dark);color:var(--white);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
 .topbar-left{display:flex;align-items:center;gap:12px}
 .logo{font-family:var(--font-display);font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em}
-.plan-badge{background:var(--gold);color:var(--ink);font-size:.7rem;font-weight:600;padding:2px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.04em}
+.plan-badge{background:var(--gold);color:var(--white);font-size:.7rem;font-weight:600;padding:2px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.04em}
 .topbar-right{display:flex;align-items:center;gap:16px}
 .topbar-link{color:rgba(255,255,255,.85);font-size:.85rem;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center}
 .topbar-link:hover{color:var(--white)}
-.avatar-btn{width:36px;height:36px;border-radius:50%;background:var(--gold);color:var(--ink);border:none;cursor:pointer;font-weight:600;font-size:.85rem;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+.avatar-btn{width:36px;height:36px;border-radius:50%;background:var(--gold);color:var(--white);border:none;cursor:pointer;font-weight:600;font-size:.85rem;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center}
 .signout-btn{background:none;border:1px solid rgba(255,255,255,.3);color:var(--white);padding:6px 14px;border-radius:var(--radius);cursor:pointer;font-size:.8rem;min-height:44px;display:inline-flex;align-items:center}
 .signout-btn:hover{background:rgba(255,255,255,.1)}
 
@@ -48,13 +50,13 @@ button,input,select,textarea{font-family:inherit;font-size:inherit}
 
 /* ===== STATS ROW ===== */
 .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px}
-.stat-card{background:var(--white);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow)}
+.stat-card{background:rgba(255,255,255,0.05);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow)}
 .stat-label{font-size:.78rem;color:#666;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
-.stat-value{font-family:var(--font-display);font-size:1.6rem;font-weight:700;color:var(--ink)}
+.stat-value{font-family:var(--font-display);font-size:1.6rem;font-weight:700;color:var(--white)}
 .stat-sub{font-size:.78rem;color:#888;margin-top:2px}
 
 /* ===== SECTION CARD ===== */
-.section-card{background:var(--white);border-radius:var(--radius-lg);padding:24px;box-shadow:var(--shadow);margin-bottom:24px}
+.section-card{background:rgba(255,255,255,0.05);border-radius:var(--radius-lg);padding:24px;box-shadow:var(--shadow);margin-bottom:24px}
 .section-title{font-size:1.15rem;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
 
 /* ===== BUTTONS ===== */
@@ -62,12 +64,12 @@ button,input,select,textarea{font-family:inherit;font-size:inherit}
 .btn:active{transform:scale(.97)}
 .btn-primary{background:var(--forest);color:var(--white)}
 .btn-primary:hover{background:var(--forest-dark)}
-.btn-secondary{background:var(--cream);color:var(--ink);border:1px solid #ddd}
+.btn-secondary{background:var(--forest-dark);color:var(--white);border:1px solid #ddd}
 .btn-secondary:hover{background:#f0ede7}
 .btn-danger{background:var(--red);color:var(--white)}
 .btn-danger:hover{background:#c9302c}
 .btn-sm{padding:6px 14px;font-size:.8rem;min-height:38px}
-.btn-gold{background:var(--gold);color:var(--ink)}
+.btn-gold{background:var(--gold);color:var(--white)}
 .btn-gold:hover{background:#b8953e}
 
 /* ===== TABLE ===== */
@@ -85,9 +87,9 @@ tr:last-child td{border-bottom:none}
 .form-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px;align-items:flex-end}
 .form-group{display:flex;flex-direction:column;gap:4px;flex:1;min-width:120px}
 .form-group label{font-size:.75rem;font-weight:500;color:#555}
-.form-group input,.form-group select,.form-group textarea{padding:10px 12px;border:1px solid #ddd;border-radius:var(--radius);font-size:.875rem;min-height:44px;background:var(--white);transition:border-color var(--transition)}
+.form-group input,.form-group select,.form-group textarea{padding:10px 12px;border:1px solid #ddd;border-radius:var(--radius);font-size:.875rem;min-height:44px;background:rgba(255,255,255,0.05);transition:border-color var(--transition)}
 .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--forest);outline:none;box-shadow:0 0 0 3px rgba(26,107,58,.15)}
-.inline-form{background:var(--cream);border-radius:var(--radius);padding:16px;margin-top:12px;border:1px solid #e8e5df}
+.inline-form{background:var(--forest-dark);border-radius:var(--radius);padding:16px;margin-top:12px;border:1px solid #e8e5df}
 
 /* ===== MESSAGE LOG ===== */
 .msg-item{display:flex;justify-content:space-between;align-items:flex-start;padding:12px 0;border-bottom:1px solid #f0f0f0;gap:12px;flex-wrap:wrap}
@@ -108,12 +110,12 @@ tr:last-child td{border-bottom:none}
 .toggle{position:relative;width:52px;height:28px;flex-shrink:0}
 .toggle input{opacity:0;width:0;height:0;position:absolute}
 .toggle-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#ccc;border-radius:28px;transition:var(--transition);min-width:44px;min-height:28px}
-.toggle-slider::before{content:'';position:absolute;height:22px;width:22px;left:3px;bottom:3px;background:var(--white);border-radius:50%;transition:var(--transition)}
+.toggle-slider::before{content:'';position:absolute;height:22px;width:22px;left:3px;bottom:3px;background:rgba(255,255,255,0.05);border-radius:50%;transition:var(--transition)}
 .toggle input:checked+.toggle-slider{background:var(--forest)}
 .toggle input:checked+.toggle-slider::before{transform:translateX(24px)}
 .toggle input:focus-visible+.toggle-slider{outline:3px solid var(--gold);outline-offset:2px}
 .toggle input:disabled+.toggle-slider{opacity:.5;cursor:not-allowed}
-.pro-tag{font-size:.65rem;background:var(--gold);color:var(--ink);padding:1px 6px;border-radius:8px;margin-left:6px;font-weight:600}
+.pro-tag{font-size:.65rem;background:var(--gold);color:var(--white);padding:1px 6px;border-radius:8px;margin-left:6px;font-weight:600}
 
 /* ===== ACCOUNT SECTION ===== */
 .account-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
@@ -130,13 +132,13 @@ tr:last-child td{border-bottom:none}
 .nps-wrap{text-align:center;padding:12px 0}
 .nps-question{font-family:var(--font-display);font-size:1.05rem;margin-bottom:16px}
 .nps-scores{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-bottom:12px}
-.nps-btn{width:44px;height:44px;border-radius:var(--radius);border:2px solid #ddd;background:var(--white);cursor:pointer;font-weight:600;font-size:.9rem;transition:all var(--transition)}
+.nps-btn{width:44px;height:44px;border-radius:var(--radius);border:2px solid #ddd;background:rgba(255,255,255,0.05);cursor:pointer;font-weight:600;font-size:.9rem;transition:all var(--transition)}
 .nps-btn:hover{border-color:var(--forest);color:var(--forest)}
 .nps-btn.selected{background:var(--forest);color:var(--white);border-color:var(--forest)}
 .nps-btn.detractor{border-color:var(--red)}
 .nps-btn.detractor.selected{background:var(--red);border-color:var(--red)}
 .nps-btn.passive{border-color:var(--gold)}
-.nps-btn.passive.selected{background:var(--gold);border-color:var(--gold);color:var(--ink)}
+.nps-btn.passive.selected{background:var(--gold);border-color:var(--gold);color:var(--white)}
 .nps-btn.promoter{border-color:var(--green)}
 .nps-btn.promoter.selected{background:var(--green);border-color:var(--green)}
 .nps-comment{margin-top:12px}
@@ -150,13 +152,13 @@ tr:last-child td{border-bottom:none}
 .cookie-banner{position:fixed;bottom:0;left:0;right:0;background:var(--forest-dark);color:var(--white);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;z-index:200;flex-wrap:wrap;box-shadow:0 -2px 10px rgba(0,0,0,.15)}
 .cookie-text{font-size:.85rem;flex:1;min-width:200px;line-height:1.5}
 .cookie-actions{display:flex;gap:10px}
-.cookie-accept{background:var(--gold);color:var(--ink);border:none;padding:10px 20px;border-radius:var(--radius);cursor:pointer;font-weight:600;font-size:.85rem;min-height:44px}
+.cookie-accept{background:var(--gold);color:var(--white);border:none;padding:10px 20px;border-radius:var(--radius);cursor:pointer;font-weight:600;font-size:.85rem;min-height:44px}
 .cookie-decline{background:transparent;color:var(--white);border:1px solid rgba(255,255,255,.4);padding:10px 20px;border-radius:var(--radius);cursor:pointer;font-size:.85rem;min-height:44px}
 
 /* ===== MODAL ===== */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;visibility:hidden;transition:opacity var(--transition)}
 .modal-overlay.active{opacity:1;visibility:visible}
-.modal-box{background:var(--white);border-radius:var(--radius-lg);padding:28px;max-width:440px;width:100%;box-shadow:0 20px 40px rgba(0,0,0,.15);transform:translateY(10px);transition:transform var(--transition)}
+.modal-box{background:rgba(255,255,255,0.05);border-radius:var(--radius-lg);padding:28px;max-width:440px;width:100%;box-shadow:0 20px 40px rgba(0,0,0,.15);transform:translateY(10px);transition:transform var(--transition)}
 .modal-overlay.active .modal-box{transform:translateY(0)}
 .modal-title{font-family:var(--font-display);font-size:1.1rem;margin-bottom:12px}
 .modal-text{font-size:.875rem;color:#666;margin-bottom:16px;line-height:1.6}
@@ -206,7 +208,7 @@ tr:last-child td{border-bottom:none}
 <!-- ===== TOP BAR ===== -->
 <nav class="topbar" role="navigation" aria-label="Main navigation">
   <div class="topbar-left">
-    <a href="/app/" class="logo" aria-label="Shegoo dashboard home">Shegoo.</a>
+    <a href="/app/" class="logo" aria-label="Bermcoin dashboard home"><img src="/assets/logo.png" alt="Bermcoin" style="height:36px;width:auto;vertical-align:middle"></a>
     <span class="plan-badge" id="plan-badge" aria-label="Current plan">free</span>
   </div>
   <div class="topbar-right">
@@ -382,7 +384,7 @@ tr:last-child td{border-bottom:none}
     </div>
     <div id="nps-container">
       <div class="nps-wrap" id="nps-form-wrap">
-        <p class="nps-question">How likely are you to recommend Shegoo to a friend?</p>
+        <p class="nps-question">How likely are you to recommend Bermcoin to a friend?</p>
         <div class="nps-scores" id="nps-scores" role="radiogroup" aria-label="Net Promoter Score from 1 to 10"></div>
         <div class="nps-comment" id="nps-comment-wrap" style="display:none">
           <div class="form-group" style="align-items:center">
@@ -399,7 +401,7 @@ tr:last-child td{border-bottom:none}
       <div class="feature-form" id="feature-form" style="display:none" role="form" aria-label="Feature suggestion form">
         <div class="form-group">
           <label for="feature-text">Your suggestion</label>
-          <input type="text" id="feature-text" placeholder="I wish Shegoo could..." maxlength="500">
+          <input type="text" id="feature-text" placeholder="I wish Bermcoin could..." maxlength="500">
         </div>
         <button class="btn btn-primary btn-sm" id="feature-submit" aria-label="Submit feature suggestion">Send</button>
       </div>
@@ -426,7 +428,7 @@ tr:last-child td{border-bottom:none}
 
 <!-- ===== COOKIE BANNER ===== -->
 <div class="cookie-banner" id="cookie-banner" style="display:none" role="dialog" aria-label="Cookie consent">
-  <p class="cookie-text">Shegoo uses localStorage to remember your preferences. No tracking cookies.</p>
+  <p class="cookie-text">Bermcoin uses localStorage to remember your preferences. No tracking cookies.</p>
   <div class="cookie-actions">
     <button class="cookie-accept" id="cookie-accept" aria-label="Accept cookies">Accept</button>
     <button class="cookie-decline" id="cookie-decline" aria-label="Decline cookies">Decline</button>
@@ -438,7 +440,7 @@ tr:last-child td{border-bottom:none}
 
 <!-- ===== FOOTER ===== -->
 <footer style="text-align:center;padding:20px;font-size:.75rem;color:#999" role="contentinfo">
-  &copy; 2026 Shegoo. All rights reserved.
+  &copy; 2026 Bermcoin. All rights reserved.
 </footer>
 
 <!-- ===== SUPABASE CDN ===== -->
@@ -446,7 +448,7 @@ tr:last-child td{border-bottom:none}
 
 <script>
 /* ==========================================================
-   SHEGOO MEMBER DASHBOARD - Production JS
+   BERMCOIN MEMBER DASHBOARD - Production JS
    ========================================================== */
 (function(){
   'use strict';
@@ -551,7 +553,7 @@ tr:last-child td{border-bottom:none}
     safeText(qs('#avatar-btn'), initials);
 
     /* Stats - active watches */
-    var activeWatches = await sb.from('rate_watches').select('id',{count:'exact',head:true}).eq('member_id',currentUser.id).in('status',['looking','on_hold','paused_limit']);
+    var activeWatches = await sb.from('rate_watches').select('id',{count:'exact',head:true}).eq('user_id',currentUser.id).in('status',['looking','on_hold','paused_limit']);
     var watchCount = activeWatches.count || 0;
     safeText(qs('#stat-watches'), String(watchCount));
     safeText(qs('#stat-watches-limit'), 'of ' + limits.watches + ' limit');
@@ -559,13 +561,13 @@ tr:last-child td{border-bottom:none}
     /* Stats - messages this month */
     var now = new Date();
     var monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-    var msgsMonth = await sb.from('nudge_log').select('id',{count:'exact',head:true}).eq('member_id',currentUser.id).gte('created_at',monthStart);
+    var msgsMonth = await sb.from('nudge_log').select('id',{count:'exact',head:true}).eq('user_id',currentUser.id).gte('fired_at',monthStart);
     var monthCount = msgsMonth.count || 0;
     safeText(qs('#stat-msgs-month'), String(monthCount));
     safeText(qs('#stat-msgs-limit'), 'of ' + limits.messages + ' limit');
 
     /* Stats - total messages */
-    var msgsTotal = await sb.from('nudge_log').select('id',{count:'exact',head:true}).eq('member_id',currentUser.id);
+    var msgsTotal = await sb.from('nudge_log').select('id',{count:'exact',head:true}).eq('user_id',currentUser.id);
     safeText(qs('#stat-msgs-total'), String(msgsTotal.count || 0));
 
     /* Account section */
@@ -590,7 +592,7 @@ tr:last-child td{border-bottom:none}
 
   /* ---------- RATE WATCHES ---------- */
   async function loadWatches(){
-    var res = await sb.from('rate_watches').select('*').eq('member_id',currentUser.id).neq('status','removed').order('created_at',{ascending:false});
+    var res = await sb.from('rate_watches').select('*').eq('user_id',currentUser.id).neq('status','removed').order('created_at',{ascending:false});
     var tbody = qs('#watches-tbody');
     tbody.innerHTML = '';
     if(res.error || !res.data || res.data.length === 0){
@@ -665,14 +667,14 @@ tr:last-child td{border-bottom:none}
     /* Validate against plan watch limit */
     var plan = (memberData.plan || 'free').toLowerCase();
     var limits = PLAN_LIMITS[plan] || PLAN_LIMITS.free;
-    var activeCount = await sb.from('rate_watches').select('id',{count:'exact',head:true}).eq('member_id',currentUser.id).in('status',['looking','on_hold','paused_limit']);
+    var activeCount = await sb.from('rate_watches').select('id',{count:'exact',head:true}).eq('user_id',currentUser.id).in('status',['looking','on_hold','paused_limit']);
     if((activeCount.count || 0) >= limits.watches){
       safeText(errEl, 'You have reached your ' + plan + ' plan limit of ' + limits.watches + ' watches. Upgrade to add more.');
       return;
     }
     safeText(errEl, '');
 
-    var ins = {member_id:currentUser.id,from_ccy:fromCcy,to_ccy:toCcy,target_rate:rate,status:'looking'};
+    var ins = {user_id:currentUser.id,from_ccy:fromCcy,to_ccy:toCcy,target_rate:rate,status:'looking'};
     if(amount) ins.send_amount = amount;
 
     var res = await sb.from('rate_watches').insert(ins);
@@ -693,7 +695,7 @@ tr:last-child td{border-bottom:none}
 
   /* ---------- MESSAGE HISTORY ---------- */
   async function loadMessages(){
-    var res = await sb.from('nudge_log').select('*').eq('member_id',currentUser.id).order('created_at',{ascending:false}).limit(20);
+    var res = await sb.from('nudge_log').select('*').eq('user_id',currentUser.id).order('fired_at',{ascending:false}).limit(20);
     var container = qs('#messages-list');
     container.innerHTML = '';
     if(res.error || !res.data || res.data.length === 0){
@@ -805,7 +807,7 @@ tr:last-child td{border-bottom:none}
       var url = URL.createObjectURL(blob);
       var a = document.createElement('a');
       a.href = url;
-      a.download = 'shegoo-data-export.json';
+      a.download = 'bermcoin-data-export.json';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -870,7 +872,7 @@ tr:last-child td{border-bottom:none}
 
   /* ---------- NPS ---------- */
   function initNPS(){
-    var lastNps = localStorage.getItem('shegoo_last_nps_date');
+    var lastNps = localStorage.getItem('bermcoin_last_nps_date');
     if(lastNps){
       var last = new Date(lastNps);
       var now = new Date();
@@ -915,7 +917,7 @@ tr:last-child td{border-bottom:none}
       this.disabled = true;
       var comment = qs('#nps-comment').value.trim();
       var res = await sb.from('feedback').insert({
-        member_id: currentUser.id,
+        user_id: currentUser.id,
         type: 'nps',
         score: selectedScore,
         comment: comment || null
@@ -925,7 +927,7 @@ tr:last-child td{border-bottom:none}
         this.disabled = false;
         return;
       }
-      localStorage.setItem('shegoo_last_nps_date', new Date().toISOString());
+      localStorage.setItem('bermcoin_last_nps_date', new Date().toISOString());
       qs('#nps-form-wrap').style.display = 'none';
       qs('#nps-thanks').style.display = 'block';
       showToast('Thank you for your feedback!','success');
@@ -949,7 +951,7 @@ tr:last-child td{border-bottom:none}
     }
     this.disabled = true;
     var res = await sb.from('feedback').insert({
-      member_id: currentUser.id,
+      user_id: currentUser.id,
       type: 'feature_request',
       comment: text
     });
@@ -966,16 +968,16 @@ tr:last-child td{border-bottom:none}
 
   /* ---------- COOKIE BANNER ---------- */
   function initCookieBanner(){
-    var consent = localStorage.getItem('shegoo_cookie_consent');
+    var consent = localStorage.getItem('bermcoin_cookie_consent');
     if(!consent){
       qs('#cookie-banner').style.display = 'flex';
     }
     qs('#cookie-accept').addEventListener('click', function(){
-      localStorage.setItem('shegoo_cookie_consent','accepted');
+      localStorage.setItem('bermcoin_cookie_consent','accepted');
       qs('#cookie-banner').style.display = 'none';
     });
     qs('#cookie-decline').addEventListener('click', function(){
-      localStorage.setItem('shegoo_cookie_consent','declined');
+      localStorage.setItem('bermcoin_cookie_consent','declined');
       qs('#cookie-banner').style.display = 'none';
     });
   }
