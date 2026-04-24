@@ -1,0 +1,32 @@
+[
+  {
+    "id": "BERMCOIN-APX-MSC-00001",
+    "name": "stripe-supabase-magic-link-onboard",
+    "project": "BERMCOIN",
+    "status": "active"
+  },
+  {
+    "id": "BERMCOIN-APX-MSC-00002",
+    "name": "rate-fetch-3source-fallback",
+    "project": "BERMCOIN",
+    "status": "active"
+  },
+  {
+    "id": "BERMCOIN-APX-MSC-00003",
+    "name": "multichannel-member-dispatch",
+    "project": "BERMCOIN",
+    "status": "active"
+  },
+  {
+    "id": "BERMCOIN-APX-MSC-00004",
+    "name": "supabase-rls-member-template",
+    "project": "BERMCOIN",
+    "status": "active"
+  },
+  {
+    "id": "BERMCOIN-APX-MSC-00005",
+    "name": "monthly-limit-reset-cron",
+    "project": "BERMCOIN",
+    "status": "active"
+  }
+]

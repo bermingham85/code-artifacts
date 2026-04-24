@@ -1,0 +1,66 @@
+{
+  "work_order": "WO-BERMCOIN-BUILD",
+  "project": "BERMCOIN",
+  "operator": "APEX Factory (Claude Opus 4.6)",
+  "date": "2026-04-11",
+  "branch": "bermcoin-full-build",
+  "pr": "https://github.com/bermingham85/code-artifacts/pull/3",
+  "phases": {
+    "1_schema": {
+      "status": "COMPLETE",
+      "migrations": 10
+    },
+    "2_rls": {
+      "status": "COMPLETE",
+      "policies": 6,
+      "tables": 7
+    },
+    "3_triggers": {
+      "status": "COMPLETE",
+      "functions": 2
+    },
+    "4_stripe": {
+      "status": "COMPLETE",
+      "price_ids": 4
+    },
+    "5_workflows": {
+      "status": "COMPLETE",
+      "count": 9,
+      "all_active": true
+    },
+    "6_backfill": {
+      "status": "COMPLETE",
+      "pairs": 7,
+      "rows": 644
+    },
+    "7_frontend": {
+      "status": "COMPLETE",
+      "pages": 3
+    },
+    "8_env": {
+      "status": "COMPLETE"
+    },
+    "9_smoke": {
+      "status": "COMPLETE",
+      "passed": 13,
+      "total": 13
+    },
+    "10_muscles": {
+      "status": "COMPLETE",
+      "count": 5
+    },
+    "11_docreg": {
+      "status": "COMPLETE",
+      "entries": 33
+    },
+    "12_closeout": {
+      "status": "COMPLETE"
+    }
+  },
+  "known_gaps": [
+    "EUR/NGN, EUR/UAH, GBP/NGN not available from ECB",
+    "TELEGRAM_BOT_TOKEN empty",
+    "SUPABASE_SERVICE_ROLE_KEY empty",
+    "BREVO_API_KEY empty"
+  ]
+}

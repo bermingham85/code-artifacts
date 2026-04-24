@@ -1,0 +1,220 @@
+{
+  "work_order_id": "WO-BERM-RECEIPT-OCR-001",
+  "project": "BERM",
+  "title": "Google Drive Receipt OCR → Google Sheets Pipeline",
+  "type": "automation",
+  "priority": "medium",
+  "created_at": "2026-02-27T00:00:00Z",
+  "status": "pending",
+
+  "goal": "Auto-detect new receipt images/PDFs in a watched Google Drive folder, OCR them using Claude vision, extract Irish Revenue-compliant fields itemized per line, and append to a Google Sheet for later ledger categorisation.",
+
+  "regulatory_compliance": {
+    "authority": "Irish Revenue Commissioners",
+    "references": [
+      "Revenue eBrief No. 025/21 — VAT Invoicing Rules",
+      "Value-Added Tax Consolidation Act 2010 s.86 (simplified invoice threshold < €100 incl. VAT)",
+      "Revenue Guide IT70 — Record-keeping obligations for sole traders"
+    ],
+    "required_fields_full_vat_invoice": [
+      "supplier_name",
+      "supplier_address",
+      "supplier_vat_reg_no",
+      "invoice_number",
+      "invoice_date",
+      "line_description",
+      "line_quantity",
+      "line_unit_price_ex_vat",
+      "line_vat_rate_pct",
+      "line_vat_amount",
+      "line_total_inc_vat",
+      "subtotal_ex_vat",
+      "total_vat",
+      "total_inc_vat",
+      "currency"
+    ],
+    "simplified_invoice_note": "Till receipts under €100 incl. VAT require only: date, description, total, VAT rate. Flag these with receipt_type=simplified.",
+    "record_retention": "6 years minimum per Revenue guidelines",
+    "currency": "EUR assumed; capture explicitly if multi-currency"
+  },
+
+  "sheet_schema": {
+    "columns": [
+      "receipt_id",
+      "receipt_type",
+      "processed_at",
+      "image_url",
+      "invoice_date",
+      "supplier_name",
+      "supplier_address",
+      "supplier_vat_reg_no",
+      "invoice_number",
+      "line_no",
+      "line_description",
+      "line_quantity",
+      "line_unit_price_ex_vat",
+      "line_vat_rate_pct",
+      "line_vat_amount",
+      "line_total_inc_vat",
+      "subtotal_ex_vat",
+      "total_vat",
+      "total_inc_vat",
+      "currency",
+      "category_hint",
+      "status",
+      "ocr_confidence",
+      "notes"
+    ],
+    "note": "One row per LINE ITEM. Header fields (supplier, date, totals) repeated on each row for ledger compatibility."
+  },
+
+  "acceptance_criteria": [
+    "New image/PDF dropped in target Drive folder triggers pipeline within 60 seconds",
+    "OCR extracts all Revenue-required fields; missing mandatory fields flagged in status column",
+    "Each line item gets its own row — no merged cells, no comma-separated items in one cell",
+    "Receipt image Drive shareable URL stored on every row",
+    "Duplicate file IDs rejected — same receipt never creates duplicate rows",
+    "Simplified invoices (< €100) accepted with reduced field set, receipt_type = simplified",
+    "Failures write status=ERROR + notes column explaining what went wrong",
+    "Manual re-trigger available: re-drop same file → system detects via file ID, skips if already processed",
+    "Sheet tab auto-created per calendar year: Receipts_2026, Receipts_2027 etc.",
+    "End-to-end test with 5 sample receipts (itemized, simplified, PDF, poor quality, non-receipt) all handled correctly"
+  ],
+
+  "missing_muscles": [
+    {
+      "name": "muscle_gdrive_watcher",
+      "ref": "APEX-MB-PY-00010",
+      "purpose": "Poll a Google Drive folder for new files since last run. Returns list of new file dicts {id, name, mimeType, webViewLink, createdTime}.",
+      "inputs": ["--folder-id DRIVE_FOLDER_ID", "--state-file PATH (tracks last seen file IDs)", "--credentials-file PATH (OAuth JSON)"],
+      "outputs": "JSON array of new file objects or empty array",
+      "api": "Google Drive API v3 — files.list with query 'parents in FOLDER_ID and createdTime > LAST_RUN'",
+      "build_notes": "Use service account credentials JSON for headless operation. Store last_run timestamp in state file. Idempotent — safe to re-run."
+    },
+    {
+      "name": "muscle_ocr_receipt",
+      "ref": "APEX-MB-PY-00011",
+      "purpose": "Download a file from Google Drive, pass to Claude claude-sonnet-4-6 vision, return structured JSON of receipt fields.",
+      "inputs": ["--file-id DRIVE_FILE_ID", "--credentials-file PATH", "--anthropic-key KEY", "--output-file PATH"],
+      "outputs": "JSON: {receipt_id, receipt_type, invoice_date, supplier_name, supplier_address, supplier_vat_reg_no, invoice_number, lines:[{line_no, description, qty, unit_price_ex_vat, vat_rate_pct, vat_amount, line_total_inc_vat}], subtotal_ex_vat, total_vat, total_inc_vat, currency, ocr_confidence, image_url}",
+      "api": "Anthropic claude-sonnet-4-6 vision via messages API. System prompt enforces Irish Revenue field extraction.",
+      "build_notes": "Download file bytes first, encode as base64. Use claude-sonnet-4-6 model. Prompt must instruct model to return ONLY valid JSON. Wrap in try/except — if JSON parse fails, return {status: ERROR}. Handle PDF by converting first page to image via pdf2image or fitz."
+    },
+    {
+      "name": "muscle_sheets_append",
+      "ref": "APEX-MB-PY-00012",
+      "purpose": "Append one or more rows to a named Google Sheet tab. Creates the tab if it does not exist.",
+      "inputs": ["--spreadsheet-id ID", "--tab-name NAME", "--rows-file PATH (JSON array of row arrays)", "--credentials-file PATH"],
+      "outputs": "JSON: {status, rows_written, range}",
+      "api": "Google Sheets API v4 — spreadsheets.values.append, spreadsheets.batchUpdate (for tab creation)",
+      "build_notes": "Validate column count matches sheet header before appending. If tab missing, create it and write header row from SHEET_SCHEMA constant."
+    },
+    {
+      "name": "muscle_receipt_dedup",
+      "ref": "APEX-MB-PY-00013",
+      "purpose": "Check if a Drive file ID has already been processed. Reads/writes a local SQLite dedup ledger.",
+      "inputs": ["--file-id ID", "--db-file PATH", "--action check|mark"],
+      "outputs": "JSON: {status, already_processed: true|false}",
+      "api": "SQLite via stdlib sqlite3. Table: processed_receipts(file_id TEXT PK, processed_at TEXT, receipt_id TEXT)",
+      "build_notes": "action=check returns already_processed flag. action=mark inserts record. Atomic via SQLite transactions."
+    },
+    {
+      "name": "muscle_gdrive_download",
+      "ref": "APEX-MB-PY-00014",
+      "purpose": "Download a single file from Google Drive to a local temp path. Handles both native Google files (export) and binary files.",
+      "inputs": ["--file-id ID", "--output-path PATH", "--credentials-file PATH"],
+      "outputs": "JSON: {status, output, mime_type}",
+      "api": "Google Drive API v3 — files.get (metadata) + files.get(alt=media) for download",
+      "build_notes": "For Google Docs/Sheets export as PDF. For images/PDFs do direct download. Clean up temp files after OCR completes."
+    }
+  ],
+
+  "n8n_workflow": {
+    "name": "BERM — Receipt OCR Pipeline",
+    "trigger": "Schedule trigger every 5 minutes OR Google Drive trigger (webhook) on new file in watched folder",
+    "nodes": [
+      {"step": 1, "name": "Drive Watcher", "type": "Execute Command", "muscle": "muscle_gdrive_watcher", "note": "Get new files since last run"},
+      {"step": 2, "name": "Loop Files", "type": "Split In Batches", "note": "Process one file at a time"},
+      {"step": 3, "name": "Dedup Check", "type": "Execute Command", "muscle": "muscle_receipt_dedup --action check", "note": "Skip if already processed"},
+      {"step": 4, "name": "OCR Receipt", "type": "Execute Command", "muscle": "muscle_ocr_receipt", "note": "Extract structured JSON"},
+      {"step": 5, "name": "Build Rows", "type": "Code (JS)", "note": "Expand line items into flat row array with all header fields repeated"},
+      {"step": 6, "name": "Sheets Append", "type": "Execute Command", "muscle": "muscle_sheets_append", "note": "Write to year tab e.g. Receipts_2026"},
+      {"step": 7, "name": "Mark Processed", "type": "Execute Command", "muscle": "muscle_receipt_dedup --action mark", "note": "Record file ID as done"},
+      {"step": 8, "name": "Error Handler", "type": "Error Trigger", "note": "Write failed file ID + error to Receipts_ERRORS tab"}
+    ]
+  },
+
+  "test_plan": {
+    "test_env": "Dedicated Google Drive test folder: /Receipts/TEST_INBOX. Dedicated Sheet: Receipt_Ledger_TEST",
+    "test_cases": [
+      {
+        "id": "TC-01",
+        "description": "Full Irish VAT invoice — itemized, multiple lines",
+        "input": "Clear photo of itemized restaurant or hardware store receipt with VAT number",
+        "expected": "All Revenue-required fields extracted; one row per line item; image_url present; status=OK",
+        "pass_criteria": "supplier_vat_reg_no extracted and matches IE format (IE + 8 chars)"
+      },
+      {
+        "id": "TC-02",
+        "description": "Simplified till receipt under €100",
+        "input": "Supermarket or petrol station receipt without VAT reg number",
+        "expected": "receipt_type=simplified; reduced field set captured; no error raised for missing VAT reg",
+        "pass_criteria": "Row written; status=OK; receipt_type=simplified"
+      },
+      {
+        "id": "TC-03",
+        "description": "PDF receipt",
+        "input": "Emailed PDF invoice dropped into Drive folder",
+        "expected": "PDF first page converted to image; OCR runs; data extracted same as photo",
+        "pass_criteria": "Row written with all fields; mime_type=application/pdf handled"
+      },
+      {
+        "id": "TC-04",
+        "description": "Poor quality / blurry photo",
+        "input": "Deliberately blurry phone photo of receipt",
+        "expected": "Partial extraction; ocr_confidence=low; status=PARTIAL; notes column explains missing fields",
+        "pass_criteria": "Row written (not skipped); status!=ERROR unless completely unreadable"
+      },
+      {
+        "id": "TC-05",
+        "description": "Non-receipt image (e.g. landscape photo)",
+        "input": "JPEG of a field",
+        "expected": "OCR returns {status: NOT_A_RECEIPT}; row written to ERRORS tab only; not appended to main ledger",
+        "pass_criteria": "Main Receipts tab unchanged; error tab has one new row"
+      },
+      {
+        "id": "TC-06",
+        "description": "Duplicate file",
+        "input": "Same receipt dropped into folder a second time",
+        "expected": "Dedup check catches it; pipeline skips; no duplicate rows in sheet",
+        "pass_criteria": "Sheet row count unchanged; no new row"
+      },
+      {
+        "id": "TC-07",
+        "description": "Receipt with multiple VAT rates",
+        "input": "Mixed receipt with 23% and 13.5% items (e.g. food + alcohol)",
+        "expected": "Each line has correct vat_rate_pct; totals reconcile across rates",
+        "pass_criteria": "Lines with 23% have vat_rate_pct=23; lines with 13.5% have vat_rate_pct=13.5"
+      },
+      {
+        "id": "TC-08",
+        "description": "New year rollover",
+        "input": "Receipt dated 2027-01-01",
+        "expected": "Written to Receipts_2027 tab; tab auto-created with correct headers",
+        "pass_criteria": "Receipts_2026 tab unchanged; Receipts_2027 exists with correct schema"
+      }
+    ],
+    "acceptance_sign_off": "All TC-01 through TC-07 must pass. TC-08 can be verified by date-setting test. No data loss on TC-04/05/06."
+  },
+
+  "credentials_needed": [
+    "Google Service Account JSON with Drive (read) + Sheets (write) scopes",
+    "Anthropic API key (for Claude vision OCR)",
+    "Target Google Drive folder ID",
+    "Target Google Sheet ID",
+    "Local SQLite dedup DB path"
+  ],
+
+  "estimated_scope": "Large (6-10 hours total: 4 muscles × ~1.5h each + n8n workflow + testing)",
+  "phase": "1 — OCR pipeline only (no categorisation, no ledger push)"
+}

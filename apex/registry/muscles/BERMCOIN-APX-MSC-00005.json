@@ -1,0 +1,27 @@
+{
+  "id": "BERMCOIN-APX-MSC-00005",
+  "name": "monthly-limit-reset-cron",
+  "project": "BERMCOIN",
+  "version": "1.0.0",
+  "description": "Monthly cron job resets nudges_this_month on all rate_watches and members rows. Uses database trigger (auto_reset_nudges) as guard plus n8n WF-03 as scheduled executor. Logs reset event to audit_log.",
+  "trigger": "cron (1st of month 00:05 UTC) via WF-03",
+  "inputs": [],
+  "outputs": [
+    "reset_count",
+    "audit_log entry"
+  ],
+  "dependencies": [
+    "supabase",
+    "n8n"
+  ],
+  "n8n_workflows": [
+    "WF-03 Bermcoin Monthly Reset"
+  ],
+  "tables": [
+    "rate_watches",
+    "members",
+    "audit_log"
+  ],
+  "created": "2026-04-11",
+  "status": "active"
+}

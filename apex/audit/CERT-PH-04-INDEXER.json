@@ -1,0 +1,45 @@
+{
+  "phase": "PH-04",
+  "name": "The Indexer",
+  "ref_code": "APEX-MB-PY-00001",
+  "status": "CERTIFIED_COMPLETE",
+  "certified_at": "2026-03-03T11:12:48Z",
+  "certified_by": "SYS",
+  "evidence": {
+    "manifest_created": true,
+    "total_skills": 69,
+    "total_files": 15,
+    "duplicates": 2,
+    "index_duration_seconds": 0.89,
+    "manifest_path": "\\\\192.168.50.246\\Automations\\apex\\registry\\manifest.json",
+    "sources_scanned": [
+      "registry/"
+    ],
+    "cli_modes_verified": [
+      "--scan",
+      "--force",
+      "--search",
+      "--stats"
+    ]
+  },
+  "tests": [
+    {
+      "test": "indexer --scan --force",
+      "result": "PASS",
+      "output": "69 skills, 15 files, 2 duplicates"
+    },
+    {
+      "test": "manifest.json exists",
+      "result": "PASS"
+    },
+    {
+      "test": "manifest.json valid JSON",
+      "result": "PASS"
+    },
+    {
+      "test": "callable_as_muscle flags set",
+      "result": "PASS",
+      "count": 44
+    }
+  ]
+}

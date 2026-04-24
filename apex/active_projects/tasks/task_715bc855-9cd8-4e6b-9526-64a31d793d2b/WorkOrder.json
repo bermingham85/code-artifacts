@@ -1,0 +1,47 @@
+{
+  "meta": {
+    "job_id": "715bc855-9cd8-4e6b-9526-64a31d793d2b",
+    "ref_code": "APEX-SYS-WF-00000",
+    "created_at": "2026-02-27T11:26:29Z",
+    "sender": "human_originator",
+    "receiver": "foreman",
+    "project": "APEX",
+    "chain_next": null,
+    "idempotency_key": null,
+    "retry_count": 0,
+    "max_retries": 3,
+    "priority": "NORMAL"
+  },
+  "sop": {
+    "action": "muscle_json_merge",
+    "inputs": [
+      "C:\\Users\\bermi\\Projects\\apex\\registry\\manifest.json",
+      "C:\\Users\\bermi\\Projects\\apex\\registry\\sources.json"
+    ],
+    "parameters": {},
+    "requirements": [],
+    "timeout_seconds": 300
+  },
+  "task_folder": "C:\\Users\\bermi\\Projects\\apex\\active_projects\\tasks\\task_715bc855-9cd8-4e6b-9526-64a31d793d2b",
+  "qa_gate": {
+    "rule": "SIZE_GT_ZERO",
+    "checks": [
+      {
+        "rule": "SIZE_GT_ZERO",
+        "target": "",
+        "min_size_bytes": 0,
+        "expected_string": null
+      }
+    ]
+  },
+  "status": {
+    "state": "FAILED",
+    "started_at": "2026-02-27T11:26:29Z",
+    "completed_at": "2026-02-27T11:26:44Z",
+    "duration_seconds": 0.13,
+    "diagnostic": null,
+    "traceback": "usage: muscle_json_merge.py [-h] --inputs INPUTS --output OUTPUT\n                            [--task-folder TASK_FOLDER]\nmuscle_json_merge.py: error: the following arguments are required: --output\n",
+    "qa_result": null,
+    "exit_code": 2
+  }
+}

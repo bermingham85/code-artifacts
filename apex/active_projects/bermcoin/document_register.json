@@ -1,0 +1,266 @@
+[
+  {
+    "id": "BERMCOIN-BCK-MIG-00001",
+    "type": "migration",
+    "name": "bermcoin_001_members",
+    "path": "bermcoin/sql/001_members.sql",
+    "status": "applied",
+    "date": "2026-04-11T08:11:08Z"
+  },
+  {
+    "id": "BERMCOIN-BCK-MIG-00002",
+    "type": "migration",
+    "name": "bermcoin_002_rate_watches",
+    "path": "bermcoin/sql/002_rate_watches.sql",
+    "status": "applied",
+    "date": "2026-04-11T08:11:08Z"
+  },
+  {
+    "id": "BERMCOIN-BCK-MIG-00003",
+    "type": "migration",
+    "name": "bermcoin_003_rates_history",
+    "path": "bermcoin/sql/003_rates_history.sql",
+    "status": "applied",
+    "date": "2026-04-11T08:11:08Z"
+  },
+  {
+    "id": "BERMCOIN-BCK-MIG-00004",
+    "type": "migration",
+    "name": "bermcoin_004_rate_cache",
+    "path": "bermcoin/sql/004_rate_cache.sql",
+    "status": "applied",
+    "date": "2026-04-11T08:11:08Z"
+  },
+  {
+    "id": "BERMCOIN-BCK-MIG-00005",
+    "type": "migration",
+    "name": "bermcoin_005_config_update",
+    "path": "bermcoin/sql/005_config_update.sql",
+    "status": "applied",
+    "date": "2026-04-11T08:11:08Z"
+  },
+  {
+    "id": "BERMCOIN-BCK-MIG-00006",
+    "type": "migration",
+    "name": "bermcoin_006_audit_log",
+    "path": "bermcoin/sql/006_audit_log.sql",
+    "status": "applied",
+    "date": "2026-04-11T08:11:08Z"
+  },
+  {
+    "id": "BERMCOIN-BCK-MIG-00007",
+    "type": "migration",
+    "name": "bermcoin_007_nudge_log",
+    "path": "bermcoin/sql/007_nudge_log.sql",
+    "status": "applied",
+    "date": "2026-04-11T08:11:08Z"
+  },
+  {
+    "id": "BERMCOIN-BCK-MIG-00008",
+    "type": "migration",
+    "name": "bermcoin_008_affiliate_conversions",
+    "path": "bermcoin/sql/008_affiliate_conversions.sql",
+    "status": "applied",
+    "date": "2026-04-11T08:11:08Z"
+  },
+  {
+    "id": "BERMCOIN-BCK-MIG-00009",
+    "type": "migration",
+    "name": "bermcoin_009_churn_log",
+    "path": "bermcoin/sql/009_churn_log.sql",
+    "status": "applied",
+    "date": "2026-04-11T08:11:08Z"
+  },
+  {
+    "id": "BERMCOIN-BCK-RLS-00001",
+    "type": "rls_policy",
+    "name": "bermcoin_rls_policies",
+    "path": "bermcoin/sql/rls.sql",
+    "status": "applied",
+    "date": "2026-04-11T08:11:08Z"
+  },
+  {
+    "id": "BERMCOIN-BCK-TRG-00001",
+    "type": "trigger",
+    "name": "bermcoin_auth_triggers",
+    "path": "bermcoin/sql/auth_trigger.sql",
+    "status": "applied",
+    "date": "2026-04-11T08:11:08Z"
+  },
+  {
+    "id": "BERMCOIN-BCK-CFG-00001",
+    "type": "config",
+    "name": "config_seeds_28keys",
+    "path": "n/a (direct SQL)",
+    "status": "applied",
+    "date": "2026-04-11T08:11:08Z"
+  },
+  {
+    "id": "BERMCOIN-BCK-DAT-00001",
+    "type": "backfill",
+    "name": "90day_rate_backfill_7pairs",
+    "path": "bermcoin/scripts/backfill.py",
+    "status": "applied",
+    "date": "2026-04-11T08:11:08Z"
+  },
+  {
+    "id": "BERMCOIN-BCK-FRT-00001",
+    "type": "frontend",
+    "name": "landing_page",
+    "path": "bermcoin/frontend/landing/index.html",
+    "status": "built",
+    "date": "2026-04-11T08:11:08Z"
+  },
+  {
+    "id": "BERMCOIN-BCK-FRT-00002",
+    "type": "frontend",
+    "name": "login_page",
+    "path": "bermcoin/frontend/login/index.html",
+    "status": "built",
+    "date": "2026-04-11T08:11:08Z"
+  },
+  {
+    "id": "BERMCOIN-BCK-FRT-00003",
+    "type": "frontend",
+    "name": "dashboard_app",
+    "path": "bermcoin/frontend/app/index.html",
+    "status": "built",
+    "date": "2026-04-11T08:11:08Z"
+  },
+  {
+    "id": "BERMCOIN-BCK-WFL-00001",
+    "type": "workflow",
+    "name": "WF-01 Bermcoin Onboarding",
+    "path": "bermcoin/n8n/wf01_onboarding.json",
+    "status": "active",
+    "date": "2026-04-11T08:11:08Z"
+  },
+  {
+    "id": "BERMCOIN-BCK-WFL-00002",
+    "type": "workflow",
+    "name": "WF-02 Bermcoin Rate Watchdog",
+    "path": "bermcoin/n8n/wf02_rate_watchdog.json",
+    "status": "active",
+    "date": "2026-04-11T08:11:08Z"
+  },
+  {
+    "id": "BERMCOIN-BCK-WFL-00003",
+    "type": "workflow",
+    "name": "WF-03 Bermcoin Monthly Reset",
+    "path": "bermcoin/n8n/wf03_monthly_reset.json",
+    "status": "active",
+    "date": "2026-04-11T08:11:08Z"
+  },
+  {
+    "id": "BERMCOIN-BCK-WFL-00004",
+    "type": "workflow",
+    "name": "WF-04 Bermcoin Offboarding",
+    "path": "bermcoin/n8n/wf04_offboarding.json",
+    "status": "active",
+    "date": "2026-04-11T08:11:08Z"
+  },
+  {
+    "id": "BERMCOIN-BCK-WFL-00005",
+    "type": "workflow",
+    "name": "WF-05 Bermcoin Self-Healing",
+    "path": "bermcoin/n8n/wf05_self_healing.json",
+    "status": "active",
+    "date": "2026-04-11T08:11:08Z"
+  },
+  {
+    "id": "BERMCOIN-BCK-WFL-00006",
+    "type": "workflow",
+    "name": "WF-06 Bermcoin Support Router",
+    "path": "bermcoin/n8n/wf06_support_router.json",
+    "status": "active",
+    "date": "2026-04-11T08:11:08Z"
+  },
+  {
+    "id": "BERMCOIN-BCK-WFL-00007",
+    "type": "workflow",
+    "name": "WF-07 Bermcoin Feedback Digest",
+    "path": "bermcoin/n8n/wf07_feedback_digest.json",
+    "status": "active",
+    "date": "2026-04-11T08:11:08Z"
+  },
+  {
+    "id": "BERMCOIN-BCK-WFL-00008",
+    "type": "workflow",
+    "name": "WF-08 Bermcoin Weekly Report",
+    "path": "bermcoin/n8n/wf08_weekly_report.json",
+    "status": "active",
+    "date": "2026-04-11T08:11:08Z"
+  },
+  {
+    "id": "BERMCOIN-BCK-WFL-00009",
+    "type": "workflow",
+    "name": "WF-09 Bermcoin Growth Metrics",
+    "path": "bermcoin/n8n/wf09_growth_metrics.json",
+    "status": "active",
+    "date": "2026-04-11T08:11:08Z"
+  },
+  {
+    "id": "BERMCOIN-BCK-MSC-00001",
+    "type": "muscle",
+    "name": "stripe-supabase-magic-link-onboard",
+    "path": "apex/registry/muscles/BERMCOIN-APX-MSC-00001.json",
+    "status": "registered",
+    "date": "2026-04-11T08:11:08Z"
+  },
+  {
+    "id": "BERMCOIN-BCK-MSC-00002",
+    "type": "muscle",
+    "name": "rate-fetch-3source-fallback",
+    "path": "apex/registry/muscles/BERMCOIN-APX-MSC-00002.json",
+    "status": "registered",
+    "date": "2026-04-11T08:11:08Z"
+  },
+  {
+    "id": "BERMCOIN-BCK-MSC-00003",
+    "type": "muscle",
+    "name": "multichannel-member-dispatch",
+    "path": "apex/registry/muscles/BERMCOIN-APX-MSC-00003.json",
+    "status": "registered",
+    "date": "2026-04-11T08:11:08Z"
+  },
+  {
+    "id": "BERMCOIN-BCK-MSC-00004",
+    "type": "muscle",
+    "name": "supabase-rls-member-template",
+    "path": "apex/registry/muscles/BERMCOIN-APX-MSC-00004.json",
+    "status": "registered",
+    "date": "2026-04-11T08:11:08Z"
+  },
+  {
+    "id": "BERMCOIN-BCK-MSC-00005",
+    "type": "muscle",
+    "name": "monthly-limit-reset-cron",
+    "path": "apex/registry/muscles/BERMCOIN-APX-MSC-00005.json",
+    "status": "registered",
+    "date": "2026-04-11T08:11:08Z"
+  },
+  {
+    "id": "BERMCOIN-BCK-ENV-00001",
+    "type": "env",
+    "name": "env_example",
+    "path": "bermcoin/.env.example",
+    "status": "pushed",
+    "date": "2026-04-11T08:11:08Z"
+  },
+  {
+    "id": "BERMCOIN-BCK-DOC-00001",
+    "type": "doc",
+    "name": "BERMCOIN-SPEC.md",
+    "path": "bermcoin/docs/BERMCOIN-SPEC.md",
+    "status": "pushed",
+    "date": "2026-04-11T08:11:08Z"
+  },
+  {
+    "id": "BERMCOIN-BCK-TST-00001",
+    "type": "smoke_test",
+    "name": "smoke_tests_13of13_pass",
+    "path": "n/a (runtime)",
+    "status": "passed",
+    "date": "2026-04-11T08:11:08Z"
+  }
+]

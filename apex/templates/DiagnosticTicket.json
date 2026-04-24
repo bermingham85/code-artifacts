@@ -1,0 +1,23 @@
+{
+  "meta": {
+    "ticket_id": "UUID-v4",
+    "ref_code": "APEX-SYS-WF-00000",
+    "parent_job_id": "UUID-v4",
+    "created_at": "ISO-8601",
+    "severity": "INFO | WARN | ERROR | FATAL",
+    "receiver": "originator"
+  },
+  "failure": {
+    "stage": "VALIDATION | EXECUTION | QA_GATE | DOC_CONTROL | TIMEOUT | IDEMPOTENCY",
+    "error_type": "STRING",
+    "message": "STRING",
+    "traceback": "FULL_TRACEBACK_STRING"
+  },
+  "resolution": {
+    "suggested_action": null,
+    "auto_retry": false,
+    "retry_count": 0,
+    "resolved": false,
+    "resolved_at": null
+  }
+}
