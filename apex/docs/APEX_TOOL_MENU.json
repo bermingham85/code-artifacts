@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "generated_at": "2026-05-25T13:17:03Z",
+  "generated_at": "2026-05-25T19:27:20Z",
   "approved_tools": [
     {
       "need": "Inventory a headless laptop",
@@ -81,6 +81,16 @@
       "exact_call": "python registry/muscle_replit_builder_packet.py --instruction-file docs/spec/my_claude_build.md --mode create --project APEX",
       "how_to": "docs/tools/muscle_replit_builder_packet/guidance.md",
       "troubleshoot": "docs/tools/muscle_replit_builder_packet/troubleshoot.md"
+    },
+    {
+      "need": "Run a Claude build with Codex review loop",
+      "name": "claude_codex_loop",
+      "ref_code": "APEX-MB-PY-00023",
+      "category": "ai",
+      "state": "APPROVED",
+      "exact_call": "python registry/claude_codex_loop.py --prompt-file docs/spec/your_build.md --phase YOUR-PHASE-001 --max-attempts 3",
+      "how_to": "docs/tools/claude_codex_loop/guidance.md",
+      "troubleshoot": "docs/tools/claude_codex_loop/troubleshoot.md"
     }
   ],
   "pending_tools": [

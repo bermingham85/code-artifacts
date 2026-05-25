@@ -2090,6 +2090,15 @@
       "call_syntax": "powershell -ExecutionPolicy Bypass -File .\\registry\\muscle_resource_guard.ps1 -JobName report-batch -MinDiskFreeGB 10 -MinMemoryFreeGB 2",
       "approved": true,
       "approved_at": "2026-05-23"
+    },
+    {
+      "name": "claude_codex_loop",
+      "ref_code": "APEX-MB-PY-00023",
+      "category": "ai",
+      "one_liner": "Runs a prepared Claude build prompt, reviews changed files with codex_bridge.py, and retries until Codex signs off or a bounded failure state is reached.",
+      "call_syntax": "python registry/claude_codex_loop.py --prompt-file docs/spec/your_build.md --phase YOUR-PHASE-001 --max-attempts 3",
+      "approved": true,
+      "approved_at": "2026-05-25"
     }
   ]
 }

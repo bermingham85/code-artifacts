@@ -6,7 +6,7 @@
 | Version | 1.0 |
 | Status | ACTIVE |
 | Purpose | Low-token tool selection menu with current state, exact use path, and editable troubleshooting links |
-| Generated | 2026-05-25T13:17:03Z |
+| Generated | 2026-05-25T19:27:20Z |
 
 ## How To Use This Menu
 
@@ -30,6 +30,7 @@ Do not load every tool document up front. This menu is the cover page. Load only
 | Check Apex health | `muscle_health_check` | APPROVED | `python registry/muscle_health_check.py` | `docs/tools/muscle_health_check/guidance.md` | `docs/tools/muscle_health_check/troubleshoot.md` |
 | Drop a WorkOrder into the pipeline | `muscle_drop_ticket` | APPROVED | `python registry/muscle_drop_ticket.py --action muscle_health_check --project APEX` | `docs/tools/muscle_drop_ticket/guidance.md` | `docs/tools/muscle_drop_ticket/troubleshoot.md` |
 | Build a Replit Agent packet | `muscle_replit_builder_packet` | APPROVED | `python registry/muscle_replit_builder_packet.py --instruction-file docs/spec/my_claude_build.md --mode create --project APEX` | `docs/tools/muscle_replit_builder_packet/guidance.md` | `docs/tools/muscle_replit_builder_packet/troubleshoot.md` |
+| Run a Claude build with Codex review loop | `claude_codex_loop` | APPROVED | `python registry/claude_codex_loop.py --prompt-file docs/spec/your_build.md --phase YOUR-PHASE-001 --max-attempts 3` | `docs/tools/claude_codex_loop/guidance.md` | `docs/tools/claude_codex_loop/troubleshoot.md` |
 
 ## Pending Tool Queue
 
