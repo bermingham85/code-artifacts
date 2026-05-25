@@ -7,9 +7,10 @@ This repository uses a low-token boot path. Do not load the full spec first.
 1. Read `docs/APEX_CONTEXT_INDEX.md`.
 2. Read `docs/APEX_TOOL_MENU.md` when choosing a tool.
 3. Read `docs/APEX_WORKSPACE_MENU.md` when deciding what to do with loose, uncommitted, or unfamiliar artifact groups.
-4. Read `registry/TOOL_INDEX.md` only when confirming approved call syntax.
-5. Read `docs/DOCUMENT_REGISTER.md` only when checking artifact status or paths.
-6. Read the full spec only when implementing or changing the autonomous delivery system:
+4. Read `docs/APEX_REPO_MENU.md` when choosing or reviewing a repository.
+5. Read `registry/TOOL_INDEX.md` only when confirming approved call syntax.
+6. Read `docs/DOCUMENT_REGISTER.md` only when checking artifact status or paths.
+7. Read the full spec only when implementing or changing the autonomous delivery system:
    `docs/spec/SPEC-APEX-AUTONOMOUS-DELIVERY-SYSTEM.md`.
 
 ## Research Routing

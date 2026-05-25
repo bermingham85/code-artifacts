@@ -18,6 +18,7 @@ Read this file first. It is the compact map. Do not load large specs, transcript
 | Autonomous delivery foundation certificate | APPROVED | `audit/CERT-APEX-AUTONOMOUS-DELIVERY.json` |
 | Tool selection menu | ACTIVE | `docs/APEX_TOOL_MENU.md` |
 | Workspace artifact menu | ACTIVE | `docs/APEX_WORKSPACE_MENU.md` |
+| Repository menu | ACTIVE | `docs/APEX_REPO_MENU.md` |
 | Machine-readable tool menu | ACTIVE | `docs/APEX_TOOL_MENU.json` |
 | Master autonomous delivery spec | ACTIVE | `docs/spec/SPEC-APEX-AUTONOMOUS-DELIVERY-SYSTEM.md` |
 | Document register | ACTIVE | `docs/DOCUMENT_REGISTER.md` |
@@ -32,6 +33,7 @@ Read this file first. It is the compact map. Do not load large specs, transcript
 - `muscle_resource_guard` is approved.
 - `docs/APEX_TOOL_MENU.md` is the low-token cover page for tool selection.
 - `docs/APEX_WORKSPACE_MENU.md` is the low-token cover page for loose/uncommitted artifact groups.
+- `docs/APEX_REPO_MENU.md` is the low-token cover page for repositories under scanned roots.
 - `docs/APEX_TOOL_MENU.md` is generated from `docs/APEX_TOOL_MENU.json`.
 - Every approved tool has a version-controlled `troubleshoot.md` for reusable fixes.
 - Required approval docs exist for both support tools: blueprint, guidance, and test record.
@@ -85,7 +87,9 @@ Use Perplexity Pro first for external research when available. Ask for concise s
 | Need approved call syntax | `registry/TOOL_INDEX.md` |
 | Need choose a tool | `docs/APEX_TOOL_MENU.md` |
 | Need understand uncommitted artifacts | `docs/APEX_WORKSPACE_MENU.md` |
+| Need choose or review a repo | `docs/APEX_REPO_MENU.md` |
 | Need update the menu | Edit `docs/APEX_TOOL_MENU.json`, then run `python registry/generate_tool_menu.py` |
+| Need refresh repo index | `python registry/generate_repo_menu.py --root C:\Users\Owner\Repos` |
 | Need document-control status | `docs/DOCUMENT_REGISTER.md` |
 | Need evidence/signoff | `audit/CERT-APEX-AUTONOMOUS-DELIVERY.json` |
 | Need inventory tool details | `docs/tools/muscle_headless_inventory/blueprint.md` and `guidance.md` |

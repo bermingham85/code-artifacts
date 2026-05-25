@@ -1,0 +1,149 @@
+{
+  "version": "1.0",
+  "generated_at": "2026-05-25T13:36:00Z",
+  "roots": [
+    "C:\\Users\\Owner\\Repos"
+  ],
+  "project_count": 4,
+  "projects": [
+    {
+      "name": "code-artifacts",
+      "path": "C:\\Users\\Owner\\Repos\\code-artifacts",
+      "root": "C:\\Users\\Owner\\Repos",
+      "relative_path": "code-artifacts",
+      "class": "DOCUMENTED_REPO",
+      "key_files": [
+        "README.md",
+        "docs/DOCUMENT_REGISTER.md"
+      ],
+      "git": {
+        "is_git": true,
+        "branch": "apex/estate-seed-00004",
+        "dirty": true,
+        "dirty_count": 29,
+        "status_preview": [
+          "M  apex/AGENTS.md",
+          "M  apex/CLAUDE.md",
+          " M apex/audit/doc_audit.jsonl",
+          "M  apex/docs/APEX_CONTEXT_INDEX.md",
+          "A  apex/docs/APEX_REPO_MENU.json",
+          "A  apex/docs/APEX_REPO_MENU.md",
+          "M  apex/docs/DOCUMENT_REGISTER.md",
+          " M apex/docs/doc_controller.py",
+          "M  apex/llms.txt",
+          "A  apex/registry/generate_repo_menu.py",
+          "?? apex/.claude/",
+          "?? apex/audit/claude_codex_loop/"
+        ]
+      },
+      "extension_counts": {
+        ".md": 114,
+        ".json": 101,
+        ".txt": 50,
+        ".py": 32,
+        ".sql": 27,
+        ".html": 18,
+        ".ps1": 8,
+        ".ts": 8
+      },
+      "recommended_entry": "README.md",
+      "next_action": "Consider adding low-token AGENTS.md or llms.txt."
+    },
+    {
+      "name": "AGENT_BUILD_SYSTEM",
+      "path": "C:\\Users\\Owner\\Repos\\code-artifacts\\AGENT_BUILD_SYSTEM",
+      "root": "C:\\Users\\Owner\\Repos",
+      "relative_path": "code-artifacts\\AGENT_BUILD_SYSTEM",
+      "class": "DOCUMENTED_REPO",
+      "key_files": [
+        "README.md"
+      ],
+      "git": {
+        "is_git": true,
+        "branch": "apex/estate-seed-00004",
+        "dirty": false,
+        "dirty_count": 0,
+        "status_preview": []
+      },
+      "extension_counts": {
+        ".md": 23,
+        ".sql": 1,
+        ".json": 1
+      },
+      "recommended_entry": "README.md",
+      "next_action": "Consider adding low-token AGENTS.md or llms.txt."
+    },
+    {
+      "name": "apex",
+      "path": "C:\\Users\\Owner\\Repos\\code-artifacts\\apex",
+      "root": "C:\\Users\\Owner\\Repos",
+      "relative_path": "code-artifacts\\apex",
+      "class": "APEX_GOVERNED",
+      "key_files": [
+        "AGENTS.md",
+        "CLAUDE.md",
+        "llms.txt",
+        "docs/APEX_CONTEXT_INDEX.md",
+        "docs/APEX_TOOL_MENU.md",
+        "docs/APEX_WORKSPACE_MENU.md",
+        "docs/DOCUMENT_REGISTER.md",
+        "registry/TOOL_INDEX.md"
+      ],
+      "git": {
+        "is_git": true,
+        "branch": "apex/estate-seed-00004",
+        "dirty": true,
+        "dirty_count": 29,
+        "status_preview": [
+          "M  AGENTS.md",
+          "M  CLAUDE.md",
+          " M audit/doc_audit.jsonl",
+          "M  docs/APEX_CONTEXT_INDEX.md",
+          "A  docs/APEX_REPO_MENU.json",
+          "A  docs/APEX_REPO_MENU.md",
+          "M  docs/DOCUMENT_REGISTER.md",
+          " M docs/doc_controller.py",
+          "M  llms.txt",
+          "A  registry/generate_repo_menu.py",
+          "?? .claude/",
+          "?? audit/claude_codex_loop/"
+        ]
+      },
+      "extension_counts": {
+        ".json": 83,
+        ".md": 80,
+        ".txt": 50,
+        ".py": 30,
+        ".sql": 12,
+        ".html": 9,
+        ".ps1": 8,
+        "[none]": 4
+      },
+      "recommended_entry": "docs/APEX_CONTEXT_INDEX.md",
+      "next_action": "Use Apex context/menu files before deeper reads."
+    },
+    {
+      "name": "jesse-project",
+      "path": "C:\\Users\\Owner\\Repos\\code-artifacts\\jesse-project",
+      "root": "C:\\Users\\Owner\\Repos",
+      "relative_path": "code-artifacts\\jesse-project",
+      "class": "DOCUMENTED_REPO",
+      "key_files": [
+        "README.md"
+      ],
+      "git": {
+        "is_git": true,
+        "branch": "apex/estate-seed-00004",
+        "dirty": false,
+        "dirty_count": 0,
+        "status_preview": []
+      },
+      "extension_counts": {
+        ".md": 3,
+        ".json": 1
+      },
+      "recommended_entry": "README.md",
+      "next_action": "Consider adding low-token AGENTS.md or llms.txt."
+    }
+  ]
+}
