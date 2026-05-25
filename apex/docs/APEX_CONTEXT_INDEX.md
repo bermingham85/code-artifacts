@@ -17,6 +17,7 @@ Read this file first. It is the compact map. Do not load large specs, transcript
 |---|---|---|
 | Autonomous delivery foundation certificate | APPROVED | `audit/CERT-APEX-AUTONOMOUS-DELIVERY.json` |
 | Tool selection menu | ACTIVE | `docs/APEX_TOOL_MENU.md` |
+| Workspace artifact menu | ACTIVE | `docs/APEX_WORKSPACE_MENU.md` |
 | Machine-readable tool menu | ACTIVE | `docs/APEX_TOOL_MENU.json` |
 | Master autonomous delivery spec | ACTIVE | `docs/spec/SPEC-APEX-AUTONOMOUS-DELIVERY-SYSTEM.md` |
 | Document register | ACTIVE | `docs/DOCUMENT_REGISTER.md` |
@@ -30,6 +31,7 @@ Read this file first. It is the compact map. Do not load large specs, transcript
 - `muscle_headless_inventory` is approved.
 - `muscle_resource_guard` is approved.
 - `docs/APEX_TOOL_MENU.md` is the low-token cover page for tool selection.
+- `docs/APEX_WORKSPACE_MENU.md` is the low-token cover page for loose/uncommitted artifact groups.
 - `docs/APEX_TOOL_MENU.md` is generated from `docs/APEX_TOOL_MENU.json`.
 - Every approved tool has a version-controlled `troubleshoot.md` for reusable fixes.
 - Required approval docs exist for both support tools: blueprint, guidance, and test record.
@@ -82,6 +84,7 @@ Use Perplexity Pro first for external research when available. Ask for concise s
 | Need exact autonomous architecture | `docs/spec/SPEC-APEX-AUTONOMOUS-DELIVERY-SYSTEM.md` |
 | Need approved call syntax | `registry/TOOL_INDEX.md` |
 | Need choose a tool | `docs/APEX_TOOL_MENU.md` |
+| Need understand uncommitted artifacts | `docs/APEX_WORKSPACE_MENU.md` |
 | Need update the menu | Edit `docs/APEX_TOOL_MENU.json`, then run `python registry/generate_tool_menu.py` |
 | Need document-control status | `docs/DOCUMENT_REGISTER.md` |
 | Need evidence/signoff | `audit/CERT-APEX-AUTONOMOUS-DELIVERY.json` |
