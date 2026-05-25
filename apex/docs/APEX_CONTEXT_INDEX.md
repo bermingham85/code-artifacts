@@ -16,6 +16,7 @@ Read this file first. It is the compact map. Do not load large specs, transcript
 | Area | Status | Path |
 |---|---|---|
 | Autonomous delivery foundation certificate | APPROVED | `audit/CERT-APEX-AUTONOMOUS-DELIVERY.json` |
+| APEX governance doctrine (locked) | ACTIVE (v1.0-PROVISIONAL pending SP-A.2 ratification) | `docs/doctrine/APEX_DOCTRINE_v1.0.md` |
 | Tool selection menu | ACTIVE | `docs/APEX_TOOL_MENU.md` |
 | Workspace artifact menu | ACTIVE | `docs/APEX_WORKSPACE_MENU.md` |
 | Repository menu | ACTIVE | `docs/APEX_REPO_MENU.md` |
@@ -91,6 +92,7 @@ Use Perplexity Pro first for external research when available. Ask for concise s
 | Need understand uncommitted artifacts | `docs/APEX_WORKSPACE_MENU.md` |
 | Need choose or review a repo | `docs/APEX_REPO_MENU.md` |
 | Need combine parallel Claude/Codex work | `docs/APEX_PARALLEL_MERGE_PLAYBOOK.md` |
+| Need apex governance doctrine | `docs/doctrine/APEX_DOCTRINE_v1.0.md` (v1.0-PROVISIONAL pending SP-A.2 ratification) |
 | Need update the menu | Edit `docs/APEX_TOOL_MENU.json`, then run `python registry/generate_tool_menu.py` |
 | Need refresh repo index | `python registry/generate_repo_menu.py --root C:\Users\Owner\Repos` |
 | Need document-control status | `docs/DOCUMENT_REGISTER.md` |
