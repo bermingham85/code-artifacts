@@ -1,0 +1,65 @@
+{
+  "task_packet_version": "1.0",
+  "task_id": "APEX-TASK-YYYYMMDD-0001",
+  "phase": "PHASE-01-DISCOVERY",
+  "goal": "One concrete outcome for Codex to implement or verify.",
+  "requester": "Claude | Orchestrator | Human",
+  "assigned_to": "Codex",
+  "authorization_boundary": {
+    "allowed_assets": [
+      "Only devices, accounts, services, and networks owned by or explicitly authorized for the user"
+    ],
+    "forbidden_actions": [
+      "Bypass authentication",
+      "Disable security controls without documented safer alternative",
+      "Expose or write plaintext secrets",
+      "Perform destructive action without backup and rollback",
+      "Power-cycle during active writes, backups, or deployments unless emergency recovery is required"
+    ]
+  },
+  "input_files": [],
+  "write_scope": [],
+  "constraints": [
+    "Make the smallest safe change that completes the task",
+    "Prefer idempotent scripts and repeatable configuration",
+    "Record assumptions instead of stopping unless genuinely blocked",
+    "Do not ask for clarification unless task is impossible or unsafe"
+  ],
+  "expected_output": {
+    "files": [],
+    "report": "TASK RESULT with status, files changed, commands, tests, evidence, risks, rollback, next task"
+  },
+  "test_command": "",
+  "success_criteria": [
+    "Deliverables exist",
+    "Tests pass or blocked test is documented",
+    "Evidence path is recorded",
+    "Rollback exists",
+    "No secrets are exposed"
+  ],
+  "rollback_plan": "",
+  "evidence_required": [
+    "Command output summary",
+    "Changed file list",
+    "Test result",
+    "Any generated audit artifact path"
+  ],
+  "blocker_policy": {
+    "stop_for": [
+      "Missing credentials",
+      "Legal or authorization uncertainty",
+      "Payment or purchase approval",
+      "Physical-only action",
+      "Risk of data loss",
+      "Risk of unauthorized access",
+      "Risk of unsafe electrical/device behavior"
+    ],
+    "blocker_report_fields": [
+      "Exact blocker",
+      "Why it blocks progress",
+      "Lowest-friction resolution",
+      "Safe fallback path",
+      "What can continue independently"
+    ]
+  }
+}

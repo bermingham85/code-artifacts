@@ -1,0 +1,174 @@
+{
+  "ref_code": "CERT-APEX-AUTONOMOUS-DELIVERY",
+  "phase": "ADS-FOUNDATION",
+  "name": "Apex Autonomous Delivery System Foundation",
+  "certifies": [
+    "APEX-MB-DOC-00002",
+    "APEX-MB-SCH-00002",
+    "APEX-MB-DOC-00003",
+    "APEX-MB-DOC-00004",
+    "APEX-MB-CFG-00003",
+    "APEX-MB-CFG-00004",
+    "APEX-MB-DOC-00009",
+    "APEX-MB-DOC-00010",
+    "APEX-MB-DOC-00011",
+    "APEX-MB-DOC-00012",
+    "APEX-MB-DOC-00013",
+    "APEX-MB-DOC-00014",
+    "APEX-MB-DOC-00015",
+    "APEX-MB-DOC-00016",
+    "APEX-MB-DOC-00017",
+    "APEX-MB-DOC-00018",
+    "APEX-MB-DOC-00019",
+    "APEX-MB-DOC-00020",
+    "APEX-MB-DOC-00021",
+    "APEX-MB-SCH-00003",
+    "APEX-MB-CFG-00005",
+    "APEX-MB-PY-00025",
+    "APEX-MB-PY-00026",
+    "APEX-MB-DOC-00023"
+  ],
+  "status": "CERTIFIED_CONDITIONAL",
+  "certified_at": "2026-05-24T20:35:00Z",
+  "certified_by": "Codex",
+  "conditions_for_full_certification": [
+    "All evidence artifacts listed in `evidence` MUST be committed to the apex repo and pushed to the origin remote so that an immutable VCS reference exists for every certified ref code.",
+    "Once committed/pushed, this certificate MUST be re-issued with status=CERTIFIED_COMPLETE, reviewer_decision=APPROVED_FOR_FOUNDATION_USE, and the matching commit SHA recorded in `evidence.vcs_commit`."
+  ],
+  "scope": "Foundation artifacts for the autonomous delivery system: master spec, reusable templates, headless laptop inventory support tool, resource guard support tool, approval docs, manifest entries, tool index entries, low-token future-context boot files, generated cover-page tool menu, editable troubleshooting pages, menu generator, validator, and AI-facing root map.",
+  "evidence": {
+    "master_spec": "apex/docs/spec/SPEC-APEX-AUTONOMOUS-DELIVERY-SYSTEM.md",
+    "task_packet_template": "apex/docs/templates/apex_task_packet_template.json",
+    "completion_certificate_template": "apex/docs/templates/apex_completion_certificate_template.md",
+    "workflow_blueprint_template": "apex/docs/templates/apex_workflow_blueprint_template.md",
+    "headless_inventory_script": "apex/registry/muscle_headless_inventory.ps1",
+    "resource_guard_script": "apex/registry/muscle_resource_guard.ps1",
+    "headless_inventory_docs": [
+      "apex/docs/tools/muscle_headless_inventory/blueprint.md",
+      "apex/docs/tools/muscle_headless_inventory/guidance.md",
+      "apex/docs/tools/muscle_headless_inventory/test_record.md"
+    ],
+    "resource_guard_docs": [
+      "apex/docs/tools/muscle_resource_guard/blueprint.md",
+      "apex/docs/tools/muscle_resource_guard/guidance.md",
+      "apex/docs/tools/muscle_resource_guard/test_record.md"
+    ],
+    "document_register": "apex/docs/DOCUMENT_REGISTER.md",
+    "tool_index": "apex/registry/TOOL_INDEX.md",
+    "manifest": "apex/registry/manifest.json",
+    "low_token_context_index": "apex/docs/APEX_CONTEXT_INDEX.md",
+    "tool_menu": "apex/docs/APEX_TOOL_MENU.md",
+    "tool_menu_json": "apex/docs/APEX_TOOL_MENU.json",
+    "tool_menu_schema": "apex/docs/APEX_TOOL_MENU.schema.json",
+    "tool_menu_generator": "apex/registry/generate_tool_menu.py",
+    "tool_docs_validator": "apex/registry/validate_tool_docs.py",
+    "ai_facing_root_map": "apex/llms.txt",
+    "troubleshoot_template": "apex/docs/templates/troubleshoot_template.md",
+    "codex_agent_boot_file": "apex/AGENTS.md",
+    "claude_boot_file": "apex/CLAUDE.md",
+    "approved_tool_troubleshoot_docs": [
+      "apex/docs/tools/muscle_file_copy/troubleshoot.md",
+      "apex/docs/tools/muscle_text_transform/troubleshoot.md",
+      "apex/docs/tools/muscle_json_merge/troubleshoot.md",
+      "apex/docs/tools/muscle_health_check/troubleshoot.md",
+      "apex/docs/tools/muscle_drop_ticket/troubleshoot.md",
+      "apex/docs/tools/muscle_replit_builder_packet/troubleshoot.md",
+      "apex/docs/tools/muscle_headless_inventory/troubleshoot.md",
+      "apex/docs/tools/muscle_resource_guard/troubleshoot.md"
+    ]
+  },
+  "tests": [
+    {
+      "test": "Task packet JSON parses with python -m json.tool",
+      "result": "PASS"
+    },
+    {
+      "test": "PowerShell syntax validation for muscle_headless_inventory.ps1",
+      "result": "PASS"
+    },
+    {
+      "test": "PowerShell syntax validation for muscle_resource_guard.ps1",
+      "result": "PASS"
+    },
+    {
+      "test": "Headless inventory smoke test writes JSON summary and inventory file",
+      "result": "PASS",
+      "evidence": "C:\\tmp\\apex_headless_inventory_test\\headless_inventory_20260523T054616Z.json"
+    },
+    {
+      "test": "Resource guard creates a temporary job lock",
+      "result": "PASS",
+      "evidence": "C:\\tmp\\apex_lock_test\\codex-smoke-test.lock.json"
+    },
+    {
+      "test": "Resource guard releases the temporary job lock",
+      "result": "PASS"
+    },
+    {
+      "test": "Test records contain Approved: YES stamps",
+      "result": "PASS"
+    },
+    {
+      "test": "approve_tool.py --list completes and shows both new support tools approved",
+      "result": "PASS"
+    },
+    {
+      "test": "registry/TOOL_INDEX.md includes muscle_headless_inventory and muscle_resource_guard as approved tools",
+      "result": "PASS"
+    },
+    {
+      "test": "Newly created artifacts are ASCII-clean",
+      "result": "PASS"
+    },
+    {
+      "test": "Low-token context boot files exist and are registered",
+      "result": "PASS",
+      "evidence": "AGENTS.md, CLAUDE.md, docs/APEX_CONTEXT_INDEX.md"
+    },
+    {
+      "test": "Low-token context files are compact",
+      "result": "PASS",
+      "evidence": "CLAUDE.md 11 lines; AGENTS.md 17 lines; docs/APEX_CONTEXT_INDEX.md 62 lines"
+    },
+    {
+      "test": "Tool cover-page menu exists and links approved tools to exact use and troubleshoot docs",
+      "result": "PASS",
+      "evidence": "docs/APEX_TOOL_MENU.md"
+    },
+    {
+      "test": "Every approved tool has a version-controlled troubleshoot.md",
+      "result": "PASS",
+      "evidence": "docs/tools/*/troubleshoot.md for 8 approved tools"
+    },
+    {
+      "test": "Tool menu generator rebuilds docs/APEX_TOOL_MENU.md from docs/APEX_TOOL_MENU.json",
+      "result": "PASS",
+      "evidence": "python registry/generate_tool_menu.py"
+    },
+    {
+      "test": "Tool docs validator returns OK with no findings",
+      "result": "PASS",
+      "evidence": "python registry/validate_tool_docs.py"
+    }
+  ],
+  "security_review": {
+    "plaintext_secrets_in_new_files": "PASS - none added",
+    "credential_handling": "PASS - scripts do not read or emit secret values",
+    "authorization_boundary": "PASS - spec restricts use to owned or explicitly authorized devices, accounts, services, and networks",
+    "remote_access_boundary": "PASS - authenticated access only; no bypass or hidden persistence instructions",
+    "power_control_boundary": "PASS - graceful shutdown and cooldown rules documented before hard reset fallbacks"
+  },
+  "rollback": {
+    "files": "Revert the listed evidence files plus approve_tool.py, registry/manifest.json, registry/TOOL_INDEX.md, and docs/DOCUMENT_REGISTER.md to remove this foundation package.",
+    "runtime_state": "No production service was installed or changed. Temporary C:\\tmp smoke-test evidence can be deleted after archival if desired.",
+    "credentials": "No credentials were created, changed, read, or stored."
+  },
+  "known_issues": [
+    "BLOCKING (full certification): The foundation package is saved locally but not committed or pushed to Git. This certificate is therefore CONDITIONAL — see `conditions_for_full_certification`. Re-issue with CERTIFIED_COMPLETE only after the commit SHA is recorded in `evidence.vcs_commit`.",
+    "Actual deployment to a physical headless laptop still requires user-authorized access, credential binding, and BIOS/UEFI verification.",
+    "Wake-on-LAN, smart plug, fingerbot, and UPS behavior are designed but not physically tested in this foundation pass.",
+    "The worktree contained unrelated modified and untracked files before this completion pass; no broad cleanup or reset was performed."
+  ],
+  "reviewer_decision": "CONDITIONAL_APPROVAL_PENDING_VCS_COMMIT",
+  "next_action": "1) Commit and push all evidence artifacts listed in `evidence` to the apex repo origin remote. 2) Re-issue this certificate with status=CERTIFIED_COMPLETE, reviewer_decision=APPROVED_FOR_FOUNDATION_USE, and `evidence.vcs_commit` populated with the matching commit SHA. 3) Then create implementation Task Packets for physical laptop discovery, remote access binding, WOL verification, backup target binding, and n8n workflow deployment when authorized credentials and device access are available."
+}

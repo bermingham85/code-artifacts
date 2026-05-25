@@ -65,6 +65,29 @@ Every tool (muscle) requires **three documents** before it may be added to the T
 | Guidance | `docs/tools/{name}/guidance.md` | How to use it: examples, when to use, common mistakes |
 | Test Record | `docs/tools/{name}/test_record.md` | Proof it works: test cases, actual outputs, PASS/FAIL |
 
+### Operational Troubleshooting Rule
+
+Every approved tool also has an editable troubleshooting page:
+
+| Document | File | Purpose |
+|----------|------|---------|
+| Troubleshoot | `docs/tools/{name}/troubleshoot.md` | Known failures, exact fixes, verification steps, and a reusable fix log |
+
+The approval gate currently enforces the three core approval documents. The tool selection menu (`docs/APEX_TOOL_MENU.md`) enforces the operational expectation that approved tools have a version-controlled `troubleshoot.md`. When a new fix is discovered, append it to that tool's `Reusable Fix Log` so future agents can reuse the repair without re-researching.
+
+### Tool Menu Generation Rule
+
+The human-facing tool menu is generated from machine-readable source:
+
+| Artifact | Purpose |
+|----------|---------|
+| `docs/APEX_TOOL_MENU.json` | Source data for approved and pending tool menu entries |
+| `docs/APEX_TOOL_MENU.schema.json` | Schema for the menu source |
+| `registry/generate_tool_menu.py` | Regenerates `docs/APEX_TOOL_MENU.md` |
+| `registry/validate_tool_docs.py` | Validates approved tools have required docs, troubleshoot pages, menu entries, register rows, and approved index entries |
+
+When tool status or call syntax changes, update `docs/APEX_TOOL_MENU.json`, run `python registry/generate_tool_menu.py`, then run `python registry/validate_tool_docs.py`.
+
 ### The Test Record Gate
 
 A tool is only approved when its `test_record.md` contains:

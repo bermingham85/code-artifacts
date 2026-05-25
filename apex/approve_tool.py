@@ -104,8 +104,11 @@ def _get_call_syntax(tool_name: str) -> str:
     if not guidance.exists():
         return f"python registry/{tool_name}.py"
     content = guidance.read_text(encoding="utf-8")
-    # Find first code block with a python call
+    # Find first code block with a supported registry call.
     match = re.search(r"```bash\s*(python registry/" + tool_name + r"[^\n]*)", content)
+    if match:
+        return match.group(1).strip()
+    match = re.search(r"```powershell\s*(powershell[^\n]*registry[\\/]" + tool_name + r"\.ps1[^\n]*)", content)
     if match:
         return match.group(1).strip()
     return f"python registry/{tool_name}.py"
@@ -120,7 +123,7 @@ def approve_tool(tool_name: str, force: bool = False) -> bool:
     if not docs_ok:
         print(f"[approve] FAIL — Missing documentation:")
         for d in missing_docs:
-            print(f"          ✗ {d}")
+            print(f"          X {d}")
         print(f"\n          Create docs at: docs/tools/{tool_name}/")
         print(f"          Templates in:    docs/templates/")
         return False
@@ -334,7 +337,7 @@ def list_tools():
     for s in sorted(muscles, key=lambda x: x.get("ref_code", "")):
         name     = s.get("name", "?")
         ref      = s.get("ref_code", "—")
-        approved = "✓ APPROVED" if s.get("approved") else "  pending"
+        approved = "APPROVED" if s.get("approved") else "pending"
         cat      = s.get("category", "—")
         print(f"{ref:<22} {name:<30} {approved:<12} {cat}")
 
@@ -342,7 +345,7 @@ def list_tools():
     indexed = {s.get("name") for s in muscles}
     for t in manifest.get("approved_tools", []):
         if t.get("name") not in indexed:
-            print(f"{t.get('ref_code','—'):<22} {t.get('name','?'):<30} {'✓ APPROVED':<12} {t.get('category','—')}")
+            print(f"{t.get('ref_code','-'):<22} {t.get('name','?'):<30} {'APPROVED':<12} {t.get('category','-')}")
 
 
 def main():

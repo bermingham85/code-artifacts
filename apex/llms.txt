@@ -1,0 +1,35 @@
+# Apex Documentation Index
+
+This is a compact AI-facing map for Apex. Prefer these entry points before reading large specs or audit folders.
+
+## Core Indexes
+
+- `docs/APEX_CONTEXT_INDEX.md`: low-token context boot map.
+- `docs/APEX_TOOL_MENU.md`: tool selection cover page with exact calls and troubleshoot links.
+- `registry/TOOL_INDEX.md`: approved callable tools.
+- `docs/DOCUMENT_REGISTER.md`: governed artifact status and paths.
+
+## Autonomous Delivery
+
+- `audit/CERT-APEX-AUTONOMOUS-DELIVERY.json`: foundation certificate and evidence.
+- `docs/spec/SPEC-APEX-AUTONOMOUS-DELIVERY-SYSTEM.md`: full autonomous delivery architecture.
+- `docs/research/APEX-TOOL-MENU-RESEARCH-2026-05-25.md`: research on the tool menu concept and alternatives.
+
+## Tool Documentation
+
+Each approved tool uses:
+
+- `docs/tools/<tool>/blueprint.md`
+- `docs/tools/<tool>/guidance.md`
+- `docs/tools/<tool>/test_record.md`
+- `docs/tools/<tool>/troubleshoot.md`
+
+When a reusable fix is found, append it to the matching `troubleshoot.md`.
+
+## Governance
+
+- `AGENTS.md`: Codex/agent boot instructions.
+- `CLAUDE.md`: Claude boot instructions.
+- `docs/NAMING_CONVENTION.md`: document control and approval rules.
+- `registry/validate_tool_docs.py`: validation for approved tool docs.
+- `registry/generate_tool_menu.py`: regenerates the Markdown tool menu from JSON.

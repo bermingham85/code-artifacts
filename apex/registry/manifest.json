@@ -160,7 +160,7 @@
     },
     {
       "id": "6556a29f-7fec-4ee7-9d30-162462b9a9c5",
-      "ref_code": "APEX-SYS-PY-00000",
+      "ref_code": "APEX-MB-PY-00008",
       "name": "muscle_drop_ticket",
       "file": "\\\\192.168.50.246\\Automations\\apex\\registry\\muscle_drop_ticket.py",
       "source": "local",
@@ -180,7 +180,12 @@
       "ast_hash": "a3eca7ea74ca0dcca6ccc7735810d4af287102bfe394899bf8048c3871f8d0af",
       "last_modified": "2026-02-27T09:33:58Z",
       "tags": [],
-      "callable_as_muscle": true
+      "callable_as_muscle": true,
+      "approved": true,
+      "approved_at": "2026-05-23",
+      "category": "system",
+      "one_liner": "Builds a valid WorkOrder JSON and atomically drops it into `hub/` for the n8n Blind Postman to pick up and execute via foreman.py. This is the primary way to trigger any other muscle.",
+      "call_syntax": "python registry/muscle_drop_ticket.py"
     },
     {
       "id": "d1791334-54e3-420f-a217-a0473f67b09a",
@@ -208,7 +213,7 @@
     },
     {
       "id": "9a28de4b-0bd1-4be0-affe-5a79c4cea55e",
-      "ref_code": "APEX-SYS-PY-00000",
+      "ref_code": "APEX-MB-PY-00004",
       "name": "muscle_file_copy",
       "file": "\\\\192.168.50.246\\Automations\\apex\\registry\\muscle_file_copy.py",
       "source": "local",
@@ -226,7 +231,12 @@
       "ast_hash": "70f596d833a70ee1cf644f80a8b783dc79466c7d0200604d7a9344e9d8a6b968",
       "last_modified": "2026-02-27T09:32:49Z",
       "tags": [],
-      "callable_as_muscle": true
+      "callable_as_muscle": true,
+      "approved": true,
+      "approved_at": "2026-05-23",
+      "category": "files",
+      "one_liner": "Copies a single file from a source path to a destination path. Creates destination directory if it does not exist.",
+      "call_syntax": "python registry/muscle_file_copy.py --source \"C:/path/source.txt\" --dest \"C:/path/dest.txt\""
     },
     {
       "id": "96e7ac33-690e-4dc7-b8fc-4c2b80d20b54",
@@ -416,7 +426,7 @@
     },
     {
       "id": "071742fc-50d7-49ff-b692-868fa8c6be3d",
-      "ref_code": "APEX-SYS-PY-00000",
+      "ref_code": "APEX-MB-PY-00007",
       "name": "muscle_health_check",
       "file": "\\\\192.168.50.246\\Automations\\apex\\registry\\muscle_health_check.py",
       "source": "local",
@@ -440,7 +450,12 @@
       "ast_hash": "d9e022588d4442ffccec8e19752e296dbf3dae89b6008993cf0d769ada97f072",
       "last_modified": "2026-02-27T09:33:35Z",
       "tags": [],
-      "callable_as_muscle": true
+      "callable_as_muscle": true,
+      "approved": true,
+      "approved_at": "2026-05-23",
+      "category": "system",
+      "one_liner": "Runs a full system health check and writes a structured JSON report covering disk space, Python environment, Apex manifest state, foreman heartbeat, and n8n reachability.",
+      "call_syntax": "python registry/muscle_health_check.py"
     },
     {
       "id": "5e23d0f1-5208-44ca-99ae-4806c088b913",
@@ -492,7 +507,7 @@
     },
     {
       "id": "c530bd1a-f99c-48b4-9df6-7c24b76312ea",
-      "ref_code": "APEX-SYS-PY-00000",
+      "ref_code": "APEX-MB-PY-00006",
       "name": "muscle_json_merge",
       "file": "\\\\192.168.50.246\\Automations\\apex\\registry\\muscle_json_merge.py",
       "source": "local",
@@ -508,7 +523,12 @@
       "ast_hash": "bd3d625f8ddbd6647c2e9fb189a00c4c224517412be52f977329c076f88c176a",
       "last_modified": "2026-02-27T09:33:12Z",
       "tags": [],
-      "callable_as_muscle": true
+      "callable_as_muscle": true,
+      "approved": true,
+      "approved_at": "2026-05-23",
+      "category": "data",
+      "one_liner": "Deep-merges two or more JSON files into one. Last file wins on key conflicts.",
+      "call_syntax": "python registry/muscle_json_merge.py --inputs \"base.json,override.json\" --output \"merged.json\""
     },
     {
       "id": "30192cef-68db-467c-8e97-7bf0c4fd268b",
@@ -1144,7 +1164,7 @@
     },
     {
       "id": "9a5dbc55-3379-4750-ae66-87c53e702012",
-      "ref_code": "APEX-SYS-PY-00000",
+      "ref_code": "APEX-MB-PY-00005",
       "name": "muscle_text_transform",
       "file": "\\\\192.168.50.246\\Automations\\apex\\registry\\muscle_text_transform.py",
       "source": "local",
@@ -1160,7 +1180,12 @@
       "ast_hash": "b2af84386f877fc0bf281f58feef77d71580f8189b22cf94f86674197ea6971c",
       "last_modified": "2026-02-27T09:33:01Z",
       "tags": [],
-      "callable_as_muscle": true
+      "callable_as_muscle": true,
+      "approved": true,
+      "approved_at": "2026-05-23",
+      "category": "data",
+      "one_liner": "Applies a text transformation operation to a file: uppercase, lowercase, strip whitespace, find-replace, or word count.",
+      "call_syntax": "python registry/muscle_text_transform.py --input in.txt --output out.txt --operation upper"
     },
     {
       "id": "085dbab2-18d7-413c-9773-fe53193934ef",
@@ -2036,6 +2061,35 @@
       "name": "_now_iso",
       "file": "\\\\192.168.50.246\\Automations\\apex\\registry\\muscle_health_check.py",
       "clash_with": "\\\\192.168.50.246\\Automations\\apex\\registry\\muscle_drop_ticket.py"
+    }
+  ],
+  "approved_tools": [
+    {
+      "name": "muscle_replit_builder_packet",
+      "ref_code": "APEX-MB-PY-00024",
+      "category": "ai",
+      "one_liner": "Creates a Replit Agent handoff packet from Claude-style build instructions. The packet lets Claude remain the planner and reviewer while Replit becomes the core code builder for app creation or iteration.",
+      "call_syntax": "python registry/muscle_replit_builder_packet.py --instruction-file docs/spec/my_claude_build.md --mode create --project APEX",
+      "approved": true,
+      "approved_at": "2026-05-23"
+    },
+    {
+      "name": "muscle_headless_inventory",
+      "ref_code": "APEX-MB-CFG-00003",
+      "category": "system",
+      "one_liner": "Captures a read-only headless laptop inventory for Apex remote-worker setup without collecting secret values.",
+      "call_syntax": "powershell -ExecutionPolicy Bypass -File .\\registry\\muscle_headless_inventory.ps1 -OutputDir .\\audit\\headless_inventory",
+      "approved": true,
+      "approved_at": "2026-05-23"
+    },
+    {
+      "name": "muscle_resource_guard",
+      "ref_code": "APEX-MB-CFG-00004",
+      "category": "system",
+      "one_liner": "Prevents startup clashes and unsafe scheduled-job overlap by checking disk, memory, duplicate-job locks, backup/deploy/destructive locks, and optional GPU lock ownership.",
+      "call_syntax": "powershell -ExecutionPolicy Bypass -File .\\registry\\muscle_resource_guard.ps1 -JobName report-batch -MinDiskFreeGB 10 -MinMemoryFreeGB 2",
+      "approved": true,
+      "approved_at": "2026-05-23"
     }
   ]
 }
