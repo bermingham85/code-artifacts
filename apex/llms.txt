@@ -8,6 +8,7 @@ This is a compact AI-facing map for Apex. Prefer these entry points before readi
 - `docs/APEX_TOOL_MENU.md`: tool selection cover page with exact calls and troubleshoot links.
 - `docs/APEX_WORKSPACE_MENU.md`: current workspace artifact group map.
 - `docs/APEX_REPO_MENU.md`: repository selection and state map.
+- `docs/APEX_PARALLEL_MERGE_PLAYBOOK.md`: instructions for combining parallel Claude/Codex product tracks.
 - `registry/TOOL_INDEX.md`: approved callable tools.
 - `docs/DOCUMENT_REGISTER.md`: governed artifact status and paths.
 
