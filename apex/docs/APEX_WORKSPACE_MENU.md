@@ -24,7 +24,7 @@ This menu explains what the current loose/uncommitted artifact groups are for, w
 | `docs/spec/SPEC-SP-A.0*` | WIP/LEGACY SPEC | SP-A bootstrap/preflight specs and inventory | Reference only | Review as SP-A governance package or archive |
 | `docs/spec/SCOPE-AGEN-AGENT-TASKS-SCHEMA-FIX-v1.md` | WIP SPEC | Agent task schema fix scope | Do not mix with tool-menu package | Review as separate AGEN schema task |
 | `docs/replit_builder_bridge.md` | WIP DOC | Replit builder bridge notes | Maybe | Compare against committed Replit builder packet docs |
-| `registry/claude_codex_loop.py` | WIP TOOL | Claude builder / Codex reviewer loop automation | Not yet from menu | Needs blueprint/guidance/test/troubleshoot before approval |
+| `registry/claude_codex_loop.py` | APPROVED TOOL | Claude builder / Codex reviewer loop automation | Use via tool menu | Runs `muscle_work_gate` before startup; see `docs/APEX_TOOL_MENU.md` |
 | `registry/muscle_compliance_check.py` | WIP TOOL | Read-only governance compliance checker | Useful manually, not approved | Add docs/test/troubleshoot, approve, then add to tool menu |
 | `registry/receipt_ocr_raw_export.py` | WIP TOOL | Receipt OCR raw export utility | Not approved | Decide if still needed; document or archive |
 | `audit/claude_codex_loop/` | AUDIT EVIDENCE | Claude/Codex loop transcripts and signoff outputs | Evidence only | Keep with loop package if committing loop tool |
@@ -39,6 +39,7 @@ This menu explains what the current loose/uncommitted artifact groups are for, w
 | Situation | Action |
 |---|---|
 | Need to use an approved tool | Read `docs/APEX_TOOL_MENU.md` |
+| Need to edit repo or promote work | Run `python registry/muscle_work_gate.py --repo . --intent write --fetch` first |
 | Need to understand loose files | Read this file first |
 | Need to approve a WIP tool | Add blueprint, guidance, test_record, troubleshoot; run `approve_tool.py`; update generated menu |
 | Need to commit a group | Commit one group at a time with matching docs/evidence |

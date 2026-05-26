@@ -18,6 +18,8 @@ Read this file first. It is the compact map. Do not load large specs, transcript
 | Autonomous delivery foundation certificate | APPROVED | `audit/CERT-APEX-AUTONOMOUS-DELIVERY.json` |
 | APEX governance doctrine (locked) | ACTIVE (v1.0-PROVISIONAL pending SP-A.2 ratification) | `docs/doctrine/APEX_DOCTRINE_v1.0.md` |
 | Tool selection menu | ACTIVE | `docs/APEX_TOOL_MENU.md` |
+| Work authority gate | ACTIVE | `docs/APEX_WORK_GATE.md` |
+| Station alignment checklist | ACTIVE | `docs/APEX_STATION_ALIGNMENT.md` |
 | Workspace artifact menu | ACTIVE | `docs/APEX_WORKSPACE_MENU.md` |
 | Repository menu | ACTIVE | `docs/APEX_REPO_MENU.md` |
 | Parallel merge playbook | ACTIVE | `docs/APEX_PARALLEL_MERGE_PLAYBOOK.md` |
@@ -34,6 +36,8 @@ Read this file first. It is the compact map. Do not load large specs, transcript
 - `muscle_headless_inventory` is approved.
 - `muscle_resource_guard` is approved.
 - `docs/APEX_TOOL_MENU.md` is the low-token cover page for tool selection.
+- `docs/APEX_WORK_GATE.md` defines the authority gate for repo edits, fallback-machine continuation, and artifact promotion.
+- `docs/APEX_STATION_ALIGNMENT.md` defines station-level shutoffs for Claude, Codex, X-drive access, and sync scripts.
 - `docs/APEX_WORKSPACE_MENU.md` is the low-token cover page for loose/uncommitted artifact groups.
 - `docs/APEX_REPO_MENU.md` is the low-token cover page for repositories under scanned roots.
 - `docs/APEX_PARALLEL_MERGE_PLAYBOOK.md` explains how to combine the Codex-built index package with the parallel Claude governance run.
@@ -48,6 +52,7 @@ Read this file first. It is the compact map. Do not load large specs, transcript
 |---|---|---|---|
 | `muscle_headless_inventory` | APEX-MB-CFG-00003 | Read-only laptop inventory without collecting secrets | `docs/tools/muscle_headless_inventory/guidance.md` |
 | `muscle_resource_guard` | APEX-MB-CFG-00004 | Scheduled-job resource and lock gate | `docs/tools/muscle_resource_guard/guidance.md` |
+| `muscle_work_gate` | APEX-MB-PY-00029 | Repo/artifact authority preflight for normal and fallback work | `docs/tools/muscle_work_gate/guidance.md` |
 
 Use `registry/TOOL_INDEX.md` for exact call syntax.
 
@@ -89,6 +94,8 @@ Use Perplexity Pro first for external research when available. Ask for concise s
 | Need exact autonomous architecture | `docs/spec/SPEC-APEX-AUTONOMOUS-DELIVERY-SYSTEM.md` |
 | Need approved call syntax | `registry/TOOL_INDEX.md` |
 | Need choose a tool | `docs/APEX_TOOL_MENU.md` |
+| Need edit a repo, use fallback work, or promote artifacts | `docs/APEX_WORK_GATE.md`, then `python registry/muscle_work_gate.py --repo . --intent write --fetch` |
+| Need align another station or LLM install | `docs/APEX_STATION_ALIGNMENT.md` |
 | Need understand uncommitted artifacts | `docs/APEX_WORKSPACE_MENU.md` |
 | Need choose or review a repo | `docs/APEX_REPO_MENU.md` |
 | Need combine parallel Claude/Codex work | `docs/APEX_PARALLEL_MERGE_PLAYBOOK.md` |

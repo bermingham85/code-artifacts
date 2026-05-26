@@ -6,6 +6,8 @@ This is a compact AI-facing map for Apex. Prefer these entry points before readi
 
 - `docs/APEX_CONTEXT_INDEX.md`: low-token context boot map.
 - `docs/APEX_TOOL_MENU.md`: tool selection cover page with exact calls and troubleshoot links.
+- `docs/APEX_WORK_GATE.md`: mandatory authority gate for repo edits, fallback work, and artifact promotion.
+- `docs/APEX_STATION_ALIGNMENT.md`: station-level shutoffs for Claude, Codex, X-drive access, and sync scripts.
 - `docs/APEX_WORKSPACE_MENU.md`: current workspace artifact group map.
 - `docs/APEX_REPO_MENU.md`: repository selection and state map.
 - `docs/APEX_PARALLEL_MERGE_PLAYBOOK.md`: instructions for combining parallel Claude/Codex product tracks.
@@ -37,3 +39,4 @@ When a reusable fix is found, append it to the matching `troubleshoot.md`.
 - `registry/validate_tool_docs.py`: validation for approved tool docs.
 - `registry/generate_tool_menu.py`: regenerates the Markdown tool menu from JSON.
 - `registry/generate_repo_menu.py`: scans repository roots and regenerates repo menus.
+- `registry/muscle_work_gate.py`: checks Git/X authority before work becomes official.

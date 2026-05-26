@@ -2099,6 +2099,15 @@
       "call_syntax": "python registry/claude_codex_loop.py --prompt-file docs/spec/your_build.md --phase YOUR-PHASE-001 --max-attempts 3",
       "approved": true,
       "approved_at": "2026-05-25"
+    },
+    {
+      "name": "muscle_work_gate",
+      "ref_code": "APEX-MB-PY-00029",
+      "category": "governance",
+      "one_liner": "Runs an authority preflight before repository work, fallback work, or artifact promotion. It prevents agents from treating stale local files as source of truth by checking the Git branch, upstream state, protected branches, dirty working tree, and Apex authority manifest.",
+      "call_syntax": "python registry/muscle_work_gate.py",
+      "approved": true,
+      "approved_at": "2026-05-26"
     }
   ]
 }

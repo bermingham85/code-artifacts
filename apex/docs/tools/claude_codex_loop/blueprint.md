@@ -25,7 +25,10 @@ The intended use is **multi-pass agentic work where independent reviewer sign-of
 | `--phase` | string | yes | Phase / job label used for the audit subdirectory (e.g. `AGEN-spec-agent`) |
 | `--repo` | path | no | APEX repo path to snapshot for change detection. Default: `cwd` |
 | `--claude-cwd` | path | no | Working directory passed to the Claude subprocess. Default: `cwd` |
-| `--x-apex` | path | no | Shared APEX estate path made readable to Claude via `--add-dir`. Default: `\\192.168.50.246\Extra\Automations\apex` |
+| `--x-apex` | path | no | Shared APEX estate path. Not exposed to Claude unless `--allow-x-apex` is passed. Default: `\\192.168.50.246\Extra\Automations\apex` |
+| `--allow-x-apex` | flag | no | Exposes `--x-apex` to Claude. Use only for explicit X-drive tasks after work-gate review. |
+| `--work-mode` | enum | no | `auto`, `normal`, or `fallback`; passed to `muscle_work_gate` before startup. |
+| `--allow-dirty-work-gate` | flag | no | Allows startup after operator-reviewed dirty worktree gate warning. |
 | `--codex-bridge` | path | no | Path to `codex_bridge.py`. Default: `C:\Users\Owner\apex_governance\cc_runbook\codex_bridge.py` |
 | `--out-dir` | path | no | Loop log root. Default: `audit/claude_codex_loop` |
 | `--max-attempts` | int | no | Maximum Claude/Codex iterations. Default: `5` |
@@ -129,7 +132,7 @@ python registry/claude_codex_loop.py `
 
 ## Apex WorkOrder Use
 
-This is the canonical "review-required" runner. Recommended call sites:
+This runner calls `muscle_work_gate` before starting Claude. A blocked work gate blocks the loop. This is the canonical "review-required" runner. Recommended call sites:
 - Agent spec implementation (AGEN-*)
 - Schema migrations
 - Doctrine changes that must pass Codex gate

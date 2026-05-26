@@ -18,7 +18,7 @@
 - For builds where you want manual human review between iterations — this loop is fully automated up to `--max-attempts`.
 - For tasks that should NOT be retried on failure — pass `--max-attempts 1` instead.
 - As an alternative to writing a clear initial prompt. Garbage-in: Claude will burn 5 attempts confused. Get the prompt right before invoking.
-- When the repo has uncommitted user changes you cannot afford to lose. The loop does not roll back. Stash or commit first.
+- When the repo has unreviewed uncommitted changes. The work gate blocks this by default; inspect first, then use `--allow-dirty-work-gate` only if continuation is intentional.
 
 ## How to Call
 
@@ -28,6 +28,17 @@ python registry/claude_codex_loop.py `
   --prompt-file docs/spec/your_build.md `
   --phase YOUR-PHASE-001
 ```
+
+The loop runs `muscle_work_gate` before Claude starts. If local changes already exist, inspect them first and then use:
+
+```powershell
+python registry/claude_codex_loop.py `
+  --prompt-file docs/spec/your_build.md `
+  --phase YOUR-PHASE-001 `
+  --allow-dirty-work-gate
+```
+
+Do not pass `--allow-x-apex` unless the task explicitly needs Claude to access the shared X Apex estate. Normal code work should stay inside the repo workspace.
 
 Common production pattern (bounded, faster):
 ```powershell

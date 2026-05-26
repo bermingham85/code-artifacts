@@ -6,7 +6,7 @@
 | Version | 1.0 |
 | Status | ACTIVE |
 | Purpose | Low-token tool selection menu with current state, exact use path, and editable troubleshooting links |
-| Generated | 2026-05-25T19:27:20Z |
+| Generated | 2026-05-26T20:32:36Z |
 
 ## How To Use This Menu
 
@@ -24,6 +24,7 @@ Do not load every tool document up front. This menu is the cover page. Load only
 |---|---|---|---|---|---|
 | Inventory a headless laptop | `muscle_headless_inventory` | APPROVED | `powershell -ExecutionPolicy Bypass -File .\registry\muscle_headless_inventory.ps1 -OutputDir .\audit\headless_inventory` | `docs/tools/muscle_headless_inventory/guidance.md` | `docs/tools/muscle_headless_inventory/troubleshoot.md` |
 | Gate a scheduled or GPU job | `muscle_resource_guard` | APPROVED | `powershell -ExecutionPolicy Bypass -File .\registry\muscle_resource_guard.ps1 -JobName report-batch -MinDiskFreeGB 10 -MinMemoryFreeGB 2` | `docs/tools/muscle_resource_guard/guidance.md` | `docs/tools/muscle_resource_guard/troubleshoot.md` |
+| Gate repo edits, fallback work, or artifact promotion | `muscle_work_gate` | APPROVED | `python registry/muscle_work_gate.py --repo . --intent write --fetch` | `docs/tools/muscle_work_gate/guidance.md` | `docs/tools/muscle_work_gate/troubleshoot.md` |
 | Copy or back up a file | `muscle_file_copy` | APPROVED | `python registry/muscle_file_copy.py --source "C:/path/source.txt" --dest "C:/path/dest.txt"` | `docs/tools/muscle_file_copy/guidance.md` | `docs/tools/muscle_file_copy/troubleshoot.md` |
 | Transform or count text | `muscle_text_transform` | APPROVED | `python registry/muscle_text_transform.py --input in.txt --output out.txt --operation upper` | `docs/tools/muscle_text_transform/guidance.md` | `docs/tools/muscle_text_transform/troubleshoot.md` |
 | Merge JSON files | `muscle_json_merge` | APPROVED | `python registry/muscle_json_merge.py --inputs "base.json,override.json" --output "merged.json"` | `docs/tools/muscle_json_merge/guidance.md` | `docs/tools/muscle_json_merge/troubleshoot.md` |

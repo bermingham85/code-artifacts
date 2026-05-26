@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "generated_at": "2026-05-25T19:27:20Z",
+  "generated_at": "2026-05-26T20:32:36Z",
   "approved_tools": [
     {
       "need": "Inventory a headless laptop",
@@ -21,6 +21,16 @@
       "exact_call": "powershell -ExecutionPolicy Bypass -File .\\registry\\muscle_resource_guard.ps1 -JobName report-batch -MinDiskFreeGB 10 -MinMemoryFreeGB 2",
       "how_to": "docs/tools/muscle_resource_guard/guidance.md",
       "troubleshoot": "docs/tools/muscle_resource_guard/troubleshoot.md"
+    },
+    {
+      "need": "Gate repo edits, fallback work, or artifact promotion",
+      "name": "muscle_work_gate",
+      "ref_code": "APEX-MB-PY-00029",
+      "category": "governance",
+      "state": "APPROVED",
+      "exact_call": "python registry/muscle_work_gate.py --repo . --intent write --fetch",
+      "how_to": "docs/tools/muscle_work_gate/guidance.md",
+      "troubleshoot": "docs/tools/muscle_work_gate/troubleshoot.md"
     },
     {
       "need": "Copy or back up a file",

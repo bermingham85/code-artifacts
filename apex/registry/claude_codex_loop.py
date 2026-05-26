@@ -139,6 +139,7 @@ def run_claude(
     cwd: Path,
     repo: Path,
     x_apex: Path,
+    allow_x_apex: bool,
     timeout_seconds: int,
 ) -> subprocess.CompletedProcess[bytes]:
     claude = shutil.which("claude")
@@ -151,9 +152,9 @@ def run_claude(
         "auto",
         "--add-dir",
         str(repo),
-        "--add-dir",
-        str(x_apex),
     ]
+    if allow_x_apex:
+        cmd.extend(["--add-dir", str(x_apex)])
     try:
         return subprocess.run(
             cmd,
@@ -167,6 +168,42 @@ def run_claude(
     except subprocess.TimeoutExpired as exc:
         stderr = (exc.stderr or b"") + f"\nTimed out after {timeout_seconds} seconds.\n".encode("utf-8")
         return subprocess.CompletedProcess(cmd, 124, stdout=exc.stdout or b"", stderr=stderr)
+
+
+def run_work_gate(repo: Path, mode: str, allow_dirty: bool) -> subprocess.CompletedProcess[bytes]:
+    gate = Path(__file__).resolve().parent / "muscle_work_gate.py"
+    if not gate.exists():
+        raise RuntimeError(f"work gate not found: {gate}")
+    cmd = [
+        sys.executable,
+        str(gate),
+        "--repo",
+        str(repo),
+        "--mode",
+        mode,
+        "--intent",
+        "write",
+        "--fetch",
+    ]
+    if allow_dirty:
+        cmd.append("--allow-dirty")
+    return subprocess.run(cmd, capture_output=True, text=False)
+
+
+def gate_allows_loop(proc: subprocess.CompletedProcess[bytes], allow_dirty: bool) -> bool:
+    if proc.returncode != 0:
+        return False
+    try:
+        report = json.loads(decode(proc.stdout) or "{}")
+    except json.JSONDecodeError:
+        return False
+    if report.get("status") == "OK":
+        return True
+    if not allow_dirty or report.get("status") != "WARN":
+        return False
+    warnings = set(report.get("warnings", []))
+    accepted = {"working tree is dirty; inspect user changes before editing"}
+    return bool(warnings) and warnings.issubset(accepted)
 
 
 def run_codex_review(
@@ -252,6 +289,13 @@ def run_loop(args: argparse.Namespace) -> int:
     if not prompt_file.exists():
         raise SystemExit(f"Prompt file not found: {prompt_file}")
 
+    gate = run_work_gate(repo, args.work_mode, args.allow_dirty_work_gate)
+    if not gate_allows_loop(gate, args.allow_dirty_work_gate):
+        sys.stdout.write(decode(gate.stdout))
+        sys.stderr.write(decode(gate.stderr))
+        print("[loop] work gate did not return an accepted OK/WARN state; blocked Claude/Codex loop startup")
+        return 2
+
     out_dir = Path(args.out_dir) / phase
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -275,6 +319,7 @@ def run_loop(args: argparse.Namespace) -> int:
             Path(args.claude_cwd).resolve(),
             repo,
             Path(args.x_apex),
+            args.allow_x_apex,
             args.builder_timeout_minutes * 60,
         )
         builder_log = write_attempt_log(out_dir, attempt, "claude_builder", builder)
@@ -372,6 +417,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--repo", default=str(Path.cwd()), help="APEX repo path.")
     parser.add_argument("--claude-cwd", default=str(Path.cwd()), help="Working directory for Claude.")
     parser.add_argument("--x-apex", default=str(DEFAULT_X_APEX), help="Shared APEX estate path.")
+    parser.add_argument("--allow-x-apex", action="store_true", help="Expose --x-apex to Claude. Use only for explicit X-drive tasks.")
+    parser.add_argument("--work-mode", choices=("auto", "normal", "fallback"), default="auto", help="Mode passed to muscle_work_gate before startup.")
+    parser.add_argument("--allow-dirty-work-gate", action="store_true", help="Continue after operator-reviewed dirty worktree gate warning.")
     parser.add_argument("--codex-bridge", default=str(DEFAULT_CODEX_BRIDGE), help="codex_bridge.py path.")
     parser.add_argument("--out-dir", default="audit/claude_codex_loop", help="Loop log root.")
     parser.add_argument("--max-attempts", type=int, default=5, help="Maximum Claude/Codex iterations.")
