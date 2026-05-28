@@ -116,22 +116,33 @@
   ],
   "codex_result": {
     "status": "PARTIAL_BLOCKED",
-    "updated_at": "2026-05-27T11:20:00Z",
+    "updated_at": "2026-05-28T09:35:00Z",
     "completed_phases": [
-      "Phase D - authored 4-doc sets for the 8 legacy muscles; muscles_missing_docs dropped from 8 to 0"
+      "Phase A - duplicate ref APEX-MB-PY-00015 closed by aligning legacy muscle headers to existing register refs",
+      "Phase B - 8 header/register mismatches closed",
+      "Phase C - 4 external/session rows no longer report as registered_missing",
+      "Phase D - authored 4-doc sets for the 8 legacy muscles; muscles_missing_docs dropped from 8 to 0",
+      "Phase E - 26 cross-project stale path warnings closed by external classification in muscle_compliance_check"
     ],
     "open_phases": [
-      "Phase A - duplicate ref APEX-MB-PY-00015 remains",
-      "Phase B - 8 header/register mismatches remain",
-      "Phase C - 4 blank-path register rows remain",
-      "Phase E - 26 cross-project stale path classifications remain",
       "Phase F - blocked by real secret-bearing .env file"
     ],
     "validation": {
+      "py_compile_phase_abce_scripts": "PASS",
       "py_compile_phase_d_scripts": "PASS",
       "cli_help_phase_d_scripts": "PASS for all CLI scripts except muscle_classify_document, which has no inspected CLI in the loaded header",
       "validate_tool_docs": "PASS {\"status\":\"OK\",\"findings\":[]}",
-      "compliance_after_phase_d": "audit/compliance/2026-05-27T11-14-08Z.json"
+      "compliance_after_phase_d": "audit/compliance/2026-05-27T11-14-08Z.json",
+      "compliance_after_phase_abce": "audit/compliance/2026-05-28T09-29-58Z.json",
+      "compliance_summary_after_phase_abce": {
+        "duplicate_refs": 0,
+        "header_register_mismatches": 0,
+        "registered_missing": 0,
+        "registered_stale_path": 0,
+        "muscles_missing_docs": 0,
+        "muscles_unapproved": 8,
+        "secrets_on_disk": 1
+      }
     },
     "cleanup_report": "audit/compliance/cleanup-report.md",
     "blocker": "active_projects/bermcoin/.env contains real secret-bearing keys. Values were not printed. Operator-approved secret handling is required before Phase F can close."

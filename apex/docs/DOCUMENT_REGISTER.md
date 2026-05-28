@@ -120,6 +120,7 @@
 | APEX-MB-CFG-00005 | APEX_TOOL_MENU.json | 1.0 | ACTIVE | 2026-05-25 | 2026-05-25 | Machine-readable source for the generated Apex tool menu. | apex/docs/APEX_TOOL_MENU.json |
 | APEX-MB-PY-00025 | generate_tool_menu.py | 1.0 | ACTIVE | 2026-05-25 | 2026-05-25 | Generator that rebuilds docs/APEX_TOOL_MENU.md from docs/APEX_TOOL_MENU.json. | apex/registry/generate_tool_menu.py |
 | APEX-MB-PY-00026 | validate_tool_docs.py | 1.0 | ACTIVE | 2026-05-25 | 2026-05-25 | Validator for approved tool documentation coverage, troubleshoot pages, register rows, menu entries, and tool index entries. | apex/registry/validate_tool_docs.py |
+| APEX-SYS-PY-00001 | muscle_compliance_check.py | 1.0 | ACTIVE | 2026-05-25 | 2026-05-28 | Read-only governance compliance checker for document register integrity, ref uniqueness, header/register agreement, stale paths, muscle docs, and secret-file detection. | apex/registry/muscle_compliance_check.py |
 | APEX-MB-DOC-00023 | llms.txt | 1.0 | ACTIVE | 2026-05-25 | 2026-05-25 | AI-facing root documentation map for low-token Apex context loading. | apex/llms.txt |
 | APEX-MB-DOC-00024 | APEX_WORKSPACE_MENU.md | 1.0 | ACTIVE | 2026-05-25 | 2026-05-25 | Low-token workspace artifact menu for understanding loose and uncommitted file groups without opening each file. | apex/docs/APEX_WORKSPACE_MENU.md |
 | APEX-MB-PY-00027 | generate_repo_menu.py | 1.0 | ACTIVE | 2026-05-25 | 2026-05-25 | Generator that scans local repo roots and writes low-token repository menus. | apex/registry/generate_repo_menu.py |

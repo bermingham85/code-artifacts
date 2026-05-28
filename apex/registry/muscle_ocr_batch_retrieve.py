@@ -1,6 +1,6 @@
 """
 muscle_ocr_batch_retrieve.py — Anthropic Batch API Result Retriever
-Ref:        APEX-MB-PY-00016
+Ref:        APEX-MB-PY-00018
 Version:    1.0
 Author:     MB / SYS
 Description: Polls an Anthropic Message Batch for completion.

@@ -4,8 +4,8 @@
 |---|---|
 | Work Order | `hub/WO-APEX-ESTATE-CLEANUP-004.json` |
 | Date | 2026-05-27 |
-| Status | PARTIAL |
-| Scope completed | Phase D documentation set creation |
+| Status | PARTIAL_BLOCKED |
+| Scope completed | Phases A, B, C, D, and E |
 
 ## Before
 
@@ -36,6 +36,22 @@ Evidence from `audit/compliance/2026-05-27T11-14-08Z.json`:
 | secrets_on_disk | 1 |
 
 Phase D closed the missing-document condition. The eight legacy muscles now have blueprint, guidance, test record, and troubleshoot pages. They remain unapproved because live external-service tests require Google, Anthropic, or Google Sheets credentials and safe fixtures.
+
+## After Phases A/B/C/E
+
+Evidence from `audit/compliance/2026-05-28T09-29-58Z.json`:
+
+| Counter | Value |
+|---|---:|
+| duplicate_refs | 0 |
+| header_register_mismatches | 0 |
+| registered_missing | 0 |
+| registered_stale_path | 0 |
+| muscles_missing_docs | 0 |
+| muscles_unapproved | 8 |
+| secrets_on_disk | 1 |
+
+Phase A closed the duplicate `APEX-MB-PY-00015` header collision by restoring legacy muscle headers to their existing register refs. Phase B closed all header/register mismatches. Phase C and Phase E are closed by registering the compliance checker and classifying external/session/cross-project rows as external instead of local missing/stale files.
 
 ## Created
 
@@ -72,15 +88,29 @@ Phase D closed the missing-document condition. The eight legacy muscles now have
 - `docs/tools/muscle_sheets_append/test_record.md`
 - `docs/tools/muscle_sheets_append/troubleshoot.md`
 - `audit/compliance/2026-05-27T11-14-08Z.json`
+- `audit/compliance/2026-05-28T09-29-58Z.json`
 - `audit/compliance/cleanup-report.md`
 
 ## Modified
 
-- `hub/WO-APEX-ESTATE-CLEANUP-004.json` should be updated with this partial result before commit.
+- `foreman.py` header ref aligned from `APEX-MB-PY-00002` to `APEX-MB-PY-00003`.
+- `registry/muscle_classify_document.py` header ref aligned from `APEX-MB-PY-00015` to `APEX-MB-PY-00019`.
+- `registry/muscle_gdrive_watcher.py` header ref aligned from `APEX-MB-PY-00010` to `APEX-MB-PY-00013`.
+- `registry/muscle_ocr_batch_retrieve.py` header ref aligned from `APEX-MB-PY-00016` to `APEX-MB-PY-00018`.
+- `registry/muscle_ocr_batch_submit.py` header ref aligned from `APEX-MB-PY-00015` to `APEX-MB-PY-00017`.
+- `registry/muscle_ocr_receipt.py` header ref aligned from `APEX-MB-PY-00011` to `APEX-MB-PY-00016`.
+- `registry/muscle_receipt_dedup.py` header ref aligned from `APEX-MB-PY-00013` to `APEX-MB-PY-00020`.
+- `registry/muscle_sheets_append.py` header ref aligned from `APEX-MB-PY-00012` to `APEX-MB-PY-00015`.
+- `registry/muscle_compliance_check.py` now treats `<external>`, `N/A` session metadata, and known cross-project prefixes as external when the path is otherwise non-local.
+- `docs/DOCUMENT_REGISTER.md` now includes `APEX-SYS-PY-00001` for `registry/muscle_compliance_check.py`.
+- `hub/WO-APEX-ESTATE-CLEANUP-004.json` updated with the latest partial result.
 
 ## Deleted Or Reconciled
 
-None in this partial pass.
+- Duplicate header ref `APEX-MB-PY-00015` reconciled.
+- Eight header/register mismatches reconciled.
+- Four missing external/session rows reconciled by external classification.
+- Twenty-six SHEGOO stale path warnings reconciled by cross-project classification.
 
 ## Validation
 
@@ -89,6 +119,8 @@ Passed:
 ```powershell
 python -m py_compile registry\muscle_classify_document.py registry\muscle_gdrive_download.py registry\muscle_gdrive_watcher.py registry\muscle_ocr_batch_retrieve.py registry\muscle_ocr_batch_submit.py registry\muscle_ocr_receipt.py registry\muscle_receipt_dedup.py registry\muscle_sheets_append.py
 python registry\validate_tool_docs.py --quiet
+python -m py_compile foreman.py registry\muscle_compliance_check.py registry\muscle_classify_document.py registry\muscle_gdrive_watcher.py registry\muscle_ocr_batch_retrieve.py registry\muscle_ocr_batch_submit.py registry\muscle_ocr_receipt.py registry\muscle_receipt_dedup.py registry\muscle_sheets_append.py
+python registry\muscle_compliance_check.py
 ```
 
 CLI help passed for:
@@ -105,12 +137,4 @@ CLI help passed for:
 
 Phase F is blocked. `active_projects/bermcoin/.env` exists and contains real secret-bearing keys. Values were not printed or copied, but key names include Supabase, Stripe, Telegram, Brevo, Meta WhatsApp, exchange-rate API, and n8n API credentials. Do not rename, delete, commit, or rewrite history automatically. This needs an operator-approved secret handling plan.
 
-Phases A-C remain open:
-
-- Duplicate ref `APEX-MB-PY-00015`.
-- Eight header/register mismatches.
-- Four blank-path register rows.
-
-Phase E remains open:
-
-- Cross-project stale path classification for SHEGOO/CLAW-style rows.
+Strict compliance remains blocked by accepted residual warnings: the eight legacy muscles are deliberately unapproved until live credential-backed fixtures are available, unregistered disk files include parallel Claude/audit material outside this commit, and Phase F still reports the real `.env` file.

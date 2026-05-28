@@ -1,6 +1,6 @@
 """
 muscle_ocr_batch_submit.py — Anthropic Batch API Receipt Submitter
-Ref:        APEX-MB-PY-00015
+Ref:        APEX-MB-PY-00017
 Version:    1.0
 Author:     MB / SYS
 Description: Takes a folder of batch-prep payloads (from muscle_ocr_receipt --mode batch-prep)

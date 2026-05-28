@@ -41,6 +41,8 @@ STALE_PREFIXES = (
     r"C:\Users\Owner\apex_governance",
 )
 
+EXTERNAL_REF_PREFIXES = ("CLAW-", "SHEGOO-", "BERM-", "JESS-", "TALE-", "BALP-")
+
 
 @dataclass
 class RegisterRow:
@@ -101,13 +103,11 @@ def parse_register(register_md: Path) -> list[RegisterRow]:
 
 
 def remap_path(raw: str, root: Path) -> tuple[Path | None, str]:
-    if (
-        not raw
-        or raw in {"-", "—", "—"}
-        or raw.upper().startswith("N/A")
-        or raw.startswith("<external>")
-    ):
+    if not raw or raw in {"-", "—", "—"}:
         return None, "no-path"
+
+    if raw.upper().startswith("N/A") or raw.startswith("<external>"):
+        return None, "external"
 
     p = raw.replace("\\", "/").rstrip("/")
 
@@ -148,6 +148,10 @@ def remap_path(raw: str, root: Path) -> tuple[Path | None, str]:
         note = "ok" if candidate.exists() else "missing"
 
     return candidate, note
+
+
+def is_external_ref(ref: str) -> bool:
+    return ref.startswith(EXTERNAL_REF_PREFIXES)
 
 
 def collect_disk_files(root: Path) -> set[Path]:
@@ -239,6 +243,13 @@ def run(root: Path, report_dir: Path, strict: bool) -> tuple[int, Findings]:
         if not REF_FORMAT.match(r.ref):
             findings.invalid_ref_format.append({"ref": r.ref, "name": r.name})
         r.resolved, r.resolution = remap_path(r.raw_path, root)
+        if is_external_ref(r.ref) and r.resolution in {
+            "no-path",
+            "missing",
+            "stale-path-missing",
+        }:
+            r.resolved = None
+            r.resolution = "external"
         by_ref.setdefault(r.ref, []).append(r)
 
     for ref, group in by_ref.items():

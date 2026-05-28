@@ -1,6 +1,6 @@
 """
 muscle_ocr_receipt.py — Receipt OCR Muscle (Irish Revenue Compliant)
-Ref:        APEX-MB-PY-00011
+Ref:        APEX-MB-PY-00016
 Version:    2.0
 Author:     MB / SYS
 Description: Two-tier OCR: Tesseract (free) first pass, Claude vision only when
