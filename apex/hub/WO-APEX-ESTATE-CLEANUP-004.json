@@ -144,7 +144,25 @@
         "secrets_on_disk": 1
       }
     },
-    "cleanup_report": "audit/compliance/cleanup-report.md",
-    "blocker": "active_projects/bermcoin/.env contains real secret-bearing keys. Values were not printed. Operator-approved secret handling is required before Phase F can close."
-  }
+        "cleanup_report": "audit/compliance/cleanup-report.md",
+        "blocker": "active_projects/bermcoin/.env contains real secret-bearing keys. Values were not printed. Operator-approved secret handling is required before Phase F can close.",
+        "phase_f_operator_runbook": {
+            "safe_facts": [
+                "The local .env exists on disk.",
+                "git ls-files confirms apex/active_projects/bermcoin/.env is not tracked.",
+                "apex/.gitignore already blocks .env and .env.* patterns.",
+                "Secret values were not printed, copied, staged, or committed."
+            ],
+            "operator_only_completion_path": [
+                "Move required values into an approved secret store such as environment variables, a platform secret manager, or an approved credential vault.",
+                "Rotate all credentials that were present in the local .env, prioritizing service-role/API/admin keys.",
+                "Stop local services that still depend on the repo-local .env.",
+                "Move the local .env outside the repository or delete it only after replacement secret injection is verified.",
+                "Verify the file is absent or ignored and not staged.",
+                "Run python registry\\muscle_compliance_check.py --strict.",
+                "If the file was ever committed in any branch, perform a separate approved history rewrite with git-filter-repo or BFG, then rotate affected credentials again."
+            ],
+            "safe_fallback": "Leave Phase F blocked, keep the file untracked and ignored, and do not run production automation that depends on secrets from a repo-local .env."
+        }
+    }
 }

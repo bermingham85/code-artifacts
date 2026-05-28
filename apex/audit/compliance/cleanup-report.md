@@ -138,3 +138,29 @@ CLI help passed for:
 Phase F is blocked. `active_projects/bermcoin/.env` exists and contains real secret-bearing keys. Values were not printed or copied, but key names include Supabase, Stripe, Telegram, Brevo, Meta WhatsApp, exchange-rate API, and n8n API credentials. Do not rename, delete, commit, or rewrite history automatically. This needs an operator-approved secret handling plan.
 
 Strict compliance remains blocked by accepted residual warnings: the eight legacy muscles are deliberately unapproved until live credential-backed fixtures are available, unregistered disk files include parallel Claude/audit material outside this commit, and Phase F still reports the real `.env` file.
+
+## Phase F Operator Runbook
+
+This runbook is safe to keep in Git because it contains no secret values.
+
+Current facts:
+
+- `active_projects/bermcoin/.env` exists on disk.
+- `git ls-files --error-unmatch apex/active_projects/bermcoin/.env` confirms it is not tracked.
+- `apex/.gitignore` already blocks `.env` and `.env.*` patterns.
+- Values were not printed, copied, or staged.
+
+Operator-only completion path:
+
+1. Confirm the application can read secrets from an approved store: environment variables, platform secret manager, or another approved credential vault.
+2. Move required values into that approved store.
+3. Rotate all credentials that were present in the local `.env`, prioritizing service-role/API/admin keys before publishable or low-risk identifiers.
+4. Stop local services that still depend on the repo-local `.env`.
+5. Move the local `.env` outside the repository or delete it only after the replacement secret store is verified.
+6. Run `git status --short --ignored active_projects/bermcoin/.env` and confirm the file is absent or ignored, not staged.
+7. Run `python registry\muscle_compliance_check.py --strict`.
+8. If the file was ever committed in any branch, perform a separate approved history rewrite with `git-filter-repo` or BFG, then force-push only under explicit repository-owner approval and rotate affected credentials again.
+
+Safe fallback:
+
+- Leave Phase F blocked, keep the file untracked and ignored, and do not run production automation that depends on secrets from a repo-local `.env`.
