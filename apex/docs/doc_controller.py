@@ -46,7 +46,8 @@ LOCK_FILE = DOCS_DIR / ".doc_controller.lock"
 # ---------------------------------------------------------------------------
 # Valid meta values
 # ---------------------------------------------------------------------------
-VALID_PROJECTS = {"APEX", "CLAW", "BERM", "JESS", "TALE", "BALP"}
+VALID_PROJECTS = {"APEX", "CLAW", "BERM", "JESS", "TALE", "BALP",
+                  "AGEN", "INFR", "FINX", "MILK", "GOVN", "GNRL", "BPIG"}
 VALID_ORIGINATORS = {"MB", "SYS"}
 VALID_TYPES = {"WF", "PY", "TS", "CFG", "SCH", "DOC", "AGT"}
 

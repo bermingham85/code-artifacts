@@ -6,7 +6,7 @@
 | Version | 1.0 |
 | Status | ACTIVE |
 | Purpose | Low-token repository selection and state menu |
-| Generated | 2026-05-25T13:36:00Z |
+| Generated | 2026-05-30T04:45:21Z |
 
 ## How To Use
 
@@ -19,17 +19,17 @@
 
 | Repo | Class | Git | Dirty | Entry | Next action |
 |---|---|---|---:|---|---|
-| `code-artifacts` | DOCUMENTED_REPO | `apex/estate-seed-00004` | 29 | `README.md` | Consider adding low-token AGENTS.md or llms.txt. |
+| `code-artifacts` | DOCUMENTED_REPO | `apex/estate-seed-00004` | 34 | `README.md` | Consider adding low-token AGENTS.md or llms.txt. |
 | `code-artifacts\AGENT_BUILD_SYSTEM` | DOCUMENTED_REPO | `apex/estate-seed-00004` | 0 | `README.md` | Consider adding low-token AGENTS.md or llms.txt. |
-| `code-artifacts\apex` | APEX_GOVERNED | `apex/estate-seed-00004` | 29 | `docs/APEX_CONTEXT_INDEX.md` | Use Apex context/menu files before deeper reads. |
+| `code-artifacts\apex` | APEX_GOVERNED | `apex/estate-seed-00004` | 34 | `docs/APEX_CONTEXT_INDEX.md` | Use Apex context/menu files before deeper reads. |
 | `code-artifacts\jesse-project` | DOCUMENTED_REPO | `apex/estate-seed-00004` | 0 | `README.md` | Consider adding low-token AGENTS.md or llms.txt. |
 
 ## Dirty Repo Details
 
 | Repo | Status preview |
 |---|---|
-| `code-artifacts` | M  apex/AGENTS.md<br>M  apex/CLAUDE.md<br> M apex/audit/doc_audit.jsonl<br>M  apex/docs/APEX_CONTEXT_INDEX.md<br>A  apex/docs/APEX_REPO_MENU.json<br>A  apex/docs/APEX_REPO_MENU.md<br>M  apex/docs/DOCUMENT_REGISTER.md<br> M apex/docs/doc_controller.py<br>M  apex/llms.txt<br>A  apex/registry/generate_repo_menu.py<br>?? apex/.claude/<br>?? apex/audit/claude_codex_loop/ |
-| `code-artifacts\apex` | M  AGENTS.md<br>M  CLAUDE.md<br> M audit/doc_audit.jsonl<br>M  docs/APEX_CONTEXT_INDEX.md<br>A  docs/APEX_REPO_MENU.json<br>A  docs/APEX_REPO_MENU.md<br>M  docs/DOCUMENT_REGISTER.md<br> M docs/doc_controller.py<br>M  llms.txt<br>A  registry/generate_repo_menu.py<br>?? .claude/<br>?? audit/claude_codex_loop/ |
+| `code-artifacts` | M apex/docs/doc_controller.py<br>?? apex/.claude/<br>?? apex/audit/claude_codex_loop/AGEN-architecture-agent-post-migration/<br>?? apex/audit/claude_codex_loop/AGEN-architecture-agent-v2/<br>?? apex/audit/claude_codex_loop/AGEN-architecture-agent/<br>?? apex/audit/claude_codex_loop/AGEN-migration-coordinator/<br>?? apex/audit/claude_codex_loop/AGEN-verification-agent/<br>?? apex/audit/claude_codex_loop/SMOKE-001/attempt_01_claude_builder.txt<br>?? apex/audit/codex_review/<br>?? apex/audit/compliance/2026-05-04T15-37-48Z.json<br>?? apex/audit/compliance/2026-05-04T15-38-30Z.json<br>?? apex/audit/compliance/2026-05-04T15-39-00Z.json |
+| `code-artifacts\apex` | M docs/doc_controller.py<br>?? .claude/<br>?? audit/claude_codex_loop/AGEN-architecture-agent-post-migration/<br>?? audit/claude_codex_loop/AGEN-architecture-agent-v2/<br>?? audit/claude_codex_loop/AGEN-architecture-agent/<br>?? audit/claude_codex_loop/AGEN-migration-coordinator/<br>?? audit/claude_codex_loop/AGEN-verification-agent/<br>?? audit/claude_codex_loop/SMOKE-001/attempt_01_claude_builder.txt<br>?? audit/codex_review/<br>?? audit/compliance/2026-05-04T15-37-48Z.json<br>?? audit/compliance/2026-05-04T15-38-30Z.json<br>?? audit/compliance/2026-05-04T15-39-00Z.json |
 
 ## Source Of Truth
 
