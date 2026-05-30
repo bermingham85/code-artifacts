@@ -25,7 +25,7 @@ Do not paste chat history between agents as the source of truth. Pull the branch
 | AGEN task lineage spec | Created in `docs/spec/SPEC-AGEN-TASK-LINEAGE-v1.md`. |
 | AGEN task lineage design | Created in `docs/policy/AGEN_TASK_LINEAGE_DESIGN_v1.md`. |
 | Supabase APEX project boundary | Live project `APEX / Apex Autonomous Delivery` created with id `243bed23-67d6-4f69-b382-e771c57abed7`; `JESS` protected/read-only by policy. |
-| AGEN task lineage migration draft | Local draft exists with review verdict `REVISE`; nested draft branch `codex/agen-task-lineage-draft` commit `92d8189`; no production migration applied. |
+| AGEN task lineage migration draft | Local draft improved; nested draft branch `codex/agen-task-lineage-draft` commit `bd7f440`; no production migration applied. |
 | SP-A.0 split | Still open only because SP-A.2 doctrine ratification is pending; do not redo SP-A.0 work. |
 
 ## Do Not Reprocess
@@ -40,7 +40,7 @@ Do not paste chat history between agents as the source of truth. Pull the branch
 
 | Priority | Work | Owner | Gate |
 |---|---|---|---|
-| P1 | AGEN task-lineage implementation: `hub/WO-APEX-AGEN-TASK-LINEAGE-IMPLEMENT-007.json`. | Codex | Local migration draft exists but needs revision: actual `create_architecture_revision` patch and canonical `agent_task_dependencies` translation are still required. No production migration without backup and explicit approval. |
+| P1 | AGEN task-lineage implementation: `hub/WO-APEX-AGEN-TASK-LINEAGE-IMPLEMENT-007.json`. | Codex/operator SQL route | Local migration draft now includes Architecture RPC source wiring and canonical `agent_task_dependencies` translation. Next gate is disposable SQL execution, then backup/export evidence and explicit production approval. |
 | P2 | SP-A.2 doctrine ratification: run the doctrine silent-twice loop against `docs/doctrine/APEX_DOCTRINE_v1.0.md`. | Claude+Codex bridge | Codex adversarial/ship-gate tooling required. |
 | P3 | Workspace noise triage: classify untracked audit/spec/raw folders without reading secrets. | Codex | Work gate and targeted file review only. |
 
@@ -61,7 +61,8 @@ Then pick the first active next action that is not blocked in the current enviro
 | Blocker | Effect | Safe fallback |
 |---|---|---|
 | Production migration approval not yet granted | Cannot apply task-lineage SQL to live Supabase. | Draft SQL, rollback, tests, and Codex review packet only. |
-| Codex CLI external review blocked without explicit approval | Cannot claim independent CLI review in this context. | Use local deterministic review findings, or get explicit approval to send named files to Codex CLI. |
+| Codex CLI external review blocked by tenant policy | Cannot claim independent external CLI review in this managed context. | Use local deterministic review findings, or run Codex CLI directly from an operator terminal outside this managed agent context. |
+| No SQL execution route in this context | Cannot run DDL, disposable DB tests, or live migration from REST API keys alone. | Use Supabase SQL editor/CLI/psql with database connection after backup evidence. |
 | No Perplexity Pro connector in this Codex context | Cannot satisfy external-research-first route here. | Record limitation; use local governed materials only. |
 | SP-A.2 needs actual Codex adversarial/ship-gate loop | Cannot honestly mark doctrine `1.0-LOCKED` from local file edits alone. | Keep doctrine `1.0-PROVISIONAL` binding and leave SP-A.0 split open. |
 
