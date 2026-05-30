@@ -47,7 +47,7 @@ The live `APEX` project was seeded on 2026-05-30 with:
 | Task | Status |
 |---|---|
 | APEX project isolation guard and Supabase setup | complete |
-| Draft AGEN task-lineage migration with future-only rollout | pending |
+| Draft AGEN task-lineage migration with future-only rollout | blocked - local draft improved; SQL execution route required |
 | Wire Apex coverpage index menu into future agent context | complete |
 | Implement APEX Supabase write guard in workflows and scripts | complete |
 

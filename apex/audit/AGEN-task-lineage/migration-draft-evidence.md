@@ -9,6 +9,7 @@
 | Existing JESS rows changed | No |
 | Default coordination project | `APEX` |
 | Review verdict | Local draft improved; runtime validation still blocked |
+| Live APEX task status | blocked - SQL execution route required |
 | Nested draft branch | `codex/agen-task-lineage-draft` |
 | Nested draft commit | `bd7f440` |
 
