@@ -1,0 +1,109 @@
+{
+  "task_packet_version": "1.0",
+  "task_id": "WO-APEX-CLAUDE-CONTINUE-005",
+  "created_at": "2026-05-30T04:20:00Z",
+  "assigned_to": "Claude Code",
+  "requested_by": "Codex bridge",
+  "priority": "HIGH",
+  "goal": "Finish the remaining Claude-owned Apex workspace work without redoing Codex estate cleanup or touching secret-bearing files.",
+  "must_pull_first": {
+    "branch": "apex/estate-seed-00004",
+    "required_head_or_later": "4c6a285",
+    "reason": "Codex pushed WO-APEX-ESTATE-CLEANUP-004 cleanup through Phase F runbook. Claude must work on top of that state."
+  },
+  "context": {
+    "completed_by_codex": [
+      "1707412 Estate cleanup phase D: document legacy muscles",
+      "9d1c4fc Estate cleanup phases A-C and E: reconcile refs",
+      "4c6a285 Estate cleanup phase F: document secret handling"
+    ],
+    "do_not_redo": [
+      "WO-APEX-ESTATE-CLEANUP-004 Phases A, B, C, D, E",
+      "Phase F secret runbook documentation"
+    ],
+    "known_remaining_blockers": [
+      "active_projects/bermcoin/.env is ignored and untracked but contains real secrets; do not read, print, move, delete, stage, or rewrite history without explicit operator approval.",
+      "Legacy cloud/API muscles remain unapproved until live credential-backed tests are available.",
+      "Unregistered audit/spec artifacts need separate governance triage."
+    ]
+  },
+  "required_gate": {
+    "command": "python registry/muscle_work_gate.py --repo . --intent write --fetch --allow-dirty",
+    "when": "before repo edits, fallback continuation, staging, or promotion",
+    "note": "Use --allow-dirty only after inspecting existing local changes."
+  },
+  "claude_scope": {
+    "primary_batch": {
+      "name": "doc-controller and repo-menu review",
+      "files": [
+        "docs/doc_controller.py",
+        "docs/APEX_REPO_MENU.json",
+        "docs/APEX_REPO_MENU.md"
+      ],
+      "actions": [
+        "Review diffs against HEAD and decide whether each change is still valid.",
+        "If valid, update or regenerate repo menu artifacts consistently.",
+        "Run syntax and generation/validation commands available in the repo.",
+        "Commit this batch separately from governance/spec/audit material."
+      ]
+    },
+    "secondary_batch": {
+      "name": "SP-A and incident work-order governance triage",
+      "files": [
+        "docs/spec/SPEC-SP-A.0.md",
+        "docs/spec/SPEC-SP-A.0a.md",
+        "docs/spec/SPEC-SP-A.0a.preflight-inventory.md",
+        "docs/spec/SCOPE-AGEN-AGENT-TASKS-SCHEMA-FIX-v1.md",
+        "hub/WO-APEX-CODEX-UNREACHABLE-001.json",
+        "hub/WO-APEX-SP-A.0-SPLIT-001.json",
+        "hub/WO-APEX-SP-A.0-STUCK-001.json",
+        "docs/replit_builder_bridge.md"
+      ],
+      "actions": [
+        "Classify as active, superseded, archive, or merge candidate.",
+        "Do not mix this batch with doc_controller or repo-menu commits.",
+        "If unsure, produce a triage report and hand a bounded implementation packet to Codex."
+      ]
+    },
+    "evidence_batch": {
+      "name": "audit evidence classification",
+      "files": [
+        "audit/claude_codex_loop/",
+        "audit/codex_review/",
+        "audit/compliance/",
+        "audit/work_gate/"
+      ],
+      "actions": [
+        "Keep only evidence tied to a committed work order or certificate.",
+        "Do not commit raw noisy audit output unless linked from a work order.",
+        "Do not commit receipt/OCR raw material without sensitive-data review."
+      ]
+    }
+  },
+  "acceptance_criteria": [
+    "Claude pulls/pivots onto branch state at or after 4c6a285.",
+    "No Codex estate cleanup commits are reverted or duplicated.",
+    "No secret-bearing file is read, printed, staged, moved, deleted, or committed.",
+    "Each batch is committed separately with a clear message.",
+    "Before each commit, Claude runs the Apex work gate and relevant validation.",
+    "If blocked, Claude writes a Blocker Report with exact file paths, blocker reason, lowest-friction resolution, and whether Codex should receive a bridge packet."
+  ],
+  "codex_bridge_rule": {
+    "when_to_send_to_codex": [
+      "Python code changes in docs/doc_controller.py need implementation or repair.",
+      "Generated repo menu output is inconsistent with generator behavior.",
+      "A validation command fails and the safe fix is code/config, not governance wording.",
+      "Claude needs an independent review before signoff."
+    ],
+    "codex_task_packet_requirements": [
+      "Task ID",
+      "Exact files Codex may edit",
+      "Files Codex must not touch",
+      "Validation command",
+      "Expected output",
+      "Rollback plan",
+      "Evidence required"
+    ]
+  },
+  "operator_note": "This packet is the bridge handoff. If Claude Code cannot see it automatically, tell Claude: pull origin/apex/estate-seed-00004 and read hub/WO-APEX-CLAUDE-CONTINUE-005.json."
+}
