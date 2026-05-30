@@ -12,6 +12,18 @@
 
 Adopt the task-lineage direction, but do not apply any migration from the earlier scope draft. The accepted root-cause target is stable lineage between `agent_tasks` and `agent_architectures.tasks[*]`; the implementation owner, backfill strategy, and dependency translation must be finalized in a separate implementation packet after live read-only schema inspection.
 
+## Live Inspection Addendum
+
+Live schema inspection completed on 2026-05-30 and is recorded at `audit/AGEN-task-lineage/live-schema-inspection.md`.
+
+Owner decision: use Architecture RPC fan-out. `create_architecture_revision` is the only point that already receives the full decomposition and writes the canonical architecture revision under one transaction. Making it also materialize `agent_tasks` keeps lineage atomic and avoids a second agent re-reading jsonb to infer task rows later.
+
+Required contract update: Architecture Agent prompt, workflow, and tests must be updated so task fan-out is an explicit responsibility, not an accidental side effect.
+
+Backfill decision: future-only for the first migration. Existing rows keep null lineage unless a later operator-approved backfill packet proves deterministic matching.
+
+Dependency decision: `agent_task_dependencies` remains the canonical dispatch graph. Any `agent_tasks.dependencies` jsonb field is a non-canonical projection of decomposition ids only and must not be used by Router as a second source of truth.
+
 ## Problem
 
 `agent_tasks` is the operational work queue. `agent_architectures.tasks` contains richer decomposition data: `task_id`, `inputs`, `outputs`, `dependencies`, `component`, and sizing metadata. Current Builder materials still describe matching task rows back to architecture entries by id or name heuristic. That makes every consumer re-solve the same bridge and keeps the failure mode alive.

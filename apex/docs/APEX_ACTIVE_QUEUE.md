@@ -37,7 +37,7 @@ Do not paste chat history between agents as the source of truth. Pull the branch
 
 | Priority | Work | Owner | Gate |
 |---|---|---|---|
-| P1 | AGEN task-lineage implementation: `hub/WO-APEX-AGEN-TASK-LINEAGE-IMPLEMENT-007.json`. | Codex or Claude+Codex bridge | Blocked until operator-approved read-only Supabase schema inspection route exists. |
+| P1 | AGEN task-lineage implementation: `hub/WO-APEX-AGEN-TASK-LINEAGE-IMPLEMENT-007.json`. | Codex | Live schema inspection complete; next is migration draft + tests, still no production migration without backup and explicit approval. |
 | P2 | SP-A.2 doctrine ratification: run the doctrine silent-twice loop against `docs/doctrine/APEX_DOCTRINE_v1.0.md`. | Claude+Codex bridge | Codex adversarial/ship-gate tooling required. |
 | P3 | Workspace noise triage: classify untracked audit/spec/raw folders without reading secrets. | Codex | Work gate and targeted file review only. |
 
@@ -57,7 +57,7 @@ Then pick the first active next action that is not blocked in the current enviro
 
 | Blocker | Effect | Safe fallback |
 |---|---|---|
-| No live Supabase read-only access in this Codex context | Cannot validate or implement task-lineage migration. | Prepare implementation packet only; do not write SQL against production. |
+| Production migration approval not yet granted | Cannot apply task-lineage SQL to live Supabase. | Draft SQL, rollback, tests, and Codex review packet only. |
 | No Perplexity Pro connector in this Codex context | Cannot satisfy external-research-first route here. | Record limitation; use local governed materials only. |
 | SP-A.2 needs actual Codex adversarial/ship-gate loop | Cannot honestly mark doctrine `1.0-LOCKED` from local file edits alone. | Keep doctrine `1.0-PROVISIONAL` binding and leave SP-A.0 split open. |
 

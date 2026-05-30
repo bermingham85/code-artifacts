@@ -2,7 +2,7 @@
   "task_packet_version": "1.0",
   "task_id": "WO-APEX-AGEN-TASK-LINEAGE-IMPLEMENT-007",
   "created_at": "2026-05-30T06:42:44Z",
-  "status": "BLOCKED_PENDING_OPERATOR_ACCESS",
+  "status": "INSPECTION_COMPLETE_READY_FOR_MIGRATION_DRAFT",
   "priority": "HIGH",
   "goal": "Implement AGEN task lineage only after live read-only schema inspection, operator approval, backup/rollback evidence, and Codex review.",
   "source_of_truth": [
@@ -35,15 +35,15 @@
   "implementation_sequence": [
     {
       "step": "S1_live_schema_inspection",
-      "status": "blocked",
+      "status": "completed",
       "requirement": "Obtain operator-approved read-only Supabase access and capture schema evidence for agent_tasks, agent_architectures, agent_task_dependencies, agent_build_artifacts, agent_verifications, and agent_routing_logs.",
       "output": "audit/AGEN-task-lineage/live-schema-inspection.md"
     },
     {
       "step": "S2_owner_decision",
-      "status": "pending",
+      "status": "completed",
       "requirement": "Choose exactly one lineage writer owner: Architecture RPC fan-out, PM/Router fan-out, or read projection only.",
-      "output": "docs/policy/AGEN_TASK_LINEAGE_DESIGN_v1.md update or addendum"
+      "output": "docs/policy/AGEN_TASK_LINEAGE_DESIGN_v1.md live inspection addendum"
     },
     {
       "step": "S3_migration_draft",
@@ -65,17 +65,30 @@
     }
   ],
   "success_criteria": [
-    "Live schema evidence exists and is linked.",
-    "One writer owner is chosen and documented.",
+    "Live schema evidence exists and is linked. COMPLETE: audit/AGEN-task-lineage/live-schema-inspection.md",
+    "One writer owner is chosen and documented. COMPLETE: Architecture RPC fan-out in docs/policy/AGEN_TASK_LINEAGE_DESIGN_v1.md",
     "Dependency semantics reconcile with agent_task_dependencies.",
     "Legacy/null-lineage rows stay valid.",
     "Rollback and backup plan exist before migration.",
     "Codex review passes before any production write."
   ],
-  "rollback_plan": "No production changes are authorized by this packet in its current status. If implementation later begins, rollback must be defined in the migration packet before any live write.",
+  "rollback_plan": "No production changes are authorized by this packet in its current status. Migration draft may proceed locally, but rollback must be defined and reviewed before any live write.",
   "operator_resolution_needed": [
-    "Provide or authorize read-only Supabase schema inspection route.",
-    "Approve whether the implementation may proceed past inspection into migration drafting.",
+    "Approve whether the implementation may proceed from local migration draft to live production migration.",
     "Confirm backup destination/evidence requirement before any production migration."
-  ]
+  ],
+  "inspection_evidence": {
+    "completed_at": "2026-05-30T06:56:41Z",
+    "method": "Supabase PostgREST OpenAPI metadata request",
+    "project_ref": "ylcepmvbjjnwmzvevxid",
+    "evidence_file": "audit/AGEN-task-lineage/live-schema-inspection.md",
+    "secrets_printed": false,
+    "data_rows_read": false
+  },
+  "owner_decision": {
+    "chosen_owner": "Architecture RPC fan-out",
+    "reason": "create_architecture_revision already receives the full decomposition and writes the canonical architecture revision transactionally.",
+    "backfill_mode": "future-only",
+    "dependency_model": "agent_task_dependencies remains canonical; jsonb dependencies, if added, are non-canonical projection only."
+  }
 }
