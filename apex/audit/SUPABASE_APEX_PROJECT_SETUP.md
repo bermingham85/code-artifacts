@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Timestamp | 2026-05-30T07:11:58Z |
+| Timestamp | 2026-05-30T07:11:58Z; status update verified after commit |
 | Mode | Authorized APEX-only Supabase write plus verification |
 | Supabase project ref | `ylcepmvbjjnwmzvevxid` |
 | Secrets printed | No |
@@ -23,8 +23,8 @@
 |---|---|---|
 | `093309e1-ca28-4889-9601-c3b915341b15` | APEX project isolation guard and Supabase setup | complete |
 | `a47f3106-fe00-4f9c-a90d-4cf1f0df6966` | Draft AGEN task-lineage migration with future-only rollout | pending |
-| `c384305b-9825-4f02-b05f-e5870908c3fb` | Wire Apex coverpage index menu into future agent context | pending |
-| `a13e4079-61ef-4935-bcfc-2d2aa1681ec7` | Implement APEX Supabase write guard in workflows and scripts | pending |
+| `c384305b-9825-4f02-b05f-e5870908c3fb` | Wire Apex coverpage index menu into future agent context | complete |
+| `a13e4079-61ef-4935-bcfc-2d2aa1681ec7` | Implement APEX Supabase write guard in workflows and scripts | complete |
 
 ## Protected Project Check
 
