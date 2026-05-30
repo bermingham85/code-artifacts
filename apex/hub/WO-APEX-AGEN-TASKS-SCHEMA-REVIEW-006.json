@@ -1,0 +1,89 @@
+{
+  "task_packet_version": "1.0",
+  "task_id": "WO-APEX-AGEN-TASKS-SCHEMA-REVIEW-006",
+  "phase": "WO-APEX-CLAUDE-CONTINUE-005 / Secondary batch / Deferred item",
+  "created_at": "2026-05-30T04:50:00Z",
+  "goal": "Adversarial review of SCOPE-AGEN-AGENT-TASKS-SCHEMA-FIX-v1.md (currently in working tree, untracked) per its own status line 'Draft — pending codex review and operator approval'. Decide: ACCEPT-AS-SCOPE (and Claude promotes to a SPEC), REVISE (counter-proposal + scope iteration), or REJECT (close as out-of-scope or premature). Claude has NOT committed the file unilaterally per WO-APEX-CLAUDE-CONTINUE-005 secondary-batch rule 'If unsure, produce a triage report and hand a bounded implementation packet to Codex'.",
+  "requested_by": "Claude (Opus 4.7) per WO-APEX-CLAUDE-CONTINUE-005",
+  "assigned_to": "Codex (architecture/security review per operating contract)",
+  "authorization_boundary": {
+    "allowed_assets": [
+      "C:/Users/Owner/Repos/code-artifacts/apex/ (this repo and branch only)",
+      "Supabase project ylcepmvbjjnwmzvevxid (read-only for schema inspection; NO destructive migrations from this packet)"
+    ],
+    "forbidden_actions": [
+      "Bypass authentication or expose plaintext secrets (the scope file references Supabase project ref as ${SUPABASE_PROJECT_REF}; preserve that placeholder)",
+      "Run destructive Supabase migrations from this review packet — review only; any migration goes through its own packet with rollback + backup",
+      "Touch unrelated batches (CONTINUE-005 primary, evidence; batch-1 hygiene; batches 4/5)",
+      "Read or commit secret-bearing files (active_projects/bermcoin/.env per CONTINUE-005)",
+      "Mark this packet APPROVED on Claude's behalf — this is review, not promotion"
+    ]
+  },
+  "input_files": [
+    "docs/spec/SCOPE-AGEN-AGENT-TASKS-SCHEMA-FIX-v1.md — the scope under review (untracked in working tree at packet time)",
+    "docs/doctrine/APEX_DOCTRINE_v1.0.md — v1.0-PROVISIONAL lock, especially R14/PT9 spec-complexity ceiling",
+    "docs/APEX_PARALLEL_MERGE_PLAYBOOK.md — for conflict-resolution rules",
+    "docs/APEX_CONTEXT_INDEX.md — operating contract",
+    "docs/NAMING_CONVENTION.md — ref-code rules (the scope refers to Architecture/Builder/Verification agents; check their existing ref codes)"
+  ],
+  "write_scope": [
+    "Codex Task Result file (path Codex chooses, e.g. audit/codex_review/AGEN-tasks-schema/findings.md) — captures the review verdict, severity-classified findings, and recommended next packet shape",
+    "hub/WO-APEX-AGEN-TASKS-SCHEMA-REVIEW-006.json — append `status` + `decided_at` + `verdict` fields with the Codex outcome"
+  ],
+  "scope_under_review": {
+    "what_it_proposes": "Add a typed link between public.agent_tasks rows and the rich task descriptors held inside agent_architectures.tasks jsonb, so Builder/Verification/Router agents can join from a flat task row to its decomposition entry without re-implementing the bridge per consumer.",
+    "claimed_gap": "Architecture Agent (n8n workflow 5V9uqEVLxJBbtJEr) decomposes specs into agent_architectures.tasks jsonb array with task_id/name/description/inputs/outputs/dependencies/estimated_hours/component fields, but public.agent_tasks is flat and the Builder bridges manually via spec_reference matching.",
+    "claude_observations_to_check": [
+      "Scope file status is 'Draft — pending codex review and operator approval' — confirm review can proceed",
+      "Scope mentions concrete in-flight Builder task `641341d9-cb61-4cde-9db3-55cb5e0c5bd9` — verify this is current state, not stale",
+      "Scope is dated 2026-05-25 — today is 2026-05-30; verify nothing has shifted in the architecture/builder pipeline since",
+      "Scope is read-only per its own author note — no migrations attempted from the scope itself"
+    ]
+  },
+  "review_questions": [
+    "Is the diagnosed gap real and persistent, or has it been mitigated by a downstream agent change since 2026-05-25?",
+    "Does the proposed schema fix conflict with any approved tool or workflow contract (e.g. n8n workflows that read agent_tasks directly)?",
+    "Would adopting the proposal create downstream migration debt for agent_architectures, agent_routing_logs, agent_build_artifacts, or agent_verifications?",
+    "Is the scope spec-complexity-ceiling compliant per PT9 (≤30 lines for identity/inputs/outputs/DoD), or does it need to be split before promotion?",
+    "Are there security implications (RLS, service-role exposure, tenant boundaries) the scope underweights?",
+    "What is the smallest safe migration to close the gap if accepted?"
+  ],
+  "expected_output": {
+    "files": [
+      "Codex Task Result (severity-classified findings + verdict + recommended next packet shape)",
+      "hub/WO-APEX-AGEN-TASKS-SCHEMA-REVIEW-006.json (status appended)"
+    ],
+    "report": "VERDICT: one of ACCEPT-AS-SCOPE (Claude promotes to SPEC under PT9 constraints), REVISE (counter-proposal + iteration loop via claude_codex_loop if needed), REJECT (close as out-of-scope/premature with rationale). Include: severity-classified findings list; mapping of each finding to a doctrine rule (R15/R16/R19/PT9 etc.); concrete next-packet shape if ACCEPT or REVISE."
+  },
+  "success_criteria": [
+    "Verdict reached and recorded in this packet's status field.",
+    "Codex Task Result file exists and is linked from the verdict.",
+    "If ACCEPT-AS-SCOPE: a follow-on packet is queued for Claude to promote the scope to a PT9-compliant SPEC.",
+    "If REVISE: counter-proposal cites specific findings + suggests scope-doc edits OR a different approach.",
+    "If REJECT: rationale references concrete doctrine rules and/or contradicting current architecture state."
+  ],
+  "rollback_plan": "If review cannot complete: leave SCOPE-AGEN-AGENT-TASKS-SCHEMA-FIX-v1.md untracked in working tree (its current state). Append BLOCKED status + reason to this packet. Do not delete the scope file.",
+  "evidence_required": [
+    "Codex review transcript (codex_runs/AGEN-tasks-schema/*.txt or audit/codex_review/AGEN-tasks-schema/*).",
+    "Severity-classified findings table.",
+    "Final verdict + reasoning."
+  ],
+  "blocker_policy": {
+    "stop_for": [
+      "Inability to read the scope file (filesystem error)",
+      "Supabase schema inspection requires write access (this packet authorises read-only)",
+      "Conflict with batch-1 muscle_compliance_check.py findings about agent_* tables (defer until hygiene cleanup completes)"
+    ],
+    "blocker_report_fields": [
+      "Exact blocker",
+      "Why it blocks review",
+      "Lowest-friction resolution",
+      "What can continue independently"
+    ]
+  },
+  "promotion_provenance": {
+    "parent_packet": "WO-APEX-CLAUDE-CONTINUE-005",
+    "parent_batch": "secondary (SP-A and incident WO governance triage)",
+    "deferral_reason": "Scope file's own status line says 'pending codex review and operator approval'. Per CONTINUE-005 secondary-batch rule: 'If unsure, produce a triage report and hand a bounded implementation packet to Codex.' Claude has not committed the scope file unilaterally; this packet is the bounded hand-off."
+  }
+}
