@@ -1,0 +1,46 @@
+{
+  "tool": "muscle_work_gate",
+  "ref_code": "APEX-MB-PY-00029",
+  "version": "1.0",
+  "timestamp": "2026-05-30T04:44:05Z",
+  "project": "APEX",
+  "station": "DESKTOP-A2MF76F",
+  "mode": "normal",
+  "intent": "write",
+  "allow_dirty": true,
+  "authority": {
+    "committed_code": "GitHub protected branches",
+    "local_shared_artifacts": "X:/Apex/Canonical",
+    "artifact_intake": "X:/Apex/Inbox",
+    "machine_workspaces": "C:/Users/Owner/Repos and tool-native save locations"
+  },
+  "repo": {
+    "path": "C:\\Users\\Owner\\Repos\\code-artifacts",
+    "is_git_repo": true,
+    "fetch_attempted": true,
+    "fetch_ok": true,
+    "fetch_error": null,
+    "root": "C:\\Users\\Owner\\Repos\\code-artifacts",
+    "branch": "apex/estate-seed-00004",
+    "head": "75d9cfac8334f530c631dcfd5cd1ca6658950f5b",
+    "upstream": "origin/apex/estate-seed-00004",
+    "remote_url": "https://github.com/bermingham85/code-artifacts.git",
+    "status_short": "M apex/docs/APEX_REPO_MENU.json\n M apex/docs/APEX_REPO_MENU.md\n M apex/docs/doc_controller.py\n?? apex/.claude/\n?? apex/audit/claude_codex_loop/AGEN-architecture-agent-post-migration/\n?? apex/audit/claude_codex_loop/AGEN-architecture-agent-v2/\n?? apex/audit/claude_codex_loop/AGEN-architecture-agent/\n?? apex/audit/claude_codex_loop/AGEN-migration-coordinator/\n?? apex/audit/claude_codex_loop/AGEN-verification-agent/\n?? apex/audit/claude_codex_loop/SMOKE-001/attempt_01_claude_builder.txt\n?? apex/audit/codex_review/\n?? apex/audit/compliance/2026-05-04T15-37-48Z.json\n?? apex/audit/compliance/2026-05-04T15-38-30Z.json\n?? apex/audit/compliance/2026-05-04T15-39-00Z.json\n?? apex/audit/compliance/2026-05-25T14-10-16Z.json\n?? apex/audit/compliance/2026-05-25T14-10-35Z.json\n?? apex/audit/compliance/2026-05-25T14-11-33Z.json\n?? apex/audit/compliance/2026-05-25T14-11-34Z.json\n?? apex/audit/compliance/2026-05-25T14-20-30Z.json\n?? apex/audit/compliance/2026-05-25T14-21-33Z.json\n?? apex/audit/compliance/2026-05-25T14-21-59Z.json\n?? apex/audit/compliance/2026-05-26T18-40-41Z.json\n?? apex/audit/compliance/2026-05-26T18-40-44Z.json\n?? apex/audit/compliance/2026-05-27T11-09-41Z.json\n?? apex/audit/receipt_ocr_raw/\n?? apex/audit/work_gate/\n?? apex/docs/replit_builder_bridge.md\n?? apex/docs/spec/SCOPE-AGEN-AGENT-TASKS-SCHEMA-FIX-v1.md\n?? apex/docs/spec/SPEC-SP-A.0.md\n?? apex/docs/spec/SPEC-SP-A.0a.md\n?? apex/docs/spec/SPEC-SP-A.0a.preflight-inventory.md\n?? apex/hub/WO-APEX-CODEX-UNREACHABLE-001.json\n?? apex/hub/WO-APEX-SP-A.0-SPLIT-001.json\n?? apex/hub/WO-APEX-SP-A.0-STUCK-001.json\n?? apex/mbw_comfyui_stitch_flow/\n?? apex/registry/receipt_ocr_raw_export.py",
+    "dirty": true,
+    "ahead": 0,
+    "behind": 0
+  },
+  "status": "WARN",
+  "blockers": [],
+  "warnings": [
+    "working tree is dirty; inspect user changes before editing"
+  ],
+  "promotion_allowed": false,
+  "official_write_allowed": true,
+  "provisional_write_allowed": false,
+  "required_route": [
+    "work on task branch",
+    "commit locally",
+    "push branch or open PR; do not push directly to protected branches"
+  ]
+}
