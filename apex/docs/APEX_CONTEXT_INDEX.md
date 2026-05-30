@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Ref Code | APEX-MB-DOC-00009 |
-| Version | 1.0 |
+| Version | 1.1 |
 | Status | ACTIVE |
 | Purpose | Low-token entry point for future Claude, Codex, and orchestrator contexts |
 
@@ -19,6 +19,7 @@ Read this file first. It is the compact map. Do not load large specs, transcript
 | APEX governance doctrine (locked) | ACTIVE (v1.0-PROVISIONAL pending SP-A.2 ratification) | `docs/doctrine/APEX_DOCTRINE_v1.0.md` |
 | Tool selection menu | ACTIVE | `docs/APEX_TOOL_MENU.md` |
 | Work authority gate | ACTIVE | `docs/APEX_WORK_GATE.md` |
+| Active queue / next action | ACTIVE | `docs/APEX_ACTIVE_QUEUE.md` |
 | Station alignment checklist | ACTIVE | `docs/APEX_STATION_ALIGNMENT.md` |
 | Workspace artifact menu | ACTIVE | `docs/APEX_WORKSPACE_MENU.md` |
 | Repository menu | ACTIVE | `docs/APEX_REPO_MENU.md` |
@@ -37,6 +38,7 @@ Read this file first. It is the compact map. Do not load large specs, transcript
 - `muscle_resource_guard` is approved.
 - `docs/APEX_TOOL_MENU.md` is the low-token cover page for tool selection.
 - `docs/APEX_WORK_GATE.md` defines the authority gate for repo edits, fallback-machine continuation, and artifact promotion.
+- `docs/APEX_ACTIVE_QUEUE.md` defines current branch state, completed packets, blocked items, and next actions.
 - `docs/APEX_STATION_ALIGNMENT.md` defines station-level shutoffs for Claude, Codex, X-drive access, and sync scripts.
 - `docs/APEX_WORKSPACE_MENU.md` is the low-token cover page for loose/uncommitted artifact groups.
 - `docs/APEX_REPO_MENU.md` is the low-token cover page for repositories under scanned roots.
@@ -102,6 +104,7 @@ Use Perplexity Pro first for external research when available. Ask for concise s
 | Need apex governance doctrine | `docs/doctrine/APEX_DOCTRINE_v1.0.md` (v1.0-PROVISIONAL pending SP-A.2 ratification) |
 | Need update the menu | Edit `docs/APEX_TOOL_MENU.json`, then run `python registry/generate_tool_menu.py` |
 | Need refresh repo index | `python registry/generate_repo_menu.py --root C:\Users\Owner\Repos` |
+| Need know what to do next | `docs/APEX_ACTIVE_QUEUE.md` |
 | Need document-control status | `docs/DOCUMENT_REGISTER.md` |
 | Need evidence/signoff | `audit/CERT-APEX-AUTONOMOUS-DELIVERY.json` |
 | Need inventory tool details | `docs/tools/muscle_headless_inventory/blueprint.md` and `guidance.md` |

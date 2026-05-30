@@ -102,7 +102,7 @@
 | APEX-MB-DOC-00008 | muscle_resource_guard guidance | 1.0 | APPROVED | 2026-05-23 | 2026-05-23 | Guidance document for using the resource guard and lock-management support tool. | apex/docs/tools/muscle_resource_guard/guidance.md |
 | APEX-MB-TST-00001 | muscle_resource_guard test_record | 1.0 | APPROVED | 2026-05-23 | 2026-05-23 | Test record and approval stamp for the resource guard and startup clash prevention support tool. | apex/docs/tools/muscle_resource_guard/test_record.md |
 | APEX-SYS-TST-00002 | CERT-APEX-AUTONOMOUS-DELIVERY.json | 1.0 | APPROVED | 2026-05-24 | 2026-05-24 | Completion certificate for the Apex autonomous delivery system foundation package. | apex/audit/CERT-APEX-AUTONOMOUS-DELIVERY.json |
-| APEX-MB-DOC-00009 | APEX_CONTEXT_INDEX.md | 1.0 | ACTIVE | 2026-05-25 | 2026-05-25 | Low-token context index for future Claude, Codex, and orchestrator windows. | apex/docs/APEX_CONTEXT_INDEX.md |
+| APEX-MB-DOC-00009 | APEX_CONTEXT_INDEX.md | 1.1 | ACTIVE | 2026-05-25 | 2026-05-30T06:42:44Z | Low-token context index for future Claude, Codex, and orchestrator windows. | apex/docs/APEX_CONTEXT_INDEX.md |
 | APEX-MB-DOC-00010 | AGENTS.md | 1.0 | ACTIVE | 2026-05-25 | 2026-05-25 | Root Codex/agent boot instructions pointing future contexts to the low-token Apex context index. | apex/AGENTS.md |
 | APEX-MB-DOC-00011 | CLAUDE.md | 1.0 | ACTIVE | 2026-05-25 | 2026-05-25 | Root Claude boot instructions pointing future Claude contexts to the low-token Apex context index. | apex/CLAUDE.md |
 | APEX-MB-DOC-00012 | APEX_TOOL_MENU.md | 1.0 | ACTIVE | 2026-05-25 | 2026-05-25 | Low-token cover-page menu for selecting Apex tools and opening exact how-to or troubleshooting docs. | apex/docs/APEX_TOOL_MENU.md |
@@ -149,3 +149,4 @@
 | APEX-MB-TST-00003 | muscle_work_gate test_record | 1.0 | APPROVED | 2026-05-26 | 2026-05-26 | Test record and approval stamp for the work authority gate tool. | apex/docs/tools/muscle_work_gate/test_record.md |
 | APEX-MB-DOC-00034 | muscle_work_gate troubleshoot | 1.0 | ACTIVE | 2026-05-26 | 2026-05-26 | Editable troubleshooting and reusable fix log for muscle_work_gate. | apex/docs/tools/muscle_work_gate/troubleshoot.md |
 | APEX-MB-DOC-00035 | APEX_STATION_ALIGNMENT.md | 1.0 | ACTIVE | 2026-05-26 | 2026-05-26 | Station-level alignment and shutoff checklist for Claude, Codex, X-drive access, sync scripts, and fallback work. | apex/docs/APEX_STATION_ALIGNMENT.md |
+| APEX-MB-DOC-00036 | APEX_ACTIVE_QUEUE.md | 1.0 | ACTIVE | 2026-05-30T06:42:44Z | 2026-05-30T06:42:44Z | Low-token active queue and current-state page for next actions, completed packets, and blocked items. | apex/docs/APEX_ACTIVE_QUEUE.md |

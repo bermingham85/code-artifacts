@@ -105,5 +105,21 @@
       "Evidence required"
     ]
   },
-  "operator_note": "This packet is the bridge handoff. If Claude Code cannot see it automatically, tell Claude: pull origin/apex/estate-seed-00004 and read hub/WO-APEX-CLAUDE-CONTINUE-005.json."
+  "operator_note": "This packet is complete. If Claude Code cannot see current state automatically, tell Claude: pull origin/apex/estate-seed-00004 and read docs/APEX_ACTIVE_QUEUE.md before opening any older work order.",
+  "status": "COMPLETED",
+  "completed_at": "2026-05-30T06:42:44Z",
+  "completion": {
+    "completed_commits": [
+      "89daf2f Primary batch: doc_controller project codes + repo menu refresh",
+      "80197a5 Secondary batch: SP-A governance triage + incident WO annotations",
+      "7e456f7 Evidence batch: linked audit artifacts only",
+      "72b48a9 Codex review of AGEN task schema scope",
+      "d5a3678 AGEN task lineage spec and design note"
+    ],
+    "durable_next_state": "docs/APEX_ACTIVE_QUEUE.md",
+    "remaining_blockers": [
+      "SP-A.2 doctrine ratification still needs the adversarial/ship-gate loop before doctrine can become 1.0-LOCKED.",
+      "AGEN task-lineage implementation still needs live read-only Supabase schema inspection and operator approval before migration."
+    ]
+  }
 }
