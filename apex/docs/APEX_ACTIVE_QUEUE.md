@@ -5,7 +5,7 @@
 | Ref Code | APEX-MB-DOC-00036 |
 | Version | 1.0 |
 | Status | ACTIVE |
-| Updated | 2026-05-30T06:42:44Z |
+| Updated | 2026-05-30T07:11:58Z |
 | Purpose | Low-token current-state page so Claude, Codex, and future contexts stop rediscovering completed work. |
 
 ## Read First Rule
@@ -24,6 +24,7 @@ Do not paste chat history between agents as the source of truth. Pull the branch
 | AGEN task schema review | Reviewed with verdict `REVISE` in `hub/WO-APEX-AGEN-TASKS-SCHEMA-REVIEW-006.json`. |
 | AGEN task lineage spec | Created in `docs/spec/SPEC-AGEN-TASK-LINEAGE-v1.md`. |
 | AGEN task lineage design | Created in `docs/policy/AGEN_TASK_LINEAGE_DESIGN_v1.md`. |
+| Supabase APEX project boundary | Live project `APEX / Apex Autonomous Delivery` created with id `243bed23-67d6-4f69-b382-e771c57abed7`; `JESS` protected/read-only by policy. |
 | SP-A.0 split | Still open only because SP-A.2 doctrine ratification is pending; do not redo SP-A.0 work. |
 
 ## Do Not Reprocess
@@ -32,12 +33,13 @@ Do not paste chat history between agents as the source of truth. Pull the branch
 - Do not promote `docs/spec/SCOPE-AGEN-AGENT-TASKS-SCHEMA-FIX-v1.md`; it is superseded by the compact spec and design note.
 - Do not commit raw `audit/claude_codex_loop/*` attempts unless directly linked by a work order or certificate.
 - Do not read, print, move, or stage secret-bearing files, especially `active_projects/bermcoin/.env`.
+- Do not write new Apex automation rows into `JESS`; use `APEX` unless an approved work order explicitly names another project.
 
 ## Active Next Actions
 
 | Priority | Work | Owner | Gate |
 |---|---|---|---|
-| P1 | AGEN task-lineage implementation: `hub/WO-APEX-AGEN-TASK-LINEAGE-IMPLEMENT-007.json`. | Codex | Live schema inspection complete; next is migration draft + tests, still no production migration without backup and explicit approval. |
+| P1 | AGEN task-lineage implementation: `hub/WO-APEX-AGEN-TASK-LINEAGE-IMPLEMENT-007.json`. | Codex | Use `APEX` project boundary for new coordination records; live schema inspection complete; next is migration draft + tests, still no production migration without backup and explicit approval. |
 | P2 | SP-A.2 doctrine ratification: run the doctrine silent-twice loop against `docs/doctrine/APEX_DOCTRINE_v1.0.md`. | Claude+Codex bridge | Codex adversarial/ship-gate tooling required. |
 | P3 | Workspace noise triage: classify untracked audit/spec/raw folders without reading secrets. | Codex | Work gate and targeted file review only. |
 

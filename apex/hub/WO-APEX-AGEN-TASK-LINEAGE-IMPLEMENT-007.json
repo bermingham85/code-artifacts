@@ -13,6 +13,14 @@
     "hub/WO-APEX-AGEN-TASKS-SCHEMA-REVIEW-006.json"
   ],
   "authorization_boundary": {
+    "supabase_project_boundary": {
+      "default_project_code": "APEX",
+      "default_project_id": "243bed23-67d6-4f69-b382-e771c57abed7",
+      "protected_project_codes": [
+        "JESS"
+      ],
+      "policy": "docs/policy/SUPABASE_PROJECT_ISOLATION.md"
+    },
     "allowed_now_without_credentials": [
       "Read local governed docs and SQL/prompt/workflow files.",
       "Prepare migration design, test matrix, and review checklist.",
