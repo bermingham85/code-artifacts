@@ -85,5 +85,39 @@
     "parent_packet": "WO-APEX-CLAUDE-CONTINUE-005",
     "parent_batch": "secondary (SP-A and incident WO governance triage)",
     "deferral_reason": "Scope file's own status line says 'pending codex review and operator approval'. Per CONTINUE-005 secondary-batch rule: 'If unsure, produce a triage report and hand a bounded implementation packet to Codex.' Claude has not committed the scope file unilaterally; this packet is the bounded hand-off."
+  },
+  "status": "REVIEWED",
+  "decided_at": "2026-05-30T05:03:03Z",
+  "verdict": {
+    "decision": "REVISE",
+    "result_file": "audit/codex_review/AGEN-tasks-schema/findings.md",
+    "summary": "The schema gap is real, but the draft is not ready to promote as a SPEC. It exceeds PT9, changes Architecture Agent ownership without updating the contract, leaves dependency semantics split between jsonb and agent_task_dependencies, and contains migration skeleton issues that need revision before implementation.",
+    "blocking_findings": [
+      "PT9 spec-complexity ceiling violation: split the long scope into a <=30-line SPEC plus separate design/policy material.",
+      "Architecture Agent fan-out to agent_tasks is a contract change and needs explicit prompt/workflow/spec updates or a different owner.",
+      "Dependency semantics must be reconciled with the existing agent_task_dependencies table before any migration."
+    ],
+    "nonblocking_findings": [
+      "The SQL skeleton uses invalid or non-portable constraint idempotency and needs guarded pg_constraint checks or another tested pattern.",
+      "Partial unique-index upsert semantics need explicit conflict inference or a different unique strategy.",
+      "Backfill behavior needs an operator decision to avoid duplicate or stale task rows.",
+      "The named in-flight Builder task appears stale in local docs.",
+      "Live Supabase read-only inspection was not available in this Codex context."
+    ],
+    "recommended_next_packet": {
+      "owner": "Claude",
+      "goal": "Revise the task-lineage scope into a PT9-compliant SPEC and separate design note, then hand Codex a later implementation packet only after operator approval and read-only live schema inspection.",
+      "outputs": [
+        "docs/spec/SPEC-AGEN-TASK-LINEAGE-v1.md",
+        "docs/policy/AGEN_TASK_LINEAGE_DESIGN_v1.md",
+        "follow-on Codex implementation packet with backup, rollback, and migration tests"
+      ]
+    },
+    "limitations": [
+      "Review used local governed repository materials only.",
+      "Perplexity Pro was not available in this Codex context.",
+      "No live Supabase schema inspection was performed.",
+      "The scope draft remains untracked and unpromoted."
+    ]
   }
 }
