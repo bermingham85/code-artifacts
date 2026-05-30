@@ -55,7 +55,7 @@
     },
     {
       "step": "S3_migration_draft",
-      "status": "pending",
+      "status": "drafted_pending_codex_review",
       "requirement": "Draft idempotent SQL only after S1 and S2. Avoid ADD CONSTRAINT IF NOT EXISTS; prove partial-index conflict behavior if used.",
       "output": "registry/clones/code-artifacts/AGENT_BUILD_SYSTEM/*/AGEN-SCRPT-task-lineage-migration-v1.sql"
     },
@@ -67,7 +67,7 @@
     },
     {
       "step": "S5_codex_review",
-      "status": "pending",
+      "status": "blocked_pending_explicit_operator_approval_or_local_offline_review",
       "requirement": "Run Codex review against the migration, owner decision, consumer diffs, rollback, RLS, dependency translation, and null-lineage behavior.",
       "output": "audit/codex_review/AGEN-task-lineage-implement/findings.md"
     }
@@ -75,7 +75,7 @@
   "success_criteria": [
     "Live schema evidence exists and is linked. COMPLETE: audit/AGEN-task-lineage/live-schema-inspection.md",
     "One writer owner is chosen and documented. COMPLETE: Architecture RPC fan-out in docs/policy/AGEN_TASK_LINEAGE_DESIGN_v1.md",
-    "Dependency semantics reconcile with agent_task_dependencies.",
+    "Dependency semantics reconcile with agent_task_dependencies. REVISE: local review found translation into agent_task_dependencies is still missing.",
     "Legacy/null-lineage rows stay valid.",
     "Rollback and backup plan exist before migration.",
     "Codex review passes before any production write."
