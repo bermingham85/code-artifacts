@@ -113,6 +113,7 @@ DECLARE
     v_arch agent_architectures%ROWTYPE;
     v_project_code TEXT;
     v_materialized_count INT := 0;
+    v_dependency_count INT := 0;
 BEGIN
     IF p_architecture_id IS NULL THEN
         RAISE EXCEPTION 'architecture_id_required';
@@ -149,6 +150,48 @@ BEGIN
             ) ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
     ) THEN
         RAISE EXCEPTION 'invalid_or_missing_decomposition_task_id: %', p_architecture_id;
+    END IF;
+
+    IF EXISTS (
+        SELECT 1
+        FROM jsonb_array_elements(COALESCE(v_arch.tasks, '[]'::jsonb)) AS elem(task_doc)
+        CROSS JOIN LATERAL jsonb_array_elements_text(
+            CASE
+                WHEN jsonb_typeof(elem.task_doc -> 'dependencies') = 'array'
+                    THEN elem.task_doc -> 'dependencies'
+                ELSE '[]'::jsonb
+            END
+        ) AS dep(decomposition_task_id)
+        WHERE dep.decomposition_task_id !~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+    ) THEN
+        RAISE EXCEPTION 'invalid_dependency_decomposition_task_id: %', p_architecture_id;
+    END IF;
+
+    IF EXISTS (
+        WITH source_ids AS (
+            SELECT (elem.task_doc ->> 'task_id')::uuid AS decomposition_task_id
+            FROM jsonb_array_elements(COALESCE(v_arch.tasks, '[]'::jsonb)) AS elem(task_doc)
+        ),
+        dependency_ids AS (
+            SELECT dep.decomposition_task_id::uuid AS decomposition_task_id
+            FROM jsonb_array_elements(COALESCE(v_arch.tasks, '[]'::jsonb)) AS elem(task_doc)
+            CROSS JOIN LATERAL jsonb_array_elements_text(
+                CASE
+                    WHEN jsonb_typeof(elem.task_doc -> 'dependencies') = 'array'
+                        THEN elem.task_doc -> 'dependencies'
+                    ELSE '[]'::jsonb
+                END
+            ) AS dep(decomposition_task_id)
+        )
+        SELECT 1
+        FROM dependency_ids d
+        WHERE NOT EXISTS (
+            SELECT 1
+            FROM source_ids s
+            WHERE s.decomposition_task_id = d.decomposition_task_id
+        )
+    ) THEN
+        RAISE EXCEPTION 'dependency_points_outside_architecture: %', p_architecture_id;
     END IF;
 
     WITH source_tasks AS (
@@ -235,11 +278,59 @@ BEGIN
     SELECT count(*) INTO v_materialized_count
     FROM upserted;
 
+    WITH materialized_tasks AS (
+        SELECT id, decomposition_task_id
+        FROM agent_tasks
+        WHERE architecture_id = p_architecture_id
+          AND decomposition_task_id IS NOT NULL
+    ),
+    source_dependencies AS (
+        SELECT
+            (elem.task_doc ->> 'task_id')::uuid AS task_decomposition_id,
+            dep.decomposition_task_id::uuid AS depends_on_decomposition_id
+        FROM jsonb_array_elements(COALESCE(v_arch.tasks, '[]'::jsonb)) AS elem(task_doc)
+        CROSS JOIN LATERAL jsonb_array_elements_text(
+            CASE
+                WHEN jsonb_typeof(elem.task_doc -> 'dependencies') = 'array'
+                    THEN elem.task_doc -> 'dependencies'
+                ELSE '[]'::jsonb
+            END
+        ) AS dep(decomposition_task_id)
+    ),
+    deleted AS (
+        DELETE FROM agent_task_dependencies existing
+        USING materialized_tasks mt
+        WHERE existing.task_id = mt.id
+    ),
+    inserted AS (
+        INSERT INTO agent_task_dependencies (
+            task_id,
+            depends_on_task_id,
+            dependency_type
+        )
+        SELECT
+            task_row.id,
+            depends_on_row.id,
+            'blocks'
+        FROM source_dependencies sd
+        JOIN materialized_tasks task_row
+          ON task_row.decomposition_task_id = sd.task_decomposition_id
+        JOIN materialized_tasks depends_on_row
+          ON depends_on_row.decomposition_task_id = sd.depends_on_decomposition_id
+        WHERE task_row.id <> depends_on_row.id
+        ON CONFLICT (task_id, depends_on_task_id) DO UPDATE
+            SET dependency_type = EXCLUDED.dependency_type
+        RETURNING id
+    )
+    SELECT count(*) INTO v_dependency_count
+    FROM inserted;
+
     RETURN jsonb_build_object(
         'ok', true,
         'architecture_id', p_architecture_id,
         'materialized_tasks', v_materialized_count,
-        'dependency_model', 'agent_task_dependencies remains canonical; agent_tasks.dependencies is projection only'
+        'materialized_dependencies', v_dependency_count,
+        'dependency_model', 'agent_task_dependencies is canonical; agent_tasks.dependencies is projection only'
     );
 END;
 $$;
@@ -265,8 +356,9 @@ COMMENT ON FUNCTION materialize_architecture_tasks(UUID) IS
     'Materializes future Architecture Agent decomposition tasks into agent_tasks. Intended to be called from create_architecture_revision in the same transaction.';
 
 -- REQUIRED RPC PATCH POINT
--- Add this call inside create_architecture_revision after v_new_id is assigned
--- and root_architecture_id has been set, before the final JSON return:
+-- This migration is complete only when create_architecture_revision includes
+-- this call after v_new_id is assigned and root_architecture_id has been set,
+-- before the final JSON return:
 --
 --     PERFORM materialize_architecture_tasks(v_new_id);
 --
