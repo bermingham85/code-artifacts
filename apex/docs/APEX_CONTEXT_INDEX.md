@@ -20,6 +20,7 @@ Read this file first. It is the compact map. Do not load large specs, transcript
 | Tool selection menu | ACTIVE | `docs/APEX_TOOL_MENU.md` |
 | Work authority gate | ACTIVE | `docs/APEX_WORK_GATE.md` |
 | Active queue / next action | ACTIVE | `docs/APEX_ACTIVE_QUEUE.md` |
+| Memory shortcuts / proven routes | ACTIVE | `docs/APEX_MEMORY_SHORTCUTS.md` |
 | Station alignment checklist | ACTIVE | `docs/APEX_STATION_ALIGNMENT.md` |
 | Supabase project isolation policy | ACTIVE | `docs/policy/SUPABASE_PROJECT_ISOLATION.md` |
 | Supabase shared project boundary | ACTIVE | `docs/policy/SUPABASE_SHARED_PROJECT_BOUNDARY.md` |
@@ -42,6 +43,7 @@ Read this file first. It is the compact map. Do not load large specs, transcript
 - `docs/APEX_TOOL_MENU.md` is the low-token cover page for tool selection.
 - `docs/APEX_WORK_GATE.md` defines the authority gate for repo edits, fallback-machine continuation, and artifact promotion.
 - `docs/APEX_ACTIVE_QUEUE.md` defines current branch state, completed packets, blocked items, and next actions.
+- `docs/APEX_MEMORY_SHORTCUTS.md` defines reusable shortcut routes so future agents do not repeatedly remap source-of-truth, fallback, station, and handoff procedures.
 - `docs/APEX_STATION_ALIGNMENT.md` defines station-level shutoffs for Claude, Codex, X-drive access, and sync scripts.
 - `docs/policy/SUPABASE_PROJECT_ISOLATION.md` and `docs/policy/SUPABASE_SHARED_PROJECT_BOUNDARY.md` define the live Supabase boundary: the instance is shared across 11 projects; new Apex work goes to `APEX`; protected project tables and rows are read-only unless explicitly authorized.
 - `docs/policy/SUPABASE_RLS_ROLLOUT_PLAN.md` captures the critical RLS advisory route; do not auto-enable RLS without policies and smoke tests.
@@ -102,6 +104,7 @@ Use Perplexity Pro first for external research when available. Ask for concise s
 | Need approved call syntax | `registry/TOOL_INDEX.md` |
 | Need choose a tool | `docs/APEX_TOOL_MENU.md` |
 | Need edit a repo, use fallback work, or promote artifacts | `docs/APEX_WORK_GATE.md`, then `python registry/muscle_work_gate.py --repo . --intent write --fetch` |
+| Need avoid rediscovering Apex routes | `docs/APEX_MEMORY_SHORTCUTS.md` |
 | Need align another station or LLM install | `docs/APEX_STATION_ALIGNMENT.md` |
 | Need write to Supabase project tables | `docs/policy/SUPABASE_SHARED_PROJECT_BOUNDARY.md`, `docs/policy/SUPABASE_PROJECT_ISOLATION.md`, then `python registry\supabase_project_guard.py --expect-code APEX` |
 | Need understand uncommitted artifacts | `docs/APEX_WORKSPACE_MENU.md` |
