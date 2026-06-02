@@ -29,6 +29,18 @@ Repository path:
 
 `apex/docs/APEX_MEMORY_SHORTCUTS.md`
 
+Callable skill:
+
+`/memory`
+
+Shared skill source:
+
+`C:/Users/Owner/.agents/skills/memory/SKILL.md`
+
+Shared skill repo path:
+
+`memory/SKILL.md` in `https://github.com/bermingham85/warp-skills`
+
 Claude, Codex, Oz, and delegated agents may add short rows here when they discover a repeatable route that prevents future remapping. Add only stable shortcuts with a source anchor, such as a committed doc, issue, PR, work-gate audit, or approved tool page.
 
 Do not use private chat text as the durable source. If a shortcut came from a chat, turn it into a row here and link the repo/issue/PR/audit evidence that makes it verifiable.
