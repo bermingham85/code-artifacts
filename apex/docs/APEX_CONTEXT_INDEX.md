@@ -22,6 +22,8 @@ Read this file first. It is the compact map. Do not load large specs, transcript
 | Active queue / next action | ACTIVE | `docs/APEX_ACTIVE_QUEUE.md` |
 | Station alignment checklist | ACTIVE | `docs/APEX_STATION_ALIGNMENT.md` |
 | Supabase project isolation policy | ACTIVE | `docs/policy/SUPABASE_PROJECT_ISOLATION.md` |
+| Supabase shared project boundary | ACTIVE | `docs/policy/SUPABASE_SHARED_PROJECT_BOUNDARY.md` |
+| Supabase RLS rollout plan | DRAFT | `docs/policy/SUPABASE_RLS_ROLLOUT_PLAN.md` |
 | Workspace artifact menu | ACTIVE | `docs/APEX_WORKSPACE_MENU.md` |
 | Repository menu | ACTIVE | `docs/APEX_REPO_MENU.md` |
 | Parallel merge playbook | ACTIVE | `docs/APEX_PARALLEL_MERGE_PLAYBOOK.md` |
@@ -41,7 +43,8 @@ Read this file first. It is the compact map. Do not load large specs, transcript
 - `docs/APEX_WORK_GATE.md` defines the authority gate for repo edits, fallback-machine continuation, and artifact promotion.
 - `docs/APEX_ACTIVE_QUEUE.md` defines current branch state, completed packets, blocked items, and next actions.
 - `docs/APEX_STATION_ALIGNMENT.md` defines station-level shutoffs for Claude, Codex, X-drive access, and sync scripts.
-- `docs/policy/SUPABASE_PROJECT_ISOLATION.md` defines the live Supabase project boundary: new Apex work goes to `APEX`; `JESS` is protected/read-only unless explicitly authorized.
+- `docs/policy/SUPABASE_PROJECT_ISOLATION.md` and `docs/policy/SUPABASE_SHARED_PROJECT_BOUNDARY.md` define the live Supabase boundary: the instance is shared across 11 projects; new Apex work goes to `APEX`; protected project tables and rows are read-only unless explicitly authorized.
+- `docs/policy/SUPABASE_RLS_ROLLOUT_PLAN.md` captures the critical RLS advisory route; do not auto-enable RLS without policies and smoke tests.
 - `docs/APEX_WORKSPACE_MENU.md` is the low-token cover page for loose/uncommitted artifact groups.
 - `docs/APEX_REPO_MENU.md` is the low-token cover page for repositories under scanned roots.
 - `docs/APEX_PARALLEL_MERGE_PLAYBOOK.md` explains how to combine the Codex-built index package with the parallel Claude governance run.
@@ -100,7 +103,7 @@ Use Perplexity Pro first for external research when available. Ask for concise s
 | Need choose a tool | `docs/APEX_TOOL_MENU.md` |
 | Need edit a repo, use fallback work, or promote artifacts | `docs/APEX_WORK_GATE.md`, then `python registry/muscle_work_gate.py --repo . --intent write --fetch` |
 | Need align another station or LLM install | `docs/APEX_STATION_ALIGNMENT.md` |
-| Need write to Supabase project tables | `docs/policy/SUPABASE_PROJECT_ISOLATION.md`, then `python registry\supabase_project_guard.py --expect-code APEX` |
+| Need write to Supabase project tables | `docs/policy/SUPABASE_SHARED_PROJECT_BOUNDARY.md`, `docs/policy/SUPABASE_PROJECT_ISOLATION.md`, then `python registry\supabase_project_guard.py --expect-code APEX` |
 | Need understand uncommitted artifacts | `docs/APEX_WORKSPACE_MENU.md` |
 | Need choose or review a repo | `docs/APEX_REPO_MENU.md` |
 | Need combine parallel Claude/Codex work | `docs/APEX_PARALLEL_MERGE_PLAYBOOK.md` |

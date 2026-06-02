@@ -3,10 +3,14 @@
 | Field | Value |
 |---|---|
 | Ref Code | APEX-MB-DOC-00037 |
-| Version | 1.0 |
+| Version | 1.1 |
 | Status | ACTIVE |
 | Created | 2026-05-30 |
-| Purpose | Keep Apex autonomous delivery work isolated from Jesse/Novel Factory and other live project backlogs. |
+| Purpose | Keep Apex autonomous delivery work isolated inside a shared 11-project Supabase instance. |
+
+## Shared Instance Correction
+
+This Supabase instance is not APEX-only. It hosts at least 11 projects and shared coordination infrastructure. Use `docs/policy/SUPABASE_SHARED_PROJECT_BOUNDARY.md` before any Supabase write, migration, backfill, RLS change, or config update.
 
 ## Live Project Boundary
 
