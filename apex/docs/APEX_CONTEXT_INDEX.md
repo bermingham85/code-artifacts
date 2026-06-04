@@ -106,7 +106,7 @@ Use Perplexity Pro first for external research when available. Ask for concise s
 | Need edit a repo, use fallback work, or promote artifacts | `docs/APEX_WORK_GATE.md`, then `python registry/muscle_work_gate.py --repo . --intent write --fetch` |
 | Need avoid rediscovering Apex routes | `docs/APEX_MEMORY_SHORTCUTS.md` |
 | Need align another station or LLM install | `docs/APEX_STATION_ALIGNMENT.md` |
-| Need write to Supabase project tables | `docs/policy/SUPABASE_SHARED_PROJECT_BOUNDARY.md`, `docs/policy/SUPABASE_PROJECT_ISOLATION.md`, then `python registry\supabase_project_guard.py --expect-code APEX` |
+| Need write to Supabase project tables | `docs/policy/SUPABASE_SHARED_PROJECT_BOUNDARY.md`, `docs/policy/SUPABASE_PROJECT_ISOLATION.md`, then set `$env:APEX_BOUNDARY_DOC_READ='APEX-MB-DOC-00038-v1.0'` and run `python registry\supabase_project_guard.py --expect-code APEX` |
 | Need understand uncommitted artifacts | `docs/APEX_WORKSPACE_MENU.md` |
 | Need choose or review a repo | `docs/APEX_REPO_MENU.md` |
 | Need combine parallel Claude/Codex work | `docs/APEX_PARALLEL_MERGE_PLAYBOOK.md` |

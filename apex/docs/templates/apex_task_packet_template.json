@@ -23,7 +23,8 @@
     "Make the smallest safe change that completes the task",
     "Prefer idempotent scripts and repeatable configuration",
     "Record assumptions instead of stopping unless genuinely blocked",
-    "Do not ask for clarification unless task is impossible or unsafe"
+    "Do not ask for clarification unless task is impossible or unsafe",
+    "For Supabase writes, migrations, backfills, RLS changes, or config updates: read docs/policy/SUPABASE_SHARED_PROJECT_BOUNDARY.md and docs/policy/SUPABASE_PROJECT_ISOLATION.md, set APEX_BOUNDARY_DOC_READ=APEX-MB-DOC-00038-v1.0, run registry/supabase_project_guard.py, and refuse cross-project writes without owner mapping, rollback, and explicit approval"
   ],
   "expected_output": {
     "files": [],

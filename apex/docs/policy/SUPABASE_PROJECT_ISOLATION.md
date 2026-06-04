@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Ref Code | APEX-MB-DOC-00037 |
-| Version | 1.1 |
+| Version | 1.2 |
 | Status | ACTIVE |
 | Created | 2026-05-30 |
 | Purpose | Keep Apex autonomous delivery work isolated inside a shared 11-project Supabase instance. |
@@ -39,10 +39,11 @@ Current live `APEX` project id:
 Use the read-only guard before Supabase write scripts:
 
 ```powershell
+$env:APEX_BOUNDARY_DOC_READ='APEX-MB-DOC-00038-v1.0'
 python registry\supabase_project_guard.py --expect-code APEX
 ```
 
-The guard reads project metadata only, confirms `APEX` exists, confirms protected projects such as `JESS` are visible, and never prints key values.
+The guard reads project metadata only, confirms `APEX` exists, refuses protected project codes by default (`AGEN`, `BERM`, `FINX`, `JESS`, `MILK`, `TALE`, `BPIG`), requires `--allow-shared` for shared infrastructure targets (`INFR`, `GOVN`, `GNRL`), requires the boundary-doc acknowledgement marker, and never prints key values.
 
 ## Current APEX Seed Tasks
 
