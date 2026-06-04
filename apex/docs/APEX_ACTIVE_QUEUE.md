@@ -29,7 +29,7 @@ Do not paste chat history between agents as the source of truth. Pull the branch
 | Supabase shared project guard enforcement | Completed by P1 guard delta: `supabase_project_guard.py` now requires the boundary-doc marker, blocks protected project codes by default, and requires `--allow-shared` for shared infra codes. |
 | Workspace noise triage | Completed P4 classification in `docs/APEX_WORKSPACE_MENU.md` v1.1 and `audit/2026-06-04/task_workspace-noise-triage/classification.md`; unrelated loose artifacts remain unstaged. |
 | B-3 task review migration | Claude reported it applied before stop directive; Codex verified `agent_tasks.last_review_at` exists and 283/283 rows are populated. Treat as completed but audit-sensitive. |
-| RLS security advisory | Claude reported Supabase flagged 71 public tables with RLS disabled. Codex could not verify via PostgREST; treat as critical pending SQL-side confirmation. Do not auto-enable RLS without policies. |
+| RLS security advisory | SQL-side inventory captured via Claude/Supabase MCP confirms 71 public tables with RLS disabled and broad anon/authenticated exposure. Do not auto-enable RLS without owner mapping, policies, rollback, and smoke tests. |
 | conv_extract June 2 | Claude reported 5 new rows extracted, 0 failed; Codex verified current counts only: 41 `conv_processed`, 42 `conv_raw`. |
 | AGEN task lineage migration draft | Local draft improved; nested draft branch `codex/agen-task-lineage-draft` commit `bd7f440`; no production migration applied. |
 | SP-A.0 split | Still open only because SP-A.2 doctrine ratification is pending; do not redo SP-A.0 work. |
@@ -48,7 +48,7 @@ Do not paste chat history between agents as the source of truth. Pull the branch
 
 | Priority | Work | Owner | Gate |
 |---|---|---|---|
-| P0 | Supabase RLS exposure rollout: `docs/policy/SUPABASE_RLS_ROLLOUT_PLAN.md`. | Operator + SQL-capable agent | Critical advisory; needs SQL-side confirmation and staged policy rollout. |
+| P0 | Supabase RLS owner/dependency mapping: `hub/WO-APEX-SUPABASE-RLS-OWNER-MAP-008.json`. | Operator + SQL-capable agent | RLS-0 confirmed; RLS-1/RLS-2 must map table owners and active clients before any policy work. |
 | P2 | AGEN task-lineage implementation: `hub/WO-APEX-AGEN-TASK-LINEAGE-IMPLEMENT-007.json`. | Codex/operator SQL route | Local migration draft now includes Architecture RPC source wiring and canonical `agent_task_dependencies` translation. Re-check shared-boundary/RLS risk before any production DDL. |
 | P3 | SP-A.2 doctrine ratification: run the doctrine silent-twice loop against `docs/doctrine/APEX_DOCTRINE_v1.0.md`. | Claude+Codex bridge | Codex adversarial/ship-gate tooling required. |
 
@@ -70,7 +70,7 @@ Then pick the first active next action that is not blocked in the current enviro
 |---|---|---|
 | Production migration approval not yet granted | Cannot apply task-lineage SQL to live Supabase. | Draft SQL, rollback, tests, and Codex review packet only. |
 | Shared Supabase instance hosts 11 projects | Cross-project writes/backfills can affect non-APEX work. | Require project/table owner mapping before writes. |
-| Reported 71-table RLS exposure | Potential anon/authenticated data exposure across shared database. | Confirm with SQL-side inventory; design policies before enabling RLS. |
+| Confirmed 71-table RLS exposure | Potential anon/authenticated data exposure across shared database. | Complete RLS-1/RLS-2 owner/client mapping; design policies before enabling RLS. |
 | Codex CLI external review blocked by tenant policy | Cannot claim independent external CLI review in this managed context. | Use local deterministic review findings, or run Codex CLI directly from an operator terminal outside this managed agent context. |
 | No SQL execution route in this context | Cannot run DDL, disposable DB tests, or live migration from REST API keys alone. | Use Supabase SQL editor/CLI/psql with database connection after backup evidence. |
 | No Perplexity Pro connector in this Codex context | Cannot satisfy external-research-first route here. | Record limitation; use local governed materials only. |
