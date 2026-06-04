@@ -27,6 +27,7 @@ Do not paste chat history between agents as the source of truth. Pull the branch
 | Supabase APEX project boundary | Live project `APEX / Apex Autonomous Delivery` created with id `243bed23-67d6-4f69-b382-e771c57abed7`; `JESS` protected/read-only by policy. |
 | Supabase shared-instance correction | Verified 11 `agent_projects`; the instance is shared and must not be treated as APEX-only. See `docs/policy/SUPABASE_SHARED_PROJECT_BOUNDARY.md`. |
 | Supabase shared project guard enforcement | Completed by P1 guard delta: `supabase_project_guard.py` now requires the boundary-doc marker, blocks protected project codes by default, and requires `--allow-shared` for shared infra codes. |
+| Workspace noise triage | Completed P4 classification in `docs/APEX_WORKSPACE_MENU.md` v1.1 and `audit/2026-06-04/task_workspace-noise-triage/classification.md`; unrelated loose artifacts remain unstaged. |
 | B-3 task review migration | Claude reported it applied before stop directive; Codex verified `agent_tasks.last_review_at` exists and 283/283 rows are populated. Treat as completed but audit-sensitive. |
 | RLS security advisory | Claude reported Supabase flagged 71 public tables with RLS disabled. Codex could not verify via PostgREST; treat as critical pending SQL-side confirmation. Do not auto-enable RLS without policies. |
 | conv_extract June 2 | Claude reported 5 new rows extracted, 0 failed; Codex verified current counts only: 41 `conv_processed`, 42 `conv_raw`. |
@@ -50,7 +51,6 @@ Do not paste chat history between agents as the source of truth. Pull the branch
 | P0 | Supabase RLS exposure rollout: `docs/policy/SUPABASE_RLS_ROLLOUT_PLAN.md`. | Operator + SQL-capable agent | Critical advisory; needs SQL-side confirmation and staged policy rollout. |
 | P2 | AGEN task-lineage implementation: `hub/WO-APEX-AGEN-TASK-LINEAGE-IMPLEMENT-007.json`. | Codex/operator SQL route | Local migration draft now includes Architecture RPC source wiring and canonical `agent_task_dependencies` translation. Re-check shared-boundary/RLS risk before any production DDL. |
 | P3 | SP-A.2 doctrine ratification: run the doctrine silent-twice loop against `docs/doctrine/APEX_DOCTRINE_v1.0.md`. | Claude+Codex bridge | Codex adversarial/ship-gate tooling required. |
-| P4 | Workspace noise triage: classify untracked audit/spec/raw folders without reading secrets. | Codex | Work gate and targeted file review only. |
 
 ## Next Agent Command
 
