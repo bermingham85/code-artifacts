@@ -1,0 +1,11 @@
+{
+  "version": "1.0",
+  "status": "open_until_project_count_5",
+  "multi_value_separator": "+",
+  "domain":       ["ocr","audio","video","image","text","finance","comms","infra","creative","data","auth","legal"],
+  "action":       ["create","modify","analyse","deploy","migrate","monitor","publish","extract","translate","summarise"],
+  "input":        ["image","pdf","audio","video","text","csv","json","api","db","url","none"],
+  "output":       ["json","sql","code","audio","video","image","doc","csv","db_row","api_call","report"],
+  "integrations": ["supabase","n8n","drive","telegram","claude_code","elevenlabs","suno","ollama","openai","github","stripe","revolut","qnap"],
+  "artifact":     ["muscle","workflow","doc","script","service","skill","report","agent","schema","policy"]
+}
