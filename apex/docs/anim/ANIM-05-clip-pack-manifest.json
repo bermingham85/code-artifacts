@@ -11,10 +11,12 @@
       "total_clips": 38,
       "production_count": 20,
       "extras_count": 18,
+      "rejected_at_hash": 0,
       "mapped_durations": 38,
       "clips": [
         {
           "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_001.mp4",
+          "resolved_path": "//192.168.50.246/Extra/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_001.mp4",
           "sha256": "613f540d85ef7e61c320245cbe2ffe3eeace9ef22e0579c3c55e838e8a690902",
           "size": 822262,
           "role": "production",
@@ -29,6 +31,7 @@
         },
         {
           "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_002.mp4",
+          "resolved_path": "//192.168.50.246/Extra/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_002.mp4",
           "sha256": "705bbb635f4d4f39fe730efb1f4508dbaeadb0cd0305dea4292d7c0cb52aa909",
           "size": 574923,
           "role": "production",
@@ -43,6 +46,7 @@
         },
         {
           "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_003.mp4",
+          "resolved_path": "//192.168.50.246/Extra/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_003.mp4",
           "sha256": "b400f44800ed8b748144a5112251d9ecdc437847b4d62866cd980b8e0174aac9",
           "size": 663969,
           "role": "production",
@@ -57,6 +61,7 @@
         },
         {
           "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_004.mp4",
+          "resolved_path": "//192.168.50.246/Extra/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_004.mp4",
           "sha256": "fac70ab089a5008ab6ccd61a16ac75ed07c3990a84e32387d8a549de83822f95",
           "size": 963450,
           "role": "production",
@@ -71,6 +76,7 @@
         },
         {
           "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_005.mp4",
+          "resolved_path": "//192.168.50.246/Extra/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_005.mp4",
           "sha256": "e5d60e7e2b14c0f0966f258cd0f6f214b282b521c90470735d4d848e0f465ff9",
           "size": 743920,
           "role": "production",
@@ -85,6 +91,7 @@
         },
         {
           "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_006.mp4",
+          "resolved_path": "//192.168.50.246/Extra/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_006.mp4",
           "sha256": "505c252a5a64fda2136a64ef7c5229ed7fcc0d8e69ee10271f7d1274df726747",
           "size": 1247822,
           "role": "production",
@@ -99,6 +106,7 @@
         },
         {
           "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_007.mp4",
+          "resolved_path": "//192.168.50.246/Extra/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_007.mp4",
           "sha256": "3ad4995c76fab1973afe162b79ab58ed55b3bd1b1fff72c029ebdfb284c8dc0b",
           "size": 985218,
           "role": "production",
@@ -113,6 +121,7 @@
         },
         {
           "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_008.mp4",
+          "resolved_path": "//192.168.50.246/Extra/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_008.mp4",
           "sha256": "743c442ad774e96dda4f6b11d4cc495b211ff17e7f771e9385181dd4b47932c7",
           "size": 667445,
           "role": "production",
@@ -127,6 +136,7 @@
         },
         {
           "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_009.mp4",
+          "resolved_path": "//192.168.50.246/Extra/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_009.mp4",
           "sha256": "cbe4d79b0e05a70c1bf7b156fd1923d1a95c473cb307eec0f11761dc3dc3131a",
           "size": 907473,
           "role": "production",
@@ -141,6 +151,7 @@
         },
         {
           "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_010.mp4",
+          "resolved_path": "//192.168.50.246/Extra/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_010.mp4",
           "sha256": "1623b193b8d9b3cb0f1f7fe5f14e159097e9be0fd24d79709b1b5bfe499be647",
           "size": 1003292,
           "role": "production",
@@ -155,6 +166,7 @@
         },
         {
           "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_011.mp4",
+          "resolved_path": "//192.168.50.246/Extra/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_011.mp4",
           "sha256": "b4ec66d32bf28671c32dfacf41d66a77e997a36c361b15dc9afffa36bcde25be",
           "size": 935795,
           "role": "production",
@@ -169,6 +181,7 @@
         },
         {
           "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_012.mp4",
+          "resolved_path": "//192.168.50.246/Extra/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_012.mp4",
           "sha256": "23d085a6a4888e71262eff08f93600ee86e5b980a99fbfe50883a3d5a8ec8e7a",
           "size": 548271,
           "role": "production",
@@ -183,6 +196,7 @@
         },
         {
           "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_013.mp4",
+          "resolved_path": "//192.168.50.246/Extra/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_013.mp4",
           "sha256": "79929c08ac7fd86e11b23cb0d9b0e8fd4f0e4c478ba3d95ab95f50df48269ad4",
           "size": 652238,
           "role": "production",
@@ -197,6 +211,7 @@
         },
         {
           "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_014.mp4",
+          "resolved_path": "//192.168.50.246/Extra/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_014.mp4",
           "sha256": "893c6e218d6b41bc72b4a5598588e3db69e16cdba76e697a804605bc559898b9",
           "size": 578101,
           "role": "production",
@@ -211,6 +226,7 @@
         },
         {
           "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_015.mp4",
+          "resolved_path": "//192.168.50.246/Extra/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_015.mp4",
           "sha256": "8790f7ca0898aedfdd9a66640d078c8f66c1f04803ea45fd748ee5fb3472fcec",
           "size": 681897,
           "role": "production",
@@ -225,6 +241,7 @@
         },
         {
           "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_016.mp4",
+          "resolved_path": "//192.168.50.246/Extra/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_016.mp4",
           "sha256": "478bfc42bdf4d8359cead5d48832c84137e5890a5e9f5bc52e3b3e9d0e9aeddd",
           "size": 515483,
           "role": "production",
@@ -239,6 +256,7 @@
         },
         {
           "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_017.mp4",
+          "resolved_path": "//192.168.50.246/Extra/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_017.mp4",
           "sha256": "11eda4c2b0ea167c501076da117661ea2122addbd05d6dcb981c679bc92d58a7",
           "size": 1015876,
           "role": "production",
@@ -253,6 +271,7 @@
         },
         {
           "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_018.mp4",
+          "resolved_path": "//192.168.50.246/Extra/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_018.mp4",
           "sha256": "c641bf1927002269edcc291d8dad73c5be5be11c40e76fd096003181a2616bff",
           "size": 590987,
           "role": "production",
@@ -267,6 +286,7 @@
         },
         {
           "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_019.mp4",
+          "resolved_path": "//192.168.50.246/Extra/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_019.mp4",
           "sha256": "49cf3aefd1958df17d0d527d40aa3dd8fd00332317c44c58f2693518ae9faf68",
           "size": 721809,
           "role": "production",
@@ -281,6 +301,7 @@
         },
         {
           "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_020.mp4",
+          "resolved_path": "//192.168.50.246/Extra/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_020.mp4",
           "sha256": "2a4b01e38e3c43c2588a4b09c00052a96c9570590ceb9481a5504110a89b9431",
           "size": 654678,
           "role": "production",
@@ -295,6 +316,7 @@
         },
         {
           "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_021.mp4",
+          "resolved_path": "//192.168.50.246/Extra/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_021.mp4",
           "sha256": "798f0d23c7483d5899f75a020256c36ee313d1bbef3e52bf28b47681a65367e0",
           "size": 1488093,
           "role": "extra",
@@ -309,6 +331,7 @@
         },
         {
           "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_022.mp4",
+          "resolved_path": "//192.168.50.246/Extra/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_022.mp4",
           "sha256": "07758abaddfce1ca8cc3061bd347f835c3a8585868355103d54a55632fe17638",
           "size": 1052305,
           "role": "extra",
@@ -323,6 +346,7 @@
         },
         {
           "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_023.mp4",
+          "resolved_path": "//192.168.50.246/Extra/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_023.mp4",
           "sha256": "45103a75469ccb3fd500cbbaf83a63ee5ffdbb04d7bdf462c90124b2b02c7d8f",
           "size": 1047627,
           "role": "extra",
@@ -337,6 +361,7 @@
         },
         {
           "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_024.mp4",
+          "resolved_path": "//192.168.50.246/Extra/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_024.mp4",
           "sha256": "9003eb23674c2be385958085ed0bb733e69a5572afb89cc522da373847e1d826",
           "size": 1223184,
           "role": "extra",
@@ -351,6 +376,7 @@
         },
         {
           "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_025.mp4",
+          "resolved_path": "//192.168.50.246/Extra/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_025.mp4",
           "sha256": "c564981c6c9d5caa28defa7d808c04905a321fdf184cbd34cd90571447faafce",
           "size": 490167,
           "role": "extra",
@@ -365,6 +391,7 @@
         },
         {
           "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_026.mp4",
+          "resolved_path": "//192.168.50.246/Extra/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_026.mp4",
           "sha256": "e3328bfcf59a4a886010e32bbb6f6ba7cfb643580a6f26e5db744b97d90fe316",
           "size": 745752,
           "role": "extra",
@@ -379,6 +406,7 @@
         },
         {
           "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_027.mp4",
+          "resolved_path": "//192.168.50.246/Extra/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_027.mp4",
           "sha256": "3a86b2ef859e7a179947a4a96d272fc098300503375ca06d5e738bb42f2f4209",
           "size": 483122,
           "role": "extra",
@@ -393,6 +421,7 @@
         },
         {
           "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_028.mp4",
+          "resolved_path": "//192.168.50.246/Extra/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_028.mp4",
           "sha256": "4ff3128a545fed585cdd5b9086032ec84acdc9d3fb0627077dd2ea74c27ec97b",
           "size": 689121,
           "role": "extra",
@@ -407,6 +436,7 @@
         },
         {
           "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_029.mp4",
+          "resolved_path": "//192.168.50.246/Extra/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_029.mp4",
           "sha256": "2ee7002ec8c9ce63b26d7dd9a39a35d39656fe23e5e4682021a54af8c6c339f9",
           "size": 1469755,
           "role": "extra",
@@ -421,6 +451,7 @@
         },
         {
           "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_030.mp4",
+          "resolved_path": "//192.168.50.246/Extra/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_030.mp4",
           "sha256": "d8e25de96ecea80a083152dd76011edb413a750e24ad321daed0bd13b364dbed",
           "size": 1427409,
           "role": "extra",
@@ -435,6 +466,7 @@
         },
         {
           "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_031.mp4",
+          "resolved_path": "//192.168.50.246/Extra/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_031.mp4",
           "sha256": "401a39714e9840b03cd08b50af88c2eee58bc19295bf9d0addb9a85c99410e24",
           "size": 1595698,
           "role": "extra",
@@ -449,6 +481,7 @@
         },
         {
           "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_032.mp4",
+          "resolved_path": "//192.168.50.246/Extra/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_032.mp4",
           "sha256": "dbdec62b2d98f50c99f5bd43cc8ad2aa01cbda31c12cc68b2c8eaa855005610c",
           "size": 1922151,
           "role": "extra",
@@ -463,6 +496,7 @@
         },
         {
           "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_033.mp4",
+          "resolved_path": "//192.168.50.246/Extra/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_033.mp4",
           "sha256": "6644ad4143681fc96bae5dab1183356871c987ad6dee9d66e8d2455c94a9c2b5",
           "size": 1424271,
           "role": "extra",
@@ -477,6 +511,7 @@
         },
         {
           "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_034.mp4",
+          "resolved_path": "//192.168.50.246/Extra/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_034.mp4",
           "sha256": "b9b2a8ed093bc10759be29f05d9e5fadc250153986aadc5850dc4037984b38b0",
           "size": 1167992,
           "role": "extra",
@@ -491,6 +526,7 @@
         },
         {
           "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_035.mp4",
+          "resolved_path": "//192.168.50.246/Extra/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_035.mp4",
           "sha256": "b08a3c3a07d090a32e70aa06e1cf0a2c2e99b58a2e39f7fb7de918a08f9272f9",
           "size": 726288,
           "role": "extra",
@@ -505,6 +541,7 @@
         },
         {
           "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_036.mp4",
+          "resolved_path": "//192.168.50.246/Extra/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_036.mp4",
           "sha256": "12be3ad1929a0a16a247b8a080abba52a08278c51ee92719b5cff26797d80b39",
           "size": 461731,
           "role": "extra",
@@ -519,6 +556,7 @@
         },
         {
           "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_037.mp4",
+          "resolved_path": "//192.168.50.246/Extra/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_037.mp4",
           "sha256": "3df0495f303b49f992dcd30352bc6ea5626db5295e2559bb62ac7a5a45dbd46b",
           "size": 1420645,
           "role": "extra",
@@ -533,6 +571,7 @@
         },
         {
           "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_038.mp4",
+          "resolved_path": "//192.168.50.246/Extra/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_038.mp4",
           "sha256": "26bcdcea4303d515c39510ac352a59d4400c91725040e48403688eff8969d581",
           "size": 614273,
           "role": "extra",
@@ -546,7 +585,7 @@
           "duration_source": "shot_list.json:shots[id=38]"
         }
       ],
-      "built_at": "2026-06-07T06:00:55+00:00"
+      "built_at": "2026-06-07T06:03:55+00:00"
     }
   }
 }

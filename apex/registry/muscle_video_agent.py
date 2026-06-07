@@ -121,21 +121,49 @@ _CLIP_INDEX_RE = re.compile(r"clip_(\d+)\.mp4$", re.IGNORECASE)
 
 
 def annotate_clip(p: Path, production_set_max: int, index: int,
-                  scene_binding: dict, shot_meta: dict) -> dict:
+                  scene_binding: dict, shot_meta: dict,
+                  root_resolved: Path) -> dict | None:
+    """Hash and stat the clip with TOCTOU defense at the open-window:
+    re-lstat to ensure it's still not a symlink, re-resolve target, re-commonpath
+    against the validated root. Return None if any check fails between discovery
+    and hashing (the discover→annotate window).
+
+    F-6 r2 fix: closes the TOCTOU gap between discover_clips() validation and the
+    actual file-content read inside sha256_of().
+    """
+    try:
+        if p.is_symlink():
+            return None
+        target = p.resolve(strict=True)
+        if Path(os.path.commonpath([str(target), str(root_resolved)])) != root_resolved:
+            return None
+        # Open and hash through the resolved target so the bytes we hash match the bytes
+        # whose containment we verified.
+        h = hashlib.sha256()
+        with target.open("rb") as f:
+            while True:
+                b = f.read(1 << 20)
+                if not b:
+                    break
+                h.update(b)
+        digest = h.hexdigest()
+        size = target.stat().st_size
+    except (FileNotFoundError, OSError, ValueError):
+        return None
     name = p.name
     m = _CLIP_INDEX_RE.search(name)
     shot_id = None
     duration = None
     if m:
-        # Clip filenames are 1-indexed (clip_001 → shot id "1").
         clip_num = int(m.group(1))
         shot_id = str(clip_num)
         if shot_id in shot_meta:
             duration = shot_meta[shot_id]["duration_seconds"]
     return {
         "path": str(p).replace("\\", "/"),
-        "sha256": sha256_of(p),
-        "size": p.stat().st_size,
+        "resolved_path": str(target).replace("\\", "/"),
+        "sha256": digest,
+        "size": size,
         "role": "production" if index < production_set_max else "extra",
         "index": index,
         "shot_id": shot_id,
@@ -176,7 +204,15 @@ def catalog_scene(scene_slug: str, force: bool) -> dict:
     shot_meta = load_shot_metadata(scene_slug)
     # PHASE_STATE: first 20 of the Grog clips are the production set.
     production_set_max = 20 if scene_slug == "MagicalRealmPlayground" else len(clips)
-    entries = [annotate_clip(p, production_set_max, i, binding, shot_meta) for i, p in enumerate(clips)]
+    try:
+        root_resolved = binding["clip_root"].resolve(strict=True)
+    except (FileNotFoundError, OSError):
+        return {"slug": scene_slug, "status": "CLIP_CATALOG_EMPTY",
+                "clip_root": str(binding["clip_root"])}
+    raw_entries = [annotate_clip(p, production_set_max, i, binding, shot_meta, root_resolved)
+                   for i, p in enumerate(clips)]
+    entries = [e for e in raw_entries if e is not None]
+    rejected = len(raw_entries) - len(entries)
     production_count = sum(1 for e in entries if e["role"] == "production")
     extras_count = sum(1 for e in entries if e["role"] == "extra")
 
@@ -189,6 +225,7 @@ def catalog_scene(scene_slug: str, force: bool) -> dict:
         "total_clips": len(entries),
         "production_count": production_count,
         "extras_count": extras_count,
+        "rejected_at_hash": rejected,
         "mapped_durations": sum(1 for e in entries if e["duration_seconds"] is not None),
         "clips": entries,
         "built_at": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
