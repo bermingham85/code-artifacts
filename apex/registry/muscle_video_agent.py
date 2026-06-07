@@ -60,6 +60,108 @@ def load_tier_config() -> dict:
     return json.loads(TIER_CONFIG_PATH.read_text(encoding="utf-8"))
 
 
+# ANIM-17: env-key resolver for tiers that need a cloud-API secret.
+# The resolved key bytes stay in process memory only; agent output exposes
+# a non-reversible fingerprint (first4:last4 of the key + first 12 hex of
+# sha256). The env_sync path itself is authoritative — never copy the key
+# elsewhere.
+
+def _key_fingerprint(key: str) -> dict:
+    if len(key) >= 8:
+        prefix = key[:4]
+        suffix = key[-4:]
+    else:
+        # very short keys: redact entirely
+        prefix = "****"
+        suffix = "****"
+    h = hashlib.sha256(key.encode("utf-8")).hexdigest()
+    return {
+        "fingerprint": f"{prefix}:{suffix}",
+        "key_sha256_first_12": h[:12],
+        "key_length": len(key),
+    }
+
+
+def resolve_env_key_from_env_sync(env_sync_path: str, field: str) -> dict:
+    """Read a named field from a JSON env_sync file. Never emits the key."""
+    p = Path(env_sync_path)
+    if not p.is_file():
+        return {"status": "ENV_SYNC_PATH_MISSING",
+                "env_sync_path": env_sync_path}
+    try:
+        # env_sync files are emitted with a UTF-8 BOM on Windows; use the
+        # BOM-tolerant codec so the resolver doesn't false-fail on legal
+        # input. The actual decoded text is identical with or without BOM.
+        data = json.loads(p.read_text(encoding="utf-8-sig"))
+    except json.JSONDecodeError as e:
+        return {"status": "ENV_SYNC_UNPARSEABLE",
+                "env_sync_path": env_sync_path, "error": str(e)}
+    if not isinstance(data, dict):
+        return {"status": "ENV_SYNC_UNPARSEABLE",
+                "env_sync_path": env_sync_path,
+                "error": f"top-level JSON must be an object; got {type(data).__name__}"}
+    if field not in data:
+        return {"status": "ENV_KEY_MISSING",
+                "env_sync_path": env_sync_path, "field": field}
+    val = data[field]
+    if not isinstance(val, str):
+        return {"status": "ENV_KEY_NOT_STRING",
+                "env_sync_path": env_sync_path, "field": field,
+                "actual_type": type(val).__name__}
+    if not val:
+        return {"status": "ENV_KEY_EMPTY",
+                "env_sync_path": env_sync_path, "field": field}
+    fp = _key_fingerprint(val)
+    return {"status": "OK", "key": val, **fp,
+            "env_sync_path": env_sync_path, "field": field}
+
+
+def effective_tier_status(tier_name: str, cfg: dict) -> dict:
+    """Compute runtime status of a tier, resolving env-key requirement if any.
+
+    Returns a dict with effective_status + optional key_resolution sub-dict.
+    The full key value is NEVER included; only fingerprint + length + sha
+    prefix (12 hex). When effective_status reaches READY the caller may
+    proceed with plan emission; KEY_OK_SHIM_PENDING is a partial gate
+    surfaced as exit 14.
+    """
+    req_key = cfg.get("requires_env_key")
+    if not req_key:
+        # legacy path — static status drives the tier (no env probe)
+        return {"effective_status": cfg.get("status"),
+                "key_resolution": None}
+    env_path = cfg.get("requires_env_key_from_env_sync_path")
+    env_field = cfg.get("requires_env_key_field")
+    if not env_path or not env_field:
+        return {"effective_status": "ENV_KEY_CONFIG_INCOMPLETE",
+                "key_resolution": {
+                    "status": "MISSING_RESOLUTION_PATH",
+                    "required_fields": [
+                        "requires_env_key_from_env_sync_path",
+                        "requires_env_key_field",
+                    ]}}
+    probe = resolve_env_key_from_env_sync(env_path, env_field)
+    if probe.get("status") != "OK":
+        # mask any partial leakage by stripping the key field if somehow set
+        probe.pop("key", None)
+        return {"effective_status": "ENV_KEY_GATED",
+                "key_resolution": probe,
+                "blocker": cfg.get("blocker"),
+                "tier_static_status": cfg.get("status")}
+    # Key resolved successfully. Strip the raw key from output.
+    fp = {k: probe[k] for k in
+          ("fingerprint", "key_sha256_first_12", "key_length",
+           "env_sync_path", "field")}
+    if cfg.get("shim_status") != "READY":
+        return {"effective_status": "KEY_OK_SHIM_PENDING",
+                "key_resolution": {"status": "OK", **fp},
+                "shim_blocker": cfg.get("shim_blocker"),
+                "tier_static_status": cfg.get("status")}
+    return {"effective_status": "READY",
+            "key_resolution": {"status": "OK", **fp},
+            "tier_static_status": cfg.get("status")}
+
+
 def validate_slug(slug: str) -> dict | None:
     if not SLUG_RE.match(slug):
         return {"slug": slug, "status": "INVALID_SLUG",
@@ -273,12 +375,26 @@ def plan_tier(tier: str, shot_id: str, scene_slug: str | None) -> dict:
     cfg = load_tier_config().get("tiers", {}).get(tier)
     if not cfg:
         return {"status": "TIER_NOT_CONFIGURED", "tier": tier}
-    # F-1 r1 fix: only READY tiers can return PLAN. NODES_INSTALLED_WEIGHTS_DEFERRED
-    # is treated as not-ready since the render would fail at weight load.
-    if cfg.get("status") != "READY":
+    # ANIM-17: consult effective_tier_status() so tiers gated on an env-key
+    # (FalCloud) can flip status based on a successful env_sync probe at
+    # runtime. The static "status" field is preserved as tier_static_status
+    # in the resolution detail but does not gate PLAN by itself anymore for
+    # env-keyed tiers.
+    eff = effective_tier_status(tier, cfg)
+    eff_status = eff.get("effective_status")
+    if eff_status == "KEY_OK_SHIM_PENDING":
+        # ANIM-17 new path: env-key resolved but the cloud-side wrapper shim
+        # is not yet built. Surface fingerprint + shim_blocker; withhold PLAN.
+        return {"status": "TIER_KEY_OK_SHIM_PENDING", "tier": tier,
+                "tier_static_status": eff.get("tier_static_status"),
+                "key_resolution": eff.get("key_resolution"),
+                "shim_blocker": eff.get("shim_blocker")}
+    if eff_status != "READY":
         return {"status": "TIER_NOT_READY", "tier": tier,
-                "tier_status": cfg.get("status"),
-                "blocker": cfg.get("blocker"),
+                "tier_status": eff_status,
+                "tier_static_status": eff.get("tier_static_status") or cfg.get("status"),
+                "key_resolution": eff.get("key_resolution"),
+                "blocker": eff.get("blocker") or cfg.get("blocker"),
                 "hint": cfg.get("weights_install_command")}
     # F-2 r1 fix: refuse PLAN if wrapper_invocation is missing/empty for a runnable tier.
     wrapper = cfg.get("wrapper_invocation")
@@ -290,7 +406,8 @@ def plan_tier(tier: str, shot_id: str, scene_slug: str | None) -> dict:
             "wrapper_invocation": wrapper,
             "approx_seconds_per_clip": cfg.get("approx_seconds_per_clip"),
             "vram_gb": cfg.get("vram_gb"),
-            "best_for": cfg.get("best_for")}
+            "best_for": cfg.get("best_for"),
+            "key_resolution": eff.get("key_resolution")}
 
 
 def main() -> int:
@@ -301,9 +418,32 @@ def main() -> int:
     ap.add_argument("--shot")
     ap.add_argument("--scene")
     ap.add_argument("--force", action="store_true")
+    # ANIM-17: standalone env-key probe — exposes fingerprint only, never key.
+    ap.add_argument("--probe-key", help="tier name; runs effective_tier_status() and prints fingerprint-only resolution")
     args = ap.parse_args()
     if args.list_tiers:
-        print(json.dumps(load_tier_config(), indent=2))
+        # ANIM-17: annotate each tier with its effective_status + key fingerprint
+        # so operators can see at-a-glance which env-gated tiers are now live.
+        # The raw key value is never emitted.
+        raw = load_tier_config()
+        annotated = json.loads(json.dumps(raw))
+        for tname, tcfg in (annotated.get("tiers", {}) or {}).items():
+            eff = effective_tier_status(tname, tcfg)
+            tcfg["_runtime"] = eff
+        print(json.dumps(annotated, indent=2))
+        return 0
+    if args.probe_key:
+        cfg = load_tier_config().get("tiers", {}).get(args.probe_key)
+        if not cfg:
+            print(json.dumps({"status": "TIER_NOT_CONFIGURED", "tier": args.probe_key}, indent=2))
+            return 9
+        eff = effective_tier_status(args.probe_key, cfg)
+        out = {"tier": args.probe_key, **eff}
+        # paranoia: strip any "key" leak that might have entered the dict
+        kr = out.get("key_resolution")
+        if isinstance(kr, dict):
+            kr.pop("key", None)
+        print(json.dumps(out, indent=2))
         return 0
     if args.catalog:
         result = catalog_scene(args.catalog, args.force)
@@ -319,7 +459,8 @@ def main() -> int:
         print(json.dumps(result, indent=2))
         code_for = {"PLAN": 0, "INVALID_TIER": 6, "INVALID_SHOT_ID": 6,
                     "INVALID_SLUG": 6, "TIER_NOT_CONFIGURED": 9,
-                    "TIER_NOT_READY": 7}
+                    "TIER_NOT_READY": 7,
+                    "TIER_KEY_OK_SHIM_PENDING": 14}
         return code_for.get(result.get("status", ""), 4)
     ap.print_help()
     return 2
