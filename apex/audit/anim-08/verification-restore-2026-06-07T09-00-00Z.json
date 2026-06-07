@@ -1,0 +1,30 @@
+{
+  "phase": "ANIM-08",
+  "audit_kind": "restore_audit",
+  "timestamp_utc": "2026-06-07T09:00:00Z",
+  "agent_recovered": "AGEN-Verification",
+  "transcript_sha256": "a2682c9090324cde2ad98bc076d8dbc80d4bca45e492a0306c7638e63c1c6a7f",
+  "extractor": "apex/registry/agen_recovery_extract.py (APEX-MB-PY-00116)",
+  "extractor_invocation": [
+    "python apex/registry/agen_recovery_extract.py",
+    "  --transcript C:/Users/Owner/apex_governance/codex_runs/AGEN-verification-agent/AGEN-verification-agent-review-20260523T012003Z-b0bd298e.txt",
+    "  --out-dir C:/Users/Owner/Repos/code-artifacts/AGENT_BUILD_SYSTEM/07_VERIFICATION_AGENT",
+    "  --restore AGEN-SCRPT-verification-supabase-migration-v1.sql",
+    "  --restore AGEN-PRMPT-verification-system-prompt-v1.md",
+    "  --restore AGEN-SPEC-verification-integration-v1.md",
+    "  --restore AGEN-TEST-verification-test-plan-v1.md",
+    "  --restore AGEN-WKFL-verification-workflow-v1.json"
+  ],
+  "extractor_exit_code": 0,
+  "extractor_status": "OK",
+  "files_written": 5,
+  "files_skipped": 2,
+  "files_rejected": 0,
+  "files_missing_from_transcript": 0,
+  "post_write_validation": {
+    "all_5_files_present_at_live_path": true,
+    "wkfl_json_parses": true,
+    "wkfl_node_count": 47,
+    "byte_exact_match_against_transcript_extraction": true
+  }
+}

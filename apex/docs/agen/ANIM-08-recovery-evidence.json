@@ -1,0 +1,88 @@
+{
+  "phase": "ANIM-08",
+  "wo_id": "APEX-ANIM-MB-WO-00001",
+  "agent_recovered": "AGEN-Verification",
+  "recovery_method": "verbatim transcript extraction (R20)",
+  "extractor_tool": "apex/registry/agen_recovery_extract.py (APEX-MB-PY-00116)",
+  "source_transcript": {
+    "path": "C:/Users/Owner/apex_governance/codex_runs/AGEN-verification-agent/AGEN-verification-agent-review-20260523T012003Z-b0bd298e.txt",
+    "sha256": "a2682c9090324cde2ad98bc076d8dbc80d4bca45e492a0306c7638e63c1c6a7f",
+    "lines": 2235,
+    "review_run_id": "20260523T012003Z-b0bd298e",
+    "review_run_utc": "2026-05-23T01:20:03Z",
+    "review_verdict_inline": "1 silent run on this transcript (per shared memory project_agen_five_agent_state_2026-06-07.md). Silent-twice clock is functionally reset because the prior silent run was on the deleted clones-path artifacts; a re-review on the restored live-path artifacts is a separate doctrine question logged as known residual in SPEC-ANIM-08 §13."
+  },
+  "live_target_dir": "AGENT_BUILD_SYSTEM/07_VERIFICATION_AGENT/",
+  "src_path_in_transcript_note": "Transcript marker paths reference apex/registry/clones/code-artifacts/AGENT_BUILD_SYSTEM/07_VERIFICATION_AGENT/ (the deprecated clones working copy from the May build). Bodies are restored to the live path AGENT_BUILD_SYSTEM/07_VERIFICATION_AGENT/ verbatim. Per shared memory, the clones path was a sibling working copy of the live path during the May build; content is identical.",
+  "restored_files": [
+    {
+      "basename": "AGEN-SCRPT-verification-supabase-migration-v1.sql",
+      "live_path": "AGENT_BUILD_SYSTEM/07_VERIFICATION_AGENT/AGEN-SCRPT-verification-supabase-migration-v1.sql",
+      "size_bytes": 23334,
+      "sha256": "3fc75d3d8e62ef7ed70bfd203b3dafc1e3d034b9172c85c8d5a8c456640141a8",
+      "transcript_byte_range": [1024, 24356],
+      "purpose": "Supabase migration for verification agent (referenced by AGEN-migration-coordinator SIGNED_OFF.json — see operator note)"
+    },
+    {
+      "basename": "AGEN-PRMPT-verification-system-prompt-v1.md",
+      "live_path": "AGENT_BUILD_SYSTEM/07_VERIFICATION_AGENT/AGEN-PRMPT-verification-system-prompt-v1.md",
+      "size_bytes": 12104,
+      "sha256": "fa7db26028d1360fa06f1e46a819358ede14e14775dfb18002700048b8ebd2fd",
+      "transcript_byte_range": [31264, 43296],
+      "purpose": "System prompt for the verification LLM call"
+    },
+    {
+      "basename": "AGEN-SPEC-verification-integration-v1.md",
+      "live_path": "AGENT_BUILD_SYSTEM/07_VERIFICATION_AGENT/AGEN-SPEC-verification-integration-v1.md",
+      "size_bytes": 21644,
+      "sha256": "fb36346d4707015041b14811dc7909fa31ce7254b1511347c319378b28a91c5c",
+      "transcript_byte_range": [43483, 64977],
+      "purpose": "Integration spec for the verification agent (n8n workflow + Supabase backing)"
+    },
+    {
+      "basename": "AGEN-TEST-verification-test-plan-v1.md",
+      "live_path": "AGENT_BUILD_SYSTEM/07_VERIFICATION_AGENT/AGEN-TEST-verification-test-plan-v1.md",
+      "size_bytes": 15770,
+      "sha256": "3cc155020160c8194fa13a7be059f57e097ed4a53ac73a1a04527be73fec06fa",
+      "transcript_byte_range": [65162, 80880],
+      "purpose": "Test plan (T1..Tn) for the verification agent"
+    },
+    {
+      "basename": "AGEN-WKFL-verification-workflow-v1.json",
+      "live_path": "AGENT_BUILD_SYSTEM/07_VERIFICATION_AGENT/AGEN-WKFL-verification-workflow-v1.json",
+      "size_bytes": 73706,
+      "sha256": "caef5fe72c196c5b3368e1fc6c7e7d790c9825b472399143afa7d10014deb8aa",
+      "transcript_byte_range": [81066, 154730],
+      "purpose": "n8n workflow JSON for the verification agent (47 nodes, name='Verification Agent')"
+    }
+  ],
+  "preserved_files_not_overwritten": [
+    {
+      "basename": "HANDOVER.md",
+      "live_path": "AGENT_BUILD_SYSTEM/07_VERIFICATION_AGENT/HANDOVER.md",
+      "reason": "Already present at live path (2026-04-19 mtime); skipped per SPEC-ANIM-08 §3 to avoid destructive overwrite."
+    },
+    {
+      "basename": "PROJECT_INSTRUCTIONS.md",
+      "live_path": "AGENT_BUILD_SYSTEM/07_VERIFICATION_AGENT/PROJECT_INSTRUCTIONS.md",
+      "reason": "Already present at live path (2026-04-19 mtime); skipped per SPEC-ANIM-08 §3."
+    }
+  ],
+  "validation": {
+    "wkfl_json_parses": true,
+    "wkfl_node_count": 47,
+    "wkfl_workflow_name": "Verification Agent",
+    "live_sha_matches_transcript_sha_for_all_5_files": true,
+    "live_sha_check_method": "hashlib.sha256(open(path, 'rb').read()).hexdigest() across all 5 written files; values match the transcript-extracted SHAs above exactly."
+  },
+  "doctrine_anchors": {
+    "R20": "Verbatim recovery — every byte written matches the transcript byte-range above with no transformation. The extractor uses .write_bytes() (raw); no encoding/newline normalisation.",
+    "R19": "EXTEND of a prior build via verbatim restore from authoritative transcript (not greenfield). Decision recorded here.",
+    "WO_clause_3": "Recovery from Codex review transcripts (verbatim recovery, not invention), then commit + PR this time."
+  },
+  "known_residuals": [
+    "Silent-twice clock for the AGEN-Verification agent itself is functionally reset — see SPEC-ANIM-08 §13 + [[project_agen_five_agent_state_2026-06-07]]. ANIM-08 cert covers restore-correctness only.",
+    "SIGNED_OFF.json reconciliation at apex/audit/claude_codex_loop/AGEN-migration-coordinator/SIGNED_OFF.json — out of ANIM-08 scope.",
+    "Other 4 AGEN agents (Builder/Specification/Architecture/Router) — separate ANIM-09+ phases."
+  ]
+}
