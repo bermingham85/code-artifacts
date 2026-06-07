@@ -1,21 +1,24 @@
 {
   "phase": "ANIM-07",
-  "evidence_kind": "pre_flight_cast_census",
+  "evidence_kind": "cast_coverage_census",
   "schema_version": 1,
-  "generated_at": "2026-06-07T07:04:45+00:00",
+  "generated_at": "2026-06-07T08:30:00+00:00",
   "scan_root": "X:/Automations/apex/projects/jesse_animate/characters/",
-  "scan_method": "Per-character PNG inventory across root + nested layouts (angles, expressions, poses, closeups, outfits, source_refs, kontext_sheets, midjourney_refs). Counts taken before the SPEC-ANIM-07 agent extension was applied so the pre-flight findings remain reproducible.",
+  "scan_method": "Per-character PNG inventory using the agent's actual discover_render_set scope (root + angles, expressions, poses, closeups, outfits, source_refs, kontext_sheets, midjourney_refs). PNG counts in `agent_scan_*` reflect what muscle_character_build_agent.py would count after the ANIM-07 extension and reproduce the per-character render_count values in apex/docs/anim/ANIM-03-reference-pack-manifest.json. The `out_of_scan_universe` block records PNGs that exist on disk but are NOT in the agent's scan universe (e.g. video_frames/) — recorded for operator transparency only, not for the manifest's render_count.",
+  "scan_method_provenance": "Counts taken from filesystem directly via path-bound find at the timestamp above; verified against muscle_character_build_agent.py --dry-run outputs (jesse=0, grog=45, lirian=18, amy=52) for the four characters whose counts the agent reports. This file was authored AFTER the agent extension and after the grog+lirian builds completed at 2026-06-07T07:03:25Z and 07:03:30Z respectively; it is a post-build coverage census, not a pre-flight snapshot.",
   "project_spec_path": "X:/Automations/apex/projects/jesse_animate/PROJECT_SPEC.md",
   "project_spec_section": "§1.8 Character Canon (Confirmed)",
   "cast_canon_named": ["jesse", "kevin", "amy", "laura", "lirian", "ann", "grog"],
   "cast_status_json_extra": ["emma", "galinda"],
+  "missing_artifacts_queue_path": "C:/Users/Owner/apex_governance/MISSING_SECRETS.queue.json",
+  "missing_artifacts_queue_note": "The single unified governance queue file at apex_governance/MISSING_SECRETS.queue.json holds both MS-* secrets and MA-* missing-artifacts rows (see MA-AGEN-001..004 and MA-ANIM-001 already present). SPEC-ANIM-07 §3/§7 references to a 'MISSING_ARTIFACTS.queue.json' name resolve to this unified file in practice; no separate file exists. MA-ANIM-07-RENDERS-EMPTY + MA-ANIM-07-MIDJOURNEY-RAW already appended (verified at 2026-06-07T07:05Z).",
   "census": [
     {
       "character": "jesse",
       "render_dir": "X:/Automations/apex/projects/jesse_animate/characters/jesse/",
-      "png_count_total": 0,
-      "png_count_root": 0,
-      "png_count_by_subdir": {},
+      "agent_scan_png_count": 0,
+      "agent_scan_breakdown": {"root": 0, "angles": 0, "expressions": 0, "poses": 0, "closeups": 0, "outfits": 0, "source_refs": 0, "kontext_sheets": 0, "midjourney_refs": 0},
+      "out_of_scan_universe": {},
       "layout": "empty_dir",
       "canon_row_present": true,
       "status_json_present": false,
@@ -28,9 +31,9 @@
     {
       "character": "kevin",
       "render_dir": "X:/Automations/apex/projects/jesse_animate/characters/kevin/",
-      "png_count_total": 0,
-      "png_count_root": 0,
-      "png_count_by_subdir": {},
+      "agent_scan_png_count": 0,
+      "agent_scan_breakdown": {"root": 0, "angles": 0, "expressions": 0, "poses": 0, "closeups": 0, "outfits": 0, "source_refs": 0, "kontext_sheets": 0, "midjourney_refs": 0},
+      "out_of_scan_universe": {},
       "layout": "empty_dir",
       "canon_row_present": true,
       "status_json_present": false,
@@ -43,9 +46,9 @@
     {
       "character": "laura",
       "render_dir": "X:/Automations/apex/projects/jesse_animate/characters/laura/",
-      "png_count_total": 0,
-      "png_count_root": 0,
-      "png_count_by_subdir": {},
+      "agent_scan_png_count": 0,
+      "agent_scan_breakdown": {"root": 0, "angles": 0, "expressions": 0, "poses": 0, "closeups": 0, "outfits": 0, "source_refs": 0, "kontext_sheets": 0, "midjourney_refs": 0},
+      "out_of_scan_universe": {},
       "layout": "empty_dir",
       "canon_row_present": true,
       "status_json_present": false,
@@ -58,9 +61,9 @@
     {
       "character": "ann",
       "render_dir": "X:/Automations/apex/projects/jesse_animate/characters/ann/",
-      "png_count_total": 0,
-      "png_count_root": 0,
-      "png_count_by_subdir": {},
+      "agent_scan_png_count": 0,
+      "agent_scan_breakdown": {"root": 0, "angles": 0, "expressions": 0, "poses": 0, "closeups": 0, "outfits": 0, "source_refs": 0, "kontext_sheets": 0, "midjourney_refs": 0},
+      "out_of_scan_universe": {},
       "layout": "empty_dir",
       "canon_row_present": true,
       "status_json_present": false,
@@ -73,9 +76,9 @@
     {
       "character": "amy",
       "render_dir": "X:/Automations/apex/projects/jesse_animate/characters/amy/",
-      "png_count_total": 52,
-      "png_count_root": 0,
-      "png_count_by_subdir": {"midjourney_refs": 52},
+      "agent_scan_png_count": 52,
+      "agent_scan_breakdown": {"root": 0, "midjourney_refs": 52},
+      "out_of_scan_universe": {},
       "layout": "midjourney_raw_only",
       "canon_row_present": true,
       "status_json_present": false,
@@ -84,14 +87,14 @@
       "blocker": "MA-ANIM-07-MIDJOURNEY-RAW",
       "agent_exit_code_expected": 7,
       "agent_exit_status_expected": "PACK_TOO_SMALL",
-      "note": "52 PNGs present but all UUID-named under midjourney_refs/. ANIM-07 picker anti-matches /midjourney_refs/ to prevent false-needle hits; promoting refs under canonical names will make the bible buildable."
+      "note": "52 PNGs counted by the agent under midjourney_refs/. The pick_pack picker anti-matches /midjourney_refs/ so none can satisfy role needles; the 52 contribute to render_count provenance only."
     },
     {
       "character": "lirian",
       "render_dir": "X:/Automations/apex/projects/jesse_animate/characters/lirian/",
-      "png_count_total": 18,
-      "png_count_root": 3,
-      "png_count_by_subdir": {"kontext_sheets": 15},
+      "agent_scan_png_count": 18,
+      "agent_scan_breakdown": {"root": 3, "kontext_sheets": 15},
+      "out_of_scan_universe": {},
       "layout": "kontext_sheets_plus_root_seeds",
       "canon_row_present": true,
       "status_json_present": false,
@@ -104,17 +107,18 @@
     {
       "character": "grog",
       "render_dir": "X:/Automations/apex/projects/jesse_animate/characters/grog/",
-      "png_count_total": 45,
-      "png_count_root": 1,
-      "png_count_by_subdir": {"kontext_sheets": 14, "midjourney_refs": 26, "video_frames": 4},
-      "layout": "kontext_sheets_plus_midjourney_plus_video",
+      "agent_scan_png_count": 45,
+      "agent_scan_breakdown": {"root": 1, "kontext_sheets": 15, "midjourney_refs": 29},
+      "out_of_scan_universe": {"video_frames": 1},
+      "layout": "kontext_sheets_plus_midjourney_plus_root_primary",
       "canon_row_present": true,
       "status_json_present": false,
       "buildable_pre_extension": false,
       "buildable_post_extension": true,
       "blocker": null,
       "agent_exit_code_expected": 0,
-      "agent_exit_status_expected": "OK"
+      "agent_exit_status_expected": "OK",
+      "note": "video_frames/ holds 1 PNG that the agent does NOT scan (no entry in discover_render_set's sub-dir list). It is recorded under out_of_scan_universe for operator transparency and does NOT contribute to the manifest's render_count=45."
     }
   ],
   "agent_extension_required": [
@@ -124,9 +128,9 @@
     "Root-level discover for lirian's lirian_candidate_seed*.png is already covered by the existing root *.png glob; add '_candidate_seed' needle to primary_ref."
   ],
   "notes": [
-    "Census recorded immediately before agent extension at 2026-06-07T07:04:45+00:00. Counts match the SPEC-ANIM-07 §2 table.",
+    "agent_scan_breakdown columns sum to agent_scan_png_count by construction; both reproduce the agent's --dry-run render_count values reported in the per-character bibles and ANIM-03-reference-pack-manifest.json entries.",
     "PROJECT_SPEC §1.8 canon at jesse_animate/PROJECT_SPEC.md lists 7 named characters. Galinda (already built in ANIM-03) is built outside the §1.8 table from her status.json. Emma (built in ANIM-03) is also outside §1.8.",
-    "Render counts are PNG counts (the agent's universe); other media (MP4/JSON/MD) is ignored.",
-    "Two operator-actionable blockers raised at MA-ANIM-07-RENDERS-EMPTY (4 chars) and MA-ANIM-07-MIDJOURNEY-RAW (1 char) in apex_governance/MISSING_SECRETS.queue.json."
+    "video_frames/ for grog is recorded under out_of_scan_universe because the agent does not scan it; it is video extraction artifact, not a reference render, and the operator has not requested its inclusion in the agent's universe.",
+    "Two operator-actionable blockers raised at MA-ANIM-07-RENDERS-EMPTY (4 chars) and MA-ANIM-07-MIDJOURNEY-RAW (1 char) in apex_governance/MISSING_SECRETS.queue.json (the unified governance queue holding both MS-* and MA-* rows)."
   ]
 }

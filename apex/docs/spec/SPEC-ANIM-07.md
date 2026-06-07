@@ -20,7 +20,9 @@ This is a pure scaling phase. It does not regenerate art, does not invoke ComfyU
 
 A render-set census run during pre-flight (`find -name "*.png"`) shows the cast is unevenly populated:
 
-| Character | PNG count | Render layout on disk | Buildable today? |
+PNG counts in this table are the **agent's** scan-universe counts (root + angles/expressions/poses/closeups/outfits/source_refs/kontext_sheets/midjourney_refs). PNGs that exist on disk but are NOT in the agent's scan universe (e.g. grog's `video_frames/1.png`) are excluded from these numbers and recorded under `out_of_scan_universe` in `apex/audit/anim-07/cast-census-2026-06-07T07-04-45Z.json`.
+
+| Character | Agent-scan PNG count | Render layout on disk | Buildable today? |
 |---|---|---|---|
 | jesse | 0 | empty dir | No — log F-ANIM07-01 (NO_RENDERS) |
 | kevin | 0 | empty dir | No — log F-ANIM07-01 (NO_RENDERS) |
@@ -28,7 +30,7 @@ A render-set census run during pre-flight (`find -name "*.png"`) shows the cast 
 | ann | 0 | empty dir | No — log F-ANIM07-01 (NO_RENDERS) |
 | amy | 52 | `midjourney_refs/` only (raw, non-canonical names) | No — log F-ANIM07-02 (MIDJOURNEY_RAW_ONLY) |
 | lirian | 18 | `kontext_sheets/` (expr_*, pose_*, turnaround_seed*) + 3 root candidates | Yes (after agent extension) |
-| grog | 46 | `primary_ref.png` + `kontext_sheets/` + `midjourney_refs/` + `video_frames/` | Yes (after agent extension) |
+| grog | 45 | `primary_ref.png` + `kontext_sheets/` + `midjourney_refs/` (plus 1 PNG in `video_frames/` out-of-scan) | Yes (after agent extension) |
 
 The ANIM-03 agent's `discover_render_set` only crawls `angles/`, `expressions/`, `poses/`, `closeups/`, `outfits/`, `source_refs/`. The grog/lirian render trees use the `kontext_sheets/` convention (with `turnaround_seed*.png`, `expr_<name>.png`, `pose_<name>.png` files) which ANIM-03 didn't account for because galinda used the older layout. The agent must be extended (not the canon).
 
@@ -43,7 +45,7 @@ In scope:
   - Preserve all prior behaviour for galinda + emma (re-running the agent for them must continue to produce `WILL_OVERWRITE_REFUSED` without `--force`).
 - Run the extended agent against `grog` and `lirian` (the only two buildable cast members). Bibles, manifest entries, and audit JSONs land at the same paths as ANIM-03 (manifest is `apex/docs/anim/ANIM-03-reference-pack-manifest.json` — additive update under new character keys).
 - Log a single follow-on findings file at `apex/docs/anim/ANIM-07-cast-coverage.json` enumerating every cast member's buildability state for the operator. Empty-dir characters (jesse/kevin/laura/ann) and midjourney-raw-only characters (amy) become operator-actionable items (renders or canon-named refs needed).
-- Append two `MISSING_ARTIFACTS` queue entries (`MA-ANIM-07-RENDERS-EMPTY`, `MA-ANIM-07-MIDJOURNEY-RAW`) so the queue surfaces them at the next `apex_status` run.
+- Append two queue entries (`MA-ANIM-07-RENDERS-EMPTY`, `MA-ANIM-07-MIDJOURNEY-RAW`) to the unified governance queue at `apex_governance/MISSING_SECRETS.queue.json` (the file holds both MS-* secrets and MA-* missing-artifacts rows; the "missing artifacts" name from prior specs resolves to this same file) so the queue surfaces them at the next `apex_status` run.
 
 Out of scope:
 - Regenerating any character art (ComfyUI work belongs to a follow-on phase once operator provides direction on which characters to prioritize).
@@ -93,7 +95,7 @@ Authoritative inputs read by this phase:
 - `grog` and `lirian` builds succeed (exit 0, status `OK`, pack size ≥ `PACK_MIN`=4).
 - Bibles, manifest entries, and audit JSONs present at output paths.
 - `ANIM-07-cast-coverage.json` enumerates all 9 cast members with disposition (`BUILT-IN-ANIM-03`, `BUILT-IN-ANIM-07`, `NO_RENDERS`, `MIDJOURNEY_RAW_ONLY`).
-- Two `MA-*` rows appended to `MISSING_ARTIFACTS.queue.json`.
+- Two `MA-*` rows appended to the unified governance queue at `apex_governance/MISSING_SECRETS.queue.json`.
 - Codex adversarial-review silent-twice (R15: two consecutive passes, no fresh CRITICAL/HIGH); ship-gate `/codex:review` clean.
 - Cert minted with full doctrine-conformance table; handover written; PR opened via `_make_pr_api.py` and branch protection acknowledged (operator merges).
 
@@ -120,7 +122,7 @@ Inline-stdin bundle is used because the Windows codex sandbox blocks shell file 
 - [ ] Agent extension backward-compatible (galinda + emma unchanged).
 - [ ] grog + lirian bibles exist with PACK_MIN+ entries and sha256-anchored references.
 - [ ] Cast coverage report enumerates all 9 members.
-- [ ] `MA-ANIM-07-RENDERS-EMPTY` and `MA-ANIM-07-MIDJOURNEY-RAW` in MISSING_ARTIFACTS queue.
+- [ ] `MA-ANIM-07-RENDERS-EMPTY` and `MA-ANIM-07-MIDJOURNEY-RAW` in `apex_governance/MISSING_SECRETS.queue.json` (unified governance queue).
 - [ ] Codex silent-twice + clean ship-gate.
 - [ ] Cert minted + index updated + handover written + PR opened.
 
