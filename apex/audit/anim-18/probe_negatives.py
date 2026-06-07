@@ -52,11 +52,20 @@ def _read_real_key(shim) -> str:
 
 
 def _assert_no_key_leak(label: str, blob: str, real_key: str) -> dict:
+    """ANIM-18 r2 F-2 fix: extend leak check to cover serialized/escaped
+    forms of the key as well as the literal bytes. The JSON-escaped form is
+    what would survive a json.dumps()/loads() round-trip if the parsed tree
+    was redacted only at the serialized level."""
     if not real_key:
         return {"probe": label, "leak_check": "SKIPPED_NO_KEY"}
-    leaked = real_key in blob
+    escaped = json.dumps(real_key)[1:-1]
+    leaked_literal = real_key in blob
+    leaked_escaped = escaped != real_key and escaped in blob
+    leaked = leaked_literal or leaked_escaped
     return {"probe": label,
-            "leak_check": "LEAK" if leaked else "CLEAN"}
+            "leak_check": "LEAK" if leaked else "CLEAN",
+            "leak_check_literal": leaked_literal,
+            "leak_check_escaped": leaked_escaped}
 
 
 def main() -> int:
@@ -209,10 +218,16 @@ def main() -> int:
     out["passed"] = passed
     out["failed"] = out["probe_count"] - passed
 
-    # Global leak check across the entire output blob.
+    # Global leak check across the entire output blob — literal + escaped.
     if real_key:
+        blob = json.dumps(out)
+        escaped = json.dumps(real_key)[1:-1]
+        leaked_literal = real_key in blob
+        leaked_escaped = escaped != real_key and escaped in blob
         out["leak_check_global"] = (
-            "LEAK" if real_key in json.dumps(out) else "CLEAN")
+            "LEAK" if (leaked_literal or leaked_escaped) else "CLEAN")
+        out["leak_check_global_literal"] = leaked_literal
+        out["leak_check_global_escaped"] = leaked_escaped
     else:
         out["leak_check_global"] = "SKIPPED_NO_KEY"
 

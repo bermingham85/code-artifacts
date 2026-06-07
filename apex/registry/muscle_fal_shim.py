@@ -198,10 +198,37 @@ def _redact_key_from_text(text: str, raw_key: str | None) -> str:
     of that body must redact the raw key before being printed, logged or
     audited. Caller passes the raw key bytes for in-process scrubbing only —
     the key itself is never returned by this function.
+
+    ANIM-18 r2 F-2 fix: also redact JSON-escaped forms of the key so that a
+    raw key smuggled through json.dumps()/json.loads() cycles is caught. We
+    compute the json.dumps() of the bare key (which produces the same
+    sequence the encoder would emit) and strip the surrounding quotes; that
+    yields the escaped key body to substitute against.
     """
     if not raw_key:
         return text
-    return text.replace(raw_key, "[REDACTED_FAL_KEY]")
+    out = text.replace(raw_key, "[REDACTED_FAL_KEY]")
+    escaped = json.dumps(raw_key)[1:-1]  # strip surrounding quotes
+    if escaped != raw_key:
+        out = out.replace(escaped, "[REDACTED_FAL_KEY]")
+    return out
+
+
+def _redact_key_from_obj(obj, raw_key: str | None):
+    """Recursively walk a parsed-JSON tree and redact raw_key from every str
+    leaf. ANIM-18 r2 F-2 fix: redacting only the serialized form misses keys
+    whose JSON serialization escapes characters (e.g. a key with a backslash).
+    Walking the parsed tree directly redacts the literal string value before
+    re-serialization."""
+    if not raw_key:
+        return obj
+    if isinstance(obj, str):
+        return _redact_key_from_text(obj, raw_key)
+    if isinstance(obj, list):
+        return [_redact_key_from_obj(x, raw_key) for x in obj]
+    if isinstance(obj, dict):
+        return {k: _redact_key_from_obj(v, raw_key) for k, v in obj.items()}
+    return obj
 
 
 def _http_post_json(url: str, body: bytes, headers: dict, raw_key: str | None,
@@ -218,23 +245,30 @@ def _http_post_json(url: str, body: bytes, headers: dict, raw_key: str | None,
                 return {"status": "FAL_UNPARSEABLE_RESPONSE",
                         "http_status": resp.status,
                         "error": _redact_key_from_text(str(e), raw_key)}
-            # Defense-in-depth: redact the raw key from the parsed response
-            # JSON in case fal.ai's error envelope echoes the header value.
-            parsed_str = _redact_key_from_text(json.dumps(parsed), raw_key)
+            # ANIM-18 r2 F-2 fix: redact by walking the parsed object tree
+            # (str leaves only), then return the redacted dict directly. This
+            # catches keys that JSON-escape (e.g. backslashes/control chars)
+            # which the prior dumps-then-replace path missed.
             return {"status": "FAL_OK",
                     "http_status": resp.status,
-                    "response": json.loads(parsed_str)}
+                    "response": _redact_key_from_obj(parsed, raw_key)}
     except urllib.error.HTTPError as e:
         body_text = ""
         try:
-            body_text = e.read().decode("utf-8", errors="replace")[:512]
+            full_body = e.read().decode("utf-8", errors="replace")
         except (OSError, AttributeError):
-            body_text = ""
+            full_body = ""
+        # ANIM-18 r2 F-1 fix: redact the FULL decoded body first, then
+        # truncate the redacted text. The previous order truncated to 512
+        # bytes BEFORE scrubbing, which could leave a key prefix at the
+        # tail of the excerpt when the echoed Authorization value straddles
+        # the boundary.
+        body_text = _redact_key_from_text(full_body, raw_key)[:512]
         return {"status": "FAL_HTTP_ERROR",
                 "http_status": getattr(e, "code", None),
                 "reason": _redact_key_from_text(
                     str(getattr(e, "reason", "")), raw_key),
-                "body_excerpt": _redact_key_from_text(body_text, raw_key)}
+                "body_excerpt": body_text}
     except urllib.error.URLError as e:
         return {"status": "FAL_ENDPOINT_UNREACHABLE",
                 "error": _redact_key_from_text(
@@ -301,10 +335,9 @@ def poll_job(job_id: str) -> dict:
                         "http_status": resp.status,
                         "error": _redact_key_from_text(str(e), raw_key),
                         "key_fingerprint": fingerprint_only(key_probe)}
-            parsed_str = _redact_key_from_text(json.dumps(parsed), raw_key)
             return {"status": "FAL_OK",
                     "http_status": resp.status,
-                    "response": json.loads(parsed_str),
+                    "response": _redact_key_from_obj(parsed, raw_key),
                     "key_fingerprint": fingerprint_only(key_probe)}
     except urllib.error.HTTPError as e:
         return {"status": "FAL_HTTP_ERROR",
