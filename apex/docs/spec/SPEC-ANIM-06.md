@@ -40,14 +40,14 @@
 ## Outputs
 - **Assembly agent** at `apex/registry/muscle_assembly_agent.py` (APEX-MB-PY-00115). Modes:
   - `--catalog-deliverable <slug>`: register the shipped MP4 for a scene as the deliverable; emits assembly manifest entry with sha256+size+duration_seconds+clip_count.
-  - `--plan-concat <slug>`: dry-run that prints the ffmpeg concat list given the ANIM-05 clip-pack production set, ordered by clip index, using the canonical `stitch_video.py` wrapper invocation.
+  - `--plan-concat <slug>`: dry-run that prints the ffmpeg concat list given the ANIM-05 clip-pack production set, **ordered by ANIM-05 manifest `index`** (canonical playback order = ls-sorted clip files). `shot_id` is reported on each line for cross-reference and a sanity-check (any non-monotonic shot_id is logged to `shot_id_monotonic_inversions`; empty array = monotonic). Plan output is itself persisted to `apex/audit/anim-06/plan-concat-<slug>-<ts>.json` (with the ordering_rule, the source manifest sha256, and the resolved concat lines) so evidence can cite a real audit file instead of inline excerpts.
   - `--list-deliverables`: lists registered deliverables.
 - **Assembly manifest** at `apex/docs/anim/ANIM-06-assembly-manifest.json`.
 - **Evidence** at `apex/docs/anim/ANIM-06-evidence.json`.
 - **Audit**: `apex/audit/anim-06/`.
 
 ## Definition of Done
-- Assembly manifest registers Grog MP4 as the MagicalRealmPlayground deliverable.
+- Assembly manifest registers Grog MP4 as the MagicalRealmPlayground deliverable with `duration_seconds` derived from `ffprobe -show_entries format=duration` (so `duration_seconds` reflects the actual MP4, not the lyric range — `duration_delta_mp4_minus_lyrics_seconds` records the drift).
 - Concat plan reproduces the 20-clip production-set order from the ANIM-05 manifest.
 - Agent path/regex-bounded + symlink-refusing + handle-bound hash (same safety pattern as ANIM-05).
 - Codex silent-twice under R15.

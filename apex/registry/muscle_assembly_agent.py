@@ -21,6 +21,7 @@ import hashlib
 import json
 import os
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -78,6 +79,27 @@ def hash_file_handle_bound(p: Path, root_resolved: Path) -> tuple[str, int, Path
             return None
         return digest, size, target_post
     except (FileNotFoundError, OSError, ValueError):
+        return None
+
+
+def ffprobe_duration(mp4_path: Path) -> float | None:
+    """F-1 r1 fix: derive actual MP4 duration via ffprobe so it cannot drift from
+    encoder padding / stitch gaps / re-trims. Returns None if ffprobe is missing or
+    the probe fails (caller must record that as missing, not fabricate the value)."""
+    try:
+        r = subprocess.run(
+            ["ffprobe", "-v", "error", "-show_entries", "format=duration",
+             "-of", "json", str(mp4_path)],
+            capture_output=True, text=True, timeout=30,
+        )
+        if r.returncode != 0:
+            return None
+        data = json.loads(r.stdout)
+        d = data.get("format", {}).get("duration")
+        if d is None:
+            return None
+        return round(float(d), 3)
+    except (FileNotFoundError, json.JSONDecodeError, ValueError, subprocess.TimeoutExpired):
         return None
 
 
@@ -149,6 +171,9 @@ def catalog_deliverable(slug: str, force: bool) -> dict:
         clip_count = scene_block.get("production_count", 0)
 
     lyrics_duration = total_duration_from_lyrics(binding["lyrics_json"])
+    mp4_duration = ffprobe_duration(mp4)
+    duration_delta = (None if mp4_duration is None or lyrics_duration is None
+                      else round(mp4_duration - lyrics_duration, 3))
 
     entry = {
         "scene_slug": slug,
@@ -159,9 +184,12 @@ def catalog_deliverable(slug: str, force: bool) -> dict:
         "resolved_path": str(resolved).replace("\\", "/"),
         "sha256": digest,
         "size_bytes": size,
+        "duration_seconds": mp4_duration,
+        "duration_seconds_source": "ffprobe (format.duration)" if mp4_duration is not None else "ffprobe-unavailable-or-failed",
         "production_clip_count_from_anim05": clip_count,
         "lyrics_json": str(binding["lyrics_json"]).replace("\\", "/"),
         "lyrics_total_duration_seconds": lyrics_duration,
+        "duration_delta_mp4_minus_lyrics_seconds": duration_delta,
         "stitch_wrapper_invocation": binding["stitch_wrapper"],
         "stitch_sibling": binding["stitch_sibling"],
         "phase_state_anchor": "session_2026_04_01_mv.shots = '20/20 complete — 19 Wan2.2 i2v two-stage MoE + 1 skip'",
@@ -185,34 +213,57 @@ def plan_concat(slug: str) -> dict:
         return bad
     if not ANIM05_MANIFEST_PATH.is_file():
         return {"slug": slug, "status": "ANIM05_MANIFEST_MISSING"}
-    anim05 = json.loads(ANIM05_MANIFEST_PATH.read_text(encoding="utf-8"))
+    # F-2 r1 fix: record the source-manifest sha256 for reproducibility of ordering.
+    manifest_bytes = ANIM05_MANIFEST_PATH.read_bytes()
+    manifest_sha = hashlib.sha256(manifest_bytes).hexdigest()
+    anim05 = json.loads(manifest_bytes.decode("utf-8"))
     scene = anim05.get("scenes", {}).get(slug)
     if not scene:
         return {"slug": slug, "status": "SCENE_NOT_IN_ANIM05_MANIFEST",
                 "known": sorted(anim05.get("scenes", {}).keys())}
     production_clips = [c for c in scene.get("clips", []) if c.get("role") == "production"]
-    # Sort by shot_id (numeric where possible) to enforce playback order.
-    def _key(c):
-        sid = c.get("shot_id")
+    # F-3 r1 fix: dual-key ordering. ANIM-05 manifest `index` is the canonical playback order
+    # (ls-sorted clip files). `shot_id` is informational. We sort by index and assert that
+    # shot_id is monotonic non-decreasing as a sanity check; any inversion is reported.
+    production_clips.sort(key=lambda c: c.get("index", 0))
+    last_shot = None
+    inversions: list[dict] = []
+    for c in production_clips:
+        sid_raw = c.get("shot_id")
         try:
-            return (0, int(sid))
+            sid = int(sid_raw) if sid_raw is not None else None
         except (TypeError, ValueError):
-            return (1, str(sid))
-    production_clips.sort(key=_key)
+            sid = None
+        if sid is not None and last_shot is not None and sid < last_shot:
+            inversions.append({"at_index": c.get("index"), "shot_id": sid, "previous_shot_id": last_shot})
+        if sid is not None:
+            last_shot = sid
     if slug not in SCENE_DELIVERABLES:
         return {"slug": slug, "status": "UNKNOWN_SCENE"}
     binding = SCENE_DELIVERABLES[slug]
-    return {
+    concat_lines = [
+        f"file '{c['path']}'  # index {c.get('index')} shot_id {c.get('shot_id')} duration {c.get('duration_seconds')}s"
+        for c in production_clips
+    ]
+    ts = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H-%M-%SZ")
+    plan_block = {
         "slug": slug,
         "status": "PLAN",
         "wrapper_invocation": binding["stitch_wrapper"],
-        "concat_lines": [
-            f"file '{c['path']}'  # shot {c.get('shot_id')} duration {c.get('duration_seconds')}s"
-            for c in production_clips
-        ],
+        "concat_lines": concat_lines,
         "production_count": len(production_clips),
+        "ordering_rule": "ANIM-05 manifest `index` (canonical playback order); shot_id reported for cross-reference; inversions logged separately",
+        "anim05_manifest_path": str(ANIM05_MANIFEST_PATH).replace("\\", "/"),
+        "anim05_manifest_sha256": manifest_sha,
+        "shot_id_monotonic_inversions": inversions,
         "lyrics_json": str(binding["lyrics_json"]).replace("\\", "/"),
+        "timestamp": ts,
     }
+    # Persist plan audit so evidence can cite a real file (F-2 r1 fix).
+    AUDIT_ROOT.mkdir(parents=True, exist_ok=True)
+    (AUDIT_ROOT / f"plan-concat-{slug.lower()}-{ts}.json").write_text(json.dumps(plan_block, indent=2))
+    plan_block["audit_path"] = str(AUDIT_ROOT / f"plan-concat-{slug.lower()}-{ts}.json").replace("\\", "/")
+    return plan_block
 
 
 def main() -> int:
