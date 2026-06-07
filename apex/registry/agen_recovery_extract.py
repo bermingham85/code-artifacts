@@ -92,6 +92,10 @@ def main() -> int:
     ap.add_argument("--restore", action="append", default=[],
                     help="Basename to restore. Repeatable. If omitted, lists all candidates and exits.")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--force", action="store_true",
+                    help="Allow overwrite of an existing destination whose bytes DIFFER from the "
+                         "transcript slice. Without --force, a mismatch is rejected (SHA_MISMATCH). "
+                         "An existing destination whose bytes already match is always a no-op.")
     args = ap.parse_args()
 
     if not args.transcript.is_file():
@@ -114,6 +118,7 @@ def main() -> int:
 
     want = set(args.restore)
     written: list[dict] = []
+    no_op_idempotent: list[dict] = []
     skipped: list[dict] = []
     rejected: list[dict] = []
     for c in candidates:
@@ -126,6 +131,36 @@ def main() -> int:
                              "resolved": str(dst.resolve(strict=False)),
                              "out_dir_resolved": str(args.out_dir.resolve(strict=False))})
             continue
+        # Existence + SHA guard per ANIM-08 round-3 fix (reversibility / idempotency):
+        # - existing destination whose bytes match the transcript slice -> no-op (idempotent).
+        # - existing destination whose bytes differ -> reject unless --force.
+        # - destination absent -> normal write.
+        action = "write"
+        if dst.exists():
+            try:
+                existing_sha = sha256_hex(dst.read_bytes())
+            except OSError as e:
+                rejected.append({"basename": c["basename"], "reason": "DST_READ_FAILED",
+                                 "dst": str(dst), "error": str(e)})
+                continue
+            if existing_sha == c["sha256"]:
+                action = "no_op_idempotent"
+                no_op_idempotent.append({
+                    "basename": c["basename"],
+                    "dst": str(dst),
+                    "size_bytes": c["size_bytes"],
+                    "sha256": c["sha256"],
+                    "note": "Destination already byte-identical to transcript slice; no write performed.",
+                })
+                continue
+            elif not args.force:
+                rejected.append({"basename": c["basename"], "reason": "SHA_MISMATCH",
+                                 "dst": str(dst), "existing_sha256": existing_sha,
+                                 "transcript_sha256": c["sha256"],
+                                 "hint": "rerun with --force to overwrite the divergent destination"})
+                continue
+            else:
+                action = "overwrite_forced"
         if not args.dry_run:
             dst.write_bytes(c["body_bytes"])
         written.append({
@@ -136,16 +171,19 @@ def main() -> int:
             "transcript_byte_start": c["byte_start"],
             "transcript_byte_end": c["byte_end"],
             "src_path_in_transcript": c["src_path_in_transcript"],
+            "action": action,
         })
     missing = sorted(want - {c["basename"] for c in candidates})
 
     result = {
         "status": "OK" if not rejected and not missing else "PARTIAL",
         "dry_run": args.dry_run,
+        "force": args.force,
         "transcript": str(args.transcript),
         "transcript_sha256": sha256_hex(args.transcript.read_bytes()),
         "out_dir": str(args.out_dir),
         "written": written,
+        "no_op_idempotent": no_op_idempotent,
         "skipped": skipped,
         "rejected": rejected,
         "missing_from_transcript": missing,
