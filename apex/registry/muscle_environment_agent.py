@@ -24,6 +24,10 @@ import sys
 from pathlib import Path
 
 SLUG_RE = re.compile(r"^[A-Z][A-Za-z0-9]{0,31}$")
+# F-2 fix: brand restricted to filename-safe pattern. F-1 fix: code-level immutable allowlist.
+BRAND_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_-]{0,31}$")
+CODE_LEVEL_BRAND_ALLOWLIST = frozenset({"Jesse-Adventures"})
+SUBSTR_MIN_LEN = 5
 PACK_MAX = 7
 PACK_MIN = 1  # one scene-ref is sufficient for a S4 catalog deliverable
 
@@ -64,11 +68,28 @@ def load_descriptors() -> dict:
     return json.loads(DESCRIPTORS_PATH.read_text(encoding="utf-8"))
 
 
+_WORD_TOKEN_RE = re.compile(r"^[a-z0-9][a-z0-9_]*$")
+
+
 def discover_scene_refs(substr: str) -> list[Path]:
+    """Catalog PNGs under SCENES_REF_ROOT whose filename contains the substr as a
+    word-boundary token sequence (not a free substring).
+
+    F-3 fix: substr is treated as a sequence of `_`-separated tokens that must appear
+    contiguously and at token-boundaries in the filename (preceded by start-of-name OR `_`,
+    followed by `_` OR `.`). This blocks both single-char "a" smuggling AND mid-token
+    overlap (e.g. "magical" alone does NOT match "magicalreal" if such a file existed).
+    Substr must be a valid lowercase token sequence (^[a-z0-9][a-z0-9_]*$) and at least
+    SUBSTR_MIN_LEN chars.
+    """
     if not SCENES_REF_ROOT.is_dir():
         return []
-    s = substr.lower()
-    return sorted([p for p in SCENES_REF_ROOT.glob("*.png") if s in p.name.lower()])
+    s = (substr or "").lower().strip()
+    if len(s) < SUBSTR_MIN_LEN or not _WORD_TOKEN_RE.match(s):
+        return []
+    # Build a regex with token-boundary anchors. (?:^|_) before, (?:_|\.) after.
+    pat = re.compile(r"(?:^|_)" + re.escape(s) + r"(?:_|\.)")
+    return sorted([p for p in SCENES_REF_ROOT.glob("*.png") if pat.search(p.name.lower())])
 
 
 def validate_slug(slug: str) -> dict | None:
@@ -149,20 +170,49 @@ def build_scene(slug: str, force: bool) -> dict:
                 "available_slugs": list(scenes.keys())}
 
     brand = descriptor.get("brand")
-    allowed = descriptors.get("brand_allowlist", [])
-    if allowed and brand not in allowed:
+    # F-2 fix: brand must match filename-safe regex.
+    if not isinstance(brand, str) or not BRAND_RE.match(brand):
+        return {"slug": slug, "status": "INVALID_BRAND",
+                "brand": brand, "expected_regex": BRAND_RE.pattern}
+    # F-1 fix: fail-closed via code-level allowlist; the descriptors-JSON allowlist is
+    # an additional optional gate but cannot loosen the code-level set.
+    if brand not in CODE_LEVEL_BRAND_ALLOWLIST:
         return {"slug": slug, "status": "BRAND_NOT_ALLOWED",
-                "brand": brand, "allowlist": allowed}
+                "brand": brand,
+                "code_level_allowlist": sorted(CODE_LEVEL_BRAND_ALLOWLIST)}
+    descriptor_allowlist = descriptors.get("brand_allowlist") or []
+    if descriptor_allowlist and brand not in descriptor_allowlist:
+        return {"slug": slug, "status": "BRAND_NOT_ALLOWED",
+                "brand": brand, "descriptor_allowlist": descriptor_allowlist}
 
     SCENE_BIBLE_ROOT.mkdir(parents=True, exist_ok=True)
     bible_path = SCENE_BIBLE_ROOT / f"ANIM_{brand}_{slug}_bg_v1.md"
+    # F-2 follow-up: even after regex validation, verify the resolved path stays inside
+    # the bible root (defense in depth against edge cases the regex might miss).
+    try:
+        resolved = bible_path.resolve(strict=False)
+        root_resolved = SCENE_BIBLE_ROOT.resolve(strict=False)
+        if Path(os.path.commonpath([str(resolved), str(root_resolved)])) != root_resolved:
+            return {"slug": slug, "status": "PATH_ESCAPE_REJECTED",
+                    "resolved": str(resolved)}
+    except ValueError:
+        return {"slug": slug, "status": "PATH_ESCAPE_REJECTED"}
     if bible_path.exists() and not force:
         return {"slug": slug, "status": "WILL_OVERWRITE_REFUSED",
                 "existing_bible": str(bible_path),
                 "hint": "rerun with --force to overwrite"}
 
     brand_tokens = load_brand_tokens()
-    substr = descriptor.get("source_path_substr", slug.lower())
+    substr = descriptor.get("source_path_substr") or slug.lower()
+    # F-3 fix: enforce minimum prefix length AND a valid lowercase token-sequence so
+    # path fragments / special chars can never reach the catalog query.
+    if (not isinstance(substr, str)
+            or len(substr.strip()) < SUBSTR_MIN_LEN
+            or not _WORD_TOKEN_RE.match(substr.strip().lower())):
+        return {"slug": slug, "status": "SUBSTR_INVALID",
+                "source_path_substr": substr,
+                "min_len": SUBSTR_MIN_LEN,
+                "expected_regex": _WORD_TOKEN_RE.pattern}
     raw_assets = discover_scene_refs(substr)[:PACK_MAX]
     assets: list[dict] = []
     for p in raw_assets:
@@ -238,8 +288,11 @@ def main() -> int:
     code_for = {"OK": 0,
                 "WILL_OVERWRITE_REFUSED": 5,
                 "INVALID_SLUG": 6,
+                "INVALID_BRAND": 6,
+                "PATH_ESCAPE_REJECTED": 6,
                 "BRAND_NOT_ALLOWED": 7,
                 "ASSET_CATALOG_EMPTY": 8,
+                "SUBSTR_INVALID": 8,
                 "DESCRIPTOR_NOT_FOUND": 9}
     return code_for.get(result.get("status", ""), 4)
 
