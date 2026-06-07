@@ -383,6 +383,136 @@ def catalog_scene(scene_slug: str, force: bool) -> dict:
     return audit
 
 
+# ANIM-16: per-energy tier routing map. LOW-energy shots route to LTX
+# (90s preview-grade); MED + HIGH route to Wan22 (180s cinematic). Hunyuan
+# is reserved for explicit physics shots which the storyboard cannot
+# detect from `energy` alone, so it is never auto-routed. FalCloud is
+# shim-pending and never auto-routed either.
+ENERGY_TO_TIER_MAP = {"LOW": "LTX", "MED": "Wan22", "HIGH": "Wan22"}
+
+
+def plan_from_storyboard(storyboard_path: str, tier_or_routing: str,
+                          output_path: str | None, force: bool) -> dict:
+    """ANIM-16: bulk-plan every shot of an ANIM-13 storyboard JSON.
+
+    tier_or_routing is either a literal tier name (Wan22/LTX/Hunyuan/FalCloud)
+    or the keyword "energy" — in which case each shot is routed per
+    ENERGY_TO_TIER_MAP. Output is a single JSON file with per-shot tier_plan
+    records (each the same shape plan_tier() returns) plus a summary.
+    """
+    routing_mode = "energy" if tier_or_routing == "energy" else "fixed"
+    if routing_mode == "fixed" and not TIER_RE.match(tier_or_routing):
+        return {"status": "INVALID_TIER", "tier": tier_or_routing,
+                "expected_regex": TIER_RE.pattern + " | 'energy'"}
+    sb_path = Path(storyboard_path)
+    if not sb_path.is_file():
+        return {"status": "STORYBOARD_NOT_FOUND",
+                "storyboard_path": storyboard_path}
+    try:
+        sb = json.loads(sb_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as e:
+        return {"status": "STORYBOARD_UNPARSEABLE",
+                "storyboard_path": storyboard_path, "error": str(e)}
+    if sb.get("phase") != "ANIM-13":
+        return {"status": "STORYBOARD_INVALID_PHASE",
+                "storyboard_path": storyboard_path,
+                "actual_phase": sb.get("phase")}
+    project = sb.get("project")
+    scene_slug = sb.get("scene_slug")
+    shots = sb.get("shots") or []
+    if not shots:
+        return {"status": "STORYBOARD_EMPTY",
+                "storyboard_path": storyboard_path}
+    if output_path is None:
+        out = REPO_ROOT / f"apex/docs/anim/ANIM-16-tier-plan-{project}.json"
+    else:
+        out = Path(output_path)
+    if out.exists() and not force:
+        return {"status": "WILL_OVERWRITE_REFUSED",
+                "existing_path": str(out).replace("\\", "/")}
+
+    sb_sha = sha256_of(sb_path)
+
+    per_shot: list[dict] = []
+    summary_by_status: dict[str, int] = {}
+    summary_by_tier: dict[str, int] = {}
+    total_render_seconds = 0.0
+    for shot in shots:
+        shot_id = str(shot.get("id"))
+        energy = shot.get("energy")
+        if routing_mode == "energy":
+            tier_chosen = ENERGY_TO_TIER_MAP.get(energy)
+            if not tier_chosen:
+                # Unknown energy → record as ENERGY_UNROUTED, skip plan_tier
+                per_shot.append({
+                    **shot,
+                    "tier_chosen": None,
+                    "tier_plan": {"status": "ENERGY_UNROUTED",
+                                   "energy": energy,
+                                   "known_energies": list(ENERGY_TO_TIER_MAP.keys())},
+                })
+                summary_by_status["ENERGY_UNROUTED"] = \
+                    summary_by_status.get("ENERGY_UNROUTED", 0) + 1
+                continue
+        else:
+            tier_chosen = tier_or_routing
+        plan = plan_tier(tier_chosen, shot_id, scene_slug)
+        per_shot.append({**shot,
+                         "tier_chosen": tier_chosen,
+                         "tier_plan": plan})
+        st = plan.get("status", "UNKNOWN")
+        summary_by_status[st] = summary_by_status.get(st, 0) + 1
+        summary_by_tier[tier_chosen] = summary_by_tier.get(tier_chosen, 0) + 1
+        if st == "PLAN" and isinstance(plan.get("approx_seconds_per_clip"), (int, float)):
+            total_render_seconds += float(plan["approx_seconds_per_clip"])
+
+    plan_doc = {
+        "phase": "ANIM-16",
+        "schema_version": 1,
+        "source_storyboard_path": storyboard_path,
+        "source_storyboard_sha256": sb_sha,
+        "source_phase": sb.get("phase"),
+        "source_storyboard_schema_version": sb.get("schema_version"),
+        "tier_routing_mode": routing_mode,
+        "tier_routing_choice": tier_or_routing if routing_mode == "fixed" else "ENERGY_MAP",
+        "energy_to_tier_map": ENERGY_TO_TIER_MAP if routing_mode == "energy" else None,
+        "project": project,
+        "character": sb.get("character"),
+        "scene_slug": scene_slug,
+        "brand": sb.get("brand"),
+        "duration_seconds": sb.get("duration_seconds"),
+        "shot_count": len(per_shot),
+        "shots": per_shot,
+        "summary": {
+            "total_shots": len(per_shot),
+            "by_status": summary_by_status,
+            "by_tier_chosen": summary_by_tier,
+            "total_estimated_render_seconds": round(total_render_seconds, 1),
+        },
+        "built_at": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
+    }
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(plan_doc, indent=2), encoding="utf-8")
+
+    audit_root = REPO_ROOT / "apex/audit/anim-16"
+    audit_root.mkdir(parents=True, exist_ok=True)
+    ts = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H-%M-%SZ")
+    audit = {
+        "phase": "ANIM-16",
+        "project": project,
+        "tier_routing": tier_or_routing,
+        "output_path": str(out).replace("\\", "/"),
+        "shot_count": len(per_shot),
+        "summary_by_status": summary_by_status,
+        "summary_by_tier_chosen": summary_by_tier,
+        "timestamp": ts,
+        "status": "OK",
+    }
+    (audit_root / f"tier-plan-{project}-{tier_or_routing}-{ts}.json").write_text(
+        json.dumps(audit, indent=2), encoding="utf-8")
+    return audit
+
+
 def plan_tier(tier: str, shot_id: str, scene_slug: str | None) -> dict:
     if not TIER_RE.match(tier):
         return {"status": "INVALID_TIER", "tier": tier,
@@ -443,6 +573,10 @@ def main() -> int:
     ap.add_argument("--force", action="store_true")
     # ANIM-17: standalone env-key probe — exposes fingerprint only, never key.
     ap.add_argument("--probe-key", help="tier name; runs effective_tier_status() and prints fingerprint-only resolution")
+    # ANIM-16: bulk tier-plan from an ANIM-13 storyboard JSON.
+    ap.add_argument("--plan-from-storyboard", help="path to ANIM-13 storyboard JSON")
+    ap.add_argument("--tier", help="tier name OR 'energy' for ANIM-16 per-energy routing")
+    ap.add_argument("--output", help="output path for ANIM-16 tier-plan JSON; default apex/docs/anim/ANIM-16-tier-plan-<project>.json")
     args = ap.parse_args()
     if args.list_tiers:
         # ANIM-17: annotate each tier with its effective_status + key fingerprint
@@ -484,6 +618,18 @@ def main() -> int:
                     "INVALID_SLUG": 6, "TIER_NOT_CONFIGURED": 9,
                     "TIER_NOT_READY": 7,
                     "TIER_KEY_OK_SHIM_PENDING": 14}
+        return code_for.get(result.get("status", ""), 4)
+    if args.plan_from_storyboard:
+        if not args.tier:
+            print(json.dumps({"status": "MISSING_TIER",
+                              "hint": "--tier is required with --plan-from-storyboard"}, indent=2))
+            return 6
+        result = plan_from_storyboard(args.plan_from_storyboard, args.tier,
+                                       args.output, args.force)
+        print(json.dumps(result, indent=2))
+        code_for = {"OK": 0, "INVALID_TIER": 6, "STORYBOARD_NOT_FOUND": 10,
+                    "STORYBOARD_UNPARSEABLE": 10, "STORYBOARD_INVALID_PHASE": 10,
+                    "STORYBOARD_EMPTY": 10, "WILL_OVERWRITE_REFUSED": 5}
         return code_for.get(result.get("status", ""), 4)
     ap.print_help()
     return 2

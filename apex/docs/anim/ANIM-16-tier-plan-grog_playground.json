@@ -1,0 +1,1277 @@
+{
+  "phase": "ANIM-16",
+  "schema_version": 1,
+  "source_storyboard_path": "apex/docs/anim/ANIM-13-storyboard-grog_playground.json",
+  "source_storyboard_sha256": "82da2834696c74af90734fc0b270bdc390ec6fccc912afb81fc39d1a24f0e211",
+  "source_phase": "ANIM-13",
+  "source_storyboard_schema_version": 3,
+  "tier_routing_mode": "fixed",
+  "tier_routing_choice": "Wan22",
+  "energy_to_tier_map": null,
+  "project": "grog_playground",
+  "character": "grog",
+  "scene_slug": "MagicalRealmPlayground",
+  "brand": "Jesse-Adventures",
+  "duration_seconds": 238.9,
+  "shot_count": 43,
+  "shots": [
+    {
+      "id": 1,
+      "section": "intro",
+      "start": 0.0,
+      "end": 5.75,
+      "duration_seconds": 5.75,
+      "lyric": "",
+      "lyric_word_count": 0,
+      "energy": "LOW",
+      "mood": "piano intro, establishing",
+      "camera_preset": "slow drift, golden tones, steady frame",
+      "wan_motion_preset": "slow ambient drift, subtle micro-motion, gentle environmental movement",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, slow drift, golden tones, steady frame, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "1",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 2,
+      "section": "intro",
+      "start": 5.75,
+      "end": 11.5,
+      "duration_seconds": 5.75,
+      "lyric": "I was born with feet like anvil's hands that broke the crib I knew.",
+      "lyric_word_count": 14,
+      "energy": "LOW",
+      "mood": "piano intro, establishing",
+      "camera_preset": "slow drift, golden tones, steady frame",
+      "wan_motion_preset": "slow ambient drift, subtle micro-motion, gentle environmental movement",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, slow drift, golden tones, steady frame, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "2",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 3,
+      "section": "verse1",
+      "start": 11.5,
+      "end": 17.2,
+      "duration_seconds": 5.7,
+      "lyric": "",
+      "lyric_word_count": 0,
+      "energy": "MED",
+      "mood": "childhood memories, longing, flashback",
+      "camera_preset": "medium shot, soft push, character framing",
+      "wan_motion_preset": "focused character action, mid-tempo gestural movement, environment reacting",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, medium shot, soft push, character framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "3",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 4,
+      "section": "verse1",
+      "start": 17.2,
+      "end": 22.9,
+      "duration_seconds": 5.7,
+      "lyric": "Ma just sighed and stitched my trousers out of tents and shades of blue.",
+      "lyric_word_count": 14,
+      "energy": "MED",
+      "mood": "childhood memories, longing, flashback",
+      "camera_preset": "medium shot, soft push, character framing",
+      "wan_motion_preset": "focused character action, mid-tempo gestural movement, environment reacting",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, medium shot, soft push, character framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "4",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 5,
+      "section": "verse1",
+      "start": 22.9,
+      "end": 28.6,
+      "duration_seconds": 5.7,
+      "lyric": "The village kids would scatter when I sat upon the swings.",
+      "lyric_word_count": 11,
+      "energy": "MED",
+      "mood": "childhood memories, longing, flashback",
+      "camera_preset": "medium shot, soft push, character framing",
+      "wan_motion_preset": "focused character action, mid-tempo gestural movement, environment reacting",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, medium shot, soft push, character framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "5",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 6,
+      "section": "verse1",
+      "start": 28.6,
+      "end": 34.3,
+      "duration_seconds": 5.7,
+      "lyric": "They said, you're not a child, you're a mountain.",
+      "lyric_word_count": 9,
+      "energy": "MED",
+      "mood": "childhood memories, longing, flashback",
+      "camera_preset": "medium shot, soft push, character framing",
+      "wan_motion_preset": "focused character action, mid-tempo gestural movement, environment reacting",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, medium shot, soft push, character framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "6",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 7,
+      "section": "verse1",
+      "start": 34.3,
+      "end": 40.0,
+      "duration_seconds": 5.7,
+      "lyric": "But I just wanted little things like hopscotch lanes and skipping ropes.",
+      "lyric_word_count": 12,
+      "energy": "MED",
+      "mood": "childhood memories, longing, flashback",
+      "camera_preset": "medium shot, soft push, character framing",
+      "wan_motion_preset": "focused character action, mid-tempo gestural movement, environment reacting",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, medium shot, soft push, character framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "7",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 8,
+      "section": "verse1",
+      "start": 40.0,
+      "end": 45.7,
+      "duration_seconds": 5.7,
+      "lyric": "A birthday hat that fit. But every time I tiptoed in the playground had a split.",
+      "lyric_word_count": 16,
+      "energy": "MED",
+      "mood": "childhood memories, longing, flashback",
+      "camera_preset": "medium shot, soft push, character framing",
+      "wan_motion_preset": "focused character action, mid-tempo gestural movement, environment reacting",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, medium shot, soft push, character framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "8",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 9,
+      "section": "verse1",
+      "start": 45.7,
+      "end": 51.4,
+      "duration_seconds": 5.7,
+      "lyric": "Cause I was too big for the playground, too wide for hide and seek.",
+      "lyric_word_count": 14,
+      "energy": "MED",
+      "mood": "childhood memories, longing, flashback",
+      "camera_preset": "medium shot, soft push, character framing",
+      "wan_motion_preset": "focused character action, mid-tempo gestural movement, environment reacting",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, medium shot, soft push, character framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "9",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 10,
+      "section": "chorus1",
+      "start": 51.4,
+      "end": 56.9,
+      "duration_seconds": 5.5,
+      "lyric": "",
+      "lyric_word_count": 0,
+      "energy": "HIGH",
+      "mood": "heartbreak, rejection, resilience",
+      "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
+      "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "10",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 11,
+      "section": "chorus1",
+      "start": 56.9,
+      "end": 62.4,
+      "duration_seconds": 5.5,
+      "lyric": "I tried to blend but every bend would groan beneath my feet.",
+      "lyric_word_count": 12,
+      "energy": "HIGH",
+      "mood": "heartbreak, rejection, resilience",
+      "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
+      "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "11",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 12,
+      "section": "chorus1",
+      "start": 62.4,
+      "end": 67.9,
+      "duration_seconds": 5.5,
+      "lyric": "I wasn't mean, I wasn't tough, just made of extra stuff.",
+      "lyric_word_count": 11,
+      "energy": "HIGH",
+      "mood": "heartbreak, rejection, resilience",
+      "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
+      "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "12",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 13,
+      "section": "chorus1",
+      "start": 67.9,
+      "end": 73.4,
+      "duration_seconds": 5.5,
+      "lyric": "But every tag would end in tears and dodgeball turned to fear.",
+      "lyric_word_count": 12,
+      "energy": "HIGH",
+      "mood": "heartbreak, rejection, resilience",
+      "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
+      "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "13",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 14,
+      "section": "chorus1",
+      "start": 73.4,
+      "end": 78.9,
+      "duration_seconds": 5.5,
+      "lyric": "Oh, I was too big for the playground, but my heart was always here.",
+      "lyric_word_count": 14,
+      "energy": "HIGH",
+      "mood": "heartbreak, rejection, resilience",
+      "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
+      "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "14",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 15,
+      "section": "chorus1",
+      "start": 78.9,
+      "end": 84.4,
+      "duration_seconds": 5.5,
+      "lyric": "",
+      "lyric_word_count": 0,
+      "energy": "HIGH",
+      "mood": "heartbreak, rejection, resilience",
+      "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
+      "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "15",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 16,
+      "section": "gap1",
+      "start": 84.4,
+      "end": 88.9,
+      "duration_seconds": 4.5,
+      "lyric": "",
+      "lyric_word_count": 0,
+      "energy": "LOW",
+      "mood": "instrumental interstitial",
+      "camera_preset": "slow drift, golden tones, steady frame",
+      "wan_motion_preset": "slow ambient drift, subtle micro-motion, gentle environmental movement",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, slow drift, golden tones, steady frame, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "16",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 17,
+      "section": "verse2",
+      "start": 88.9,
+      "end": 94.643,
+      "duration_seconds": 5.743,
+      "lyric": "At school they called me lunch break cause I crushed the canteen bench.",
+      "lyric_word_count": 13,
+      "energy": "MED",
+      "mood": "school memories, humiliation, dreams",
+      "camera_preset": "medium shot, soft push, character framing",
+      "wan_motion_preset": "focused character action, mid-tempo gestural movement, environment reacting",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, medium shot, soft push, character framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "17",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 18,
+      "section": "verse2",
+      "start": 94.643,
+      "end": 100.386,
+      "duration_seconds": 5.743,
+      "lyric": "And every cloakroom hook I tried would wail like it was drenched.",
+      "lyric_word_count": 12,
+      "energy": "MED",
+      "mood": "school memories, humiliation, dreams",
+      "camera_preset": "medium shot, soft push, character framing",
+      "wan_motion_preset": "focused character action, mid-tempo gestural movement, environment reacting",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, medium shot, soft push, character framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "18",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 19,
+      "section": "verse2",
+      "start": 100.386,
+      "end": 106.129,
+      "duration_seconds": 5.743,
+      "lyric": "I joined the choir once briefly. They gave me just one line.",
+      "lyric_word_count": 12,
+      "energy": "MED",
+      "mood": "school memories, humiliation, dreams",
+      "camera_preset": "medium shot, soft push, character framing",
+      "wan_motion_preset": "focused character action, mid-tempo gestural movement, environment reacting",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, medium shot, soft push, character framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "19",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 20,
+      "section": "verse2",
+      "start": 106.129,
+      "end": 111.871,
+      "duration_seconds": 5.742,
+      "lyric": "Then Grog will guard the kingdom gates while everyone else sings fight.",
+      "lyric_word_count": 12,
+      "energy": "MED",
+      "mood": "school memories, humiliation, dreams",
+      "camera_preset": "medium shot, soft push, character framing",
+      "wan_motion_preset": "focused character action, mid-tempo gestural movement, environment reacting",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, medium shot, soft push, character framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "20",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 21,
+      "section": "verse2",
+      "start": 111.871,
+      "end": 117.614,
+      "duration_seconds": 5.743,
+      "lyric": "But I had dreams in giant jars of ballet shoes and stars.",
+      "lyric_word_count": 12,
+      "energy": "MED",
+      "mood": "school memories, humiliation, dreams",
+      "camera_preset": "medium shot, soft push, character framing",
+      "wan_motion_preset": "focused character action, mid-tempo gestural movement, environment reacting",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, medium shot, soft push, character framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "21",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 22,
+      "section": "verse2",
+      "start": 117.614,
+      "end": 123.357,
+      "duration_seconds": 5.743,
+      "lyric": "I tried to wear a tutu once, it split me into bars.",
+      "lyric_word_count": 12,
+      "energy": "MED",
+      "mood": "school memories, humiliation, dreams",
+      "camera_preset": "medium shot, soft push, character framing",
+      "wan_motion_preset": "focused character action, mid-tempo gestural movement, environment reacting",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, medium shot, soft push, character framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "22",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 23,
+      "section": "verse2",
+      "start": 123.357,
+      "end": 129.1,
+      "duration_seconds": 5.743,
+      "lyric": "",
+      "lyric_word_count": 0,
+      "energy": "MED",
+      "mood": "school memories, humiliation, dreams",
+      "camera_preset": "medium shot, soft push, character framing",
+      "wan_motion_preset": "focused character action, mid-tempo gestural movement, environment reacting",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, medium shot, soft push, character framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "23",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 24,
+      "section": "chorus2",
+      "start": 129.1,
+      "end": 134.633,
+      "duration_seconds": 5.533,
+      "lyric": "Cause I was too big for the playground, too loud for cockpit shows.",
+      "lyric_word_count": 13,
+      "energy": "HIGH",
+      "mood": "frustration, determination",
+      "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
+      "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "24",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 25,
+      "section": "chorus2",
+      "start": 134.633,
+      "end": 140.167,
+      "duration_seconds": 5.534,
+      "lyric": "I'd clap along, the roof came off, and then I got blamed, you know.",
+      "lyric_word_count": 14,
+      "energy": "HIGH",
+      "mood": "frustration, determination",
+      "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
+      "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "25",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 26,
+      "section": "chorus2",
+      "start": 140.167,
+      "end": 145.7,
+      "duration_seconds": 5.533,
+      "lyric": "I wasn't mean, I wasn't wild, just a rather hefty child.",
+      "lyric_word_count": 11,
+      "energy": "HIGH",
+      "mood": "frustration, determination",
+      "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
+      "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "26",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 27,
+      "section": "chorus2",
+      "start": 145.7,
+      "end": 151.233,
+      "duration_seconds": 5.533,
+      "lyric": "The teeter-bore, the seesaw cried, and that time nearly died.",
+      "lyric_word_count": 10,
+      "energy": "HIGH",
+      "mood": "frustration, determination",
+      "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
+      "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "27",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 28,
+      "section": "chorus2",
+      "start": 151.233,
+      "end": 156.767,
+      "duration_seconds": 5.534,
+      "lyric": "Yes, I was too big for the playground, but I still believed in sight.",
+      "lyric_word_count": 14,
+      "energy": "HIGH",
+      "mood": "frustration, determination",
+      "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
+      "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "28",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 29,
+      "section": "chorus2",
+      "start": 156.767,
+      "end": 162.3,
+      "duration_seconds": 5.533,
+      "lyric": "",
+      "lyric_word_count": 0,
+      "energy": "HIGH",
+      "mood": "frustration, determination",
+      "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
+      "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "29",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 30,
+      "section": "gap2",
+      "start": 162.3,
+      "end": 165.1,
+      "duration_seconds": 2.8,
+      "lyric": "",
+      "lyric_word_count": 0,
+      "energy": "LOW",
+      "mood": "instrumental interstitial",
+      "camera_preset": "slow drift, golden tones, steady frame",
+      "wan_motion_preset": "slow ambient drift, subtle micro-motion, gentle environmental movement",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, slow drift, golden tones, steady frame, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "30",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 31,
+      "section": "outro",
+      "start": 165.1,
+      "end": 170.745,
+      "duration_seconds": 5.645,
+      "lyric": "Now when the kids see me stomping through, they gasp like I'm some tale.",
+      "lyric_word_count": 14,
+      "energy": "HIGH",
+      "mood": "resolution, building, triumph",
+      "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
+      "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "31",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 32,
+      "section": "outro",
+      "start": 170.745,
+      "end": 176.391,
+      "duration_seconds": 5.646,
+      "lyric": "But once I just wanted someone to braid my hair without a pail.",
+      "lyric_word_count": 13,
+      "energy": "HIGH",
+      "mood": "resolution, building, triumph",
+      "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
+      "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "32",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 33,
+      "section": "outro",
+      "start": 176.391,
+      "end": 182.036,
+      "duration_seconds": 5.645,
+      "lyric": "So let me build the treehouse tall with beams no storm could bend.",
+      "lyric_word_count": 13,
+      "energy": "HIGH",
+      "mood": "resolution, building, triumph",
+      "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
+      "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "33",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 34,
+      "section": "outro",
+      "start": 182.036,
+      "end": 187.682,
+      "duration_seconds": 5.646,
+      "lyric": "And swing so high the clouds look small and play till stories end.",
+      "lyric_word_count": 13,
+      "energy": "HIGH",
+      "mood": "resolution, building, triumph",
+      "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
+      "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "34",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 35,
+      "section": "outro",
+      "start": 187.682,
+      "end": 193.327,
+      "duration_seconds": 5.645,
+      "lyric": "Cause I was too big for the playground, but now I'll build the swings.",
+      "lyric_word_count": 14,
+      "energy": "HIGH",
+      "mood": "resolution, building, triumph",
+      "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
+      "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "35",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 36,
+      "section": "outro",
+      "start": 193.327,
+      "end": 198.973,
+      "duration_seconds": 5.646,
+      "lyric": "For every kid who's felt too weird for fairy tales or wings.",
+      "lyric_word_count": 12,
+      "energy": "HIGH",
+      "mood": "resolution, building, triumph",
+      "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
+      "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "36",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 37,
+      "section": "outro",
+      "start": 198.973,
+      "end": 204.618,
+      "duration_seconds": 5.645,
+      "lyric": "I wasn't mean, I wasn't cursed, just stretched from birth to burst.",
+      "lyric_word_count": 12,
+      "energy": "HIGH",
+      "mood": "resolution, building, triumph",
+      "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
+      "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "37",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 38,
+      "section": "outro",
+      "start": 204.618,
+      "end": 210.264,
+      "duration_seconds": 5.646,
+      "lyric": "",
+      "lyric_word_count": 0,
+      "energy": "HIGH",
+      "mood": "resolution, building, triumph",
+      "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
+      "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "38",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 39,
+      "section": "outro",
+      "start": 210.264,
+      "end": 215.909,
+      "duration_seconds": 5.645,
+      "lyric": "But give me planks and rope and glue, I'll make the world fit you.",
+      "lyric_word_count": 14,
+      "energy": "HIGH",
+      "mood": "resolution, building, triumph",
+      "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
+      "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "39",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 40,
+      "section": "outro",
+      "start": 215.909,
+      "end": 221.555,
+      "duration_seconds": 5.646,
+      "lyric": "I was too big for the playground, but the playground grew with me too.",
+      "lyric_word_count": 14,
+      "energy": "HIGH",
+      "mood": "resolution, building, triumph",
+      "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
+      "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "40",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 41,
+      "section": "outro",
+      "start": 221.555,
+      "end": 227.2,
+      "duration_seconds": 5.645,
+      "lyric": "",
+      "lyric_word_count": 0,
+      "energy": "HIGH",
+      "mood": "resolution, building, triumph",
+      "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
+      "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "41",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 42,
+      "section": "fade",
+      "start": 227.2,
+      "end": 233.05,
+      "duration_seconds": 5.85,
+      "lyric": "",
+      "lyric_word_count": 0,
+      "energy": "LOW",
+      "mood": "peace, completion",
+      "camera_preset": "slow drift, golden tones, steady frame",
+      "wan_motion_preset": "slow ambient drift, subtle micro-motion, gentle environmental movement",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, slow drift, golden tones, steady frame, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "42",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    },
+    {
+      "id": 43,
+      "section": "fade",
+      "start": 233.05,
+      "end": 238.9,
+      "duration_seconds": 5.85,
+      "lyric": "Thank you for watching!",
+      "lyric_word_count": 4,
+      "energy": "LOW",
+      "mood": "peace, completion",
+      "camera_preset": "slow drift, golden tones, steady frame",
+      "wan_motion_preset": "slow ambient drift, subtle micro-motion, gentle environmental movement",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, slow drift, golden tones, steady frame, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "needs_fill": [
+        "action"
+      ],
+      "tier_chosen": "Wan22",
+      "tier_plan": {
+        "status": "PLAN",
+        "tier": "Wan22",
+        "shot": "43",
+        "scene": "MagicalRealmPlayground",
+        "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>",
+        "approx_seconds_per_clip": 180,
+        "vram_gb": 24,
+        "best_for": "cinematic human shots; final delivery",
+        "key_resolution": null
+      }
+    }
+  ],
+  "summary": {
+    "total_shots": 43,
+    "by_status": {
+      "PLAN": 43
+    },
+    "by_tier_chosen": {
+      "Wan22": 43
+    },
+    "total_estimated_render_seconds": 7740.0
+  },
+  "built_at": "2026-06-07T13:53:21+00:00"
+}

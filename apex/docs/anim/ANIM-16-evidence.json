@@ -1,0 +1,66 @@
+{
+  "phase": "ANIM-16",
+  "title": "storyboard → tier-plan integration (ANIM-13 -> ANIM-05 bulk-plan)",
+  "spec_path": "apex/docs/spec/SPEC-ANIM-16.md",
+  "branch": "phase/ANIM-16-storyboard-tier-plan",
+  "doctrine": ["P3", "R15", "R16", "R19", "R20", "O2", "O6", "O9"],
+  "schema_changes": {
+    "muscle_video_agent.py": {
+      "ref_code": "APEX-MB-PY-00114",
+      "new_function": "plan_from_storyboard(storyboard_path, tier_or_routing, output_path, force) -> dict",
+      "new_module_constant": "ENERGY_TO_TIER_MAP = {LOW: LTX, MED: Wan22, HIGH: Wan22}",
+      "new_cli_flags": ["--plan-from-storyboard <path>", "--tier <name|energy>", "--output <path>"],
+      "new_exit_codes": {
+        "STORYBOARD_NOT_FOUND": 10,
+        "STORYBOARD_UNPARSEABLE": 10,
+        "STORYBOARD_INVALID_PHASE": 10,
+        "STORYBOARD_EMPTY": 10
+      }
+    },
+    "ANIM-16-tier-plan-<project>.json": {"schema_version": 1, "introduced_in": "ANIM-16"}
+  },
+  "happy_path_runs": {
+    "wan22_fixed": {
+      "command": "python apex/registry/muscle_video_agent.py --plan-from-storyboard apex/docs/anim/ANIM-13-storyboard-grog_playground.json --tier Wan22",
+      "result": {"shot_count": 43, "by_status": {"PLAN": 43}, "by_tier_chosen": {"Wan22": 43}, "total_estimated_render_seconds": 7740.0},
+      "output_path": "apex/docs/anim/ANIM-16-tier-plan-grog_playground.json",
+      "audit_path": "apex/audit/anim-16/tier-plan-grog_playground-Wan22-2026-06-07T13-53-21Z.json"
+    },
+    "ltx_fixed": {
+      "command": "python apex/registry/muscle_video_agent.py --plan-from-storyboard <grog> --tier LTX --output apex/docs/anim/ANIM-16-tier-plan-grog_playground-ltx.json",
+      "result": {"shot_count": 43, "by_status": {"PLAN": 43}, "by_tier_chosen": {"LTX": 43}, "total_estimated_render_seconds": 3870.0},
+      "note": "regression confirms LTX tier also produces 43 PLAN; 90s/clip x 43 = 3870s"
+    },
+    "energy_routing": {
+      "command": "python apex/registry/muscle_video_agent.py --plan-from-storyboard <grog> --tier energy --output apex/docs/anim/ANIM-16-tier-plan-grog_playground-energy.json",
+      "result": {"shot_count": 43, "by_status": {"PLAN": 43}, "by_tier_chosen": {"LTX": 6, "Wan22": 37}, "total_estimated_render_seconds": 7200.0},
+      "note": "6 LOW-energy shots routed to LTX (6 x 90s = 540s); 37 MED+HIGH routed to Wan22 (37 x 180s = 6660s); total 7200s — matches"
+    },
+    "falcloud_passthrough": {
+      "command": "python apex/registry/muscle_video_agent.py --plan-from-storyboard <grog> --tier FalCloud --output apex/docs/anim/ANIM-16-tier-plan-grog_playground-falcloud.json",
+      "result": {"shot_count": 43, "by_status": {"TIER_KEY_OK_SHIM_PENDING": 43}, "by_tier_chosen": {"FalCloud": 43}, "total_estimated_render_seconds": 0.0},
+      "note": "every shot inherits ANIM-17 fingerprint 95de:0714 in tier_plan.key_resolution; PLAN withheld until ANIM-18 shim lands"
+    },
+    "hunyuan_passthrough": {
+      "command": "python apex/registry/muscle_video_agent.py --plan-from-storyboard <grog> --tier Hunyuan --output apex/docs/anim/ANIM-16-tier-plan-grog_playground-hunyuan.json",
+      "result": {"shot_count": 43, "by_status": {"TIER_NOT_READY": 43}, "by_tier_chosen": {"Hunyuan": 43}, "total_estimated_render_seconds": 0.0},
+      "note": "all shots reflect Hunyuan NODES_INSTALLED_WEIGHTS_DEFERRED state cleanly"
+    }
+  },
+  "negative_path_runs": {
+    "storyboard_not_found": {"command": "--plan-from-storyboard /tmp/nonexistent.json --tier Wan22", "expected_exit": 10, "actual_exit": 10},
+    "storyboard_invalid_phase": {"command": "--plan-from-storyboard <projects.json instead of storyboard>", "expected_exit": 10, "actual_exit": 10},
+    "invalid_tier": {"command": "--plan-from-storyboard <grog> --tier NotARealTier", "expected_exit": 6, "actual_exit": 6},
+    "missing_tier": {"command": "--plan-from-storyboard <grog> (no --tier)", "expected_exit": 6, "actual_exit": 6},
+    "will_overwrite_refused": {"command": "re-run --plan-from-storyboard <grog> --tier Wan22 without --force", "expected_exit": 5, "actual_exit": 5}
+  },
+  "storyboard_sha_capture": {
+    "source_storyboard_path": "apex/docs/anim/ANIM-13-storyboard-grog_playground.json",
+    "captured_in_output_at_field": "source_storyboard_sha256",
+    "purpose": "downstream consumers / future ANIM-18 shim can detect storyboard drift between plan emission and render submission"
+  },
+  "codex_runs": [],
+  "ledger_convention": "Per ANIM-14 chain-ledger convention.",
+  "built_at": "2026-06-07T13:54:00+00:00",
+  "last_updated_at": "2026-06-07T13:54:00+00:00"
+}
