@@ -243,13 +243,15 @@ def resolve_character_markers(project_slug: str, cfg: dict, ref_pack: dict) -> d
                 "origin": "projects.json",
                 "required_fields": list(_MARKER_FIELDS),
                 "present_fields": project_present}
-    # ANIM-14 r1 F-3 fix: manifest_partial is only a fatal blocker when we
-    # actually need the manifest (i.e. project is not complete on its own).
-    # A complete project marker block always wins; an incidentally-partial
-    # manifest declaration is a registry inconsistency but not a runtime
-    # blocker for this project. If a project later omits markers, the
-    # manifest's partial state becomes fatal at that time.
-    if not project_path_complete and manifest_has_partial:
+    # ANIM-14 r3 F-6 fix (supersedes r1 F-3 softening): SPEC-ANIM-14 §"Schema
+    # extension" says the manifest's marker block must be all-four-fields or
+    # all-absent, and "the agent re-validates this at runtime". Re-validation
+    # is unconditional — a partial manifest marker block is a registry
+    # inconsistency and the agent must surface it before any project that
+    # binds this character can run, even if that project carries its own
+    # full marker block. Forcing the registry fix is safer than silently
+    # tolerating drift in a certed manifest.
+    if manifest_has_partial:
         return {"slug": project_slug,
                 "status": "CHARACTER_MARKERS_MANIFEST_PARTIAL",
                 "origin": "ANIM-03 manifest",

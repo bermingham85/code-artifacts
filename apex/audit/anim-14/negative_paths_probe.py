@@ -125,7 +125,11 @@ r5 = _probe(
     mutation="manifest carries full verifiable marker block; project carries no marker fields",
 )
 
-# 6. F-3 fix evidence: project-complete + manifest-partial -> OK
+# 6. r3 F-6 fix (supersedes r1 F-3): manifest_partial is ALWAYS fatal per
+#    SPEC-ANIM-14 — "the agent re-validates this at runtime" is unconditional.
+#    A project with its own complete marker block still cannot run while the
+#    manifest's marker block for the bound character is in registry-inconsistent
+#    partial state. This forces the registry fix.
 r6 = _probe(
     "proj_full_manifest_partial_probe",
     {
@@ -141,8 +145,8 @@ r6 = _probe(
         "character_markers_provenance_field": "grog_identifiers",
         # missing sha256 -> partial manifest
     }}},
-    expected_status="OK",
-    mutation="project carries full verifiable marker block; manifest has 3-of-4 (registry inconsistency); F-3 fix tolerates",
+    expected_status="CHARACTER_MARKERS_MANIFEST_PARTIAL",
+    mutation="project carries full verifiable marker block; manifest has 3-of-4 (registry inconsistency); r3 F-6 surfaces MANIFEST_PARTIAL to force registry fix",
 )
 
 # 7. F-5 fix evidence: source file top-level non-dict JSON

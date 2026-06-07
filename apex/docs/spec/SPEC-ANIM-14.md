@@ -57,7 +57,7 @@ ANIM-14 lifts `character_markers` (plus provenance) up to the per-character entr
 }
 ```
 
-All four fields are required together or all absent (no partial declarations). Manifest writer should validate this at registration time; the agent re-validates at runtime.
+All four fields are required together or all absent (no partial declarations). Manifest writer should validate this at registration time; the agent re-validates this at runtime UNCONDITIONALLY — a partial manifest marker block for any bound character surfaces `CHARACTER_MARKERS_MANIFEST_PARTIAL` (exit 13) before the project path is even evaluated, forcing the registry inconsistency to be fixed before any project using that character can run. This is stricter than tolerating partials when projects.json supplies a full override, but it is the only reading consistent with treating ANIM-03 as a certed manifest under doctrine "no claim without sha" / R20.
 
 Backfill in this phase: grog only. Galinda / emma / lirian carry no marker block in ANIM-14 (no canonical source field exists for them yet). The agent surfaces a clear error (`CHARACTER_MARKERS_NOT_FOUND`) if a future project binding for those characters omits markers in the project config and the manifest also lacks them.
 

@@ -43,7 +43,8 @@
       "storyboard_schema_version_before": 2,
       "storyboard_schema_version_after": 3,
       "anim14_r1_F2_fix": "AUDIT_ROOT honors APEX_PHASE_AUDIT_DIR env (relative paths rebased on REPO_ROOT). Default remains apex/audit/anim-13 for backward compat. ANIM-14 phase runs set APEX_PHASE_AUDIT_DIR=apex/audit/anim-14 to land evidence in this phase's namespace.",
-      "anim14_r1_F3_fix": "manifest_has_partial only fatal when project_path_complete is False; a project that declares the full marker block tolerates an incidentally-partial manifest registration (registry inconsistency is logged but not a runtime blocker for the project)."
+      "anim14_r2_F5_fix": "_verify_markers_against_source() type-guards json.loads result; top-level non-object JSON returns CHARACTER_MARKERS_SOURCE_UNPARSEABLE; non-string source field returns CHARACTER_MARKERS_FIELD_MISSING with error context; non-string recorded marker returns CHARACTER_MARKERS_VALUE_MISMATCH with error context.",
+      "anim14_r3_F6_fix": "Restored strict manifest_partial semantics — CHARACTER_MARKERS_MANIFEST_PARTIAL fires UNCONDITIONALLY when ANIM-03's character block is 3-of-4 fields present, regardless of whether projects.json carries an override. This supersedes the r1 F-3 softening; SPEC-ANIM-14 §Schema extension was tightened to make the unconditional re-validation explicit. Trade-off: a project with its own valid marker block still cannot run if the manifest's marker block for the bound character is registry-inconsistent — but this forces the registry to be fixed before any work for that character proceeds, which is the safer doctrine-compliant default."
     }
   },
   "happy_path_runs": {
@@ -88,7 +89,16 @@
     "MA-ANIM-14-MARKERS-LIRIAN — register a lirian canonical identifier source (also blocks ANIM-15 Lirian MV binding)"
   ],
   "codex_runs": [
-    {"round": 1, "transcript": "apex_governance/codex_runs/ANIM-14/round1.txt", "high_findings": 1, "med_findings": 2, "fixed_in": "anim14_r1_F1_F2_F3"}
+    {"round": 1, "transcript": "apex_governance/codex_runs/ANIM-14/round1.txt", "high_findings": 1, "med_findings": 2, "low_findings": 0, "fixed_in_commit": "4482385 [ANIM-14] Codex round-1 fix (F-1 bundle visibility, F-2 audit dir override, F-3 manifest_partial tolerance)"},
+    {"round": 2, "transcript": "apex_governance/codex_runs/ANIM-14/round2.txt", "high_findings": 0, "med_findings": 1, "low_findings": 1, "fixed_in_commit": "c296feb [ANIM-14] Codex round-2 fix (F-4 probe audit-richness, F-5 non-object JSON source guard)"},
+    {"round": 3, "transcript": "apex_governance/codex_runs/ANIM-14/round3.txt", "high_findings": 0, "med_findings": 1, "low_findings": 1, "fixed_in_commit": "round-3 fix commit (F-6 strict manifest_partial restored; F-7 this codex_runs ledger update)"}
   ],
+  "silent_twice_progress": {
+    "rule": "Two consecutive HIGH-empty rounds = closed.",
+    "round_2_high_count": 0,
+    "round_3_high_count": 0,
+    "round_4_required_to_confirm_after_r3_fixes": true,
+    "comment": "r3 F-6 reverted r1's F-3 softening, so the agent's behavior changed; a fresh round is needed to confirm no new HIGH findings emerged from the revert."
+  },
   "built_at": "2026-06-07T13:06:33+00:00"
 }
