@@ -216,10 +216,16 @@ def _redact_key_from_text(text: str, raw_key: str | None) -> str:
 
 def _redact_key_from_obj(obj, raw_key: str | None):
     """Recursively walk a parsed-JSON tree and redact raw_key from every str
-    leaf. ANIM-18 r2 F-2 fix: redacting only the serialized form misses keys
-    whose JSON serialization escapes characters (e.g. a key with a backslash).
-    Walking the parsed tree directly redacts the literal string value before
-    re-serialization."""
+    leaf AND from every dict key.
+
+    ANIM-18 r2 F-2 fix: redacting only the serialized form misses keys whose
+    JSON serialization escapes characters; walking the parsed tree directly
+    redacts the literal string value before re-serialization.
+
+    ANIM-18 r3 F-1 fix: also redact dict keys, not just values. A response
+    where the raw FAL key appeared as a JSON property NAME would otherwise
+    slip through value-only redaction and reach the audit JSON unredacted.
+    """
     if not raw_key:
         return obj
     if isinstance(obj, str):
@@ -227,7 +233,9 @@ def _redact_key_from_obj(obj, raw_key: str | None):
     if isinstance(obj, list):
         return [_redact_key_from_obj(x, raw_key) for x in obj]
     if isinstance(obj, dict):
-        return {k: _redact_key_from_obj(v, raw_key) for k, v in obj.items()}
+        return {_redact_key_from_text(k, raw_key) if isinstance(k, str) else k:
+                _redact_key_from_obj(v, raw_key)
+                for k, v in obj.items()}
     return obj
 
 
@@ -304,13 +312,19 @@ def submit_shot(shot_id: str, tier_plan_path: str, live: bool) -> dict:
     }
     http_result = _http_post_json(SUBMIT_URL, body, headers, raw_key)
     # Wrap result with fingerprint-only key metadata.
-    return {"status": http_result["status"],
-            "submit_url": SUBMIT_URL,
-            "payload_sha256": hashlib.sha256(body).hexdigest(),
-            "fal_response": {k: v for k, v in http_result.items() if k != "status"},
-            "key_fingerprint": fingerprint_only(key_probe),
-            "submitted_at": datetime.datetime.now(
-                datetime.timezone.utc).isoformat(timespec="seconds")}
+    out = {"status": http_result["status"],
+           "submit_url": SUBMIT_URL,
+           "payload_sha256": hashlib.sha256(body).hexdigest(),
+           "fal_response": {k: v for k, v in http_result.items() if k != "status"},
+           "key_fingerprint": fingerprint_only(key_probe),
+           "submitted_at": datetime.datetime.now(
+               datetime.timezone.utc).isoformat(timespec="seconds")}
+    # ANIM-18 r3 F-1 fix: final redaction pass before the result leaves this
+    # function. Even if _http_post_json missed a leak path, this pass walks
+    # the entire output tree (dict keys + values, lists, nested dicts) and
+    # strips raw_key + its JSON-escaped form. The previous main() pipeline
+    # used json.loads(json.dumps(result)) which was a no-op round-trip.
+    return _redact_key_from_obj(out, raw_key)
 
 
 def poll_job(job_id: str) -> dict:
@@ -325,31 +339,36 @@ def poll_job(job_id: str) -> dict:
     raw_key = key_probe["key"]
     req = urllib.request.Request(url, method="GET")
     req.add_header("Authorization", f"Key {raw_key}")
+    # ANIM-18 r3 F-1 fix: poll_job applies a final _redact_key_from_obj()
+    # pass on the result before return. Defined as a small inner wrapper to
+    # keep the early-return branches DRY.
+    def _seal(result: dict) -> dict:
+        return _redact_key_from_obj(result, raw_key)
     try:
         with urllib.request.urlopen(req, timeout=DEFAULT_TIMEOUT_SECONDS) as resp:
             raw = resp.read()
             try:
                 parsed = json.loads(raw.decode("utf-8"))
             except (json.JSONDecodeError, UnicodeDecodeError) as e:
-                return {"status": "FAL_UNPARSEABLE_RESPONSE",
-                        "http_status": resp.status,
-                        "error": _redact_key_from_text(str(e), raw_key),
-                        "key_fingerprint": fingerprint_only(key_probe)}
-            return {"status": "FAL_OK",
-                    "http_status": resp.status,
-                    "response": _redact_key_from_obj(parsed, raw_key),
-                    "key_fingerprint": fingerprint_only(key_probe)}
+                return _seal({"status": "FAL_UNPARSEABLE_RESPONSE",
+                              "http_status": resp.status,
+                              "error": _redact_key_from_text(str(e), raw_key),
+                              "key_fingerprint": fingerprint_only(key_probe)})
+            return _seal({"status": "FAL_OK",
+                          "http_status": resp.status,
+                          "response": _redact_key_from_obj(parsed, raw_key),
+                          "key_fingerprint": fingerprint_only(key_probe)})
     except urllib.error.HTTPError as e:
-        return {"status": "FAL_HTTP_ERROR",
-                "http_status": getattr(e, "code", None),
-                "reason": _redact_key_from_text(
-                    str(getattr(e, "reason", "")), raw_key),
-                "key_fingerprint": fingerprint_only(key_probe)}
+        return _seal({"status": "FAL_HTTP_ERROR",
+                      "http_status": getattr(e, "code", None),
+                      "reason": _redact_key_from_text(
+                          str(getattr(e, "reason", "")), raw_key),
+                      "key_fingerprint": fingerprint_only(key_probe)})
     except (urllib.error.URLError, TimeoutError, OSError) as e:
-        return {"status": "FAL_ENDPOINT_UNREACHABLE",
-                "error": _redact_key_from_text(
-                    f"{type(e).__name__}: {e}", raw_key),
-                "key_fingerprint": fingerprint_only(key_probe)}
+        return _seal({"status": "FAL_ENDPOINT_UNREACHABLE",
+                      "error": _redact_key_from_text(
+                          f"{type(e).__name__}: {e}", raw_key),
+                      "key_fingerprint": fingerprint_only(key_probe)})
 
 
 def probe() -> dict:

@@ -213,6 +213,110 @@ def main() -> int:
         **_assert_no_key_leak("P8", json.dumps(r), real_key),
     })
 
+    # Probes 9–11 — ANIM-18 r3 F-2 fix: monkeypatch urlopen with synthetic
+    # responses that smuggle the live key into the body, as a property name,
+    # and as a JSON-escaped string. The shim's redaction layer must scrub
+    # every form before the result is printed or audited. Without these
+    # probes, regressions in _http_post_json / _redact_key_from_obj /
+    # poll_job would not be caught.
+    import urllib.request as _ulr
+    import io as _io
+
+    class _FakeResp:
+        def __init__(self, body_bytes: bytes, status: int = 200):
+            self._body = body_bytes
+            self.status = status
+        def read(self):
+            return self._body
+        def __enter__(self):
+            return self
+        def __exit__(self, *a):
+            return False
+
+    if real_key:
+        # P9 — successful JSON response with raw key as a value.
+        body = json.dumps({"request_id": "abc12345",
+                           "echo": real_key}).encode("utf-8")
+        original = _ulr.urlopen
+        _ulr.urlopen = lambda req, timeout=30: _FakeResp(body, 200)
+        try:
+            r = shim.submit_shot(
+                "1",
+                str(REPO_ROOT
+                    / "apex/docs/anim/ANIM-16-tier-plan-grog_playground-falcloud.json"),
+                live=True)
+        finally:
+            _ulr.urlopen = original
+        out["probes"].append({
+            "id": "MOCK_LIVE_VALUE_REDACTED",
+            "expected_status": "FAL_OK",
+            "actual_status": r.get("status"),
+            "pass": (r.get("status") == "FAL_OK"
+                     and "FAL_OK" in r.get("status", "")),
+            "result": r,
+            **_assert_no_key_leak("P9", json.dumps(r), real_key),
+        })
+
+        # P10 — successful JSON response with raw key as a property NAME
+        # (this is the F-1 HIGH that r3 added dict-key redaction to fix).
+        body = json.dumps({"request_id": "abc12346",
+                           real_key: "value-under-key-name"}).encode("utf-8")
+        _ulr.urlopen = lambda req, timeout=30: _FakeResp(body, 200)
+        try:
+            r = shim.submit_shot(
+                "1",
+                str(REPO_ROOT
+                    / "apex/docs/anim/ANIM-16-tier-plan-grog_playground-falcloud.json"),
+                live=True)
+        finally:
+            _ulr.urlopen = original
+        out["probes"].append({
+            "id": "MOCK_LIVE_DICT_KEY_REDACTED",
+            "expected_status": "FAL_OK",
+            "actual_status": r.get("status"),
+            "pass": r.get("status") == "FAL_OK",
+            "result": r,
+            **_assert_no_key_leak("P10", json.dumps(r), real_key),
+        })
+
+        # P11 — HTTPError body containing the raw key (echo of Authorization).
+        class _FakeHTTPError(Exception):
+            def __init__(self, body_bytes: bytes):
+                self._body = body_bytes
+                self.code = 401
+                self.reason = "Unauthorized"
+            def read(self):
+                return self._body
+
+        # Need a urllib.error.HTTPError subclass for the except branch to
+        # match. Build a real one with the live body bytes.
+        from urllib.error import HTTPError
+        err_body = ("UNAUTHORIZED: header=Authorization: Key "
+                    + real_key).encode("utf-8")
+
+        def _raise_http_error(req, timeout=30):
+            raise HTTPError(url=req.full_url if hasattr(req, "full_url") else "",
+                            code=401, msg="Unauthorized",
+                            hdrs=None, fp=_io.BytesIO(err_body))
+
+        _ulr.urlopen = _raise_http_error
+        try:
+            r = shim.submit_shot(
+                "1",
+                str(REPO_ROOT
+                    / "apex/docs/anim/ANIM-16-tier-plan-grog_playground-falcloud.json"),
+                live=True)
+        finally:
+            _ulr.urlopen = original
+        out["probes"].append({
+            "id": "MOCK_LIVE_HTTP_ERROR_BODY_REDACTED",
+            "expected_status": "FAL_HTTP_ERROR",
+            "actual_status": r.get("status"),
+            "pass": r.get("status") == "FAL_HTTP_ERROR",
+            "result": r,
+            **_assert_no_key_leak("P11", json.dumps(r), real_key),
+        })
+
     out["probe_count"] = len(out["probes"])
     passed = sum(1 for p in out["probes"] if p.get("pass"))
     out["passed"] = passed
