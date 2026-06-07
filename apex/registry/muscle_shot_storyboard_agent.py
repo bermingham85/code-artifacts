@@ -195,17 +195,22 @@ def build_storyboard(project_slug: str, target_shot_seconds: float, force: bool)
                     "brand_tokens.prompt_rules": prompt_rules,
                 }.items() if not v]}
 
-    # F-3 r2: character_markers stays in projects.json (no canonical field for it
-    # in the ANIM-03 manifest yet) but its source file + content sha256 must be
-    # present and re-verified at runtime. Any drift between the recorded sha and
-    # the live source aborts before emission.
+    # F-3 r2 + F-5 r3: character_markers stays in projects.json (no canonical
+    # marker field in ANIM-03 yet), but its provenance is anchored two ways:
+    #   (a) the named source file's sha256 must match the recorded value
+    #       (catches the file being swapped or modified);
+    #   (b) the emitted character_markers string must exactly equal the JSON
+    #       field at character_markers_provenance_field inside that source
+    #       (catches a fabricated marker string pointed at an unrelated file).
     src_path_str = cfg.get("character_markers_provenance_source_path")
     src_sha = cfg.get("character_markers_provenance_sha256")
-    if not src_path_str or not src_sha:
+    src_field = cfg.get("character_markers_provenance_field")
+    if not src_path_str or not src_sha or not src_field:
         return {"slug": project_slug, "status": "CHARACTER_MARKERS_PROVENANCE_MISSING",
                 "required_fields": [
                     "character_markers_provenance_source_path",
                     "character_markers_provenance_sha256",
+                    "character_markers_provenance_field",
                 ]}
     src_path = Path(src_path_str)
     if not src_path.is_file():
@@ -217,6 +222,20 @@ def build_storyboard(project_slug: str, target_shot_seconds: float, force: bool)
                 "source_path": src_path_str,
                 "recorded_sha256": src_sha,
                 "actual_sha256": actual_sha}
+    try:
+        src_data = json.loads(src_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as e:
+        return {"slug": project_slug, "status": "CHARACTER_MARKERS_SOURCE_UNPARSEABLE",
+                "source_path": src_path_str, "error": str(e)}
+    source_value = src_data.get(src_field)
+    if source_value is None:
+        return {"slug": project_slug, "status": "CHARACTER_MARKERS_FIELD_MISSING",
+                "source_path": src_path_str, "field": src_field}
+    if cfg["character_markers"] != source_value:
+        return {"slug": project_slug, "status": "CHARACTER_MARKERS_VALUE_MISMATCH",
+                "source_path": src_path_str, "field": src_field,
+                "recorded_in_projects_json": cfg["character_markers"],
+                "actual_in_source": source_value}
 
     lyrics = load_lyrics(cfg["lyrics_timestamped_path"])
     if not lyrics:
@@ -428,7 +447,10 @@ def main() -> int:
                     "SCENE_MANIFEST_INCOMPLETE": 10,
                     "CHARACTER_MARKERS_PROVENANCE_MISSING": 11,
                     "CHARACTER_MARKERS_SOURCE_MISSING": 11,
-                    "CHARACTER_MARKERS_PROVENANCE_DRIFT": 11}
+                    "CHARACTER_MARKERS_PROVENANCE_DRIFT": 11,
+                    "CHARACTER_MARKERS_SOURCE_UNPARSEABLE": 11,
+                    "CHARACTER_MARKERS_FIELD_MISSING": 11,
+                    "CHARACTER_MARKERS_VALUE_MISMATCH": 11}
         return code_for.get(result.get("status", ""), 4)
 
     if args.validate:

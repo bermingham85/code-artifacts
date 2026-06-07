@@ -9,9 +9,9 @@
   "deliverables": [
     {
       "path": "apex/registry/muscle_shot_storyboard_agent.py",
-      "sha256": "a15f34211a4c2449cf29218091af41daa2a70db9775bc885663a71494002df0f",
+      "sha256": "405e9a8b5e3fb3fc90ef1abe33ae2eae14fcb5f97f4c74051746610828c3ca18",
       "kind": "muscle",
-      "post_round2": true
+      "post_round3": true
     },
     {
       "path": "apex/docs/anim/ANIM-13-projects.json",
@@ -21,15 +21,21 @@
     },
     {
       "path": "apex/docs/anim/ANIM-13-storyboard-grog_playground.json",
-      "sha256": "056c61d8eb69707d59cc957fe1d6969162365b7f0cbdfc65f96346ff1667cd75",
+      "sha256": "e8fad801323f1b4d8dfaa2dfd57d14c7ffdefc276f9801ba52f31705a584e579",
       "kind": "deterministic output",
-      "post_round2": true
+      "post_round3": true
     },
     {
       "path": "apex/docs/anim/ANIM-13-validation-grog.json",
-      "sha256": "f7dcb9b83f0a33cb8727f54eacd0a98bec01088edfed10f4eaf5a8d2723f231e",
+      "sha256": "4c3625a0c22b35fba9487486284fb56e7e6ecf564ffb0cfad581b7c2af8db88d",
       "kind": "gold-reference validation report",
-      "post_round2": true
+      "post_round3": true
+    }
+  ],
+  "codex_round3_fixes": [
+    {
+      "finding": "F-5 (P3, muscle:185) — character_markers provenance only sha-verified the source file but didn't compare the emitted string to the named field, so a fabricated marker pointed at any unchanged file with a matching sha would pass",
+      "fix": "agent now (i) parses the source JSON, (ii) reads the value at character_markers_provenance_field (e.g. 'grog_identifiers' in shot_list.json), and (iii) requires cfg['character_markers'] == source[field] verbatim. New statuses CHARACTER_MARKERS_SOURCE_UNPARSEABLE / CHARACTER_MARKERS_FIELD_MISSING / CHARACTER_MARKERS_VALUE_MISMATCH (all exit 11). Verified by inline negative test: fabricating the character_markers string in projects.json reliably triggers CHARACTER_MARKERS_VALUE_MISMATCH."
     }
   ],
   "codex_round2_fixes": [
