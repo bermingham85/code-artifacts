@@ -1,8 +1,9 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "schema_version_history": [
     {"version": 1, "introduced_in": "ANIM-05", "summary": "initial Wan22/LTX/Hunyuan/FalCloud tier definitions"},
-    {"version": 2, "introduced_in": "ANIM-17", "summary": "FalCloud carries env-key resolution metadata (requires_env_key + requires_env_key_from_env_sync_path + requires_env_key_field + shim_status + shim_blocker); agent recomputes effective_status at runtime"}
+    {"version": 2, "introduced_in": "ANIM-17", "summary": "FalCloud carries env-key resolution metadata (requires_env_key + requires_env_key_from_env_sync_path + requires_env_key_field + shim_status + shim_blocker); agent recomputes effective_status at runtime"},
+    {"version": 3, "introduced_in": "ANIM-18", "summary": "FalCloud.shim_status flipped PENDING -> READY; wrapper_invocation points to muscle_fal_shim.py (APEX-MB-PY-00118); FalCloud is now runnable end-to-end under operator-explicit --live flag"}
   ],
   "tiers": {
     "Wan22": {
@@ -56,10 +57,13 @@
       "requires_env_key": "FAL_AI_API_KEY",
       "requires_env_key_from_env_sync_path": "X:/env_sync/user_portable.json",
       "requires_env_key_field": "FAL_AI_API_KEY",
-      "shim_status": "PENDING",
-      "shim_blocker": "fal.ai animation-agent wrapper script not yet built; ANIM-17 closes the key-resolution gate only — shim implementation is a follow-on phase",
-      "wrapper_invocation": null,
-      "anim17_change_note": "previous status was OPERATOR_GATED with blocker 'G9 — fal.ai key-resolution route TBD; key NOT in env_sync'; ANIM-17 verified the key IS in env_sync at the recorded path + field and wired the agent to resolve it via effective_tier_status() at runtime, fingerprint-only exposure."
+      "shim_status": "READY",
+      "shim_blocker": null,
+      "wrapper_invocation": "python apex/registry/muscle_fal_shim.py --submit --shot-id <id> --tier-plan <path> --live",
+      "wrapper_script": "apex/registry/muscle_fal_shim.py",
+      "wrapper_muscle_id": "APEX-MB-PY-00118",
+      "anim17_change_note": "previous status was OPERATOR_GATED with blocker 'G9 — fal.ai key-resolution route TBD; key NOT in env_sync'; ANIM-17 verified the key IS in env_sync at the recorded path + field and wired the agent to resolve it via effective_tier_status() at runtime, fingerprint-only exposure.",
+      "anim18_change_note": "ANIM-18 built the fal.ai animation-agent wrapper shim at apex/registry/muscle_fal_shim.py. Shim default is dry-run; live HTTP POST to fal.ai queue endpoint requires explicit --live flag (no accidental cloud spend). Fingerprint-only key exposure preserved per ANIM-17 R20."
     }
   },
   "default_route": "Wan22"

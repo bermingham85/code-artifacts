@@ -1,0 +1,150 @@
+{
+  "phase": "ANIM-18",
+  "schema_version": 1,
+  "title": "fal.ai animation-agent wrapper shim — closes WO §1.4 FalCloud write side",
+  "built_at": "2026-06-07T14:30:00Z",
+  "files_under_seal": {
+    "apex/registry/muscle_fal_shim.py": "6a551e957d9cc05f076881291ab725725043e7429c8f2e2e94ec9388b0456c08",
+    "apex/docs/spec/SPEC-ANIM-18.md": "115000f424f41f757b1f23b7c7459638c4e4bf4a59cefc17daf8832914fb7ce5",
+    "apex/audit/anim-18/probe_negatives.py": "9a15a83d1e307f2be4b3a92c72c3ad9dac0a554548600da4360ab25db97c37f3",
+    "apex/docs/anim/ANIM-05-tier-config.json": "0e44a2ff93da9ba3be28b05a6d03aa5fd5807f2b8eeb5ca907a1c1ae5fa1925e"
+  },
+  "tier_config_change": {
+    "schema_version": "2 -> 3",
+    "FalCloud.shim_status": "PENDING -> READY",
+    "FalCloud.wrapper_invocation": "null -> python apex/registry/muscle_fal_shim.py --submit --shot-id <id> --tier-plan <path> --live",
+    "FalCloud.shim_blocker": "non-null prose -> null"
+  },
+  "fal_endpoint_schema": {
+    "queue_base": "https://queue.fal.run",
+    "model_id": "fal-ai/animation-agent",
+    "submit_url": "https://queue.fal.run/fal-ai/animation-agent",
+    "poll_url_template": "https://queue.fal.run/fal-ai/animation-agent/requests/{job_id}/status",
+    "auth_header": "Authorization: Key <FAL_AI_API_KEY>",
+    "content_type": "application/json",
+    "request_body_shape": {
+      "input.prompt": "string (from tier-plan shot.kontext_prompt_template)",
+      "input.image_url": "string (anchor image; pass-through from tier-plan shot.anchor_image_url, may be empty until ANIM-03 reference packs populate it)",
+      "input.aspect_ratio": "string (default 16:9)",
+      "input.duration": "float seconds (from tier-plan shot.duration_seconds)",
+      "input.needs_fill": "bool (from tier-plan shot.needs_fill)",
+      "metadata.shot_id": "string",
+      "metadata.tier_plan_phase": "string",
+      "metadata.tier_plan_project": "string",
+      "metadata.scene_slug": "string",
+      "metadata.character_markers": "string | null (from tier-plan shot.character_markers)",
+      "metadata.character_markers_source": "string | null"
+    },
+    "response_body_shape_documented": {
+      "request_id": "string (fal.ai job_id; format ANIM-18 JOB_ID_RE: ^[A-Za-z0-9-]{8,128}$)",
+      "status_url": "string (poll URL)",
+      "response_url": "string (final-result URL when status=COMPLETED)"
+    },
+    "source_note": "fal.ai queue endpoint schema pinned in shim constants (FAL_QUEUE_BASE/FAL_MODEL_ID) so an API rename is a one-line change rather than a redesign."
+  },
+  "happy_path_dry_run": {
+    "command": "APEX_REPO=. python apex/registry/muscle_fal_shim.py --submit --shot-id 1 --tier-plan apex/docs/anim/ANIM-16-tier-plan-grog_playground-falcloud.json",
+    "expected_status": "DRY_RUN",
+    "actual_status": "DRY_RUN",
+    "payload_sha256": "0b55098b7f330a8cef649bac03fe656ccabfe8956388ad22c47190aa5a087424",
+    "key_fingerprint": {
+      "fingerprint": "95de:0714",
+      "key_sha256_first_12": "be61d3851aac",
+      "key_length": 69,
+      "env_sync_path": "X:/env_sync/user_portable.json",
+      "field": "FAL_AI_API_KEY"
+    },
+    "fingerprint_matches_anim17_cert": true,
+    "http_calls_made": 0,
+    "note": "Default --submit (no --live) issued zero HTTP calls. Same fingerprint as ANIM-17 cert evidence (95de:0714)."
+  },
+  "determinism_property_test": {
+    "method": "build_payload(shot=1, tier_plan=falcloud.json) called twice; SHA256 of json.dumps(payload, sort_keys=True) compared",
+    "sha_run_1": "0b55098b7f330a8cef649bac03fe656ccabfe8956388ad22c47190aa5a087424",
+    "sha_run_2": "0b55098b7f330a8cef649bac03fe656ccabfe8956388ad22c47190aa5a087424",
+    "bytes_equal": true,
+    "passed": true
+  },
+  "negative_probe_results": {
+    "harness": "apex/audit/anim-18/probe_negatives.py",
+    "probe_count": 6,
+    "passed": 6,
+    "failed": 0,
+    "global_leak_check": "CLEAN",
+    "probe_ids": [
+      "TIER_PLAN_NOT_FOUND",
+      "TIER_PLAN_UNPARSEABLE",
+      "TIER_PLAN_INVALID_PHASE",
+      "SHOT_NOT_IN_TIER_PLAN",
+      "SHOT_NOT_ROUTED_TO_FALCLOUD",
+      "INVALID_SHOT_ID"
+    ],
+    "per_probe_leak_check": {
+      "P1": "CLEAN",
+      "P2": "CLEAN",
+      "P3": "CLEAN",
+      "P4": "CLEAN",
+      "P5": "CLEAN",
+      "P6": "CLEAN"
+    }
+  },
+  "leak_check": {
+    "method": "Read live FAL_AI_API_KEY into process memory for assertion only; never persisted; grep against (a) shim source, (b) tier-config JSON, (c) probe harness output, (d) this evidence file",
+    "scope": [
+      "apex/registry/muscle_fal_shim.py",
+      "apex/docs/spec/SPEC-ANIM-18.md",
+      "apex/docs/anim/ANIM-05-tier-config.json",
+      "apex/docs/anim/ANIM-18-evidence.json",
+      "apex/audit/anim-18/probe_negatives.py"
+    ],
+    "outcome": "CLEAN",
+    "note": "Raw key bytes do not appear in any persisted file. Fingerprint-only exposure preserved per ANIM-17 R20."
+  },
+  "live_safety_proof": {
+    "claim": "Default --submit invocation issues ZERO HTTP calls",
+    "method": "Probe harness exercises 6 negative paths without any urllib.request.urlopen call; happy-path dry-run prints 'DRY-RUN — no HTTP call made.' and returns exit 0 without contacting fal.ai. Live POST requires explicit --live flag.",
+    "argparse_default": "args.live is False by default; submit_shot() branches to DRY_RUN before any urlopen call when live=False"
+  },
+  "reuse_compliance": {
+    "anim17_handover_rules": [
+      "Do not introduce a new env-key resolution helper.",
+      "Do not store the resolved key bytes anywhere outside X:/env_sync/user_portable.json.",
+      "Do not relax the leak check."
+    ],
+    "shim_compliance": [
+      "resolve_fal_key() imports muscle_video_agent.resolve_env_key_from_env_sync() (no new resolver).",
+      "Key bytes held in process memory only; written nowhere; passed to Authorization header live, then dropped.",
+      "Every probe + every audit JSON pass through fingerprint_only() which strips 'key' field; defensive json round-trip in --submit path."
+    ]
+  },
+  "codex_round_ledger": [
+    {
+      "round": 1,
+      "model": "gpt-5.5",
+      "auth_mode": "ChatGPT-account subscription",
+      "command": "CODEX_MODEL=gpt-5.5 codex exec --model gpt-5.5 --skip-git-repo-check --cd /c/Users/Owner/Repos/code-artifacts < bundle.txt > round1.txt",
+      "transcript_path": "apex_governance/codex_runs/ANIM-18/round1.txt",
+      "findings": "TO_BE_FILLED_AT_RUN",
+      "fixed_in_commit": "TO_BE_BACKFILLED"
+    }
+  ],
+  "silent_twice_progress": {
+    "target_rounds": "1 + 2 (or until two consecutive empty)",
+    "current_state": "PRE_CODEX_REVIEW",
+    "fix_round_cap_R16": 5
+  },
+  "exit_code_map": {
+    "0": ["PAYLOAD","DRY_RUN","FAL_OK","READY"],
+    "4": "default unrecognized status",
+    "6": ["INVALID_SHOT_ID","INVALID_JOB_ID","MISSING_ARGS","MULTIPLE_MODES"],
+    "7": ["FAL_KEY_UNRESOLVED","KEY_UNRESOLVED"],
+    "10": ["TIER_PLAN_NOT_FOUND","TIER_PLAN_UNPARSEABLE","TIER_PLAN_INVALID_PHASE","TIER_PLAN_EMPTY","TIER_PLAN_UNREADABLE","SHOT_NOT_IN_TIER_PLAN","SHOT_NOT_ROUTED_TO_FALCLOUD"],
+    "11": "FAL_HTTP_ERROR",
+    "12": "FAL_ENDPOINT_UNREACHABLE",
+    "13": "FAL_UNPARSEABLE_RESPONSE",
+    "14": "KEY_OK_SHIM_PENDING (legacy code retained for backward compat in case operator downgrades tier-config)"
+  },
+  "ledger_convention": {
+    "rule": "each round-N's fixed_in_commit is unknowable inside its own commit; the value is backfilled by the next commit. Final un-backfilled placeholder is resolved at cert-mint time. Documented as the chain-ledger convention in ANIM-14-evidence.json:ledger_convention."
+  }
+}
