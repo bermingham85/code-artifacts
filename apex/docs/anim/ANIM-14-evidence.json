@@ -115,7 +115,10 @@
     {"round": 6, "transcript": "apex_governance/codex_runs/ANIM-14/round6.txt", "high_findings": 2, "med_findings": 1, "low_findings": 0, "fixed_in_commit": "011d3fc [ANIM-14] Codex round-6 fix (F-12 timestamp split: built_at frozen + last_updated_at refresh; F-13 ANIM-14-evidence-probes.json inlined in next bundle; F-14 manifest_has_partial precedence over project_has_partial per SPEC-ANIM-14 §Schema-extension)"}
   ],
   "round_7_followups": [
-    {"round": 7, "transcript": "apex_governance/codex_runs/ANIM-14/round7.txt", "high_findings": 1, "med_findings": 0, "low_findings": 0, "fixed_in_commit": "[backfilled at next commit] (F-15 audit_landed_at_final pointed at 13:14:28Z but committed regens were at 13:25:05Z; freeze final audit pointer + add frozen_final_run flag to prevent further drift)"}
+    {"round": 7, "transcript": "apex_governance/codex_runs/ANIM-14/round7.txt", "high_findings": 1, "med_findings": 0, "low_findings": 0, "fixed_in_commit": "94f9580 [ANIM-14] Codex round-7 fix (F-15 audit_landed_at_final pointed at 13:14:28Z but committed regens were at 13:25:05Z; freeze final audit pointer + add frozen_final_run flag to prevent further drift)"}
+  ],
+  "round_8_silent": [
+    {"round": 8, "transcript": "apex_governance/codex_runs/ANIM-14/round8.txt", "high_findings": 0, "med_findings": 1, "low_findings": 0, "outcome": "first HIGH-empty round since R3; silent-twice clock at 1/2. MED F-16 was the chain-ledger forward-placeholder for R7 SHA — backfilled in this ledger update commit. No code change required."}
   ],
   "silent_twice_progress": {
     "rule": "Two consecutive HIGH-empty rounds = closed.",
@@ -125,9 +128,10 @@
     "round_5_high_count": 2,
     "round_6_high_count": 2,
     "round_7_high_count": 1,
-    "comment": "R7 surfaced 1 HIGH (audit_landed_at_final pointed at 13:14:28Z but post-r6 regens were 13:25:05Z); confirmed no code-path HIGH. silent-twice clock at 0/2. R8 + R9 must both be HIGH-empty. Final audit JSONs now FROZEN at 13:25:05Z to prevent the storyboard/validate regen + evidence timestamp drift loop that was burning rounds. R16 cap exceeded; ANIM-13 precedent supports continuation when each round finds real defects."
+    "round_8_high_count": 0,
+    "comment": "R8 returned 0 HIGH (silent-once); only MED was the documented chain-ledger placeholder pattern, backfilled in same commit as that ledger entry. silent-twice clock at 1/2. R9 must also be HIGH-empty to close. Resolver code has been clean since R3; the long tail of HIGHs (R4-R7) were evidence reconciliation issues."
   },
   "built_at": "2026-06-07T13:06:33+00:00",
-  "last_updated_at": "2026-06-07T13:27:00+00:00",
+  "last_updated_at": "2026-06-07T13:30:00+00:00",
   "timestamp_semantics": "built_at = first emission of this evidence file; last_updated_at = wall-clock of the most recent edit. Final FROZEN audit JSONs are apex/audit/anim-14/storyboard-grog_playground-2026-06-07T13-25-05Z.json + validate-grog_playground-2026-06-07T13-25-05Z.json (the 13:25:05Z regen post r6 F-14 precedence reorder commit 011d3fc). No further regens are planned for ANIM-14; the frozen_final_run flag in happy_path_runs §2 + §3 marks this freeze. Subsequent codex rounds review the frozen state without triggering new audit JSON writes."
 }
