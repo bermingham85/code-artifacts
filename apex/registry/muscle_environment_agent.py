@@ -73,23 +73,34 @@ _WORD_TOKEN_RE = re.compile(r"^[a-z0-9][a-z0-9_]*$")
 
 def discover_scene_refs(substr: str) -> list[Path]:
     """Catalog PNGs under SCENES_REF_ROOT whose filename contains the substr as a
-    word-boundary token sequence (not a free substring).
-
-    F-3 fix: substr is treated as a sequence of `_`-separated tokens that must appear
-    contiguously and at token-boundaries in the filename (preceded by start-of-name OR `_`,
-    followed by `_` OR `.`). This blocks both single-char "a" smuggling AND mid-token
-    overlap (e.g. "magical" alone does NOT match "magicalreal" if such a file existed).
-    Substr must be a valid lowercase token sequence (^[a-z0-9][a-z0-9_]*$) and at least
-    SUBSTR_MIN_LEN chars.
+    word-boundary token sequence (not a free substring) AND whose resolved target stays
+    under the approved scene-ref root (F-1 r3 fix: blocks symlink/junction escapes).
     """
     if not SCENES_REF_ROOT.is_dir():
         return []
     s = (substr or "").lower().strip()
     if len(s) < SUBSTR_MIN_LEN or not _WORD_TOKEN_RE.match(s):
         return []
-    # Build a regex with token-boundary anchors. (?:^|_) before, (?:_|\.) after.
     pat = re.compile(r"(?:^|_)" + re.escape(s) + r"(?:_|\.)")
-    return sorted([p for p in SCENES_REF_ROOT.glob("*.png") if pat.search(p.name.lower())])
+    try:
+        root_resolved = SCENES_REF_ROOT.resolve(strict=True)
+    except (FileNotFoundError, OSError):
+        return []
+    safe: list[Path] = []
+    for p in SCENES_REF_ROOT.glob("*.png"):
+        if not pat.search(p.name.lower()):
+            continue
+        try:
+            target = p.resolve(strict=True)
+        except (FileNotFoundError, OSError):
+            continue
+        try:
+            if Path(os.path.commonpath([str(target), str(root_resolved)])) != root_resolved:
+                continue
+        except ValueError:
+            continue
+        safe.append(p)
+    return sorted(safe)
 
 
 def validate_slug(slug: str) -> dict | None:
