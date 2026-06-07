@@ -59,8 +59,13 @@
       "result": {"status": "OK", "shot_count": 43, "section_count": 9},
       "character_markers_source_annotation": "ANIM-03 manifest (sha-verified against X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/shot_list.json)",
       "character_markers_value_matches_pre_migration": true,
-      "audit_landed_at": "apex/audit/anim-14/storyboard-grog_playground-2026-06-07T13-06-33Z.json",
-      "note": "ANIM-03 lookup path; emitted markers byte-equal to pre-migration value"
+      "audit_landed_at_final": "apex/audit/anim-14/storyboard-grog_playground-2026-06-07T13-14-28Z.json",
+      "audit_history": [
+        "apex/audit/anim-14/storyboard-grog_playground-2026-06-07T13-06-33Z.json (r1 fix run)",
+        "apex/audit/anim-14/storyboard-grog_playground-2026-06-07T13-10-43Z.json (r2 fix run)",
+        "apex/audit/anim-14/storyboard-grog_playground-2026-06-07T13-14-28Z.json (r3 fix run; final post-strict-manifest_partial)"
+      ],
+      "note": "ANIM-03 lookup path; emitted markers byte-equal to pre-migration value; final regen is the 13:14:28Z run after r3 F-6 strict semantics commit"
     },
     "3_validate_post_migration": {
       "command": "APEX_PHASE_AUDIT_DIR=apex/audit/anim-14 python apex/registry/muscle_shot_storyboard_agent.py --validate grog_playground",
@@ -70,8 +75,13 @@
       "mean_section_boundary_delta_seconds": 0.0,
       "coverage_ratio": 1.0,
       "status": "OK",
-      "audit_landed_at": "apex/audit/anim-14/validate-grog_playground-2026-06-07T13-06-33Z.json",
-      "note": "section deltas + coverage identical to ANIM-13 baseline; ANIM-03 lookup path produces wire-equivalent output"
+      "audit_landed_at_final": "apex/audit/anim-14/validate-grog_playground-2026-06-07T13-14-28Z.json",
+      "audit_history": [
+        "apex/audit/anim-14/validate-grog_playground-2026-06-07T13-06-33Z.json (r1 fix run)",
+        "apex/audit/anim-14/validate-grog_playground-2026-06-07T13-10-43Z.json (r2 fix run)",
+        "apex/audit/anim-14/validate-grog_playground-2026-06-07T13-14-28Z.json (r3 fix run; final post-strict-manifest_partial)"
+      ],
+      "note": "section deltas + coverage identical to ANIM-13 baseline across all three regens; ANIM-03 lookup path produces wire-equivalent output"
     }
   },
   "negative_path_evidence_file": "apex/docs/anim/ANIM-14-evidence-probes.json",
@@ -93,14 +103,16 @@
     {"round": 1, "transcript": "apex_governance/codex_runs/ANIM-14/round1.txt", "high_findings": 1, "med_findings": 2, "low_findings": 0, "fixed_in_commit": "4482385 [ANIM-14] Codex round-1 fix (F-1 bundle visibility, F-2 audit dir override, F-3 manifest_partial tolerance)"},
     {"round": 2, "transcript": "apex_governance/codex_runs/ANIM-14/round2.txt", "high_findings": 0, "med_findings": 1, "low_findings": 1, "fixed_in_commit": "c296feb [ANIM-14] Codex round-2 fix (F-4 probe audit-richness, F-5 non-object JSON source guard)"},
     {"round": 3, "transcript": "apex_governance/codex_runs/ANIM-14/round3.txt", "high_findings": 0, "med_findings": 1, "low_findings": 1, "fixed_in_commit": "2174908 [ANIM-14] Codex round-3 fix (F-6 strict manifest_partial restored; F-7 codex_runs ledger update)"},
-    {"round": 4, "transcript": "apex_governance/codex_runs/ANIM-14/round4.txt", "high_findings": 2, "med_findings": 0, "low_findings": 0, "fixed_in_commit": "round-4 fix commit (F-8 negative_path_summary mismatch with r3 strict semantics; F-9 r3 placeholder commit hash replaced with actual 2174908)"}
+    {"round": 4, "transcript": "apex_governance/codex_runs/ANIM-14/round4.txt", "high_findings": 2, "med_findings": 0, "low_findings": 0, "fixed_in_commit": "581631c [ANIM-14] Codex round-4 fix (F-8 negative_path_summary aligned with r3 strict semantics; F-9 r3 placeholder commit hash replaced with actual 2174908)"},
+    {"round": 5, "transcript": "apex_governance/codex_runs/ANIM-14/round5.txt", "high_findings": 2, "med_findings": 0, "low_findings": 0, "fixed_in_commit": "this commit (F-10 r4 placeholder commit hash replaced with actual 581631c; F-11 happy-path runs now record audit_history + final 13:14:28Z audit path matching the in-repo audit JSONs)"}
   ],
   "silent_twice_progress": {
     "rule": "Two consecutive HIGH-empty rounds = closed.",
     "round_2_high_count": 0,
     "round_3_high_count": 0,
     "round_4_high_count": 2,
-    "comment": "R4 surfaced 2 HIGH on stale evidence (not code); silent-twice clock reset. Resolver code itself was confirmed clean by R4: 'I found no code-path HIGH in muscle_shot_storyboard_agent.py'. R5 + R6 must both be HIGH-empty for silent-twice to close."
+    "round_5_high_count": 2,
+    "comment": "R5 surfaced 2 HIGH on stale evidence (R4 commit-hash placeholder + happy-path timestamp mismatch); R5 confirmed no code-path HIGH. silent-twice clock reset again — R6 + R7 must both be HIGH-empty to close. Per R16 phase has used 5 fix rounds (R1-R5) of the 5-round cap; remaining rounds must be silent."
   },
   "built_at": "2026-06-07T13:06:33+00:00"
 }
