@@ -1,0 +1,56 @@
+{
+  "_comment": "Tracked in-repo mirror of 4 MA queue rows appended to apex_governance/MISSING_SECRETS.queue.json during ANIM-12. The external queue is outside the code-artifacts git tree; this in-repo audit satisfies the SPEC DoD durability claim (per ANIM-09 round-1 fix pattern).",
+  "external_queue_path": "C:/Users/Owner/apex_governance/MISSING_SECRETS.queue.json",
+  "external_queue_is_in_repo": false,
+  "appended_at": "2026-06-07T10:40:00Z",
+  "rows": [
+    {
+      "id": "MA-AGEN-001-ROUTER-WKFL",
+      "raised_at": "2026-06-07T10:40:00Z",
+      "phase": "ANIM-12",
+      "asset": "AGEN-WKFL-router-agent-v1.json (Router agent n8n workflow)",
+      "location_checked": ["Grep for 'AGEN-WKFL-router' across all 200+ codex_runs transcripts — 0 hits"],
+      "symptom": "No router workflow JSON is inlined anywhere in the codex_runs archive. Router never had its own build-loop directory.",
+      "impact": "Router runtime cannot be deployed without this. Migration SCRPT alone is insufficient for agent operation.",
+      "resolution_required": "Operator: (a) locate from prompt registry / X clone snapshots predating May deletion; (b) draft fresh under separate ANIM phase; (c) defer router deployment.",
+      "owner": "Michael",
+      "status": "OPEN"
+    },
+    {
+      "id": "MA-AGEN-001-ROUTER-PRMPT",
+      "raised_at": "2026-06-07T10:40:00Z",
+      "phase": "ANIM-12",
+      "asset": "AGEN-PRMPT-router-system-prompt-v1.md (Router agent system prompt)",
+      "location_checked": ["Grep for 'AGEN-PRMPT-router' across all 200+ codex_runs transcripts — 0 hits"],
+      "symptom": "No router system prompt inlined anywhere.",
+      "impact": "Router runtime cannot be deployed without this.",
+      "resolution_required": "Operator: source from prompt registry / X clone snapshots, draft fresh, or defer.",
+      "owner": "Michael",
+      "status": "OPEN"
+    },
+    {
+      "id": "MA-AGEN-001-ROUTER-SPEC",
+      "raised_at": "2026-06-07T10:40:00Z",
+      "phase": "ANIM-12",
+      "asset": "AGEN-SPEC-router-integration-v1.md (Router agent integration spec)",
+      "location_checked": ["Grep for 'AGEN-SPEC-router' across all 200+ codex_runs transcripts — 0 hits"],
+      "symptom": "No router integration spec inlined anywhere.",
+      "impact": "Doc-control gap; agent runtime can theoretically operate without it but operator/auditor cannot verify behavior contract.",
+      "resolution_required": "Operator: source from prompt registry / X clone snapshots, draft fresh, or declare out-of-scope.",
+      "owner": "Michael",
+      "status": "OPEN"
+    },
+    {
+      "id": "MA-AGEN-001-ROUTER-TEST",
+      "raised_at": "2026-06-07T10:40:00Z",
+      "phase": "ANIM-12",
+      "asset": "AGEN-TEST-router-test-plan-v1.md (Router agent test plan)",
+      "location_checked": ["Grep for 'AGEN-TEST-router' across all 200+ codex_runs transcripts — 0 hits"],
+      "symptom": "No router test plan inlined anywhere.",
+      "impact": "Router runtime cannot be validated without this; deployment must use ad-hoc smoke tests until the test plan is restored.",
+      "resolution_required": "Operator: source from prompt registry / X clone snapshots, draft fresh, or defer.",
+      "owner": "Michael",
+      "status": "OPEN"
+    }
+  ]
+}
