@@ -413,25 +413,96 @@ def plan_from_storyboard(storyboard_path: str, tier_or_routing: str,
     except json.JSONDecodeError as e:
         return {"status": "STORYBOARD_UNPARSEABLE",
                 "storyboard_path": storyboard_path, "error": str(e)}
+    # ANIM-16 r1 F-1 fix: tighten storyboard schema validation up front so
+    # downstream emission can rely on well-formed input. We require:
+    #   - top-level dict
+    #   - phase == ANIM-13
+    #   - schema_version >= 2
+    #   - project (non-empty string)
+    #   - scene_slug matches SLUG_RE
+    #   - shots is a non-empty list
+    #   - each shot is a dict carrying id + section + energy + duration_seconds
+    if not isinstance(sb, dict):
+        return {"status": "STORYBOARD_UNPARSEABLE",
+                "storyboard_path": storyboard_path,
+                "error": "top-level JSON must be an object"}
     if sb.get("phase") != "ANIM-13":
         return {"status": "STORYBOARD_INVALID_PHASE",
                 "storyboard_path": storyboard_path,
                 "actual_phase": sb.get("phase")}
+    sv = sb.get("schema_version")
+    if not isinstance(sv, int) or sv < 2:
+        return {"status": "STORYBOARD_SCHEMA_TOO_OLD",
+                "storyboard_path": storyboard_path,
+                "actual_schema_version": sv,
+                "minimum_required": 2}
     project = sb.get("project")
+    if not isinstance(project, str) or not project:
+        return {"status": "STORYBOARD_MISSING_PROJECT",
+                "storyboard_path": storyboard_path}
     scene_slug = sb.get("scene_slug")
-    shots = sb.get("shots") or []
+    if not isinstance(scene_slug, str) or validate_slug(scene_slug):
+        return {"status": "STORYBOARD_INVALID_SCENE_SLUG",
+                "storyboard_path": storyboard_path,
+                "scene_slug": scene_slug,
+                "expected_regex": SLUG_RE.pattern}
+    shots = sb.get("shots")
+    if not isinstance(shots, list):
+        return {"status": "STORYBOARD_SHOTS_NOT_LIST",
+                "storyboard_path": storyboard_path}
     if not shots:
         return {"status": "STORYBOARD_EMPTY",
                 "storyboard_path": storyboard_path}
+    required_shot_fields = ("id", "section", "energy", "duration_seconds")
+    for idx, shot in enumerate(shots):
+        if not isinstance(shot, dict):
+            return {"status": "STORYBOARD_SHOT_NOT_DICT",
+                    "storyboard_path": storyboard_path,
+                    "shot_index": idx}
+        missing = [f for f in required_shot_fields if f not in shot]
+        if missing:
+            return {"status": "STORYBOARD_SHOT_MISSING_FIELDS",
+                    "storyboard_path": storyboard_path,
+                    "shot_index": idx, "missing_fields": missing}
+    # ANIM-16 r1 F-4 fix: pre-validate all energies against ENERGY_TO_TIER_MAP
+    # when --tier energy is requested. A single unknown energy must fail the
+    # whole run rather than producing a partial plan.
+    if routing_mode == "energy":
+        unknown = sorted({s["energy"] for s in shots
+                          if s["energy"] not in ENERGY_TO_TIER_MAP})
+        if unknown:
+            return {"status": "STORYBOARD_INVALID_ENERGY",
+                    "storyboard_path": storyboard_path,
+                    "unknown_energies": unknown,
+                    "known_energies": list(ENERGY_TO_TIER_MAP.keys())}
+
+    # ANIM-16 r1 F-3 fix: compute storyboard SHA up front so the overwrite
+    # check can compare hashes and surface drift explicitly. If the existing
+    # output references a different storyboard SHA, we report
+    # STORYBOARD_DRIFT_FROM_PRIOR_PLAN with both hashes rather than a generic
+    # overwrite refusal.
+    sb_sha = sha256_of(sb_path)
     if output_path is None:
         out = REPO_ROOT / f"apex/docs/anim/ANIM-16-tier-plan-{project}.json"
     else:
         out = Path(output_path)
     if out.exists() and not force:
+        prior_sha = None
+        try:
+            prior = json.loads(out.read_text(encoding="utf-8"))
+            prior_sha = prior.get("source_storyboard_sha256")
+        except (json.JSONDecodeError, OSError):
+            prior_sha = None
+        if prior_sha and prior_sha != sb_sha:
+            return {"status": "STORYBOARD_DRIFT_FROM_PRIOR_PLAN",
+                    "existing_path": str(out).replace("\\", "/"),
+                    "prior_storyboard_sha256": prior_sha,
+                    "current_storyboard_sha256": sb_sha,
+                    "hint": "rerun with --force to overwrite, or update the storyboard pointer"}
         return {"status": "WILL_OVERWRITE_REFUSED",
-                "existing_path": str(out).replace("\\", "/")}
-
-    sb_sha = sha256_of(sb_path)
+                "existing_path": str(out).replace("\\", "/"),
+                "prior_storyboard_sha256": prior_sha,
+                "current_storyboard_sha256": sb_sha}
 
     per_shot: list[dict] = []
     summary_by_status: dict[str, int] = {}
@@ -441,24 +512,20 @@ def plan_from_storyboard(storyboard_path: str, tier_or_routing: str,
         shot_id = str(shot.get("id"))
         energy = shot.get("energy")
         if routing_mode == "energy":
-            tier_chosen = ENERGY_TO_TIER_MAP.get(energy)
-            if not tier_chosen:
-                # Unknown energy → record as ENERGY_UNROUTED, skip plan_tier
-                per_shot.append({
-                    **shot,
-                    "tier_chosen": None,
-                    "tier_plan": {"status": "ENERGY_UNROUTED",
-                                   "energy": energy,
-                                   "known_energies": list(ENERGY_TO_TIER_MAP.keys())},
-                })
-                summary_by_status["ENERGY_UNROUTED"] = \
-                    summary_by_status.get("ENERGY_UNROUTED", 0) + 1
-                continue
+            # r1 F-4 fix: pre-validation above ensures every energy is in the
+            # map; the get() is now safe but kept defensive.
+            tier_chosen = ENERGY_TO_TIER_MAP[energy]
         else:
             tier_chosen = tier_or_routing
         plan = plan_tier(tier_chosen, shot_id, scene_slug)
+        # ANIM-16 r1 F-2 fix: per-shot record carries storyboard-level
+        # character traceability fields so downstream consumers don't have
+        # to chase the source storyboard separately. Marker text + provenance
+        # source annotation come from the storyboard top-level fields.
         per_shot.append({**shot,
                          "tier_chosen": tier_chosen,
+                         "character_markers": sb.get("character_markers"),
+                         "character_markers_source": sb.get("character_markers_source"),
                          "tier_plan": plan})
         st = plan.get("status", "UNKNOWN")
         summary_by_status[st] = summary_by_status.get(st, 0) + 1
@@ -629,6 +696,14 @@ def main() -> int:
         print(json.dumps(result, indent=2))
         code_for = {"OK": 0, "INVALID_TIER": 6, "STORYBOARD_NOT_FOUND": 10,
                     "STORYBOARD_UNPARSEABLE": 10, "STORYBOARD_INVALID_PHASE": 10,
+                    "STORYBOARD_SCHEMA_TOO_OLD": 10,
+                    "STORYBOARD_MISSING_PROJECT": 10,
+                    "STORYBOARD_INVALID_SCENE_SLUG": 10,
+                    "STORYBOARD_SHOTS_NOT_LIST": 10,
+                    "STORYBOARD_SHOT_NOT_DICT": 10,
+                    "STORYBOARD_SHOT_MISSING_FIELDS": 10,
+                    "STORYBOARD_INVALID_ENERGY": 10,
+                    "STORYBOARD_DRIFT_FROM_PRIOR_PLAN": 11,
                     "STORYBOARD_EMPTY": 10, "WILL_OVERWRITE_REFUSED": 5}
         return code_for.get(result.get("status", ""), 4)
     ap.print_help()

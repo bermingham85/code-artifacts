@@ -59,8 +59,15 @@
     "captured_in_output_at_field": "source_storyboard_sha256",
     "purpose": "downstream consumers / future ANIM-18 shim can detect storyboard drift between plan emission and render submission"
   },
-  "codex_runs": [],
-  "ledger_convention": "Per ANIM-14 chain-ledger convention.",
+  "codex_runs": [
+    {"round": 1, "transcript": "apex_governance/codex_runs/ANIM-16/round1.txt", "high_findings": 0, "med_findings": 5, "low_findings": 0, "fixed_in_commit": "[backfilled at next commit] (F-1 storyboard schema validation tightened — 7 new STORYBOARD_* error classes; F-2 per-shot record now carries character_markers + character_markers_source for traceability; F-3 storyboard SHA computed up front + STORYBOARD_DRIFT_FROM_PRIOR_PLAN exit 11 when prior plan's SHA doesn't match; F-4 --tier energy now pre-validates all shot energies against ENERGY_TO_TIER_MAP and surfaces STORYBOARD_INVALID_ENERGY; F-5 codex_runs ledger pattern adopted)"}
+  ],
+  "ledger_convention": "Per ANIM-14 chain-ledger convention — last entry's fixed_in_commit is backfilled by the next commit.",
+  "new_negative_paths_post_r1": {
+    "STORYBOARD_SCHEMA_TOO_OLD": {"command": "old schema_version=1 input", "expected_exit": 10, "actual_exit": 10},
+    "STORYBOARD_INVALID_ENERGY": {"command": "shot with energy not in {LOW,MED,HIGH} + --tier energy", "expected_exit": 10, "actual_exit": 10},
+    "STORYBOARD_DRIFT_FROM_PRIOR_PLAN": {"command": "rerun with stale prior_storyboard_sha256 in existing output", "expected_exit": 11, "actual_exit": 11}
+  },
   "built_at": "2026-06-07T13:54:00+00:00",
-  "last_updated_at": "2026-06-07T13:54:00+00:00"
+  "last_updated_at": "2026-06-07T13:58:00+00:00"
 }
