@@ -23,6 +23,12 @@ import sys
 from pathlib import Path
 
 CHARACTER_NAME_RE = re.compile(r"^[a-z][a-z0-9_]{0,31}$")
+# Brand is part of an on-disk filename (ANIM_<Brand>_<Char>_bible_v<n>.md) and is
+# trust-but-verified: it appears in the manifest, the bible header, and the
+# output path. Refuse any value that could escape BIBLE_ROOT or smuggle path
+# separators / dot segments into a write target. Letters, digits, single
+# hyphens and underscores only, up to 48 chars.
+BRAND_NAME_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_-]{0,47}$")
 PACK_MIN, PACK_MAX = 4, 7
 
 BRAND_DEFAULT = "Jesse-Adventures"
@@ -80,13 +86,26 @@ def sha256_of(p: Path, chunk: int = 1 << 20) -> str:
 
 
 def discover_render_set(char_dir: Path) -> list[Path]:
+    """Enumerate PNG renders under a character dir.
+
+    Path-safety (ANIM-07 r2): every candidate file is resolved and required to
+    remain under the *resolved* character dir. Symlinks/junctions that point
+    outside the character tree are filtered out so they cannot be hashed,
+    written into the manifest, or smuggle external content into the reference
+    pack. The character dir itself was already path-escape-checked by
+    `validate_character_arg`.
+    """
     if not char_dir.is_dir():
         return []
+    try:
+        char_resolved = char_dir.resolve(strict=True)
+    except (OSError, RuntimeError):
+        return []
     out: list[Path] = []
+    candidates: list[Path] = []
     # Flat files at root (Emma-style: emma_angle_front_00001_.png; also Lirian's
     # lirian_candidate_seed*.png and Grog's primary_ref.png).
-    for p in sorted(char_dir.glob("*.png")):
-        out.append(p)
+    candidates.extend(sorted(char_dir.glob("*.png")))
     # Nested layouts:
     #   ANIM-03 (Galinda-style): angles/, expressions/, poses/, closeups/, outfits/, source_refs/.
     #   ANIM-07 extension (Grog/Lirian): kontext_sheets/ (turnaround_seed*, expr_*, pose_*);
@@ -97,7 +116,20 @@ def discover_render_set(char_dir: Path) -> list[Path]:
                 "kontext_sheets", "midjourney_refs"):
         d = char_dir / sub
         if d.is_dir():
-            out.extend(sorted(d.glob("*.png")))
+            candidates.extend(sorted(d.glob("*.png")))
+    for p in candidates:
+        try:
+            resolved = p.resolve(strict=True)
+        except (OSError, RuntimeError):
+            continue
+        try:
+            if Path(os.path.commonpath([str(resolved), str(char_resolved)])) != char_resolved:
+                continue  # symlink/junction escapes the character dir; reject
+        except ValueError:
+            continue  # different drives
+        if not resolved.is_file():
+            continue
+        out.append(p)
     return out
 
 
@@ -318,11 +350,31 @@ def build_character(character: str, brand: str, force: bool) -> dict:
         return ret  # type: ignore[return-value]
     char_dir = ret  # type: ignore[assignment]
 
+    # ANIM-07 r2 fix (F-1 HIGH): brand contributes to the on-disk write target
+    # (ANIM_<Brand>_<Char>_bible_v1.md). Refuse anything that could path-escape
+    # BIBLE_ROOT or smuggle separators / dot segments into the bible path. Then
+    # resolve and assert the final bible_path is contained under BIBLE_ROOT
+    # before the overwrite guard, so a malicious brand cannot bypass it.
+    if not BRAND_NAME_RE.match(brand):
+        return {"character": character, "status": "INVALID_BRAND_NAME",
+                "brand": brand, "expected_regex": BRAND_NAME_RE.pattern,
+                "hint": "letters/digits/'-'/'_' only, must start with a letter, max 48 chars"}
+
     # F-4 r2 fix: check overwrite guard BEFORE volatile render discovery and hashing so
     # rerunning an already-built bible always returns WILL_OVERWRITE_REFUSED (exit 5),
     # independent of whether source renders are still present or the pack still meets PACK_MIN.
     cap = character.capitalize()
     bible_path = BIBLE_ROOT / f"ANIM_{brand}_{cap}_bible_v1.md"
+    try:
+        bible_resolved = bible_path.resolve(strict=False)
+        bible_root_resolved = BIBLE_ROOT.resolve(strict=False)
+        if Path(os.path.commonpath([str(bible_resolved), str(bible_root_resolved)])) != bible_root_resolved:
+            return {"character": character, "status": "PATH_ESCAPE_REJECTED",
+                    "field": "brand", "brand": brand,
+                    "resolved": str(bible_resolved), "bible_root": str(bible_root_resolved)}
+    except ValueError:
+        return {"character": character, "status": "PATH_ESCAPE_REJECTED",
+                "field": "brand", "brand": brand, "bible_root": str(BIBLE_ROOT)}
     if bible_path.exists() and not force:
         return {"character": character, "status": "WILL_OVERWRITE_REFUSED",
                 "existing_bible": str(bible_path),
@@ -437,6 +489,7 @@ def main() -> int:
         "OK": 0,
         "WILL_OVERWRITE_REFUSED": 5,
         "INVALID_CHARACTER_NAME": 6,
+        "INVALID_BRAND_NAME": 6,
         "PATH_ESCAPE_REJECTED": 6,
         "PACK_TOO_SMALL": 7,
         "NO_CANON_SOURCE": 8,

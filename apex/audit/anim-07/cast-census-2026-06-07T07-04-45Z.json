@@ -8,8 +8,9 @@
   "scan_method_provenance": "Counts taken from filesystem directly via path-bound find at the timestamp above; verified against muscle_character_build_agent.py --dry-run outputs (jesse=0, grog=45, lirian=18, amy=52) for the four characters whose counts the agent reports. This file was authored AFTER the agent extension and after the grog+lirian builds completed at 2026-06-07T07:03:25Z and 07:03:30Z respectively; it is a post-build coverage census, not a pre-flight snapshot.",
   "project_spec_path": "X:/Automations/apex/projects/jesse_animate/PROJECT_SPEC.md",
   "project_spec_section": "§1.8 Character Canon (Confirmed)",
-  "cast_canon_named": ["jesse", "kevin", "amy", "laura", "lirian", "ann", "grog"],
-  "cast_status_json_extra": ["emma", "galinda"],
+  "cast_canon_named": ["jesse", "kevin", "emma", "amy", "laura", "grog", "lirian", "ann"],
+  "cast_status_json_extra": ["galinda"],
+  "cast_canon_count_note": "PROJECT_SPEC.md lines 125-132 enumerate 8 named characters in §1.8. Emma is in the canon table (line 127) but has no status.json on disk, which is why her ANIM-03 manifest entry sets status_json_path=null and emits F-ANIM03-02; canon-named is determined by §1.8 presence, not by status.json presence. Galinda is the only render-tree resident NOT in §1.8 and is built from her status.json.",
   "missing_artifacts_queue_path": "C:/Users/Owner/apex_governance/MISSING_SECRETS.queue.json",
   "missing_artifacts_queue_note": "The single unified governance queue file at apex_governance/MISSING_SECRETS.queue.json holds both MS-* secrets and MA-* missing-artifacts rows (see MA-AGEN-001..004 and MA-ANIM-001 already present). SPEC-ANIM-07 §3/§7 references to a 'MISSING_ARTIFACTS.queue.json' name resolve to this unified file in practice; no separate file exists. MA-ANIM-07-RENDERS-EMPTY + MA-ANIM-07-MIDJOURNEY-RAW already appended (verified at 2026-06-07T07:05Z).",
   "census": [
