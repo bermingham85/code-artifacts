@@ -16,7 +16,9 @@
       "character_markers_provenance_field": "grog_identifiers",
       "character_markers_provenance_sha256": "6414235bd985e2d90c4e5875846739a276da0f2c7388abff4a99377332f6a428",
       "f3_r2_note": "scene_markers, style_anchor, prompt_rules are NOT carried in this binding — the agent reads them at runtime from ANIM-04-scene-pack-manifest.json (scenes[<scene>].descriptor.prompt + brand_tokens.style_anchor + brand_tokens.prompt_rules). character_markers stays here but its source file + content sha256 are verified at runtime against the live file; drift aborts emission.",
-      "sections_source": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/shot_list.json:sections (verbatim)",
+      "sections_provenance_source_path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/shot_list.json",
+      "sections_provenance_field": "sections",
+      "f6_r5_note": "sections are present below for human-readable diff, but at runtime the agent re-reads them from the named source field and requires verbatim equality. Mismatch -> SECTIONS_VALUE_MISMATCH (exit 12).",
       "sections": [
         {"name": "intro", "start": 0.0, "end": 11.5, "energy": "LOW", "mood": "piano intro, establishing"},
         {"name": "verse1", "start": 11.5, "end": 51.4, "energy": "MED", "mood": "childhood memories, longing, flashback"},

@@ -9,27 +9,33 @@
   "deliverables": [
     {
       "path": "apex/registry/muscle_shot_storyboard_agent.py",
-      "sha256": "405e9a8b5e3fb3fc90ef1abe33ae2eae14fcb5f97f4c74051746610828c3ca18",
+      "sha256": "4d4b321d72ee4ac796fdfe8554fc7a5ead86b86b690890c10071b06ed6bf9047",
       "kind": "muscle",
-      "post_round3": true
+      "post_round5": true
     },
     {
       "path": "apex/docs/anim/ANIM-13-projects.json",
-      "sha256": "ccab61626136b62f1a68f96d9d3e7af6100a16b611ef9fb471399d3defa41b7d",
+      "sha256": "fe318b7a4a476ccb4fcc82e619fed138ecf0c1cb8c35bbad3bf24aedae8d002d",
       "kind": "config",
-      "post_round2": true
+      "post_round5": true
     },
     {
       "path": "apex/docs/anim/ANIM-13-storyboard-grog_playground.json",
-      "sha256": "e8fad801323f1b4d8dfaa2dfd57d14c7ffdefc276f9801ba52f31705a584e579",
+      "sha256": "459274f89e68c10ff58d8c6db6bb31a2ee131383164f42230788af6c9610cee3",
       "kind": "deterministic output",
-      "post_round3": true
+      "post_round5": true
     },
     {
       "path": "apex/docs/anim/ANIM-13-validation-grog.json",
-      "sha256": "4c3625a0c22b35fba9487486284fb56e7e6ecf564ffb0cfad581b7c2af8db88d",
+      "sha256": "380693930cf4f9fe142d00cf849d676da80b9f52184653c796f15591867cc628",
       "kind": "gold-reference validation report",
-      "post_round3": true
+      "post_round5": true
+    }
+  ],
+  "codex_round5_fixes": [
+    {
+      "finding": "F-6 (P3/R20) — sections table was still trusted from projects.json without verbatim-matching against the source file's named field, same gap pattern as F-5 for character_markers",
+      "fix": "sections inherit the same provenance treatment as character_markers. projects.json now requires sections_provenance_source_path + sections_provenance_field; build_storyboard() reads the source JSON, fetches source[field], and requires cfg['sections'] == source[field] verbatim (recursive equality). New statuses (all exit 12): SECTIONS_PROVENANCE_MISSING / SECTIONS_SOURCE_MISSING / SECTIONS_SOURCE_UNPARSEABLE / SECTIONS_FIELD_MISSING / SECTIONS_VALUE_MISMATCH. Verified via inline negative test (mutating section[0].end to 999.0 reliably triggers SECTIONS_VALUE_MISMATCH)."
     }
   ],
   "codex_round3_fixes": [

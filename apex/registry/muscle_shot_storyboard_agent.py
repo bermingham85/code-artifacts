@@ -237,6 +237,38 @@ def build_storyboard(project_slug: str, target_shot_seconds: float, force: bool)
                 "recorded_in_projects_json": cfg["character_markers"],
                 "actual_in_source": source_value}
 
+    # F-6 r5 fix: sections table inherits the same provenance treatment as
+    # character_markers. cfg requires sections_provenance_source_path +
+    # sections_provenance_field (the JSON array field within that source);
+    # build_storyboard hashes the source, reads the field, and requires the
+    # in-projects sections to be a verbatim match (recursive equality).
+    sec_src_str = cfg.get("sections_provenance_source_path")
+    sec_field = cfg.get("sections_provenance_field")
+    if not sec_src_str or not sec_field:
+        return {"slug": project_slug, "status": "SECTIONS_PROVENANCE_MISSING",
+                "required_fields": [
+                    "sections_provenance_source_path",
+                    "sections_provenance_field",
+                ]}
+    sec_src_path = Path(sec_src_str)
+    if not sec_src_path.is_file():
+        return {"slug": project_slug, "status": "SECTIONS_SOURCE_MISSING",
+                "source_path": sec_src_str}
+    try:
+        sec_src_data = json.loads(sec_src_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as e:
+        return {"slug": project_slug, "status": "SECTIONS_SOURCE_UNPARSEABLE",
+                "source_path": sec_src_str, "error": str(e)}
+    sec_source_value = sec_src_data.get(sec_field)
+    if sec_source_value is None:
+        return {"slug": project_slug, "status": "SECTIONS_FIELD_MISSING",
+                "source_path": sec_src_str, "field": sec_field}
+    if cfg["sections"] != sec_source_value:
+        return {"slug": project_slug, "status": "SECTIONS_VALUE_MISMATCH",
+                "source_path": sec_src_str, "field": sec_field,
+                "recorded_in_projects_json": cfg["sections"],
+                "actual_in_source": sec_source_value}
+
     lyrics = load_lyrics(cfg["lyrics_timestamped_path"])
     if not lyrics:
         return {"slug": project_slug, "status": "LYRICS_MISSING",
@@ -450,7 +482,12 @@ def main() -> int:
                     "CHARACTER_MARKERS_PROVENANCE_DRIFT": 11,
                     "CHARACTER_MARKERS_SOURCE_UNPARSEABLE": 11,
                     "CHARACTER_MARKERS_FIELD_MISSING": 11,
-                    "CHARACTER_MARKERS_VALUE_MISMATCH": 11}
+                    "CHARACTER_MARKERS_VALUE_MISMATCH": 11,
+                    "SECTIONS_PROVENANCE_MISSING": 12,
+                    "SECTIONS_SOURCE_MISSING": 12,
+                    "SECTIONS_SOURCE_UNPARSEABLE": 12,
+                    "SECTIONS_FIELD_MISSING": 12,
+                    "SECTIONS_VALUE_MISMATCH": 12}
         return code_for.get(result.get("status", ""), 4)
 
     if args.validate:
