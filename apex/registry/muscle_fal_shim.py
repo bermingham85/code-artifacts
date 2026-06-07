@@ -221,12 +221,18 @@ _STATUS_RE = re.compile(r"^[A-Z][A-Z0-9_]{0,63}$")
 _FINGERPRINT_RE = re.compile(r"^[a-f0-9]{4}:[a-f0-9]{4}$")
 _HEX12_RE = re.compile(r"^[a-f0-9]{12}$")
 _FIELD_NAME_RE = re.compile(r"^[A-Z_][A-Z0-9_]{0,63}$")
-# env_sync_path is either a Windows / POSIX JSON path or the literal
-# "<sentinel>" used by P12-P17 probes. Path body restricted to filesystem
-# characters; JSON suffix required so an attacker-supplied free-form string
-# cannot match (a raw key has neither a `.json` suffix nor the bracket form).
-_ENV_SYNC_PATH_RE = re.compile(
-    r"^(?:<sentinel>|[A-Za-z]?:?[/\\]?[\w\-./\\: ]{1,255}\.json)$")
+# ANIM-18 r9 MED-1 fix: env_sync_path was previously regex-validated as
+# "any path body ending in .json". That accepted credential-stuffed values
+# like `X:/env_sync/<raw_fal_key>.json` — the raw key sits inside a
+# syntactically valid path. Replace the regex with an exact-match allowlist
+# of canonical values. The legitimate set is small (the production env_sync
+# location + the probe harness sentinel); a new env_sync location is a
+# tier-config change that already requires a phase + cert, so the one-line
+# allowlist update fits the existing change-management route.
+_ALLOWED_ENV_SYNC_PATHS = frozenset({
+    "<sentinel>",
+    "X:/env_sync/user_portable.json",
+})
 # Python type names from type(x).__name__: simple identifiers, optionally
 # dotted (e.g. 'NoneType', 'collections.OrderedDict'). Bounded to 32 chars.
 _ACTUAL_TYPE_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_.]{0,31}$")
@@ -244,7 +250,7 @@ def _validate_safe_shape(name: str, value) -> bool:
         return isinstance(value, int) and not isinstance(value, bool) \
                and 0 <= value <= 1024
     if name == "env_sync_path":
-        return isinstance(value, str) and bool(_ENV_SYNC_PATH_RE.match(value))
+        return isinstance(value, str) and value in _ALLOWED_ENV_SYNC_PATHS
     if name == "field":
         return isinstance(value, str) and bool(_FIELD_NAME_RE.match(value))
     if name == "actual_type":

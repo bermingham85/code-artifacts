@@ -525,6 +525,34 @@ def main() -> int:
                            json.dumps(fp_results), real_key),
     })
 
+    # ---- P27: ANIM-18 r9 MED-1 fix. env_sync_path was regex-validated as
+    # "any path body ending in .json", which let a tampered resolver smuggle
+    # the raw key inside an otherwise-syntactically-valid path. Verify the
+    # exact attack form (sentinel embedded in a .json filename) is suppressed
+    # by the new exact-allowlist contract.
+
+    stuffed_path = f"X:/env_sync/{SENTINEL_KEY}.json"
+    stuffed_path_probe = {
+        "status": "ENV_KEY_MISSING",
+        "env_sync_path": stuffed_path,
+        "field": "FAL_AI_API_KEY",
+    }
+    shim.resolve_fal_key = lambda: dict(stuffed_path_probe)
+    try:
+        r = shim.probe()
+        kr = (r or {}).get("key_resolution") or {}
+        path_suppressed = kr.get("env_sync_path") == "<suppressed-by-fingerprint_only>"
+        _record(out, "ENV_SYNC_PATH_CREDENTIAL_STUFFING", "KEY_UNRESOLVED",
+                r, real_key,
+                extra={
+                    "path_suppressed": path_suppressed,
+                    # both must be true: sentinel not in output AND path suppressed
+                    "pass": (r.get("status") == "KEY_UNRESOLVED"
+                             and path_suppressed),
+                })
+    finally:
+        shim.resolve_fal_key = original_resolver
+
     # ---- Aggregate + fail-closed scrub before any print ----
 
     out["probe_count"] = len(out["probes"])
