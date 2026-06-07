@@ -1,0 +1,15 @@
+{
+  "phase": "ANIM-16",
+  "project": "grog_playground",
+  "tier_routing": "Wan22",
+  "output_path": "apex/docs/anim/ANIM-16-tier-plan-grog_playground.json",
+  "shot_count": 43,
+  "summary_by_status": {
+    "PLAN": 43
+  },
+  "summary_by_tier_chosen": {
+    "Wan22": 43
+  },
+  "timestamp": "2026-06-07T14-01-47Z",
+  "status": "OK"
+}

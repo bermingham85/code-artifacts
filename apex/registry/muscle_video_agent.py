@@ -440,6 +440,27 @@ def plan_from_storyboard(storyboard_path: str, tier_or_routing: str,
     if not isinstance(project, str) or not project:
         return {"status": "STORYBOARD_MISSING_PROJECT",
                 "storyboard_path": storyboard_path}
+    # ANIM-16 r2 F-9 fix: project string is interpolated into default
+    # output path. Constrain to a filename-safe slug to prevent path
+    # traversal (e.g. project="../escape") and unexpected directory
+    # creation. Use the same SHOT_ID_RE pattern (low-ASCII slug rules) as
+    # other agent inputs.
+    if not SHOT_ID_RE.match(project):
+        return {"status": "STORYBOARD_INVALID_PROJECT",
+                "storyboard_path": storyboard_path,
+                "project": project,
+                "expected_regex": SHOT_ID_RE.pattern}
+    # ANIM-16 r2 F-7 fix: storyboard traceability fields (character_markers
+    # + source annotation) must be present + non-empty strings on the
+    # storyboard top-level so they can be carried into every per-shot
+    # record. Null traceability defeats the round-1 F-2 fix.
+    for tf in ("character_markers", "character_markers_source"):
+        val = sb.get(tf)
+        if not isinstance(val, str) or not val.strip():
+            return {"status": "STORYBOARD_MISSING_TRACEABILITY_FIELD",
+                    "storyboard_path": storyboard_path,
+                    "field": tf,
+                    "hint": "ANIM-13 storyboards from ANIM-14+ always carry these"}
     scene_slug = sb.get("scene_slug")
     if not isinstance(scene_slug, str) or validate_slug(scene_slug):
         return {"status": "STORYBOARD_INVALID_SCENE_SLUG",
@@ -453,7 +474,17 @@ def plan_from_storyboard(storyboard_path: str, tier_or_routing: str,
     if not shots:
         return {"status": "STORYBOARD_EMPTY",
                 "storyboard_path": storyboard_path}
-    required_shot_fields = ("id", "section", "energy", "duration_seconds")
+    # ANIM-16 r2 F-6 fix: require every storyboard-shape field the §Outputs
+    # spec lists per shot, not just the four core identifier fields. The
+    # output JSON assumes all of these are present and downstream consumers
+    # rely on them. Malformed storyboards (e.g. truncated by a future
+    # generator change) must fail loud at this gate.
+    required_shot_fields = (
+        "id", "section", "start", "end", "duration_seconds",
+        "energy", "mood", "lyric", "lyric_word_count",
+        "camera_preset", "wan_motion_preset",
+        "kontext_prompt_template", "needs_fill",
+    )
     for idx, shot in enumerate(shots):
         if not isinstance(shot, dict):
             return {"status": "STORYBOARD_SHOT_NOT_DICT",
@@ -464,16 +495,25 @@ def plan_from_storyboard(storyboard_path: str, tier_or_routing: str,
             return {"status": "STORYBOARD_SHOT_MISSING_FIELDS",
                     "storyboard_path": storyboard_path,
                     "shot_index": idx, "missing_fields": missing}
-    # ANIM-16 r1 F-4 fix: pre-validate all energies against ENERGY_TO_TIER_MAP
-    # when --tier energy is requested. A single unknown energy must fail the
-    # whole run rather than producing a partial plan.
-    if routing_mode == "energy":
-        unknown = sorted({s["energy"] for s in shots
-                          if s["energy"] not in ENERGY_TO_TIER_MAP})
-        if unknown:
+    # ANIM-16 r2 F-8 fix: every shot's energy must be a string AND one of
+    # ENERGY_TO_TIER_MAP keys, regardless of routing mode. Fixed-tier runs
+    # don't use energy for selection but invalid energy values are still
+    # garbage data and should fail loud. Also defends against unhashable
+    # energy values (list/dict) that would crash the set-membership check
+    # below.
+    for idx, shot in enumerate(shots):
+        e = shot.get("energy")
+        if not isinstance(e, str):
             return {"status": "STORYBOARD_INVALID_ENERGY",
                     "storyboard_path": storyboard_path,
-                    "unknown_energies": unknown,
+                    "shot_index": idx,
+                    "energy_type": type(e).__name__,
+                    "known_energies": list(ENERGY_TO_TIER_MAP.keys())}
+        if e not in ENERGY_TO_TIER_MAP:
+            return {"status": "STORYBOARD_INVALID_ENERGY",
+                    "storyboard_path": storyboard_path,
+                    "shot_index": idx,
+                    "energy_value": e,
                     "known_energies": list(ENERGY_TO_TIER_MAP.keys())}
 
     # ANIM-16 r1 F-3 fix: compute storyboard SHA up front so the overwrite
@@ -698,6 +738,8 @@ def main() -> int:
                     "STORYBOARD_UNPARSEABLE": 10, "STORYBOARD_INVALID_PHASE": 10,
                     "STORYBOARD_SCHEMA_TOO_OLD": 10,
                     "STORYBOARD_MISSING_PROJECT": 10,
+                    "STORYBOARD_INVALID_PROJECT": 10,
+                    "STORYBOARD_MISSING_TRACEABILITY_FIELD": 10,
                     "STORYBOARD_INVALID_SCENE_SLUG": 10,
                     "STORYBOARD_SHOTS_NOT_LIST": 10,
                     "STORYBOARD_SHOT_NOT_DICT": 10,

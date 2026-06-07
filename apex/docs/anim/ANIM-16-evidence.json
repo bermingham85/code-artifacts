@@ -11,10 +11,23 @@
       "new_module_constant": "ENERGY_TO_TIER_MAP = {LOW: LTX, MED: Wan22, HIGH: Wan22}",
       "new_cli_flags": ["--plan-from-storyboard <path>", "--tier <name|energy>", "--output <path>"],
       "new_exit_codes": {
+        "INVALID_TIER": 6,
+        "MISSING_TIER": 6,
+        "WILL_OVERWRITE_REFUSED": 5,
         "STORYBOARD_NOT_FOUND": 10,
         "STORYBOARD_UNPARSEABLE": 10,
         "STORYBOARD_INVALID_PHASE": 10,
-        "STORYBOARD_EMPTY": 10
+        "STORYBOARD_SCHEMA_TOO_OLD": 10,
+        "STORYBOARD_MISSING_PROJECT": 10,
+        "STORYBOARD_INVALID_PROJECT": 10,
+        "STORYBOARD_MISSING_TRACEABILITY_FIELD": 10,
+        "STORYBOARD_INVALID_SCENE_SLUG": 10,
+        "STORYBOARD_SHOTS_NOT_LIST": 10,
+        "STORYBOARD_SHOT_NOT_DICT": 10,
+        "STORYBOARD_SHOT_MISSING_FIELDS": 10,
+        "STORYBOARD_INVALID_ENERGY": 10,
+        "STORYBOARD_EMPTY": 10,
+        "STORYBOARD_DRIFT_FROM_PRIOR_PLAN": 11
       }
     },
     "ANIM-16-tier-plan-<project>.json": {"schema_version": 1, "introduced_in": "ANIM-16"}
@@ -60,7 +73,8 @@
     "purpose": "downstream consumers / future ANIM-18 shim can detect storyboard drift between plan emission and render submission"
   },
   "codex_runs": [
-    {"round": 1, "transcript": "apex_governance/codex_runs/ANIM-16/round1.txt", "high_findings": 0, "med_findings": 5, "low_findings": 0, "fixed_in_commit": "[backfilled at next commit] (F-1 storyboard schema validation tightened — 7 new STORYBOARD_* error classes; F-2 per-shot record now carries character_markers + character_markers_source for traceability; F-3 storyboard SHA computed up front + STORYBOARD_DRIFT_FROM_PRIOR_PLAN exit 11 when prior plan's SHA doesn't match; F-4 --tier energy now pre-validates all shot energies against ENERGY_TO_TIER_MAP and surfaces STORYBOARD_INVALID_ENERGY; F-5 codex_runs ledger pattern adopted)"}
+    {"round": 1, "transcript": "apex_governance/codex_runs/ANIM-16/round1.txt", "high_findings": 0, "med_findings": 5, "low_findings": 0, "fixed_in_commit": "2a49ba3 [ANIM-16] Codex round-1 fix (F-1 schema validation tightened; F-2 per-shot traceability passthrough; F-3 storyboard SHA drift detection; F-4 energy pre-validate for routing mode; F-5 codex_runs ledger)"},
+    {"round": 2, "transcript": "apex_governance/codex_runs/ANIM-16/round2.txt", "high_findings": 0, "med_findings": 5, "low_findings": 0, "fixed_in_commit": "[backfilled at next commit] (F-6 required_shot_fields expanded to all spec-listed fields; F-7 storyboard top-level character_markers + source field required as non-empty strings; F-8 energy validation runs for all shots regardless of routing mode + non-string energy rejected before set lookup; F-9 project string constrained to SHOT_ID_RE for path-traversal safety; F-10 new_exit_codes in evidence backfilled with all r1+r2 new statuses)"}
   ],
   "ledger_convention": "Per ANIM-14 chain-ledger convention — last entry's fixed_in_commit is backfilled by the next commit.",
   "new_negative_paths_post_r1": {

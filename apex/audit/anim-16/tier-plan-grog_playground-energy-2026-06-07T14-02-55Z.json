@@ -1,0 +1,16 @@
+{
+  "phase": "ANIM-16",
+  "project": "grog_playground",
+  "tier_routing": "energy",
+  "output_path": "apex/docs/anim/ANIM-16-tier-plan-grog_playground-energy.json",
+  "shot_count": 43,
+  "summary_by_status": {
+    "PLAN": 43
+  },
+  "summary_by_tier_chosen": {
+    "LTX": 6,
+    "Wan22": 37
+  },
+  "timestamp": "2026-06-07T14-02-55Z",
+  "status": "OK"
+}
