@@ -35,7 +35,17 @@ PROJECTS_PATH = REPO_ROOT / "apex/docs/anim/ANIM-13-projects.json"
 REF_PACK_MANIFEST_PATH = REPO_ROOT / "apex/docs/anim/ANIM-03-reference-pack-manifest.json"
 SCENE_PACK_MANIFEST_PATH = REPO_ROOT / "apex/docs/anim/ANIM-04-scene-pack-manifest.json"
 STORYBOARD_DIR = REPO_ROOT / "apex/docs/anim"
-AUDIT_ROOT = REPO_ROOT / "apex/audit/anim-13"
+# ANIM-14 r1 F-2 fix: audits default to the agent's home phase (ANIM-13) but
+# can be redirected via APEX_PHASE_AUDIT_DIR so phase-scoped runs (e.g.
+# ANIM-14 schema-extension evidence) co-locate their audit JSONs with the
+# rest of the phase artifacts under apex/audit/anim-14/. Path is rebased on
+# REPO_ROOT when relative, taken as-is when absolute.
+_audit_override = os.environ.get("APEX_PHASE_AUDIT_DIR")
+if _audit_override:
+    _audit_p = Path(_audit_override)
+    AUDIT_ROOT = _audit_p if _audit_p.is_absolute() else REPO_ROOT / _audit_p
+else:
+    AUDIT_ROOT = REPO_ROOT / "apex/audit/anim-13"
 
 ENERGY_CAMERA = {
     "LOW": "slow drift, golden tones, steady frame",
@@ -214,7 +224,13 @@ def resolve_character_markers(project_slug: str, cfg: dict, ref_pack: dict) -> d
                 "origin": "projects.json",
                 "required_fields": list(_MARKER_FIELDS),
                 "present_fields": project_present}
-    if manifest_has_partial:
+    # ANIM-14 r1 F-3 fix: manifest_partial is only a fatal blocker when we
+    # actually need the manifest (i.e. project is not complete on its own).
+    # A complete project marker block always wins; an incidentally-partial
+    # manifest declaration is a registry inconsistency but not a runtime
+    # blocker for this project. If a project later omits markers, the
+    # manifest's partial state becomes fatal at that time.
+    if not project_path_complete and manifest_has_partial:
         return {"slug": project_slug,
                 "status": "CHARACTER_MARKERS_MANIFEST_PARTIAL",
                 "origin": "ANIM-03 manifest",

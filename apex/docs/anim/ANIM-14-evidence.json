@@ -30,7 +30,6 @@
       "purpose": "forces the ANIM-03 lookup path to be exercised end-to-end on the only currently-registered project"
     },
     "muscle_shot_storyboard_agent.py": {
-      "lines_changed": "approx 130 added (helper + resolver) / 35 removed (inline block)",
       "new_helper_functions": [
         "_verify_markers_against_source(character_markers, src_path_str, src_sha, src_field) -> dict|None",
         "resolve_character_markers(project_slug, cfg, ref_pack) -> dict"
@@ -42,7 +41,9 @@
         "CHARACTER_MARKERS_SOURCE_CONFLICT": 13
       },
       "storyboard_schema_version_before": 2,
-      "storyboard_schema_version_after": 3
+      "storyboard_schema_version_after": 3,
+      "anim14_r1_F2_fix": "AUDIT_ROOT honors APEX_PHASE_AUDIT_DIR env (relative paths rebased on REPO_ROOT). Default remains apex/audit/anim-13 for backward compat. ANIM-14 phase runs set APEX_PHASE_AUDIT_DIR=apex/audit/anim-14 to land evidence in this phase's namespace.",
+      "anim14_r1_F3_fix": "manifest_has_partial only fatal when project_path_complete is False; a project that declares the full marker block tolerates an incidentally-partial manifest registration (registry inconsistency is logged but not a runtime blocker for the project)."
     }
   },
   "happy_path_runs": {
@@ -53,35 +54,41 @@
       "note": "ANIM-14 cross-check on both paths (projects.json + ANIM-03 entry both present and byte-equal); projects.json wins precedence"
     },
     "2_projects_json_marker_block_removed_post_migration": {
-      "command": "python apex/registry/muscle_shot_storyboard_agent.py --storyboard grog_playground --force",
+      "command": "APEX_PHASE_AUDIT_DIR=apex/audit/anim-14 python apex/registry/muscle_shot_storyboard_agent.py --storyboard grog_playground --force",
       "result": {"status": "OK", "shot_count": 43, "section_count": 9},
       "character_markers_source_annotation": "ANIM-03 manifest (sha-verified against X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/shot_list.json)",
       "character_markers_value_matches_pre_migration": true,
+      "audit_landed_at": "apex/audit/anim-14/storyboard-grog_playground-2026-06-07T13-06-33Z.json",
       "note": "ANIM-03 lookup path; emitted markers byte-equal to pre-migration value"
     },
     "3_validate_post_migration": {
-      "command": "python apex/registry/muscle_shot_storyboard_agent.py --validate grog_playground",
+      "command": "APEX_PHASE_AUDIT_DIR=apex/audit/anim-14 python apex/registry/muscle_shot_storyboard_agent.py --validate grog_playground",
       "emitted_shot_count": 43,
       "gold_shot_count": 38,
       "max_section_boundary_delta_seconds": 0.0,
       "mean_section_boundary_delta_seconds": 0.0,
       "coverage_ratio": 1.0,
       "status": "OK",
+      "audit_landed_at": "apex/audit/anim-14/validate-grog_playground-2026-06-07T13-06-33Z.json",
       "note": "section deltas + coverage identical to ANIM-13 baseline; ANIM-03 lookup path produces wire-equivalent output"
     }
   },
   "negative_path_evidence_file": "apex/docs/anim/ANIM-14-evidence-probes.json",
   "negative_path_summary": {
     "CHARACTER_MARKERS_NOT_FOUND": "fires when project AND manifest both omit the marker block",
-    "CHARACTER_MARKERS_MANIFEST_PARTIAL": "fires when ANIM-03 manifest's marker block is 3-of-4 fields present",
+    "CHARACTER_MARKERS_MANIFEST_PARTIAL_when_project_absent": "fires only when ANIM-03 manifest's marker block is 3-of-4 fields present AND projects.json declares nothing (r1 F-3 fix preserves project override)",
     "CHARACTER_MARKERS_VALUE_MISMATCH (manifest path)": "fires when ANIM-03 records wrong character_markers text; sha + field still verified against named source",
     "CHARACTER_MARKERS_SOURCE_CONFLICT": "fires when projects.json AND ANIM-03 both verified-OK individually (against different fields in same source file) but recorded marker text differs",
-    "OK via manifest-only": "happy path with markers from ANIM-03 lookup only"
+    "OK_via_manifest_only": "happy path with markers from ANIM-03 lookup only",
+    "OK_project_complete_with_manifest_partial_tolerated": "r1 F-3 fix evidence: project_path_complete=True + manifest_has_partial=True returns OK with projects.json marker text"
   },
   "open_followons": [
     "MA-ANIM-14-MARKERS-GALINDA — register a galinda canonical identifier source",
     "MA-ANIM-14-MARKERS-EMMA — register an emma canonical identifier source",
     "MA-ANIM-14-MARKERS-LIRIAN — register a lirian canonical identifier source (also blocks ANIM-15 Lirian MV binding)"
   ],
-  "built_at": "2026-06-07T13:01:13+00:00"
+  "codex_runs": [
+    {"round": 1, "transcript": "apex_governance/codex_runs/ANIM-14/round1.txt", "high_findings": 1, "med_findings": 2, "fixed_in": "anim14_r1_F1_F2_F3"}
+  ],
+  "built_at": "2026-06-07T13:06:33+00:00"
 }

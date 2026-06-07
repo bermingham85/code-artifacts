@@ -83,14 +83,34 @@ manifest_ok = {"characters": {"grog": {
 }}}
 r5 = resolve_character_markers("ok_probe", cfg_ok, manifest_ok)
 
+# ANIM-14 r1 F-3 fix: project-complete must succeed even when manifest is
+# incidentally partial (registry-inconsistency tolerance for the project
+# that already declares its markers explicitly).
+cfg_full_proj = {
+    "character": "grog",
+    "character_markers": GROG_MARKERS,
+    "character_markers_provenance_source_path": GROG_SRC,
+    "character_markers_provenance_field": "grog_identifiers",
+    "character_markers_provenance_sha256": GROG_SHA,
+}
+manifest_partial = {"characters": {"grog": {
+    "character_markers": GROG_MARKERS,
+    "character_markers_provenance_source_path": GROG_SRC,
+    "character_markers_provenance_field": "grog_identifiers",
+    # missing sha256 (3-of-4)
+}}}
+r6 = resolve_character_markers("proj_full_manifest_partial_probe",
+                                cfg_full_proj, manifest_partial)
+
 out = {
     "phase": "ANIM-14",
     "probes": {
         "CHARACTER_MARKERS_NOT_FOUND": r1,
-        "CHARACTER_MARKERS_MANIFEST_PARTIAL": r2,
+        "CHARACTER_MARKERS_MANIFEST_PARTIAL_when_project_absent": r2,
         "CHARACTER_MARKERS_VALUE_MISMATCH_from_manifest": r3,
         "CHARACTER_MARKERS_SOURCE_CONFLICT": r4,
         "OK_via_manifest_only": r5,
+        "OK_project_complete_with_manifest_partial_tolerated": r6,
     },
 }
 print(json.dumps(out, indent=2))

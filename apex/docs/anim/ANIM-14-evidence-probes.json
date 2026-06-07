@@ -10,7 +10,7 @@
         "ANIM-03 manifest:characters['grog']"
       ]
     },
-    "CHARACTER_MARKERS_MANIFEST_PARTIAL": {
+    "CHARACTER_MARKERS_MANIFEST_PARTIAL_when_project_absent": {
       "slug": "pm_probe",
       "status": "CHARACTER_MARKERS_MANIFEST_PARTIAL",
       "origin": "ANIM-03 manifest",
@@ -48,6 +48,11 @@
       "status": "OK",
       "character_markers": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers",
       "character_markers_source_annotation": "ANIM-03 manifest (sha-verified against X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/shot_list.json)"
+    },
+    "OK_project_complete_with_manifest_partial_tolerated": {
+      "status": "OK",
+      "character_markers": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers",
+      "character_markers_source_annotation": "projects.json (sha-verified against X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/shot_list.json)"
     }
   }
 }
