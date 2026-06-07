@@ -7,13 +7,16 @@
   "agent_build": {
     "muscle": "APEX-MB-PY-00114 (apex/registry/muscle_video_agent.py)",
     "modes": ["--list-tiers", "--catalog <slug> [--force]", "--plan-tier <Wan22|LTX|Hunyuan|FalCloud> --shot <id> [--scene <slug>]"],
-    "safety_tests_verified": {
-      "slug_regex": {"input": "--catalog '../etc'", "expect_status": "INVALID_SLUG", "expect_exit": 6, "regex": "^[A-Z][A-Za-z0-9]{0,31}$"},
-      "tier_regex": {"input": "--plan-tier BadTier --shot s1", "expect_status": "INVALID_TIER", "expect_exit": 6, "regex": "^(Wan22|LTX|Hunyuan|FalCloud)$"},
-      "shot_id_regex": "--plan-tier Wan22 --shot '*' would fail SHOT_ID_RE",
-      "operator_gated_tier_refused": {"input": "--plan-tier FalCloud --shot shot_001", "expect_status": "TIER_NOT_READY", "expect_exit": 7, "blocker_note": "fal.ai key not in env_sync"},
-      "rerun_guard": "--catalog MagicalRealmPlayground a second time without --force → WILL_OVERWRITE_REFUSED exit 5",
-      "symlink_target_check": "discover_clips() resolves each candidate strict=True and commonpath-checks against the resolved CLIP_ROOTS root before sha256/stat — escapes are skipped (same pattern as ANIM-04 r3 fix)"
+    "safety_tests_live_audit": "apex/audit/anim-05/safety-tests-live.json (actual cmd / exit / stdout-tail per case, captured 2026-06-07T05:59Z)",
+    "safety_tests_summary": {
+      "slug_regex_rejection": "INVALID_SLUG exit 6 on '../etc'",
+      "tier_regex_rejection": "INVALID_TIER exit 6 on BadTier",
+      "shot_id_regex_rejection": "INVALID_SHOT_ID exit 6 on '*'",
+      "tier_not_ready_hunyuan": "TIER_NOT_READY exit 7 — Hunyuan NODES_INSTALLED_WEIGHTS_DEFERRED never returns PLAN (F-1 r1 fix)",
+      "tier_not_ready_fal": "TIER_NOT_READY exit 7 — FalCloud OPERATOR_GATED",
+      "rerun_guard": "WILL_OVERWRITE_REFUSED exit 5 — confirmed in live capture",
+      "symlink_outright_refusal": "discover_clips() lstat()-checks p.is_symlink() and skips before resolve/hash (F-4 r1 fix: closes TOCTOU window)",
+      "wrapper_required": "plan_tier returns TIER_NOT_CONFIGURED when wrapper_invocation is missing/empty even for READY tier (F-2 r1 fix)"
     }
   },
   "tier_config": {
@@ -27,11 +30,14 @@
     "default_route": "Wan22"
   },
   "magical_realm_playground_catalog": {
-    "audit_path": "apex/audit/anim-05/catalog-magicalrealmplayground-2026-06-07T05-56-22Z.json",
+    "audit_path": "apex/audit/anim-05/catalog-magicalrealmplayground-2026-06-07T06-00-55Z.json",
     "clip_root": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips",
+    "shot_list_json": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/shot_list.json",
     "total_clips_on_disk": 38,
     "production_count": 20,
     "extras_count": 18,
+    "mapped_durations": 38,
+    "per_clip_schema_v2_fields": ["path", "sha256", "size", "role", "index", "shot_id", "character", "scene_slug", "brand", "source", "duration_seconds", "duration_source"],
     "phase_state_anchor_quote": "session_2026_04_01_mv.shots = '20/20 complete — 19 Wan2.2 i2v two-stage MoE + 1 skip (existing). Zero errors.'",
     "production_set_rule": "First 20 ls-sorted MP4s are the production shipment per PHASE_STATE; remaining 18 are extras/alts (cataloged but not promoted)."
   },

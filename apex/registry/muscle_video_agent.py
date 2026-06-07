@@ -31,9 +31,15 @@ TIER_CONFIG_PATH = REPO_ROOT / "apex/docs/anim/ANIM-05-tier-config.json"
 MANIFEST_PATH = REPO_ROOT / "apex/docs/anim/ANIM-05-clip-pack-manifest.json"
 AUDIT_ROOT = REPO_ROOT / "apex/audit/anim-05"
 
-# Per-scene clip roots (will grow as more scenes / brands are added).
-CLIP_ROOTS = {
-    "MagicalRealmPlayground": Path(r"X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips"),
+# Per-scene clip-source bindings: clip root + shot list + character + brand.
+SCENE_BINDINGS = {
+    "MagicalRealmPlayground": {
+        "clip_root": Path(r"X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips"),
+        "shot_list_json": Path(r"X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/shot_list.json"),
+        "character": "grog",
+        "brand": "Jesse-Adventures",
+        "source": "Wan2.2 i2v two-stage MoE (per PHASE_STATE session_2026_04_01_mv)",
+    },
 }
 
 
@@ -62,8 +68,14 @@ def validate_slug(slug: str) -> dict | None:
 
 
 def discover_clips(scene_slug: str) -> list[Path]:
-    root = CLIP_ROOTS.get(scene_slug)
-    if not root or not root.is_dir():
+    """Discover MP4 clips under the scene's clip root. F-4 r1 fix: reject symlinks
+    outright (lstat().is_symlink()) so the resolved-target window between check and
+    hash cannot be exploited; non-symlink files are hashed on the regular path."""
+    binding = SCENE_BINDINGS.get(scene_slug)
+    if not binding:
+        return []
+    root = binding["clip_root"]
+    if not root.is_dir():
         return []
     try:
         root_resolved = root.resolve(strict=True)
@@ -72,6 +84,8 @@ def discover_clips(scene_slug: str) -> list[Path]:
     out: list[Path] = []
     for p in sorted(root.glob("*.mp4")):
         try:
+            if p.is_symlink():
+                continue  # F-4 r1: refuse symlinks outright; no TOCTOU window
             target = p.resolve(strict=True)
         except (FileNotFoundError, OSError):
             continue
@@ -84,13 +98,56 @@ def discover_clips(scene_slug: str) -> list[Path]:
     return out
 
 
-def annotate_clip(p: Path, production_set_max: int, index: int) -> dict:
+def load_shot_metadata(scene_slug: str) -> dict:
+    """Read shot_list.json and return {id_str: {start, end, duration}} per shot."""
+    binding = SCENE_BINDINGS.get(scene_slug)
+    if not binding:
+        return {}
+    sp = binding["shot_list_json"]
+    if not sp.is_file():
+        return {}
+    data = json.loads(sp.read_text(encoding="utf-8"))
+    out: dict[str, dict] = {}
+    for s in data.get("shots", []):
+        sid = str(s.get("id"))
+        start = s.get("start")
+        end = s.get("end")
+        if start is not None and end is not None:
+            out[sid] = {"start": start, "end": end, "duration_seconds": round(end - start, 3)}
+    return out
+
+
+_CLIP_INDEX_RE = re.compile(r"clip_(\d+)\.mp4$", re.IGNORECASE)
+
+
+def annotate_clip(p: Path, production_set_max: int, index: int,
+                  scene_binding: dict, shot_meta: dict) -> dict:
+    name = p.name
+    m = _CLIP_INDEX_RE.search(name)
+    shot_id = None
+    duration = None
+    if m:
+        # Clip filenames are 1-indexed (clip_001 → shot id "1").
+        clip_num = int(m.group(1))
+        shot_id = str(clip_num)
+        if shot_id in shot_meta:
+            duration = shot_meta[shot_id]["duration_seconds"]
     return {
         "path": str(p).replace("\\", "/"),
         "sha256": sha256_of(p),
         "size": p.stat().st_size,
         "role": "production" if index < production_set_max else "extra",
         "index": index,
+        "shot_id": shot_id,
+        "character": scene_binding.get("character"),
+        "scene_slug": scene_binding.get("scene_slug_self"),
+        "brand": scene_binding.get("brand"),
+        "source": scene_binding.get("source"),
+        "duration_seconds": duration,
+        "duration_source": (
+            f"{scene_binding['shot_list_json'].name}:shots[id={shot_id}]"
+            if duration is not None else "unmapped"
+        ),
     }
 
 
@@ -98,33 +155,41 @@ def catalog_scene(scene_slug: str, force: bool) -> dict:
     bad = validate_slug(scene_slug)
     if bad:
         return bad
-    if scene_slug not in CLIP_ROOTS:
+    if scene_slug not in SCENE_BINDINGS:
         return {"slug": scene_slug, "status": "UNKNOWN_SCENE_ROOT",
-                "known_scenes": sorted(CLIP_ROOTS.keys())}
+                "known_scenes": sorted(SCENE_BINDINGS.keys())}
 
     manifest = (json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
                 if MANIFEST_PATH.is_file()
-                else {"phase": "ANIM-05", "schema_version": 1, "scenes": {}})
+                else {"phase": "ANIM-05", "schema_version": 2, "scenes": {}})
     if scene_slug in manifest.get("scenes", {}) and not force:
         return {"slug": scene_slug, "status": "WILL_OVERWRITE_REFUSED",
-                "existing_entry_paths": manifest["scenes"][scene_slug]["clip_root"]}
+                "existing_entry": str(SCENE_BINDINGS[scene_slug]["clip_root"])}
 
     clips = discover_clips(scene_slug)
     if not clips:
         return {"slug": scene_slug, "status": "CLIP_CATALOG_EMPTY",
-                "clip_root": str(CLIP_ROOTS[scene_slug])}
+                "clip_root": str(SCENE_BINDINGS[scene_slug]["clip_root"])}
 
+    binding = dict(SCENE_BINDINGS[scene_slug])
+    binding["scene_slug_self"] = scene_slug
+    shot_meta = load_shot_metadata(scene_slug)
     # PHASE_STATE: first 20 of the Grog clips are the production set.
     production_set_max = 20 if scene_slug == "MagicalRealmPlayground" else len(clips)
-    entries = [annotate_clip(p, production_set_max, i) for i, p in enumerate(clips)]
+    entries = [annotate_clip(p, production_set_max, i, binding, shot_meta) for i, p in enumerate(clips)]
     production_count = sum(1 for e in entries if e["role"] == "production")
     extras_count = sum(1 for e in entries if e["role"] == "extra")
 
     manifest.setdefault("scenes", {})[scene_slug] = {
-        "clip_root": str(CLIP_ROOTS[scene_slug]).replace("\\", "/"),
+        "clip_root": str(binding["clip_root"]).replace("\\", "/"),
+        "shot_list_json": str(binding["shot_list_json"]).replace("\\", "/"),
+        "character": binding["character"],
+        "brand": binding["brand"],
+        "source": binding["source"],
         "total_clips": len(entries),
         "production_count": production_count,
         "extras_count": extras_count,
+        "mapped_durations": sum(1 for e in entries if e["duration_seconds"] is not None),
         "clips": entries,
         "built_at": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
     }
@@ -134,9 +199,10 @@ def catalog_scene(scene_slug: str, force: bool) -> dict:
     AUDIT_ROOT.mkdir(parents=True, exist_ok=True)
     ts = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H-%M-%SZ")
     audit_path = AUDIT_ROOT / f"catalog-{scene_slug.lower()}-{ts}.json"
-    audit = {"scene_slug": scene_slug, "clip_root": str(CLIP_ROOTS[scene_slug]).replace("\\", "/"),
+    audit = {"scene_slug": scene_slug, "clip_root": str(binding["clip_root"]).replace("\\", "/"),
              "total_clips": len(entries), "production_count": production_count,
-             "extras_count": extras_count, "timestamp": ts, "status": "OK"}
+             "extras_count": extras_count, "mapped_durations": manifest["scenes"][scene_slug]["mapped_durations"],
+             "timestamp": ts, "status": "OK"}
     audit_path.write_text(json.dumps(audit, indent=2))
     return audit
 
@@ -153,13 +219,21 @@ def plan_tier(tier: str, shot_id: str, scene_slug: str | None) -> dict:
     cfg = load_tier_config().get("tiers", {}).get(tier)
     if not cfg:
         return {"status": "TIER_NOT_CONFIGURED", "tier": tier}
-    if cfg.get("status") not in {"READY", "NODES_INSTALLED_WEIGHTS_DEFERRED"}:
+    # F-1 r1 fix: only READY tiers can return PLAN. NODES_INSTALLED_WEIGHTS_DEFERRED
+    # is treated as not-ready since the render would fail at weight load.
+    if cfg.get("status") != "READY":
         return {"status": "TIER_NOT_READY", "tier": tier,
                 "tier_status": cfg.get("status"),
-                "blocker": cfg.get("blocker")}
+                "blocker": cfg.get("blocker"),
+                "hint": cfg.get("weights_install_command")}
+    # F-2 r1 fix: refuse PLAN if wrapper_invocation is missing/empty for a runnable tier.
+    wrapper = cfg.get("wrapper_invocation")
+    if not isinstance(wrapper, str) or not wrapper.strip():
+        return {"status": "TIER_NOT_CONFIGURED", "tier": tier,
+                "missing": "wrapper_invocation"}
     return {"status": "PLAN",
             "tier": tier, "shot": shot_id, "scene": scene_slug,
-            "wrapper_invocation": cfg.get("wrapper_invocation"),
+            "wrapper_invocation": wrapper,
             "approx_seconds_per_clip": cfg.get("approx_seconds_per_clip"),
             "vram_gb": cfg.get("vram_gb"),
             "best_for": cfg.get("best_for")}

@@ -22,7 +22,9 @@
       "approx_seconds_per_clip": 90,
       "cost_usd_per_clip": 0.0,
       "best_for": "iteration / previews before Wan 2.2 finals",
-      "status": "READY"
+      "status": "READY",
+      "wrapper_script": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/muscle_music_video.py",
+      "wrapper_invocation": "python muscle_music_video.py --mode animate --tier ltx --shot-list <shot_list.json>"
     },
     "Hunyuan": {
       "label": "HunyuanVideo (physics-heavy)",
@@ -36,7 +38,8 @@
       "best_for": "water / cloth / fire / heavy physics",
       "status": "NODES_INSTALLED_WEIGHTS_DEFERRED",
       "weights_install_command": "python apex/registry/muscle_install_hunyuanvideo.py --download-weights",
-      "approx_download_gb": 14
+      "approx_download_gb": 14,
+      "wrapper_invocation": "python muscle_music_video.py --mode animate --tier hunyuan --shot-list <shot_list.json>  (requires --download-weights first)"
     },
     "FalCloud": {
       "label": "fal.ai animation-agent (cloud burst fallback)",
