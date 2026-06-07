@@ -175,10 +175,29 @@ def _verify_markers_against_source(character_markers: str, src_path_str: str,
     except json.JSONDecodeError as e:
         return {"status": "CHARACTER_MARKERS_SOURCE_UNPARSEABLE",
                 "source_path": src_path_str, "error": str(e)}
+    # ANIM-14 r2 F-5 fix: a top-level JSON array/string/number/bool/null is
+    # structurally invalid for our field-name lookup; surface the same
+    # SOURCE_UNPARSEABLE class rather than crashing on .get().
+    if not isinstance(src_data, dict):
+        return {"status": "CHARACTER_MARKERS_SOURCE_UNPARSEABLE",
+                "source_path": src_path_str,
+                "error": f"top-level JSON must be an object; got {type(src_data).__name__}"}
     source_value = src_data.get(src_field)
     if source_value is None:
         return {"status": "CHARACTER_MARKERS_FIELD_MISSING",
                 "source_path": src_path_str, "field": src_field}
+    # ANIM-14 r2 F-5 fix (cont.): the recorded marker and the source field
+    # value must both be strings for byte-equality to be a meaningful check.
+    if not isinstance(source_value, str):
+        return {"status": "CHARACTER_MARKERS_FIELD_MISSING",
+                "source_path": src_path_str, "field": src_field,
+                "error": f"field present but not a string (got {type(source_value).__name__})"}
+    if not isinstance(character_markers, str):
+        return {"status": "CHARACTER_MARKERS_VALUE_MISMATCH",
+                "source_path": src_path_str, "field": src_field,
+                "recorded_markers": character_markers,
+                "actual_in_source": source_value,
+                "error": f"recorded character_markers is not a string (got {type(character_markers).__name__})"}
     if character_markers != source_value:
         return {"status": "CHARACTER_MARKERS_VALUE_MISMATCH",
                 "source_path": src_path_str, "field": src_field,

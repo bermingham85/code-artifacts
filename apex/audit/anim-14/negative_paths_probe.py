@@ -1,10 +1,12 @@
 """ANIM-14 negative-path evidence probe.
 
-Imports resolve_character_markers() and runs four constructed inputs to
-demonstrate the new error classes fire as designed. Output is captured to
-apex/docs/anim/ANIM-14-evidence.json by the caller.
+Imports resolve_character_markers() and runs constructed inputs to demonstrate
+each new error class fires as designed. ANIM-14 r2 F-4 fix: each probe is now
+recorded with harness name, input mutation, expected status, actual status,
+and a UTC timestamp so the evidence is auditable independently of the agent.
 """
 from __future__ import annotations
+import datetime
 import json
 import sys
 from pathlib import Path
@@ -23,94 +25,162 @@ GROG_MARKERS = (
     "smooth clean-shaven face, warm brown eyes, teal roughspun vest, "
     "fraying rope belt, patched fringe brown trousers"
 )
-
-# 1. CHARACTER_MARKERS_NOT_FOUND — project+manifest both have nothing
-cfg_nf = {"character": "grog"}
-manifest_nf = {"characters": {"grog": {"bible_path": "x.md"}}}
-r1 = resolve_character_markers("nf_probe", cfg_nf, manifest_nf)
-
-# 2. CHARACTER_MARKERS_MANIFEST_PARTIAL — manifest has 3/4 marker fields
-cfg_pm = {"character": "grog"}
-manifest_pm = {"characters": {"grog": {
-    "character_markers": GROG_MARKERS,
-    "character_markers_provenance_source_path": GROG_SRC,
-    "character_markers_provenance_field": "grog_identifiers",
-    # missing sha256
-}}}
-r2 = resolve_character_markers("pm_probe", cfg_pm, manifest_pm)
-
-# 3. CHARACTER_MARKERS_VALUE_MISMATCH from ANIM-03 path —
-#    manifest has wrong character_markers text but correct sha + field
-cfg_vm = {"character": "grog"}
-manifest_vm = {"characters": {"grog": {
-    "character_markers": "fabricated wrong text — not from source",
-    "character_markers_provenance_source_path": GROG_SRC,
-    "character_markers_provenance_field": "grog_identifiers",
-    "character_markers_provenance_sha256": GROG_SHA,
-}}}
-r3 = resolve_character_markers("vm_probe", cfg_vm, manifest_vm)
-
-# 4. CHARACTER_MARKERS_SOURCE_CONFLICT — projects.json + ANIM-03 both valid
-#    but record different marker strings (verified individually against
-#    DIFFERENT source fields)
-cfg_conf = {
-    "character": "grog",
-    "character_markers": GROG_MARKERS,
-    "character_markers_provenance_source_path": GROG_SRC,
-    "character_markers_provenance_field": "grog_identifiers",
-    "character_markers_provenance_sha256": GROG_SHA,
-}
 YOUNG_GROG_MARKERS = (
     "tiny toddler ogre with warm beige skin, smooth round clean-shaven cheeks, "
     "wide innocent warm brown eyes, stubby chubby fingers, "
     "already twice the height of a full-grown adult"
 )
-manifest_conf = {"characters": {"grog": {
-    "character_markers": YOUNG_GROG_MARKERS,
-    "character_markers_provenance_source_path": GROG_SRC,
-    "character_markers_provenance_field": "young_grog_identifiers",
-    "character_markers_provenance_sha256": GROG_SHA,
-}}}
-r4 = resolve_character_markers("conf_probe", cfg_conf, manifest_conf)
+HARNESS = "apex/audit/anim-14/negative_paths_probe.py"
 
-# Sanity: success path resolving from ANIM-03 only
-cfg_ok = {"character": "grog"}
-manifest_ok = {"characters": {"grog": {
-    "character_markers": GROG_MARKERS,
-    "character_markers_provenance_source_path": GROG_SRC,
-    "character_markers_provenance_field": "grog_identifiers",
-    "character_markers_provenance_sha256": GROG_SHA,
-}}}
-r5 = resolve_character_markers("ok_probe", cfg_ok, manifest_ok)
 
-# ANIM-14 r1 F-3 fix: project-complete must succeed even when manifest is
-# incidentally partial (registry-inconsistency tolerance for the project
-# that already declares its markers explicitly).
-cfg_full_proj = {
-    "character": "grog",
-    "character_markers": GROG_MARKERS,
-    "character_markers_provenance_source_path": GROG_SRC,
-    "character_markers_provenance_field": "grog_identifiers",
-    "character_markers_provenance_sha256": GROG_SHA,
-}
-manifest_partial = {"characters": {"grog": {
-    "character_markers": GROG_MARKERS,
-    "character_markers_provenance_source_path": GROG_SRC,
-    "character_markers_provenance_field": "grog_identifiers",
-    # missing sha256 (3-of-4)
-}}}
-r6 = resolve_character_markers("proj_full_manifest_partial_probe",
-                                cfg_full_proj, manifest_partial)
+def _now_utc() -> str:
+    return datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds")
+
+
+def _probe(name: str, cfg: dict, ref_pack: dict, expected_status: str,
+           mutation: str) -> dict:
+    """Run resolve_character_markers() and record full auditable context."""
+    result = resolve_character_markers(name, cfg, ref_pack)
+    return {
+        "probe_id": name,
+        "harness": HARNESS,
+        "function_under_test": "resolve_character_markers(project_slug, cfg, ref_pack)",
+        "mutation": mutation,
+        "expected_status": expected_status,
+        "actual_status": result.get("status"),
+        "pass": result.get("status") == expected_status,
+        "result": result,
+        "timestamp_utc": _now_utc(),
+    }
+
+
+# 1. CHARACTER_MARKERS_NOT_FOUND
+r1 = _probe(
+    "nf_probe",
+    {"character": "grog"},
+    {"characters": {"grog": {"bible_path": "x.md"}}},
+    expected_status="CHARACTER_MARKERS_NOT_FOUND",
+    mutation="cfg = {character: grog} only; manifest['characters']['grog'] has no marker fields",
+)
+
+# 2. CHARACTER_MARKERS_MANIFEST_PARTIAL — when project is absent
+r2 = _probe(
+    "pm_probe",
+    {"character": "grog"},
+    {"characters": {"grog": {
+        "character_markers": GROG_MARKERS,
+        "character_markers_provenance_source_path": GROG_SRC,
+        "character_markers_provenance_field": "grog_identifiers",
+        # missing sha256 -> 3-of-4
+    }}},
+    expected_status="CHARACTER_MARKERS_MANIFEST_PARTIAL",
+    mutation="manifest['characters']['grog'] has 3-of-4 marker fields (sha256 absent); project carries no marker fields, so fallback is required",
+)
+
+# 3. CHARACTER_MARKERS_VALUE_MISMATCH from ANIM-03 path
+r3 = _probe(
+    "vm_probe",
+    {"character": "grog"},
+    {"characters": {"grog": {
+        "character_markers": "fabricated wrong text — not from source",
+        "character_markers_provenance_source_path": GROG_SRC,
+        "character_markers_provenance_field": "grog_identifiers",
+        "character_markers_provenance_sha256": GROG_SHA,
+    }}},
+    expected_status="CHARACTER_MARKERS_VALUE_MISMATCH",
+    mutation="manifest carries provenance triple verifiable against source (sha matches), but character_markers text differs from the source field value",
+)
+
+# 4. CHARACTER_MARKERS_SOURCE_CONFLICT
+r4 = _probe(
+    "conf_probe",
+    {
+        "character": "grog",
+        "character_markers": GROG_MARKERS,
+        "character_markers_provenance_source_path": GROG_SRC,
+        "character_markers_provenance_field": "grog_identifiers",
+        "character_markers_provenance_sha256": GROG_SHA,
+    },
+    {"characters": {"grog": {
+        "character_markers": YOUNG_GROG_MARKERS,
+        "character_markers_provenance_source_path": GROG_SRC,
+        "character_markers_provenance_field": "young_grog_identifiers",
+        "character_markers_provenance_sha256": GROG_SHA,
+    }}},
+    expected_status="CHARACTER_MARKERS_SOURCE_CONFLICT",
+    mutation="project + manifest both verifiable individually (against different fields in the same source file); recorded character_markers strings differ",
+)
+
+# 5. OK via manifest-only
+r5 = _probe(
+    "ok_probe",
+    {"character": "grog"},
+    {"characters": {"grog": {
+        "character_markers": GROG_MARKERS,
+        "character_markers_provenance_source_path": GROG_SRC,
+        "character_markers_provenance_field": "grog_identifiers",
+        "character_markers_provenance_sha256": GROG_SHA,
+    }}},
+    expected_status="OK",
+    mutation="manifest carries full verifiable marker block; project carries no marker fields",
+)
+
+# 6. F-3 fix evidence: project-complete + manifest-partial -> OK
+r6 = _probe(
+    "proj_full_manifest_partial_probe",
+    {
+        "character": "grog",
+        "character_markers": GROG_MARKERS,
+        "character_markers_provenance_source_path": GROG_SRC,
+        "character_markers_provenance_field": "grog_identifiers",
+        "character_markers_provenance_sha256": GROG_SHA,
+    },
+    {"characters": {"grog": {
+        "character_markers": GROG_MARKERS,
+        "character_markers_provenance_source_path": GROG_SRC,
+        "character_markers_provenance_field": "grog_identifiers",
+        # missing sha256 -> partial manifest
+    }}},
+    expected_status="OK",
+    mutation="project carries full verifiable marker block; manifest has 3-of-4 (registry inconsistency); F-3 fix tolerates",
+)
+
+# 7. F-5 fix evidence: source file top-level non-dict JSON
+#    Build a temp file containing a JSON array to exercise the
+#    isinstance(src_data, dict) guard in _verify_markers_against_source().
+_tmp_dir = REPO / "apex" / "audit" / "anim-14" / "tmp"
+_tmp_dir.mkdir(parents=True, exist_ok=True)
+_tmp_src = _tmp_dir / "non_object_source.json"
+_tmp_src.write_text('["this", "is", "an", "array"]', encoding="utf-8")
+import hashlib  # noqa: E402
+_tmp_sha = hashlib.sha256(_tmp_src.read_bytes()).hexdigest()
+r7 = _probe(
+    "non_object_source_probe",
+    {"character": "grog"},
+    {"characters": {"grog": {
+        "character_markers": "anything",
+        "character_markers_provenance_source_path": str(_tmp_src).replace("\\", "/"),
+        "character_markers_provenance_field": "anything",
+        "character_markers_provenance_sha256": _tmp_sha,
+    }}},
+    expected_status="CHARACTER_MARKERS_SOURCE_UNPARSEABLE",
+    mutation=(
+        f"temp source {_tmp_src.name} contains a JSON array (top-level non-object); "
+        "sha256 + path verifiable; isinstance(src_data, dict) guard returns "
+        "CHARACTER_MARKERS_SOURCE_UNPARSEABLE rather than crashing on .get()"
+    ),
+)
 
 out = {
     "phase": "ANIM-14",
-    "probes": {
-        "CHARACTER_MARKERS_NOT_FOUND": r1,
-        "CHARACTER_MARKERS_MANIFEST_PARTIAL_when_project_absent": r2,
-        "CHARACTER_MARKERS_VALUE_MISMATCH_from_manifest": r3,
-        "CHARACTER_MARKERS_SOURCE_CONFLICT": r4,
-        "OK_via_manifest_only": r5,
-        "OK_project_complete_with_manifest_partial_tolerated": r6,
+    "harness": HARNESS,
+    "doctrine_evidence_class": "O9 (auditable probe trail)",
+    "probes": [r1, r2, r3, r4, r5, r6, r7],
+    "summary": {
+        "total_probes": 7,
+        "pass": sum(1 for r in [r1, r2, r3, r4, r5, r6, r7] if r["pass"]),
+        "fail": sum(1 for r in [r1, r2, r3, r4, r5, r6, r7] if not r["pass"]),
     },
+    "built_at": _now_utc(),
 }
 print(json.dumps(out, indent=2))
