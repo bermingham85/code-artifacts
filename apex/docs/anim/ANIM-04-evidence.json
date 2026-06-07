@@ -1,0 +1,39 @@
+{
+  "phase": "ANIM-04",
+  "wo_id": "APEX-ANIM-MB-WO-00001",
+  "issued_utc": "2026-06-07T05:42:00Z",
+  "author": "APEX orchestrator (Claude Opus 4.7)",
+  "anchor_policy": "Every claim cites either an audit JSON path, a filesystem read at a specified path, or a verbatim quote from shot_list.json / PROJECT_SPEC.md.",
+  "brand_tokens": {
+    "source": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/shot_list.json",
+    "style_anchor_quoted_verbatim": "Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+    "prompt_rules_quoted_verbatim": "Subject in first 15 words. 30-80 words per kontext_prompt. No quality tags. No negation. Lighting described as interaction. Texture inline with subject. Style anchor once at end. Character identified by key visual markers not 'the same character'."
+  },
+  "agent_build": {
+    "muscle": "APEX-MB-PY-00113 (apex/registry/muscle_environment_agent.py)",
+    "dry_run_command": "python apex/registry/muscle_environment_agent.py --slug <Slug> --dry-run",
+    "live_run_command": "python apex/registry/muscle_environment_agent.py --slug <Slug> [--force]",
+    "rerun_guard_exit_code": 5,
+    "verified_safe_against_traversal": "SLUG_RE=^[A-Z][A-Za-z0-9]{0,31}$ rejects path traversal; tested via --slug '../etc'",
+    "audit_dir": "apex/audit/anim-04/"
+  },
+  "magical_realm_playground_build": {
+    "audit_path": "apex/audit/anim-04/magicalrealmplayground-build-2026-06-07T05-41-52Z.json",
+    "bible_path": "apex/docs/anim/scenes/ANIM_Jesse-Adventures_MagicalRealmPlayground_bg_v1.md",
+    "descriptor_block_quoted": {
+      "slug": "MagicalRealmPlayground",
+      "brand": "Jesse-Adventures",
+      "prompt": "A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing",
+      "source_path_substr": "magical_realm_playground"
+    },
+    "asset_count": 7,
+    "asset_source_root": "X:/Automations/apex/projects/jesse_animate/characters/_source_refs/scenes/",
+    "asset_total_under_root_matching_substr": 9,
+    "asset_truncation_note": "Pack capped at PACK_MAX=7; 2 additional variants beyond the cap.",
+    "downstream_use": "ANIM-05 video agent reads ANIM-04-scene-pack-manifest.json:scenes.MagicalRealmPlayground.assets[] for first-shot Wan 2.2 i2v background references."
+  },
+  "operator_gated_blockers": [
+    "MA-ANIM-001..003 (PRs #7, #8, #9 awaiting operator merge)",
+    "G10 from ANIM-01 handover: Supabase QC tracking schema migration — operator-gated, not executed in ANIM-04 (filesystem manifest + audit JSONs serve as the QC ledger for now)."
+  ]
+}

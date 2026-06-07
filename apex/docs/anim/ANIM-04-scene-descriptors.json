@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "brand_allowlist": ["Jesse-Adventures"],
+  "scenes": {
+    "MagicalRealmPlayground": {
+      "brand": "Jesse-Adventures",
+      "prompt": "A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing",
+      "source_path_substr": "magical_realm_playground",
+      "notes": "Anchor scene for the Grog music video; shipped MP4 at grog_too_big_for_playground_mv.mp4 uses Midjourney variants under this prefix. Pixar 3D animated feature style anchor applied at prompt tail per shot_list.json prompt_rules."
+    }
+  },
+  "brand_token_source_paths": {
+    "style_anchor": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/shot_list.json:style_anchor",
+    "prompt_rules": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/shot_list.json:prompt_rules"
+  }
+}
