@@ -201,6 +201,9 @@ def main() -> int:
     _record(out, "FAL_KEY_UNRESOLVED", "FAL_KEY_UNRESOLVED", r, real_key)
 
     # ---- P8: dry-run urlopen suppression (tripwire spy) ----
+    # ANIM-18 r7 F-1 fix: shim now routes HTTP through shim._urlopen (a
+    # no-redirect-opener wrapper) instead of urllib.request.urlopen directly.
+    # Patch shim._urlopen so the spy / fake-response hooks survive.
 
     called = {"urlopen": False}
 
@@ -208,12 +211,12 @@ def main() -> int:
         called["urlopen"] = True
         raise AssertionError("urlopen called in dry-run path")
 
-    original_urlopen = _ulr.urlopen
-    _ulr.urlopen = _tripwire
+    original_shim_urlopen = shim._urlopen
+    shim._urlopen = _tripwire
     try:
         r = shim.submit_shot("1", falcloud_plan, live=False)
     finally:
-        _ulr.urlopen = original_urlopen
+        shim._urlopen = original_shim_urlopen
     _record(out, "DRY_RUN_URLOPEN_SUPPRESSED", "DRY_RUN", r, real_key,
             extra={"urlopen_called": called["urlopen"],
                    "pass": r.get("status") == "DRY_RUN" and not called["urlopen"]})
@@ -236,21 +239,21 @@ def main() -> int:
         # P9 — successful JSON response with sentinel in a value field.
         body = json.dumps({"request_id": "abc12345",
                            "echo": SENTINEL_KEY}).encode("utf-8")
-        _ulr.urlopen = lambda req, timeout=30: _FakeResp(body, 200)
+        shim._urlopen = lambda req, timeout=30: _FakeResp(body, 200)
         try:
             r = shim.submit_shot("1", falcloud_plan, live=True)
         finally:
-            _ulr.urlopen = original_urlopen
+            shim._urlopen = original_shim_urlopen
         _record(out, "MOCK_LIVE_VALUE_REDACTED", "FAL_OK", r, real_key)
 
         # P10 — successful JSON response with sentinel as a property name.
         body = json.dumps({"request_id": "abc12346",
                            SENTINEL_KEY: "value-under-sentinel-key-name"}).encode("utf-8")
-        _ulr.urlopen = lambda req, timeout=30: _FakeResp(body, 200)
+        shim._urlopen = lambda req, timeout=30: _FakeResp(body, 200)
         try:
             r = shim.submit_shot("1", falcloud_plan, live=True)
         finally:
-            _ulr.urlopen = original_urlopen
+            shim._urlopen = original_shim_urlopen
         _record(out, "MOCK_LIVE_DICT_KEY_REDACTED", "FAL_OK", r, real_key)
 
         # P11 — HTTPError body containing the sentinel (echo of Authorization).
@@ -262,11 +265,11 @@ def main() -> int:
                             code=401, msg="Unauthorized",
                             hdrs=None, fp=_io.BytesIO(err_body))
 
-        _ulr.urlopen = _raise_http_error
+        shim._urlopen = _raise_http_error
         try:
             r = shim.submit_shot("1", falcloud_plan, live=True)
         finally:
-            _ulr.urlopen = original_urlopen
+            shim._urlopen = original_shim_urlopen
         _record(out, "MOCK_LIVE_HTTP_ERROR_BODY_REDACTED", "FAL_HTTP_ERROR",
                 r, real_key)
 
@@ -328,6 +331,122 @@ def main() -> int:
                 r, real_key)
     finally:
         shim.resolve_fal_key = original_resolver
+
+    # ---- P18: ANIM-18 r7 F-1 fix. Redirect refusal + Authorization placement.
+    # Two assertions:
+    #   (a) When the mocked HTTP layer "302"s to a different host, submit_shot
+    #       surfaces FAL_HTTP_ERROR rather than following the redirect. The
+    #       _NoRedirectHandler converts 30x into HTTPError before any redirect
+    #       request is issued.
+    #   (b) The Authorization header on the captured Request lives in
+    #       unredirected_hdrs (NOT in headers), so a redirect that DID slip
+    #       through would not carry the credential.
+
+    shim.resolve_fal_key = lambda: dict(sentinel_probe)
+    try:
+        captured_req = {"req": None}
+
+        def _capture_then_302(req, timeout=30):
+            captured_req["req"] = req
+            raise HTTPError(url=req.full_url, code=302, msg="Found",
+                            hdrs=None,
+                            fp=_io.BytesIO(b"Location: https://attacker.example/exfil"))
+
+        shim._urlopen = _capture_then_302
+        try:
+            r = shim.submit_shot("1", falcloud_plan, live=True)
+        finally:
+            shim._urlopen = original_shim_urlopen
+
+        captured = captured_req["req"]
+        # Authorization MUST be unredirected; ordinary headers map MUST NOT carry it.
+        # CPython lowercases header names in `headers` and preserves case in
+        # `unredirected_hdrs`. Probe both forms.
+        auth_in_redirectable = (
+            captured is not None
+            and ("Authorization" in captured.headers
+                 or "authorization" in captured.headers))
+        auth_in_unredirected = (
+            captured is not None
+            and ("Authorization" in captured.unredirected_hdrs
+                 or "authorization" in captured.unredirected_hdrs))
+
+        _record(out, "REDIRECT_REFUSED_AND_AUTH_UNREDIRECTED",
+                "FAL_HTTP_ERROR", r, real_key,
+                extra={
+                    "auth_in_redirectable_headers": auth_in_redirectable,
+                    "auth_in_unredirected_headers": auth_in_unredirected,
+                    "pass": (r.get("status") == "FAL_HTTP_ERROR"
+                             and not auth_in_redirectable
+                             and auth_in_unredirected),
+                })
+    finally:
+        shim.resolve_fal_key = original_resolver
+
+    # ---- P19: ANIM-18 r7 F-2 fix. Resolver returning sentinel in each
+    # allowlisted SAFE-SHAPE field with no resolved key in scope. fingerprint_only
+    # value-shape validators must suppress all of them. We pack the sentinel
+    # into status / fingerprint / key_sha256_first_12 / env_sync_path / field /
+    # actual_type / key_length-as-string at once, and run probe() — which
+    # builds out.key_resolution = fingerprint_only(probe). The result must
+    # NOT carry the sentinel in any field; suppression placeholders survive.
+
+    field_stuffed_probe = {
+        "status": SENTINEL_KEY,
+        "fingerprint": SENTINEL_KEY,
+        "key_sha256_first_12": SENTINEL_KEY,
+        "key_length": SENTINEL_KEY,           # wrong type (str, not int)
+        "env_sync_path": SENTINEL_KEY,
+        "field": SENTINEL_KEY,
+        "actual_type": SENTINEL_KEY,
+    }
+    shim.resolve_fal_key = lambda: dict(field_stuffed_probe)
+    try:
+        r = shim.probe()
+        _record(out, "VALUE_SHAPE_SUPPRESSES_FIELD_STUFFING", "KEY_UNRESOLVED",
+                r, real_key)
+        # All seven safe-shape fields must read as the suppression placeholder
+        # in the persisted output. probe() wraps the probe through
+        # fingerprint_only into out["key_resolution"].
+        kr = (r or {}).get("key_resolution") or {}
+        all_suppressed = all(
+            kr.get(k) == "<suppressed-by-fingerprint_only>"
+            for k in ("status", "fingerprint", "key_sha256_first_12",
+                      "key_length", "env_sync_path", "field", "actual_type"))
+        out["probes"][-1]["all_safe_shape_suppressed"] = all_suppressed
+        out["probes"][-1]["pass"] = (
+            out["probes"][-1]["pass"] and all_suppressed)
+    finally:
+        shim.resolve_fal_key = original_resolver
+
+    # ---- P20: ANIM-18 r7 F-3 fix. tier-config FalCloud is a string ("tampered")
+    # — load_tier_config returns it as-is; resolve_fal_key + probe must
+    # detect non-dict and return TIER_CONFIG_INVALID_SHAPE instead of crashing.
+
+    original_load_tier_config = shim.load_tier_config
+    shim.load_tier_config = lambda: {
+        "schema_version": 3,
+        "tiers": {"FalCloud": "tampered"},
+    }
+    try:
+        r = shim.resolve_fal_key()
+        _record(out, "TIER_CFG_NON_DICT_RESOLVE", "TIER_CONFIG_INVALID_SHAPE",
+                r, real_key)
+        r = shim.probe()
+        _record(out, "TIER_CFG_NON_DICT_PROBE", "KEY_UNRESOLVED", r, real_key)
+    finally:
+        shim.load_tier_config = original_load_tier_config
+
+    # ---- P21: ANIM-18 r7 F-3 fix. tier-config FalCloud missing — still
+    # produces TIER_NOT_CONFIGURED (separate enum from INVALID_SHAPE).
+
+    shim.load_tier_config = lambda: {"schema_version": 3, "tiers": {}}
+    try:
+        r = shim.resolve_fal_key()
+        _record(out, "TIER_CFG_MISSING_RESOLVE", "TIER_NOT_CONFIGURED",
+                r, real_key)
+    finally:
+        shim.load_tier_config = original_load_tier_config
 
     # ---- Aggregate + fail-closed scrub before any print ----
 

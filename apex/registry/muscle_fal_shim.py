@@ -46,6 +46,50 @@ JOB_ID_RE = re.compile(r"^[A-Za-z0-9\-]{8,128}$")
 DEFAULT_TIMEOUT_SECONDS = 30
 
 
+class _NoRedirectHandler(urllib.request.HTTPRedirectHandler):
+    """ANIM-18 r7 F-1 fix: refuse 30x redirects on FAL calls.
+
+    CPython's default HTTPRedirectHandler rebuilds the redirected request with
+    the original request's headers minus content-type/content-length. That
+    means an `Authorization: Key <raw_key>` set with `req.add_header(...)`
+    WOULD survive a redirect — including a redirect to a different host. A
+    malicious or compromised upstream proxy could 30x to a logging endpoint
+    and exfiltrate the credential.
+
+    Defense: install this handler on a per-call opener so any 30x raises
+    HTTPError instead of silently re-issuing. The redirect surfaces as
+    FAL_HTTP_ERROR with the body already redacted by _redact_key_from_text().
+    fal.ai queue API is documented as a direct queue endpoint; redirects are
+    not part of its contract, so refusing them does not break legitimate
+    traffic.
+    """
+
+    def http_error_301(self, req, fp, code, msg, headers):
+        raise urllib.error.HTTPError(
+            req.full_url, code, "redirect refused (FAL auth safety)",
+            headers, fp)
+
+    http_error_302 = http_error_301
+    http_error_303 = http_error_301
+    http_error_307 = http_error_301
+    http_error_308 = http_error_301
+
+
+def _no_redirect_opener() -> urllib.request.OpenerDirector:
+    return urllib.request.build_opener(_NoRedirectHandler())
+
+
+def _urlopen(req: urllib.request.Request,
+             timeout: int = DEFAULT_TIMEOUT_SECONDS):
+    """Module-level seam used by _http_post_json + poll_job. Calls into a
+    fresh no-redirect opener so 30x responses raise HTTPError instead of
+    being followed (ANIM-18 r7 F-1). Defined as a top-level function so
+    the probe harness can monkeypatch a single attribute on this module
+    rather than reaching into urllib internals.
+    """
+    return _no_redirect_opener().open(req, timeout=timeout)
+
+
 def _import_video_agent():
     """Import muscle_video_agent so we can reuse the ANIM-17 key resolver.
 
@@ -102,6 +146,15 @@ def load_tier_config() -> dict:
 def resolve_fal_key() -> dict:
     """Resolve FAL_AI_API_KEY via the ANIM-17 helper. Never persists the key."""
     cfg = load_tier_config().get("tiers", {}).get("FalCloud")
+    # ANIM-18 r7 F-3 fix: previous guard `if not cfg:` only filtered None /
+    # empty-dict. A tampered tier-config with e.g. "FalCloud": "tampered"
+    # passed truthy and then crashed at cfg.get(...). Validate dict shape so
+    # malformed configs return TIER_CONFIG_INVALID_SHAPE (structured) instead.
+    if cfg is None:
+        return {"status": "TIER_NOT_CONFIGURED", "tier": "FalCloud"}
+    if not isinstance(cfg, dict):
+        return {"status": "TIER_CONFIG_INVALID_SHAPE", "tier": "FalCloud",
+                "actual_type": type(cfg).__name__}
     if not cfg:
         return {"status": "TIER_NOT_CONFIGURED", "tier": "FalCloud"}
     env_path = cfg.get("requires_env_key_from_env_sync_path")
@@ -131,6 +184,47 @@ FINGERPRINT_SAFE_SHAPE = (
 )
 FINGERPRINT_FREE_FORM = ("error",)
 
+# ANIM-18 r7 F-2 fix: each safe-shape field's VALUE must also match a strict
+# shape — name-only allowlisting let a tampered resolver inject the raw key
+# string into a permitted field name (e.g. "status": "<raw_key>"). When no
+# resolved key is in scope, _seal_outward() has nothing to scrub against, so
+# the validators here are the last line of defense. Validators are tight: the
+# legitimate values used by ANIM-17 resolve_env_key_from_env_sync() + this
+# shim are short, ASCII-only, and structurally narrow.
+_STATUS_RE = re.compile(r"^[A-Z][A-Z0-9_]{0,63}$")
+_FINGERPRINT_RE = re.compile(r"^[A-Za-z0-9]{1,16}:[A-Za-z0-9]{1,16}$")
+_HEX12_RE = re.compile(r"^[a-f0-9]{12}$")
+_FIELD_NAME_RE = re.compile(r"^[A-Z_][A-Z0-9_]{0,63}$")
+# env_sync_path is either a Windows / POSIX JSON path or the literal
+# "<sentinel>" used by P12-P17 probes. Path body restricted to filesystem
+# characters; JSON suffix required so an attacker-supplied free-form string
+# cannot match (a raw key has neither a `.json` suffix nor the bracket form).
+_ENV_SYNC_PATH_RE = re.compile(
+    r"^(?:<sentinel>|[A-Za-z]?:?[/\\]?[\w\-./\\: ]{1,255}\.json)$")
+# Python type names from type(x).__name__: simple identifiers, optionally
+# dotted (e.g. 'NoneType', 'collections.OrderedDict'). Bounded to 32 chars.
+_ACTUAL_TYPE_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_.]{0,31}$")
+
+
+def _validate_safe_shape(name: str, value) -> bool:
+    """Return True iff `value` matches the strict shape contract for `name`."""
+    if name == "status":
+        return isinstance(value, str) and bool(_STATUS_RE.match(value))
+    if name == "fingerprint":
+        return isinstance(value, str) and bool(_FINGERPRINT_RE.match(value))
+    if name == "key_sha256_first_12":
+        return isinstance(value, str) and bool(_HEX12_RE.match(value))
+    if name == "key_length":
+        return isinstance(value, int) and not isinstance(value, bool) \
+               and 0 <= value <= 1024
+    if name == "env_sync_path":
+        return isinstance(value, str) and bool(_ENV_SYNC_PATH_RE.match(value))
+    if name == "field":
+        return isinstance(value, str) and bool(_FIELD_NAME_RE.match(value))
+    if name == "actual_type":
+        return isinstance(value, str) and bool(_ACTUAL_TYPE_RE.match(value))
+    return False
+
 
 def fingerprint_only(probe: dict) -> dict:
     """Project a probe dict down to a fixed set of safe diagnostic fields.
@@ -149,8 +243,21 @@ def fingerprint_only(probe: dict) -> dict:
     failure category, so the suppressed `error` text is information that
     operators can recover from the live resolver call directly (it is never
     silently dropped — only kept out of the persisted result).
+
+    ANIM-18 r7 F-2 fix: field-name allowlisting alone was insufficient — a
+    tampered resolver could still stuff the raw key into a permitted field
+    NAME (e.g. emit `{"status": "<raw_key>"}`). When the resolver returns
+    no `key`, `_seal_outward()` no-ops because it has nothing to scrub
+    against. Each safe-shape field now also has a VALUE-shape validator
+    (regex / type / length bound). Values that fail their validator are
+    replaced with the same suppression placeholder.
     """
-    out = {k: probe[k] for k in FINGERPRINT_SAFE_SHAPE if k in probe}
+    out = {}
+    for k in FINGERPRINT_SAFE_SHAPE:
+        if k not in probe:
+            continue
+        out[k] = probe[k] if _validate_safe_shape(k, probe[k]) \
+                          else "<suppressed-by-fingerprint_only>"
     for k in FINGERPRINT_FREE_FORM:
         if k in probe:
             out[k] = "<suppressed-by-fingerprint_only>"
@@ -330,10 +437,17 @@ def _redact_key_from_obj(obj, raw_key: str | None):
 def _http_post_json(url: str, body: bytes, headers: dict, raw_key: str | None,
                     timeout: int = DEFAULT_TIMEOUT_SECONDS) -> dict:
     req = urllib.request.Request(url, data=body, method="POST")
+    # ANIM-18 r7 F-1 fix: Authorization is added via add_unredirected_header()
+    # so even if the no-redirect opener were bypassed, the credential header
+    # is dropped on redirected requests. Other headers (Content-Type) go
+    # through add_header() as before.
+    auth_value = headers.pop("Authorization", None)
     for k, v in headers.items():
         req.add_header(k, v)
+    if auth_value is not None:
+        req.add_unredirected_header("Authorization", auth_value)
     try:
-        with urllib.request.urlopen(req, timeout=timeout) as resp:
+        with _urlopen(req, timeout=timeout) as resp:
             raw = resp.read()
             try:
                 parsed = json.loads(raw.decode("utf-8"))
@@ -436,14 +550,16 @@ def poll_job(job_id: str) -> dict:
     url = POLL_URL_TEMPLATE.format(job_id=job_id)
     raw_key = key_probe["key"]
     req = urllib.request.Request(url, method="GET")
-    req.add_header("Authorization", f"Key {raw_key}")
+    # ANIM-18 r7 F-1 fix: Authorization as unredirected header — dropped on
+    # any 30x redirect (defense in depth alongside _no_redirect_opener()).
+    req.add_unredirected_header("Authorization", f"Key {raw_key}")
     # ANIM-18 r3 F-1 fix: poll_job applies a final _redact_key_from_obj()
     # pass on the result before return. Defined as a small inner wrapper to
     # keep the early-return branches DRY.
     def _seal(result: dict) -> dict:
         return _redact_key_from_obj(result, raw_key)
     try:
-        with urllib.request.urlopen(req, timeout=DEFAULT_TIMEOUT_SECONDS) as resp:
+        with _urlopen(req, timeout=DEFAULT_TIMEOUT_SECONDS) as resp:
             raw = resp.read()
             try:
                 parsed = json.loads(raw.decode("utf-8"))
@@ -472,7 +588,11 @@ def poll_job(job_id: str) -> dict:
 def probe() -> dict:
     """Sanity check: resolve key, confirm tier-config wiring, no HTTP call."""
     key_probe = resolve_fal_key()
-    cfg = load_tier_config().get("tiers", {}).get("FalCloud", {})
+    # ANIM-18 r7 F-3 fix: guard cfg type before `.get()`. A non-dict FalCloud
+    # entry previously crashed here; now it falls through with empty cfg and
+    # the structured key_probe status carries TIER_CONFIG_INVALID_SHAPE.
+    cfg_raw = load_tier_config().get("tiers", {}).get("FalCloud")
+    cfg = cfg_raw if isinstance(cfg_raw, dict) else {}
     out = {
         "tier": "FalCloud",
         "submit_url": SUBMIT_URL,
