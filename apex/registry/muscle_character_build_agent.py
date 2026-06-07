@@ -40,14 +40,31 @@ PHASE_STATE = PROJECT_ROOT / "PHASE_STATE.json"
 # Picker takes the first render whose lower-cased path contains ANY needle and NO anti_needle.
 # Anti-needles disambiguate roles whose names overlap (e.g. "front" matches both angle_front and
 # the front-three-quarter image; anti-needles exclude the latter from the front bucket).
+# Roles ordered so legacy ANIM-03 needles win first (back-compat); kontext_sheets/ roles trail.
 PACK_ROLES = [
-    ("primary_ref",         ["primary_ref"],                                        []),
+    ("primary_ref",         ["primary_ref", "_candidate_seed"],                     []),
     ("angle_front",         ["_front_", "/angles/front_", "/angles/front."],        ["three_quarter", "back"]),
     ("angle_three_quarter", ["front_three_quarter", "_three_quarter_"],             ["back_three_quarter"]),
     ("angle_side",          ["_side_", "side_left", "side_right", "/angles/side"],  []),
     ("angle_back",          ["_back_", "/angles/back_", "/angles/back."],           ["three_quarter"]),
     ("expression_neutral",  ["expr_neutral", "/expressions/neutral"],               []),
     ("alt_form",            ["alt_form", "dragon"],                                 []),
+    # ANIM-07 extension: kontext_sheets/-layout role buckets (grog, lirian).
+    # New needles are kontext-specific so they cannot leak into legacy ANIM-03 picks.
+    ("turnaround_seed",     ["/kontext_sheets/turnaround_seed"],                    []),
+    ("expression_happy",    ["/kontext_sheets/expr_happy"],                         []),
+    ("expression_angry",    ["/kontext_sheets/expr_angry"],                         []),
+    ("expression_sad",      ["/kontext_sheets/expr_sad"],                           []),
+    ("pose_action",         ["/kontext_sheets/pose_bow_drawn",
+                             "/kontext_sheets/pose_running",
+                             "/kontext_sheets/pose_climbing",
+                             "/kontext_sheets/pose_lifting"],                       []),
+    ("pose_idle",           ["/kontext_sheets/pose_listening",
+                             "/kontext_sheets/pose_arms_crossed",
+                             "/kontext_sheets/pose_sitting",
+                             "/kontext_sheets/pose_sleeping",
+                             "/kontext_sheets/pose_walking",
+                             "/kontext_sheets/pose_gentle_hand"],                   []),
 ]
 
 
@@ -66,11 +83,18 @@ def discover_render_set(char_dir: Path) -> list[Path]:
     if not char_dir.is_dir():
         return []
     out: list[Path] = []
-    # Flat files at root (Emma-style: emma_angle_front_00001_.png).
+    # Flat files at root (Emma-style: emma_angle_front_00001_.png; also Lirian's
+    # lirian_candidate_seed*.png and Grog's primary_ref.png).
     for p in sorted(char_dir.glob("*.png")):
         out.append(p)
-    # Nested template-structure (Galinda-style: angles/, expressions/, poses/).
-    for sub in ("angles", "expressions", "poses", "closeups", "outfits", "source_refs"):
+    # Nested layouts:
+    #   ANIM-03 (Galinda-style): angles/, expressions/, poses/, closeups/, outfits/, source_refs/.
+    #   ANIM-07 extension (Grog/Lirian): kontext_sheets/ (turnaround_seed*, expr_*, pose_*);
+    #     midjourney_refs/ holds raw refs — included for render_count provenance only because
+    #     no PACK_ROLES needle targets midjourney UUID names, so they cannot be picked into
+    #     the reference pack but do contribute to the manifest's audit-grade render_count.
+    for sub in ("angles", "expressions", "poses", "closeups", "outfits", "source_refs",
+                "kontext_sheets", "midjourney_refs"):
         d = char_dir / sub
         if d.is_dir():
             out.extend(sorted(d.glob("*.png")))
@@ -78,6 +102,15 @@ def discover_render_set(char_dir: Path) -> list[Path]:
 
 
 def pick_pack(renders: list[Path]) -> list[dict]:
+    """Pick at most PACK_MAX role-tagged refs.
+
+    Universal exclusion: `/midjourney_refs/` paths are never picked into the pack —
+    they are raw operator references with non-canonical UUID filenames that can
+    accidentally satisfy needle matches (e.g. "stand_side_<uuid>.png" hitting
+    `_side_`). They still count toward render_count for provenance, but are not
+    pack-eligible. To make a midjourney ref pack-eligible, the operator must
+    promote it under a canonical name.
+    """
     picked: list[dict] = []
     used = set()
     for role, needles, anti in PACK_ROLES:
@@ -85,6 +118,8 @@ def pick_pack(renders: list[Path]) -> list[dict]:
             if p in used:
                 continue
             low = str(p).replace("\\", "/").lower()
+            if "/midjourney_refs/" in low:
+                continue
             if not any(n.lower() in low for n in needles):
                 continue
             if any(a.lower() in low for a in anti):

@@ -1,0 +1,13 @@
+{
+  "character": "lirian",
+  "brand": "Jesse-Adventures",
+  "bible_path": "apex/docs/anim/bibles/ANIM_Jesse-Adventures_Lirian_bible_v1.md",
+  "manifest_path": "apex/docs/anim/ANIM-03-reference-pack-manifest.json",
+  "render_count": 18,
+  "pack_size": 7,
+  "findings": [
+    "F-ANIM03-02: lirian has no status.json under X:\\Automations\\apex\\projects\\jesse_animate\\characters\\lirian; bible built from PROJECT_SPEC + render-set inference."
+  ],
+  "timestamp": "2026-06-07T07-03-30Z",
+  "status": "OK"
+}
