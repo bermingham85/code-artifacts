@@ -32,6 +32,8 @@ SLUG_RE = re.compile(r"^[a-z][a-z0-9_]{0,63}$")
 
 REPO_ROOT = Path(os.environ.get("APEX_REPO", "."))
 PROJECTS_PATH = REPO_ROOT / "apex/docs/anim/ANIM-13-projects.json"
+REF_PACK_MANIFEST_PATH = REPO_ROOT / "apex/docs/anim/ANIM-03-reference-pack-manifest.json"
+SCENE_PACK_MANIFEST_PATH = REPO_ROOT / "apex/docs/anim/ANIM-04-scene-pack-manifest.json"
 STORYBOARD_DIR = REPO_ROOT / "apex/docs/anim"
 AUDIT_ROOT = REPO_ROOT / "apex/audit/anim-13"
 
@@ -53,6 +55,20 @@ def load_projects() -> dict:
     if not PROJECTS_PATH.is_file():
         return {"projects": {}}
     return json.loads(PROJECTS_PATH.read_text(encoding="utf-8"))
+
+
+def load_ref_pack_characters() -> set[str]:
+    if not REF_PACK_MANIFEST_PATH.is_file():
+        return set()
+    data = json.loads(REF_PACK_MANIFEST_PATH.read_text(encoding="utf-8"))
+    return set(data.get("characters", {}).keys())
+
+
+def load_scene_pack_scenes() -> set[str]:
+    if not SCENE_PACK_MANIFEST_PATH.is_file():
+        return set()
+    data = json.loads(SCENE_PACK_MANIFEST_PATH.read_text(encoding="utf-8"))
+    return set(data.get("scenes", {}).keys())
 
 
 def validate_slug(slug: str) -> dict | None:
@@ -106,9 +122,11 @@ def lyric_text_for_window(lyrics: list[dict], a: float, b: float) -> tuple[str, 
 
 
 def compile_prompt_template(character_markers: str, scene_markers: str,
-                            style_anchor: str) -> str:
+                            camera_preset: str, style_anchor: str) -> str:
+    """F-2 r1 fix: interpolate camera_preset inline so the only unresolved
+    placeholder is {action}, matching needs_fill. No untracked placeholders."""
     return (f"{character_markers}, {{action}}, {scene_markers}, "
-            f"{{camera_preset}}, {style_anchor}")
+            f"{camera_preset}, {style_anchor}")
 
 
 def build_storyboard(project_slug: str, target_shot_seconds: float, force: bool) -> dict:
@@ -124,6 +142,24 @@ def build_storyboard(project_slug: str, target_shot_seconds: float, force: bool)
     if out_path.exists() and not force:
         return {"slug": project_slug, "status": "WILL_OVERWRITE_REFUSED",
                 "existing_path": str(out_path).replace("\\", "/")}
+
+    # F-1 r1 fix: cross-check character + scene slugs against ANIM-03 and ANIM-04
+    # authoritative manifests. Marker strings stay verbatim from projects.json
+    # (the operator-controlled source), but membership is anchored to the
+    # certed manifests so a project cannot reference a non-existent character
+    # or scene.
+    known_chars = load_ref_pack_characters()
+    if known_chars and cfg["character"] not in known_chars:
+        return {"slug": project_slug, "status": "UNKNOWN_CHARACTER",
+                "character": cfg["character"],
+                "known_characters": sorted(known_chars),
+                "manifest": str(REF_PACK_MANIFEST_PATH).replace("\\", "/")}
+    known_scenes = load_scene_pack_scenes()
+    if known_scenes and cfg["scene"] not in known_scenes:
+        return {"slug": project_slug, "status": "UNKNOWN_SCENE",
+                "scene": cfg["scene"],
+                "known_scenes": sorted(known_scenes),
+                "manifest": str(SCENE_PACK_MANIFEST_PATH).replace("\\", "/")}
 
     lyrics = load_lyrics(cfg["lyrics_timestamped_path"])
     if not lyrics:
@@ -143,6 +179,8 @@ def build_storyboard(project_slug: str, target_shot_seconds: float, force: bool)
         for (a, b) in windows:
             shot_id += 1
             lyric, wc = lyric_text_for_window(lyrics, a, b)
+            camera_preset = ENERGY_CAMERA.get(energy, ENERGY_CAMERA["MED"])
+            wan_motion_preset = ENERGY_MOTION.get(energy, ENERGY_MOTION["MED"])
             shots.append({
                 "id": shot_id,
                 "section": section["name"],
@@ -153,10 +191,10 @@ def build_storyboard(project_slug: str, target_shot_seconds: float, force: bool)
                 "lyric_word_count": wc,
                 "energy": energy,
                 "mood": section.get("mood", ""),
-                "camera_preset": ENERGY_CAMERA.get(energy, ENERGY_CAMERA["MED"]),
-                "wan_motion_preset": ENERGY_MOTION.get(energy, ENERGY_MOTION["MED"]),
+                "camera_preset": camera_preset,
+                "wan_motion_preset": wan_motion_preset,
                 "kontext_prompt_template": compile_prompt_template(
-                    char_markers, scene_markers, style_anchor),
+                    char_markers, scene_markers, camera_preset, style_anchor),
                 "needs_fill": ["action"],
             })
 
@@ -324,7 +362,8 @@ def main() -> int:
         result = build_storyboard(args.storyboard, args.target_shot_seconds, args.force)
         print(json.dumps(result, indent=2))
         code_for = {"OK": 0, "WILL_OVERWRITE_REFUSED": 5, "INVALID_SLUG": 6,
-                    "UNKNOWN_PROJECT": 9, "LYRICS_MISSING": 8}
+                    "UNKNOWN_PROJECT": 9, "LYRICS_MISSING": 8,
+                    "UNKNOWN_CHARACTER": 7, "UNKNOWN_SCENE": 7}
         return code_for.get(result.get("status", ""), 4)
 
     if args.validate:

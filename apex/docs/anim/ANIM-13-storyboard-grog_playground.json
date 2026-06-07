@@ -27,7 +27,7 @@
       "mood": "piano intro, establishing",
       "camera_preset": "slow drift, golden tones, steady frame",
       "wan_motion_preset": "slow ambient drift, subtle micro-motion, gentle environmental movement",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, slow drift, golden tones, steady frame, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -44,7 +44,7 @@
       "mood": "piano intro, establishing",
       "camera_preset": "slow drift, golden tones, steady frame",
       "wan_motion_preset": "slow ambient drift, subtle micro-motion, gentle environmental movement",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, slow drift, golden tones, steady frame, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -61,7 +61,7 @@
       "mood": "childhood memories, longing, flashback",
       "camera_preset": "medium shot, soft push, character framing",
       "wan_motion_preset": "focused character action, mid-tempo gestural movement, environment reacting",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, medium shot, soft push, character framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -78,7 +78,7 @@
       "mood": "childhood memories, longing, flashback",
       "camera_preset": "medium shot, soft push, character framing",
       "wan_motion_preset": "focused character action, mid-tempo gestural movement, environment reacting",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, medium shot, soft push, character framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -95,7 +95,7 @@
       "mood": "childhood memories, longing, flashback",
       "camera_preset": "medium shot, soft push, character framing",
       "wan_motion_preset": "focused character action, mid-tempo gestural movement, environment reacting",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, medium shot, soft push, character framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -112,7 +112,7 @@
       "mood": "childhood memories, longing, flashback",
       "camera_preset": "medium shot, soft push, character framing",
       "wan_motion_preset": "focused character action, mid-tempo gestural movement, environment reacting",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, medium shot, soft push, character framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -129,7 +129,7 @@
       "mood": "childhood memories, longing, flashback",
       "camera_preset": "medium shot, soft push, character framing",
       "wan_motion_preset": "focused character action, mid-tempo gestural movement, environment reacting",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, medium shot, soft push, character framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -146,7 +146,7 @@
       "mood": "childhood memories, longing, flashback",
       "camera_preset": "medium shot, soft push, character framing",
       "wan_motion_preset": "focused character action, mid-tempo gestural movement, environment reacting",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, medium shot, soft push, character framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -163,7 +163,7 @@
       "mood": "childhood memories, longing, flashback",
       "camera_preset": "medium shot, soft push, character framing",
       "wan_motion_preset": "focused character action, mid-tempo gestural movement, environment reacting",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, medium shot, soft push, character framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -180,7 +180,7 @@
       "mood": "heartbreak, rejection, resilience",
       "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
       "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -197,7 +197,7 @@
       "mood": "heartbreak, rejection, resilience",
       "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
       "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -214,7 +214,7 @@
       "mood": "heartbreak, rejection, resilience",
       "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
       "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -231,7 +231,7 @@
       "mood": "heartbreak, rejection, resilience",
       "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
       "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -248,7 +248,7 @@
       "mood": "heartbreak, rejection, resilience",
       "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
       "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -265,7 +265,7 @@
       "mood": "heartbreak, rejection, resilience",
       "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
       "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -282,7 +282,7 @@
       "mood": "instrumental interstitial",
       "camera_preset": "slow drift, golden tones, steady frame",
       "wan_motion_preset": "slow ambient drift, subtle micro-motion, gentle environmental movement",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, slow drift, golden tones, steady frame, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -299,7 +299,7 @@
       "mood": "school memories, humiliation, dreams",
       "camera_preset": "medium shot, soft push, character framing",
       "wan_motion_preset": "focused character action, mid-tempo gestural movement, environment reacting",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, medium shot, soft push, character framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -316,7 +316,7 @@
       "mood": "school memories, humiliation, dreams",
       "camera_preset": "medium shot, soft push, character framing",
       "wan_motion_preset": "focused character action, mid-tempo gestural movement, environment reacting",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, medium shot, soft push, character framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -333,7 +333,7 @@
       "mood": "school memories, humiliation, dreams",
       "camera_preset": "medium shot, soft push, character framing",
       "wan_motion_preset": "focused character action, mid-tempo gestural movement, environment reacting",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, medium shot, soft push, character framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -350,7 +350,7 @@
       "mood": "school memories, humiliation, dreams",
       "camera_preset": "medium shot, soft push, character framing",
       "wan_motion_preset": "focused character action, mid-tempo gestural movement, environment reacting",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, medium shot, soft push, character framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -367,7 +367,7 @@
       "mood": "school memories, humiliation, dreams",
       "camera_preset": "medium shot, soft push, character framing",
       "wan_motion_preset": "focused character action, mid-tempo gestural movement, environment reacting",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, medium shot, soft push, character framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -384,7 +384,7 @@
       "mood": "school memories, humiliation, dreams",
       "camera_preset": "medium shot, soft push, character framing",
       "wan_motion_preset": "focused character action, mid-tempo gestural movement, environment reacting",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, medium shot, soft push, character framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -401,7 +401,7 @@
       "mood": "school memories, humiliation, dreams",
       "camera_preset": "medium shot, soft push, character framing",
       "wan_motion_preset": "focused character action, mid-tempo gestural movement, environment reacting",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, medium shot, soft push, character framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -418,7 +418,7 @@
       "mood": "frustration, determination",
       "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
       "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -435,7 +435,7 @@
       "mood": "frustration, determination",
       "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
       "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -452,7 +452,7 @@
       "mood": "frustration, determination",
       "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
       "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -469,7 +469,7 @@
       "mood": "frustration, determination",
       "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
       "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -486,7 +486,7 @@
       "mood": "frustration, determination",
       "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
       "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -503,7 +503,7 @@
       "mood": "frustration, determination",
       "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
       "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -520,7 +520,7 @@
       "mood": "instrumental interstitial",
       "camera_preset": "slow drift, golden tones, steady frame",
       "wan_motion_preset": "slow ambient drift, subtle micro-motion, gentle environmental movement",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, slow drift, golden tones, steady frame, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -537,7 +537,7 @@
       "mood": "resolution, building, triumph",
       "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
       "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -554,7 +554,7 @@
       "mood": "resolution, building, triumph",
       "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
       "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -571,7 +571,7 @@
       "mood": "resolution, building, triumph",
       "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
       "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -588,7 +588,7 @@
       "mood": "resolution, building, triumph",
       "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
       "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -605,7 +605,7 @@
       "mood": "resolution, building, triumph",
       "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
       "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -622,7 +622,7 @@
       "mood": "resolution, building, triumph",
       "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
       "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -639,7 +639,7 @@
       "mood": "resolution, building, triumph",
       "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
       "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -656,7 +656,7 @@
       "mood": "resolution, building, triumph",
       "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
       "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -673,7 +673,7 @@
       "mood": "resolution, building, triumph",
       "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
       "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -690,7 +690,7 @@
       "mood": "resolution, building, triumph",
       "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
       "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -707,7 +707,7 @@
       "mood": "resolution, building, triumph",
       "camera_preset": "dynamic angle, push-in or whip pan, bold framing",
       "wan_motion_preset": "strong character action, impact beats, environment dramatically reacting",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, dynamic angle, push-in or whip pan, bold framing, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -724,7 +724,7 @@
       "mood": "peace, completion",
       "camera_preset": "slow drift, golden tones, steady frame",
       "wan_motion_preset": "slow ambient drift, subtle micro-motion, gentle environmental movement",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, slow drift, golden tones, steady frame, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
@@ -741,11 +741,11 @@
       "mood": "peace, completion",
       "camera_preset": "slow drift, golden tones, steady frame",
       "wan_motion_preset": "slow ambient drift, subtle micro-motion, gentle environmental movement",
-      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, {camera_preset}, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "kontext_prompt_template": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers, {action}, A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing, slow drift, golden tones, steady frame, Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
       "needs_fill": [
         "action"
       ]
     }
   ],
-  "built_at": "2026-06-07T12:02:30+00:00"
+  "built_at": "2026-06-07T12:07:46+00:00"
 }

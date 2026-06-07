@@ -9,8 +9,9 @@
   "deliverables": [
     {
       "path": "apex/registry/muscle_shot_storyboard_agent.py",
-      "sha256": "a5953deaa926f19cc47826cb8d59b42d6c85d2c14c56359545ef76ba21beda05",
-      "kind": "muscle"
+      "sha256": "28f169513e78b8974e43ffd67c0b00f1936b80571e9c5905a8e43242088b1ce8",
+      "kind": "muscle",
+      "post_round1": true
     },
     {
       "path": "apex/docs/anim/ANIM-13-projects.json",
@@ -19,13 +20,25 @@
     },
     {
       "path": "apex/docs/anim/ANIM-13-storyboard-grog_playground.json",
-      "sha256": "c2d888fbd9d1d2ed5b51ff75bc200ef9ca341714b08b708a3d8fc00d7a5ca6c7",
-      "kind": "deterministic output"
+      "sha256": "315d0e90e0b733df5b9eb7d6566e3377a531cd6d7eb00f6478f72e30b726c42c",
+      "kind": "deterministic output",
+      "post_round1": true
     },
     {
       "path": "apex/docs/anim/ANIM-13-validation-grog.json",
-      "sha256": "fe9ede2058e7b1290b7d7ea1681b1533bd08ba9b2014e68fd0eebbbd55b27554",
-      "kind": "gold-reference validation report"
+      "sha256": "54aa215f6eeaecec65c8c4fb208114368561a8f55084df52f6044dd6b1ee85ba",
+      "kind": "gold-reference validation report",
+      "post_round1": true
+    }
+  ],
+  "codex_round1_fixes": [
+    {
+      "finding": "F-1 (P3, muscle:134) — agent trusted projects.json marker strings without cross-checking against ANIM-03/ANIM-04 manifests",
+      "fix": "added load_ref_pack_characters() + load_scene_pack_scenes() readers; build_storyboard() now returns UNKNOWN_CHARACTER (exit 7) or UNKNOWN_SCENE (exit 7) when the project's character/scene slug is not registered in the certed manifests. Marker strings remain verbatim from projects.json (the operator-controlled source-of-truth copy from shot_list.json:grog_identifiers); the cross-check anchors membership to the certed manifests so a project cannot reference a non-existent bible. Verified: load_ref_pack_characters() returns {emma, galinda, grog, lirian}; load_scene_pack_scenes() returns {MagicalRealmPlayground}; grog_playground project passes."
+    },
+    {
+      "finding": "F-2 (P3, muscle:110) — kontext_prompt_template emitted unresolved {camera_preset} placeholder while needs_fill only listed action",
+      "fix": "compile_prompt_template() now takes camera_preset as an arg and interpolates the literal preset string into the template at compile time. Each shot now has its own per-energy template (LOW/MED/HIGH) with {action} as the only unresolved placeholder, matching needs_fill exactly. Verified: shot 5 (verse1, MED energy) template contains the literal 'medium shot, soft push, character framing' and only {action} remains."
     }
   ],
   "test_runs": [
