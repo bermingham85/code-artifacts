@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "tiers": {
+    "Wan22": {
+      "label": "Wan 2.2 I2V (primary)",
+      "model_files": [
+        "C:/ComfyUI/models/diffusion_models/wan2.2_i2v_high_noise_14B_fp8_scaled.safetensors",
+        "C:/ComfyUI/models/diffusion_models/wan2.2_i2v_low_noise_14B_fp8_scaled.safetensors"
+      ],
+      "vram_gb": 24,
+      "approx_seconds_per_clip": 180,
+      "cost_usd_per_clip": 0.0,
+      "best_for": "cinematic human shots; final delivery",
+      "status": "READY",
+      "wrapper_script": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/muscle_music_video.py",
+      "wrapper_invocation": "python muscle_music_video.py --mode animate --shot-list <shot_list.json>"
+    },
+    "LTX": {
+      "label": "LTX-Video (fast preview)",
+      "model_files": ["C:/ComfyUI/models/unet/ltx-2-19b-dev-fp8.safetensors"],
+      "vram_gb": 16,
+      "approx_seconds_per_clip": 90,
+      "cost_usd_per_clip": 0.0,
+      "best_for": "iteration / previews before Wan 2.2 finals",
+      "status": "READY"
+    },
+    "Hunyuan": {
+      "label": "HunyuanVideo (physics-heavy)",
+      "model_files": [
+        "C:/ComfyUI/models/diffusion_models/hunyuan_video_720_cfgdistill_fp8_e4m3fn.safetensors (NOT YET DOWNLOADED — operator-gated)",
+        "C:/ComfyUI/models/vae/hunyuan_video_vae_bf16.safetensors (NOT YET DOWNLOADED)"
+      ],
+      "vram_gb": 24,
+      "approx_seconds_per_clip": 300,
+      "cost_usd_per_clip": 0.0,
+      "best_for": "water / cloth / fire / heavy physics",
+      "status": "NODES_INSTALLED_WEIGHTS_DEFERRED",
+      "weights_install_command": "python apex/registry/muscle_install_hunyuanvideo.py --download-weights",
+      "approx_download_gb": 14
+    },
+    "FalCloud": {
+      "label": "fal.ai animation-agent (cloud burst fallback)",
+      "model_files": [],
+      "vram_gb": 0,
+      "approx_seconds_per_clip": 60,
+      "cost_usd_per_clip": 0.10,
+      "best_for": "burst-scale render windows when local GPU is busy",
+      "status": "OPERATOR_GATED",
+      "blocker": "G9 — fal.ai key-resolution route TBD; key NOT in env_sync; not pursuable autonomously"
+    }
+  },
+  "default_route": "Wan22"
+}

@@ -1,0 +1,43 @@
+{
+  "phase": "ANIM-05",
+  "wo_id": "APEX-ANIM-MB-WO-00001",
+  "issued_utc": "2026-06-07T05:56:00Z",
+  "author": "APEX orchestrator (Claude Opus 4.7)",
+  "anchor_policy": "Every claim cites an audit JSON path, a filesystem read, or a verbatim quote from PHASE_STATE.json / shot_list.json.",
+  "agent_build": {
+    "muscle": "APEX-MB-PY-00114 (apex/registry/muscle_video_agent.py)",
+    "modes": ["--list-tiers", "--catalog <slug> [--force]", "--plan-tier <Wan22|LTX|Hunyuan|FalCloud> --shot <id> [--scene <slug>]"],
+    "safety_tests_verified": {
+      "slug_regex": {"input": "--catalog '../etc'", "expect_status": "INVALID_SLUG", "expect_exit": 6, "regex": "^[A-Z][A-Za-z0-9]{0,31}$"},
+      "tier_regex": {"input": "--plan-tier BadTier --shot s1", "expect_status": "INVALID_TIER", "expect_exit": 6, "regex": "^(Wan22|LTX|Hunyuan|FalCloud)$"},
+      "shot_id_regex": "--plan-tier Wan22 --shot '*' would fail SHOT_ID_RE",
+      "operator_gated_tier_refused": {"input": "--plan-tier FalCloud --shot shot_001", "expect_status": "TIER_NOT_READY", "expect_exit": 7, "blocker_note": "fal.ai key not in env_sync"},
+      "rerun_guard": "--catalog MagicalRealmPlayground a second time without --force → WILL_OVERWRITE_REFUSED exit 5",
+      "symlink_target_check": "discover_clips() resolves each candidate strict=True and commonpath-checks against the resolved CLIP_ROOTS root before sha256/stat — escapes are skipped (same pattern as ANIM-04 r3 fix)"
+    }
+  },
+  "tier_config": {
+    "path": "apex/docs/anim/ANIM-05-tier-config.json",
+    "tiers": {
+      "Wan22": {"status": "READY", "approx_seconds_per_clip": 180, "vram_gb": 24},
+      "LTX": {"status": "READY", "approx_seconds_per_clip": 90, "vram_gb": 16},
+      "Hunyuan": {"status": "NODES_INSTALLED_WEIGHTS_DEFERRED", "approx_download_gb": 14},
+      "FalCloud": {"status": "OPERATOR_GATED", "blocker": "G9 fal.ai key route TBD"}
+    },
+    "default_route": "Wan22"
+  },
+  "magical_realm_playground_catalog": {
+    "audit_path": "apex/audit/anim-05/catalog-magicalrealmplayground-2026-06-07T05-56-22Z.json",
+    "clip_root": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips",
+    "total_clips_on_disk": 38,
+    "production_count": 20,
+    "extras_count": 18,
+    "phase_state_anchor_quote": "session_2026_04_01_mv.shots = '20/20 complete — 19 Wan2.2 i2v two-stage MoE + 1 skip (existing). Zero errors.'",
+    "production_set_rule": "First 20 ls-sorted MP4s are the production shipment per PHASE_STATE; remaining 18 are extras/alts (cataloged but not promoted)."
+  },
+  "operator_gated_blockers": [
+    "MA-ANIM-001..005 (PRs #7, #8, #9, #10, and the upcoming ANIM-05 PR)",
+    "G9 fal.ai key-resolution route — not pursuable autonomously",
+    "Hunyuan weights download — operator runs `python apex/registry/muscle_install_hunyuanvideo.py --download-weights` (~14GB)"
+  ]
+}
