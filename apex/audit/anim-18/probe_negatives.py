@@ -300,6 +300,35 @@ def main() -> int:
     finally:
         shim.resolve_fal_key = original_resolver
 
+    # ---- P15-P17: ANIM-18 r6 F-2 fix. Resolver failure (no key field) ----
+    # with the sentinel embedded in an allowlisted DIAGNOSTIC field. This
+    # is the shape r6 F-1 caught: _seal_outward no-ops because there is no
+    # raw_key to scrub against, so fingerprint_only must suppress free-form
+    # value content directly. Verify probe / build_payload / dry-run submit
+    # do not leak the sentinel.
+
+    leaky_no_key_probe = {
+        "status": "ENV_KEY_MISSING",
+        # Sentinel embedded in the free-form `error` field — the resolver
+        # contract allows this string under legitimate failure paths.
+        "error": SENTINEL_KEY,
+        "env_sync_path": "X:/env_sync/user_portable.json",
+        "field": "FAL_AI_API_KEY",
+    }
+    shim.resolve_fal_key = lambda: dict(leaky_no_key_probe)
+    try:
+        r = shim.probe()
+        _record(out, "RESOLVER_LEAK_NO_KEY_PROBE", "KEY_UNRESOLVED",
+                r, real_key)
+        r = shim.build_payload("1", falcloud_plan)
+        _record(out, "RESOLVER_LEAK_NO_KEY_BUILD_PAYLOAD", "FAL_KEY_UNRESOLVED",
+                r, real_key)
+        r = shim.submit_shot("1", falcloud_plan, live=False)
+        _record(out, "RESOLVER_LEAK_NO_KEY_DRY_RUN", "FAL_KEY_UNRESOLVED",
+                r, real_key)
+    finally:
+        shim.resolve_fal_key = original_resolver
+
     # ---- Aggregate + fail-closed scrub before any print ----
 
     out["probe_count"] = len(out["probes"])

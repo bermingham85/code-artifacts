@@ -51,22 +51,52 @@ def _import_video_agent():
 
     Using importlib (rather than a regular `from . import …`) keeps the shim
     runnable as a standalone script when registry/ is not on sys.path.
+
+    ANIM-18 r6 F-3 fix: returns (module, None) on success or (None, status)
+    where status is a stable enum dict. Callers must check the status
+    before using the module — uncaught ImportError/OSError previously
+    produced an unstructured traceback on every CLI mode.
     """
     here = Path(__file__).parent
     target = here / "muscle_video_agent.py"
-    spec = importlib.util.spec_from_file_location(
-        "muscle_video_agent", str(target))
-    if spec is None or spec.loader is None:
-        raise RuntimeError("muscle_video_agent.py not found beside shim")
-    mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
-    return mod
+    if not target.is_file():
+        return None, {"status": "VIDEO_AGENT_NOT_FOUND",
+                      "path": str(target).replace("\\", "/")}
+    try:
+        spec = importlib.util.spec_from_file_location(
+            "muscle_video_agent", str(target))
+        if spec is None or spec.loader is None:
+            return None, {"status": "VIDEO_AGENT_IMPORT_FAILED",
+                          "path": str(target).replace("\\", "/")}
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        return mod, None
+    except (OSError, ImportError, SyntaxError) as e:
+        return None, {"status": "VIDEO_AGENT_IMPORT_FAILED",
+                      "error": f"{type(e).__name__}"}
 
 
 def load_tier_config() -> dict:
+    """Load ANIM-05-tier-config.json. ANIM-18 r6 F-3 fix: any read/parse
+    error now returns a stable {tiers: {}} shape with a __load_error entry
+    so callers can detect the failure without a traceback. CLI modes that
+    rely on FalCloud config will then surface TIER_NOT_CONFIGURED through
+    the existing resolve_fal_key() path."""
     if not TIER_CONFIG_PATH.is_file():
-        return {"tiers": {}}
-    return json.loads(TIER_CONFIG_PATH.read_text(encoding="utf-8"))
+        return {"tiers": {}, "__load_error": "TIER_CONFIG_NOT_FOUND"}
+    try:
+        text = TIER_CONFIG_PATH.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError):
+        return {"tiers": {}, "__load_error": "TIER_CONFIG_UNREADABLE"}
+    try:
+        data = json.loads(text)
+    except json.JSONDecodeError:
+        return {"tiers": {}, "__load_error": "TIER_CONFIG_UNPARSEABLE"}
+    if not isinstance(data, dict):
+        return {"tiers": {}, "__load_error": "TIER_CONFIG_INVALID_SHAPE"}
+    if "tiers" not in data or not isinstance(data["tiers"], dict):
+        return {"tiers": {}, "__load_error": "TIER_CONFIG_MISSING_TIERS"}
+    return data
 
 
 def resolve_fal_key() -> dict:
@@ -78,15 +108,28 @@ def resolve_fal_key() -> dict:
     env_field = cfg.get("requires_env_key_field")
     if not env_path or not env_field:
         return {"status": "TIER_CONFIG_INCOMPLETE", "tier": "FalCloud"}
-    va = _import_video_agent()
-    probe = va.resolve_env_key_from_env_sync(env_path, env_field)
+    va, import_err = _import_video_agent()
+    if import_err is not None:
+        return {"status": "VIDEO_AGENT_IMPORT_FAILED", **import_err}
+    try:
+        probe = va.resolve_env_key_from_env_sync(env_path, env_field)
+    except (OSError, AttributeError, TypeError):
+        return {"status": "RESOLVER_CRASHED"}
     return probe
 
 
-FINGERPRINT_ALLOWLIST = (
+# ANIM-18 r6 F-1 fix: split the allowlist into two classes —
+#   "safe-shape" fields whose values are well-defined enums or short bounded
+#   strings under the shim's own control (these are emitted as-is); and
+#   "free-form" fields (currently just `error`) whose values can carry
+#   arbitrary content from the underlying resolver and must NOT be passed
+#   through, because the seal pass cannot scrub them when no key is in scope.
+#   The free-form fields are replaced with a fixed placeholder.
+FINGERPRINT_SAFE_SHAPE = (
     "status", "fingerprint", "key_sha256_first_12", "key_length",
-    "env_sync_path", "field", "error", "actual_type",
+    "env_sync_path", "field", "actual_type",
 )
+FINGERPRINT_FREE_FORM = ("error",)
 
 
 def fingerprint_only(probe: dict) -> dict:
@@ -96,11 +139,22 @@ def fingerprint_only(probe: dict) -> dict:
     dropped a top-level "key" field. A resolver that emitted the raw key in
     any other field name, nested position, or as a dict-key would have
     leaked through. This is now an allowlist: only the documented safe
-    diagnostic fields survive. Anything else (including a malicious resolver
-    return) is dropped entirely. The values themselves are then passed
-    through _redact_key_from_obj() via the caller's final-sealing wrapper.
+    diagnostic fields survive.
+
+    ANIM-18 r6 F-1 fix: free-form fields like "error" are still capable of
+    carrying attacker-controlled / tampered-resolver content, and when the
+    resolver returns no usable `key` (status != OK), the outward sealing
+    pass has nothing to scrub against. Replace any free-form field with a
+    fixed placeholder; the structured `status` enum already carries the
+    failure category, so the suppressed `error` text is information that
+    operators can recover from the live resolver call directly (it is never
+    silently dropped — only kept out of the persisted result).
     """
-    return {k: probe[k] for k in FINGERPRINT_ALLOWLIST if k in probe}
+    out = {k: probe[k] for k in FINGERPRINT_SAFE_SHAPE if k in probe}
+    for k in FINGERPRINT_FREE_FORM:
+        if k in probe:
+            out[k] = "<suppressed-by-fingerprint_only>"
+    return out
 
 
 def validate_tier_plan(tier_plan_path: str) -> dict:
