@@ -44,7 +44,7 @@
       "findings": [
         "F-ANIM03-01: canon mismatch on galinda age \u2014 status.json says 'young adult woman (early 20s)'; README.md line 15 reads '| Age | 4-5 (child) |'. Bible locks the status.json value as authoritative because it matches the 2026-04-07 PHASE_STATE.json formal sign-off and the 15/15 production-ready renders; operator to merge or fork the README."
       ],
-      "built_at": "2026-06-07T05:30:57+00:00"
+      "built_at": "2026-06-07T05:34:55+00:00"
     },
     "emma": {
       "brand": "Jesse-Adventures",
@@ -93,7 +93,7 @@
       "findings": [
         "F-ANIM03-02: emma has no status.json under X:\\Automations\\apex\\projects\\jesse_animate\\characters\\emma; bible built from PROJECT_SPEC + render-set inference."
       ],
-      "built_at": "2026-06-07T05:30:58+00:00"
+      "built_at": "2026-06-07T05:34:55+00:00"
     }
   }
 }

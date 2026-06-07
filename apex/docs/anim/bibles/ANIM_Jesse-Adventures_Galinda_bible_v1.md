@@ -1,7 +1,7 @@
 # Character Bible — Galinda
 
 **File:** `ANIM_Jesse-Adventures_Galinda_bible_v1.md`
-**Authored:** 2026-06-07T05:30:57+00:00
+**Authored:** 2026-06-07T05:34:55+00:00
 **Brand:** Jesse-Adventures
 **Phase:** ANIM-03 (WO `APEX-ANIM-MB-WO-00001`)
 

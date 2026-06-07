@@ -123,17 +123,30 @@ def read_readme(char_dir: Path) -> str | None:
     return rp.read_text(encoding="utf-8")
 
 
+CANON_SECTION_HEADER_RE = re.compile(r"^###\s+1\.8\s+Character Canon\b", re.IGNORECASE)
+NEXT_SECTION_RE = re.compile(r"^#{1,3}\s+\S")
+
+
 def project_spec_canon_row(character: str) -> str | None:
     """Find the §1.8 character-canon row whose first cell exactly equals the character name.
 
-    Strict first-column equality avoids the F-1 bug where 'emma' matched 'Gemma' inside a
-    model-list table. Returns the trimmed row, or None if no exact match (or multiple).
+    Two-layer scope: (1) only scan lines that fall inside the §1.8 section (header to the
+    next ## or ### heading); (2) inside that section, only return a row whose first cell
+    exactly equals the character name. Fails closed on no-match OR ambiguous-match.
     """
     if not PROJECT_SPEC.is_file():
         return None
     target = character.strip().lower()
     matches: list[str] = []
+    in_section = False
     for line in PROJECT_SPEC.read_text(encoding="utf-8").splitlines():
+        if not in_section:
+            if CANON_SECTION_HEADER_RE.match(line):
+                in_section = True
+            continue
+        # Closing condition: next major section heading.
+        if NEXT_SECTION_RE.match(line) and not CANON_SECTION_HEADER_RE.match(line):
+            break
         stripped = line.strip()
         if not stripped.startswith("|"):
             continue
@@ -144,7 +157,7 @@ def project_spec_canon_row(character: str) -> str | None:
             matches.append(stripped)
     if len(matches) == 1:
         return matches[0]
-    return None  # 0 = no canon row; 2+ = ambiguous, refuse to guess
+    return None  # 0 = no canon row in §1.8; 2+ = ambiguous within §1.8, refuse to guess
 
 
 def readme_line_matching(readme: str, needle: str) -> tuple[int, str] | None:
@@ -242,27 +255,56 @@ def render_bible(character: str, brand: str, status: dict | None,
     return "\n".join(lines) + "\n"
 
 
-def build_character(character: str, brand: str, force: bool) -> dict:
-    # F-2 fix: bound --character against a tight regex; reject anything that could traverse paths.
-    if not CHARACTER_NAME_RE.match(character):
-        return {"character": character, "status": "INVALID_CHARACTER_NAME",
-                "expected_regex": CHARACTER_NAME_RE.pattern,
-                "hint": "lowercase a-z, 0-9, underscore; must start with a-z; max 32 chars"}
+def validate_character_arg(character: str) -> tuple[bool, dict | Path]:
+    """Shared validation called by both build and dry-run paths.
 
+    Returns (True, char_dir) on success or (False, error_dict) on rejection.
+    """
+    if not CHARACTER_NAME_RE.match(character):
+        return False, {"character": character, "status": "INVALID_CHARACTER_NAME",
+                       "expected_regex": CHARACTER_NAME_RE.pattern,
+                       "hint": "lowercase a-z, 0-9, underscore; must start with a-z; max 32 chars"}
     char_dir = CHAR_ROOT / character
-    # Defense in depth: ensure resolved char_dir stays under CHAR_ROOT.
     try:
         resolved = char_dir.resolve(strict=False)
-        if Path(os.path.commonpath([str(resolved), str(CHAR_ROOT.resolve(strict=False))])) != CHAR_ROOT.resolve(strict=False):
-            return {"character": character, "status": "PATH_ESCAPE_REJECTED",
-                    "resolved": str(resolved), "char_root": str(CHAR_ROOT.resolve(strict=False))}
+        root_resolved = CHAR_ROOT.resolve(strict=False)
+        if Path(os.path.commonpath([str(resolved), str(root_resolved)])) != root_resolved:
+            return False, {"character": character, "status": "PATH_ESCAPE_REJECTED",
+                           "resolved": str(resolved), "char_root": str(root_resolved)}
     except ValueError:
-        return {"character": character, "status": "PATH_ESCAPE_REJECTED",
-                "char_root": str(CHAR_ROOT)}
+        return False, {"character": character, "status": "PATH_ESCAPE_REJECTED",
+                       "char_root": str(CHAR_ROOT)}
+    return True, char_dir
+
+
+def build_character(character: str, brand: str, force: bool) -> dict:
+    ok, ret = validate_character_arg(character)
+    if not ok:
+        return ret  # type: ignore[return-value]
+    char_dir = ret  # type: ignore[assignment]
+
+    # F-4 r2 fix: check overwrite guard BEFORE volatile render discovery and hashing so
+    # rerunning an already-built bible always returns WILL_OVERWRITE_REFUSED (exit 5),
+    # independent of whether source renders are still present or the pack still meets PACK_MIN.
+    cap = character.capitalize()
+    bible_path = BIBLE_ROOT / f"ANIM_{brand}_{cap}_bible_v1.md"
+    if bible_path.exists() and not force:
+        return {"character": character, "status": "WILL_OVERWRITE_REFUSED",
+                "existing_bible": str(bible_path),
+                "hint": "rerun with --force to overwrite"}
 
     status = read_status_json(char_dir)
     readme = read_readme(char_dir)
     spec_row = project_spec_canon_row(character)
+
+    # F-3 r2 fix: fail closed if no canon source is resolved at all. Render-set
+    # inference alone is not enough to issue a bible.
+    if not (status or spec_row):
+        return {"character": character, "status": "NO_CANON_SOURCE",
+                "char_dir": str(char_dir),
+                "checked": ["status.json", "PROJECT_SPEC.md §1.8 first-cell match"],
+                "hint": "populate <char>/status.json or add a §1.8 row before retrying"}
+
     renders = discover_render_set(char_dir)
     pack = annotate_pack(pick_pack(renders))
 
@@ -292,13 +334,6 @@ def build_character(character: str, brand: str, force: bool) -> dict:
 
     bible_md = render_bible(character, brand, status, readme, spec_row, pack, findings)
     BIBLE_ROOT.mkdir(parents=True, exist_ok=True)
-    cap = character.capitalize()
-    bible_path = BIBLE_ROOT / f"ANIM_{brand}_{cap}_bible_v1.md"
-    if bible_path.exists() and not force:
-        return {"character": character, "status": "WILL_OVERWRITE_REFUSED",
-                "existing_bible": str(bible_path), "findings": findings,
-                "hint": "rerun with --force to overwrite"}
-
     bible_path.write_text(bible_md, encoding="utf-8")
 
     # Update / create reference-pack manifest
@@ -347,7 +382,11 @@ def main() -> int:
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
     if args.dry_run:
-        char_dir = CHAR_ROOT / args.character.lower()
+        ok, ret = validate_character_arg(args.character)
+        if not ok:
+            print(json.dumps(ret, indent=2))
+            return 6
+        char_dir = ret  # type: ignore[assignment]
         renders = discover_render_set(char_dir)
         pack = annotate_pack(pick_pack(renders))
         print(json.dumps({
@@ -365,6 +404,7 @@ def main() -> int:
         "INVALID_CHARACTER_NAME": 6,
         "PATH_ESCAPE_REJECTED": 6,
         "PACK_TOO_SMALL": 7,
+        "NO_CANON_SOURCE": 8,
     }
     return code_for.get(result.get("status", ""), 4)
 

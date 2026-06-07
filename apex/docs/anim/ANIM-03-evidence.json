@@ -25,7 +25,7 @@
     "audit_dir": "apex/audit/anim-03/"
   },
   "galinda_build": {
-    "audit_path": "apex/audit/anim-03/galinda-build-2026-06-07T05-30-57Z.json",
+    "audit_path": "apex/audit/anim-03/galinda-build-2026-06-07T05-34-55Z.json",
     "render_source_root": "X:/Automations/apex/projects/jesse_animate/characters/galinda",
     "render_count_under_root": 211,
     "reference_pack_size": 5,
@@ -47,7 +47,7 @@
     ]
   },
   "emma_build": {
-    "audit_path": "apex/audit/anim-03/emma-build-2026-06-07T05-30-58Z.json",
+    "audit_path": "apex/audit/anim-03/emma-build-2026-06-07T05-34-55Z.json",
     "render_source_root": "X:/Automations/apex/projects/jesse_animate/characters/emma",
     "render_count_under_root": 12,
     "reference_pack_size": 6,
