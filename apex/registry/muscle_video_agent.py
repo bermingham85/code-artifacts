@@ -92,7 +92,16 @@ def resolve_env_key_from_env_sync(env_sync_path: str, field: str) -> dict:
         # env_sync files are emitted with a UTF-8 BOM on Windows; use the
         # BOM-tolerant codec so the resolver doesn't false-fail on legal
         # input. The actual decoded text is identical with or without BOM.
-        data = json.loads(p.read_text(encoding="utf-8-sig"))
+        text = p.read_text(encoding="utf-8-sig")
+    except (UnicodeDecodeError, OSError) as e:
+        # ANIM-17 r2 F-6 fix: surface structured failure for non-decodable
+        # bytes or I/O errors (locked file, permission, etc.) rather than
+        # letting the CLI crash with an unstructured stack.
+        return {"status": "ENV_SYNC_UNREADABLE",
+                "env_sync_path": env_sync_path,
+                "error": f"{type(e).__name__}: {e}"}
+    try:
+        data = json.loads(text)
     except json.JSONDecodeError as e:
         return {"status": "ENV_SYNC_UNPARSEABLE",
                 "env_sync_path": env_sync_path, "error": str(e)}
@@ -396,7 +405,10 @@ def plan_tier(tier: str, shot_id: str, scene_slug: str | None) -> dict:
     if eff_status == "KEY_OK_SHIM_PENDING":
         # ANIM-17 new path: env-key resolved but the cloud-side wrapper shim
         # is not yet built. Surface fingerprint + shim_blocker; withhold PLAN.
+        # ANIM-17 r2 F-5 fix: include effective tier_status alongside
+        # tier_static_status so consumers can rely on the spec-mandated shape.
         return {"status": "TIER_KEY_OK_SHIM_PENDING", "tier": tier,
+                "tier_status": eff_status,
                 "tier_static_status": eff.get("tier_static_status"),
                 "key_resolution": eff.get("key_resolution"),
                 "shim_blocker": eff.get("shim_blocker")}
