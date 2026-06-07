@@ -1,0 +1,80 @@
+{
+  "phase": "ANIM-11",
+  "agent": "AGEN-Architecture",
+  "issued": "2026-06-07T10:32:00Z",
+  "live_out_dir": "C:/Users/Owner/Repos/code-artifacts/AGENT_BUILD_SYSTEM/05_ARCHITECTURE_AGENT/",
+  "extractor": {
+    "id": "APEX-MB-PY-00116",
+    "path": "apex/registry/agen_recovery_extract.py",
+    "mode": "BYTE-MODE",
+    "frozen_since": "ANIM-08 (head 8be8daf)",
+    "modified_in_this_phase": false
+  },
+  "source_transcript": {
+    "path": "C:/Users/Owner/apex_governance/codex_runs/AGEN-architecture-agent-post-migration/AGEN-architecture-agent-post-migration-review-20260524T203145Z-3e4d1dcd.txt",
+    "size_bytes": 188414,
+    "sha256": "a2de5faaea9a97f8e9e9430137f824e327b7a4abf3b15faa1f3268b438b8edf0",
+    "marker_balance": {"FILE_markers": 8, "END_FILE_markers": 8, "balanced": true},
+    "marker_inventory": [
+      "CERT-APEX-AUTONOMOUS-DELIVERY.json (not extracted; not an AGEN runtime artifact)",
+      "DOCUMENT_REGISTER.md (not extracted; doc-control file, not target-agent)",
+      "AGEN-PRMPT-architecture-system-prompt-v1.md (extracted)",
+      "AGEN-SCRPT-architecture-supabase-migration-v1.sql (extracted)",
+      "AGEN-TEST-architecture-test-plan-v1.md (extracted)",
+      "AGEN-WKFL-architecture-agent-v1.json (extracted)",
+      "HANDOVER.md (not extracted; already present at live path with 2026-04-19 mtime)",
+      "PROJECT_INSTRUCTIONS.md (not extracted; already present at live path)"
+    ],
+    "role": "Single source-of-record for 4 of 5 Architecture AGEN artifacts (latest reviewer-iterated bytes for WKFL/PRMPT/TEST/SCRPT)."
+  },
+  "shared_memory_correction": {
+    "memory_anchor": "[[project_agen_five_agent_state_2026-06-07]]",
+    "original_claim": "Architecture: only migration SCRPT inline",
+    "verified_reality": "4 of 5 AGEN artifacts (WKFL/PRMPT/TEST/SCRPT) are inline in the AGEN-architecture-agent-post-migration subdirectory. SPEC is still missing.",
+    "note": "Correction documented here; not propagated to shared-memory file in this phase (operator-touchable)."
+  },
+  "restored_files": [
+    {
+      "basename": "AGEN-WKFL-architecture-agent-v1.json",
+      "size_bytes": 58973,
+      "sha256": "e6c9a5642854aac24f3e3319333812e4cbc07793a61412d58e787f740f46614f",
+      "src_path_in_transcript_header": "apex/registry/clones/code-artifacts/AGENT_BUILD_SYSTEM/05_ARCHITECTURE_AGENT/AGEN-WKFL-architecture-agent-v1.json",
+      "live_dst": "AGENT_BUILD_SYSTEM/05_ARCHITECTURE_AGENT/AGEN-WKFL-architecture-agent-v1.json",
+      "parses_as_json": true,
+      "json_node_count": 40,
+      "json_workflow_name": "Architecture Agent",
+      "path_reconciled_from_clones_to_live": true
+    },
+    {
+      "basename": "AGEN-PRMPT-architecture-system-prompt-v1.md",
+      "size_bytes": 11591,
+      "sha256": "559087f7cc74d449005c343d5895451a1d1b9466c9eaa3e72b2026aa5cb46545",
+      "live_dst": "AGENT_BUILD_SYSTEM/05_ARCHITECTURE_AGENT/AGEN-PRMPT-architecture-system-prompt-v1.md",
+      "path_reconciled_from_clones_to_live": true
+    },
+    {
+      "basename": "AGEN-TEST-architecture-test-plan-v1.md",
+      "size_bytes": 4162,
+      "sha256": "a3a963e1575684866f607cf65d35ca17f157e6476c6da31d30d127e44f9ed29a",
+      "live_dst": "AGENT_BUILD_SYSTEM/05_ARCHITECTURE_AGENT/AGEN-TEST-architecture-test-plan-v1.md",
+      "path_reconciled_from_clones_to_live": true
+    },
+    {
+      "basename": "AGEN-SCRPT-architecture-supabase-migration-v1.sql",
+      "size_bytes": 26908,
+      "sha256": "419d1d621535f8e74815aaecf5ee2d9a4044b3c754a2adce6437c7db80af5d63",
+      "live_dst": "AGENT_BUILD_SYSTEM/05_ARCHITECTURE_AGENT/AGEN-SCRPT-architecture-supabase-migration-v1.sql",
+      "path_reconciled_from_clones_to_live": true,
+      "sql_lines": 581
+    }
+  ],
+  "missing_from_transcripts": [
+    {
+      "basename_expected": "AGEN-SPEC-architecture-integration-v1.md",
+      "reason": "Not inline in any architecture transcript across 6 subdirectories: AGEN-architecture-agent/, AGEN-architecture-agent-build-2026-05-24/, AGEN-architecture-agent-post-migration/, AGEN-architecture-prompt-v1-20260524/, AGEN-architecture-prompt-v1-retry-20260524/, AGEN-architecture-workflow-v1-20260524/, AGEN-architecture-workflow-v1-retry-20260524/.",
+      "tracked_as": "MA-AGEN-001-ARCH-SPEC in apex_governance/MISSING_SECRETS.queue.json + in-repo mirror at apex/audit/anim-11/missing-artifacts-queue-row.json",
+      "operator_action_required": "Locate the original Architecture integration spec from a different source (prompt registry, X clone snapshots predating May deletion). If irrecoverable, draft fresh under a separate ANIM phase."
+    }
+  ],
+  "doctrine_anchors": ["R15", "R19 (REUSE)", "R20 (verbatim)", "P1", "P2", "O2", "O6", "WO_clause_3"]
+}
