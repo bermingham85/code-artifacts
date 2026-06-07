@@ -1,0 +1,87 @@
+{
+  "phase": "ANIM-14",
+  "title": "character_markers schema extension on ANIM-03 reference-pack manifest",
+  "spec_path": "apex/docs/spec/SPEC-ANIM-14.md",
+  "branch": "phase/ANIM-14-marker-schema",
+  "doctrine": ["P3", "R15", "R16", "R20", "O2", "O6", "O9"],
+  "schema_changes": {
+    "ANIM-03-reference-pack-manifest.json": {
+      "schema_version_before": 1,
+      "schema_version_after": 2,
+      "additive": true,
+      "new_optional_fields_per_character": [
+        "character_markers",
+        "character_markers_provenance_source_path",
+        "character_markers_provenance_field",
+        "character_markers_provenance_sha256",
+        "character_markers_registered_in"
+      ],
+      "backfilled_characters": ["grog"],
+      "not_backfilled_characters_reason": {
+        "galinda": "no canonical marker-identifier source field exists yet; logged as MA-ANIM-14-MARKERS-GALINDA",
+        "emma": "no canonical marker-identifier source field exists yet; logged as MA-ANIM-14-MARKERS-EMMA",
+        "lirian": "no canonical marker-identifier source field exists yet; logged as MA-ANIM-14-MARKERS-LIRIAN"
+      }
+    },
+    "ANIM-13-projects.json": {
+      "schema_version_before": 1,
+      "schema_version_after": 2,
+      "grog_playground_diff": "removed character_markers + character_markers_provenance_source_path + character_markers_provenance_field + character_markers_provenance_sha256; replaced with explanatory character_markers_note pointing at ANIM-03",
+      "purpose": "forces the ANIM-03 lookup path to be exercised end-to-end on the only currently-registered project"
+    },
+    "muscle_shot_storyboard_agent.py": {
+      "lines_changed": "approx 130 added (helper + resolver) / 35 removed (inline block)",
+      "new_helper_functions": [
+        "_verify_markers_against_source(character_markers, src_path_str, src_sha, src_field) -> dict|None",
+        "resolve_character_markers(project_slug, cfg, ref_pack) -> dict"
+      ],
+      "new_module_constant": "_MARKER_FIELDS",
+      "new_exit_codes": {
+        "CHARACTER_MARKERS_NOT_FOUND": 13,
+        "CHARACTER_MARKERS_MANIFEST_PARTIAL": 13,
+        "CHARACTER_MARKERS_SOURCE_CONFLICT": 13
+      },
+      "storyboard_schema_version_before": 2,
+      "storyboard_schema_version_after": 3
+    }
+  },
+  "happy_path_runs": {
+    "1_projects_json_still_carrying_markers_pre_migration": {
+      "command": "python apex/registry/muscle_shot_storyboard_agent.py --storyboard grog_playground --force",
+      "result": {"status": "OK", "shot_count": 43, "section_count": 9},
+      "character_markers_source_annotation": "projects.json (sha-verified against X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/shot_list.json)",
+      "note": "ANIM-14 cross-check on both paths (projects.json + ANIM-03 entry both present and byte-equal); projects.json wins precedence"
+    },
+    "2_projects_json_marker_block_removed_post_migration": {
+      "command": "python apex/registry/muscle_shot_storyboard_agent.py --storyboard grog_playground --force",
+      "result": {"status": "OK", "shot_count": 43, "section_count": 9},
+      "character_markers_source_annotation": "ANIM-03 manifest (sha-verified against X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/shot_list.json)",
+      "character_markers_value_matches_pre_migration": true,
+      "note": "ANIM-03 lookup path; emitted markers byte-equal to pre-migration value"
+    },
+    "3_validate_post_migration": {
+      "command": "python apex/registry/muscle_shot_storyboard_agent.py --validate grog_playground",
+      "emitted_shot_count": 43,
+      "gold_shot_count": 38,
+      "max_section_boundary_delta_seconds": 0.0,
+      "mean_section_boundary_delta_seconds": 0.0,
+      "coverage_ratio": 1.0,
+      "status": "OK",
+      "note": "section deltas + coverage identical to ANIM-13 baseline; ANIM-03 lookup path produces wire-equivalent output"
+    }
+  },
+  "negative_path_evidence_file": "apex/docs/anim/ANIM-14-evidence-probes.json",
+  "negative_path_summary": {
+    "CHARACTER_MARKERS_NOT_FOUND": "fires when project AND manifest both omit the marker block",
+    "CHARACTER_MARKERS_MANIFEST_PARTIAL": "fires when ANIM-03 manifest's marker block is 3-of-4 fields present",
+    "CHARACTER_MARKERS_VALUE_MISMATCH (manifest path)": "fires when ANIM-03 records wrong character_markers text; sha + field still verified against named source",
+    "CHARACTER_MARKERS_SOURCE_CONFLICT": "fires when projects.json AND ANIM-03 both verified-OK individually (against different fields in same source file) but recorded marker text differs",
+    "OK via manifest-only": "happy path with markers from ANIM-03 lookup only"
+  },
+  "open_followons": [
+    "MA-ANIM-14-MARKERS-GALINDA — register a galinda canonical identifier source",
+    "MA-ANIM-14-MARKERS-EMMA — register an emma canonical identifier source",
+    "MA-ANIM-14-MARKERS-LIRIAN — register a lirian canonical identifier source (also blocks ANIM-15 Lirian MV binding)"
+  ],
+  "built_at": "2026-06-07T13:01:13+00:00"
+}

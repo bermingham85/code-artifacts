@@ -1,6 +1,10 @@
 {
   "phase": "ANIM-03",
-  "schema_version": 1,
+  "schema_version": 2,
+  "schema_version_history": [
+    {"version": 1, "introduced_in": "ANIM-03", "summary": "initial per-character bible_path + reference_pack[] + findings[]"},
+    {"version": 2, "introduced_in": "ANIM-14", "summary": "optional per-character character_markers + provenance triple (source_path/field/sha256) hoisted from ANIM-13 project bindings; extra fields are ignored by schema_version=1 readers (additive change)"}
+  ],
   "brand": "Jesse-Adventures",
   "characters": {
     "galinda": {
@@ -148,6 +152,11 @@
       "findings": [
         "F-ANIM03-02: grog has no status.json under X:\\Automations\\apex\\projects\\jesse_animate\\characters\\grog; bible built from PROJECT_SPEC + render-set inference."
       ],
+      "character_markers": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers",
+      "character_markers_provenance_source_path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/shot_list.json",
+      "character_markers_provenance_field": "grog_identifiers",
+      "character_markers_provenance_sha256": "6414235bd985e2d90c4e5875846739a276da0f2c7388abff4a99377332f6a428",
+      "character_markers_registered_in": "ANIM-14",
       "built_at": "2026-06-07T08:44:46+00:00"
     },
     "lirian": {

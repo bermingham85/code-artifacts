@@ -1,6 +1,23 @@
 {
   "phase": "ANIM-13",
-  "schema_version": 2,
+  "schema_version": 3,
+  "schema_version_history": [
+    {
+      "version": 1,
+      "introduced_in": "ANIM-13",
+      "summary": "initial deterministic shot-skeleton format"
+    },
+    {
+      "version": 2,
+      "introduced_in": "ANIM-13 (post r5)",
+      "summary": "added provenance source annotation per marker field"
+    },
+    {
+      "version": 3,
+      "introduced_in": "ANIM-14",
+      "summary": "character_markers may resolve from ANIM-03 manifest when projects.json omits the marker block; source annotation reports which path supplied the value"
+    }
+  ],
   "project": "grog_playground",
   "song_title": "too big for the playground (piano power Ballad) Remix",
   "character": "grog",
@@ -9,7 +26,7 @@
   "duration_seconds": 238.9,
   "target_shot_seconds": 5.5,
   "character_markers": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers",
-  "character_markers_source": "projects.json (sha-verified against X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/shot_list.json)",
+  "character_markers_source": "ANIM-03 manifest (sha-verified against X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/shot_list.json)",
   "scene_markers": "A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing",
   "scene_markers_source": "ANIM-04-scene-pack-manifest.json:scenes['MagicalRealmPlayground'].descriptor.prompt",
   "style_anchor": "Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
@@ -751,5 +768,5 @@
       ]
     }
   ],
-  "built_at": "2026-06-07T12:21:37+00:00"
+  "built_at": "2026-06-07T13:01:13+00:00"
 }

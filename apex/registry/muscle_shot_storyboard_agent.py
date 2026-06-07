@@ -141,6 +141,141 @@ def compile_prompt_template(character_markers: str, scene_markers: str,
             f"{camera_preset}, {style_anchor}")
 
 
+def _verify_markers_against_source(character_markers: str, src_path_str: str,
+                                    src_sha: str, src_field: str) -> dict | None:
+    """ANIM-14: extracted from inline ANIM-13 logic so both the projects.json
+    path and the ANIM-03 manifest path apply identical provenance verification.
+
+    Returns None on success or a status dict on the first failure. Caller is
+    responsible for tagging which path triggered the failure (`origin` key)
+    and adding slug context, so dispatchers report the right exit code.
+    """
+    src_path = Path(src_path_str)
+    if not src_path.is_file():
+        return {"status": "CHARACTER_MARKERS_SOURCE_MISSING",
+                "source_path": src_path_str}
+    actual_sha = sha256_of(src_path)
+    if actual_sha != src_sha:
+        return {"status": "CHARACTER_MARKERS_PROVENANCE_DRIFT",
+                "source_path": src_path_str,
+                "recorded_sha256": src_sha,
+                "actual_sha256": actual_sha}
+    try:
+        src_data = json.loads(src_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as e:
+        return {"status": "CHARACTER_MARKERS_SOURCE_UNPARSEABLE",
+                "source_path": src_path_str, "error": str(e)}
+    source_value = src_data.get(src_field)
+    if source_value is None:
+        return {"status": "CHARACTER_MARKERS_FIELD_MISSING",
+                "source_path": src_path_str, "field": src_field}
+    if character_markers != source_value:
+        return {"status": "CHARACTER_MARKERS_VALUE_MISMATCH",
+                "source_path": src_path_str, "field": src_field,
+                "recorded_markers": character_markers,
+                "actual_in_source": source_value}
+    return None
+
+
+_MARKER_FIELDS = (
+    "character_markers",
+    "character_markers_provenance_source_path",
+    "character_markers_provenance_sha256",
+    "character_markers_provenance_field",
+)
+
+
+def resolve_character_markers(project_slug: str, cfg: dict, ref_pack: dict) -> dict:
+    """ANIM-14 marker resolution.
+
+    Precedence:
+      1. projects.json carries the full marker block (all four _MARKER_FIELDS).
+      2. ANIM-03 manifest carries the full marker block under
+         characters[<char>]; project config carries none.
+      3. Both declare; both verified; cross-check character_markers byte-equal.
+
+    Partial-declaration cases (any-but-not-all) are reported, since a
+    declaration without provenance is unsafe even if the marker text happens
+    to be correct (matches the ANIM-13 doctrine of "no claim without sha").
+    """
+    project_present = [k for k in _MARKER_FIELDS if cfg.get(k) is not None]
+    project_path_complete = len(project_present) == len(_MARKER_FIELDS)
+    project_has_partial = 0 < len(project_present) < len(_MARKER_FIELDS)
+
+    char_slug = cfg.get("character")
+    char_entry = (ref_pack.get("characters", {}) or {}).get(char_slug, {}) or {}
+    manifest_present = [k for k in _MARKER_FIELDS if char_entry.get(k) is not None]
+    manifest_path_complete = len(manifest_present) == len(_MARKER_FIELDS)
+    manifest_has_partial = 0 < len(manifest_present) < len(_MARKER_FIELDS)
+
+    if project_has_partial:
+        return {"slug": project_slug,
+                "status": "CHARACTER_MARKERS_PROVENANCE_MISSING",
+                "origin": "projects.json",
+                "required_fields": list(_MARKER_FIELDS),
+                "present_fields": project_present}
+    if manifest_has_partial:
+        return {"slug": project_slug,
+                "status": "CHARACTER_MARKERS_MANIFEST_PARTIAL",
+                "origin": "ANIM-03 manifest",
+                "character": char_slug,
+                "required_fields": list(_MARKER_FIELDS),
+                "present_fields": manifest_present}
+    if not project_path_complete and not manifest_path_complete:
+        return {"slug": project_slug,
+                "status": "CHARACTER_MARKERS_NOT_FOUND",
+                "character": char_slug,
+                "checked": [
+                    "projects.json:projects['" + project_slug + "']",
+                    "ANIM-03 manifest:characters['" + (char_slug or "") + "']",
+                ]}
+
+    chosen_source = None
+    chosen_markers = None
+    chosen_src_path = None
+    if project_path_complete:
+        err = _verify_markers_against_source(
+            cfg["character_markers"],
+            cfg["character_markers_provenance_source_path"],
+            cfg["character_markers_provenance_sha256"],
+            cfg["character_markers_provenance_field"])
+        if err is not None:
+            err.update({"slug": project_slug, "origin": "projects.json"})
+            return err
+        chosen_source = "projects.json"
+        chosen_markers = cfg["character_markers"]
+        chosen_src_path = cfg["character_markers_provenance_source_path"]
+
+    if manifest_path_complete:
+        err = _verify_markers_against_source(
+            char_entry["character_markers"],
+            char_entry["character_markers_provenance_source_path"],
+            char_entry["character_markers_provenance_sha256"],
+            char_entry["character_markers_provenance_field"])
+        if err is not None:
+            err.update({"slug": project_slug, "origin": "ANIM-03 manifest",
+                        "character": char_slug})
+            return err
+        if not project_path_complete:
+            chosen_source = "ANIM-03 manifest"
+            chosen_markers = char_entry["character_markers"]
+            chosen_src_path = char_entry["character_markers_provenance_source_path"]
+        else:
+            if cfg["character_markers"] != char_entry["character_markers"]:
+                return {"slug": project_slug,
+                        "status": "CHARACTER_MARKERS_SOURCE_CONFLICT",
+                        "character": char_slug,
+                        "projects_json_value": cfg["character_markers"],
+                        "anim03_manifest_value": char_entry["character_markers"]}
+
+    return {
+        "status": "OK",
+        "character_markers": chosen_markers,
+        "character_markers_source_annotation":
+            f"{chosen_source} (sha-verified against {chosen_src_path})",
+    }
+
+
 def build_storyboard(project_slug: str, target_shot_seconds: float, force: bool) -> dict:
     bad = validate_slug(project_slug)
     if bad:
@@ -195,47 +330,24 @@ def build_storyboard(project_slug: str, target_shot_seconds: float, force: bool)
                     "brand_tokens.prompt_rules": prompt_rules,
                 }.items() if not v]}
 
-    # F-3 r2 + F-5 r3: character_markers stays in projects.json (no canonical
-    # marker field in ANIM-03 yet), but its provenance is anchored two ways:
-    #   (a) the named source file's sha256 must match the recorded value
-    #       (catches the file being swapped or modified);
-    #   (b) the emitted character_markers string must exactly equal the JSON
-    #       field at character_markers_provenance_field inside that source
-    #       (catches a fabricated marker string pointed at an unrelated file).
-    src_path_str = cfg.get("character_markers_provenance_source_path")
-    src_sha = cfg.get("character_markers_provenance_sha256")
-    src_field = cfg.get("character_markers_provenance_field")
-    if not src_path_str or not src_sha or not src_field:
-        return {"slug": project_slug, "status": "CHARACTER_MARKERS_PROVENANCE_MISSING",
-                "required_fields": [
-                    "character_markers_provenance_source_path",
-                    "character_markers_provenance_sha256",
-                    "character_markers_provenance_field",
-                ]}
-    src_path = Path(src_path_str)
-    if not src_path.is_file():
-        return {"slug": project_slug, "status": "CHARACTER_MARKERS_SOURCE_MISSING",
-                "source_path": src_path_str}
-    actual_sha = sha256_of(src_path)
-    if actual_sha != src_sha:
-        return {"slug": project_slug, "status": "CHARACTER_MARKERS_PROVENANCE_DRIFT",
-                "source_path": src_path_str,
-                "recorded_sha256": src_sha,
-                "actual_sha256": actual_sha}
-    try:
-        src_data = json.loads(src_path.read_text(encoding="utf-8"))
-    except json.JSONDecodeError as e:
-        return {"slug": project_slug, "status": "CHARACTER_MARKERS_SOURCE_UNPARSEABLE",
-                "source_path": src_path_str, "error": str(e)}
-    source_value = src_data.get(src_field)
-    if source_value is None:
-        return {"slug": project_slug, "status": "CHARACTER_MARKERS_FIELD_MISSING",
-                "source_path": src_path_str, "field": src_field}
-    if cfg["character_markers"] != source_value:
-        return {"slug": project_slug, "status": "CHARACTER_MARKERS_VALUE_MISMATCH",
-                "source_path": src_path_str, "field": src_field,
-                "recorded_in_projects_json": cfg["character_markers"],
-                "actual_in_source": source_value}
+    # F-3 r2 + F-5 r3 (ANIM-13): character_markers must be sourced from an
+    # authoritative on-disk file and verified two ways — file sha256 match +
+    # in-file field-value verbatim equality with the recorded marker text.
+    # ANIM-14 hoists the same marker block (text + provenance triple) into the
+    # per-character entry of the ANIM-03 reference-pack manifest, so future
+    # project bindings don't have to re-state them. Precedence:
+    #   1. If projects.json carries all four marker fields, use them
+    #      (backward-compatible ANIM-13 path).
+    #   2. Otherwise, fall back to ANIM-03 manifest's marker block for the
+    #      bound character.
+    #   3. If both declare markers, both verifications run AND the two
+    #      character_markers strings are cross-checked byte-equal.
+    marker_resolution = resolve_character_markers(
+        project_slug, cfg, ref_pack)
+    if marker_resolution.get("status") != "OK":
+        return marker_resolution
+    char_markers_resolved = marker_resolution["character_markers"]
+    char_markers_source_annotation = marker_resolution["character_markers_source_annotation"]
 
     # F-6 r5 fix: sections table inherits the same provenance treatment as
     # character_markers. cfg requires sections_provenance_source_path +
@@ -275,7 +387,7 @@ def build_storyboard(project_slug: str, target_shot_seconds: float, force: bool)
                 "lyrics_path": cfg["lyrics_timestamped_path"]}
 
     sections = cfg["sections"]
-    char_markers = cfg["character_markers"]
+    char_markers = char_markers_resolved
 
     shots: list[dict] = []
     shot_id = 0
@@ -306,7 +418,12 @@ def build_storyboard(project_slug: str, target_shot_seconds: float, force: bool)
 
     storyboard = {
         "phase": "ANIM-13",
-        "schema_version": 2,
+        "schema_version": 3,
+        "schema_version_history": [
+            {"version": 1, "introduced_in": "ANIM-13", "summary": "initial deterministic shot-skeleton format"},
+            {"version": 2, "introduced_in": "ANIM-13 (post r5)", "summary": "added provenance source annotation per marker field"},
+            {"version": 3, "introduced_in": "ANIM-14", "summary": "character_markers may resolve from ANIM-03 manifest when projects.json omits the marker block; source annotation reports which path supplied the value"}
+        ],
         "project": project_slug,
         "song_title": cfg["song_title"],
         "character": cfg["character"],
@@ -315,7 +432,7 @@ def build_storyboard(project_slug: str, target_shot_seconds: float, force: bool)
         "duration_seconds": cfg["duration_seconds"],
         "target_shot_seconds": target_shot_seconds,
         "character_markers": char_markers,
-        "character_markers_source": "projects.json (sha-verified against " + src_path_str + ")",
+        "character_markers_source": char_markers_source_annotation,
         "scene_markers": scene_markers,
         "scene_markers_source": "ANIM-04-scene-pack-manifest.json:scenes['" + cfg["scene"] + "'].descriptor.prompt",
         "style_anchor": style_anchor,
@@ -483,6 +600,9 @@ def main() -> int:
                     "CHARACTER_MARKERS_SOURCE_UNPARSEABLE": 11,
                     "CHARACTER_MARKERS_FIELD_MISSING": 11,
                     "CHARACTER_MARKERS_VALUE_MISMATCH": 11,
+                    "CHARACTER_MARKERS_NOT_FOUND": 13,
+                    "CHARACTER_MARKERS_MANIFEST_PARTIAL": 13,
+                    "CHARACTER_MARKERS_SOURCE_CONFLICT": 13,
                     "SECTIONS_PROVENANCE_MISSING": 12,
                     "SECTIONS_SOURCE_MISSING": 12,
                     "SECTIONS_SOURCE_UNPARSEABLE": 12,

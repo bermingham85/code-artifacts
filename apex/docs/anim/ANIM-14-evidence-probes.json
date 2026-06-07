@@ -1,0 +1,53 @@
+{
+  "phase": "ANIM-14",
+  "probes": {
+    "CHARACTER_MARKERS_NOT_FOUND": {
+      "slug": "nf_probe",
+      "status": "CHARACTER_MARKERS_NOT_FOUND",
+      "character": "grog",
+      "checked": [
+        "projects.json:projects['nf_probe']",
+        "ANIM-03 manifest:characters['grog']"
+      ]
+    },
+    "CHARACTER_MARKERS_MANIFEST_PARTIAL": {
+      "slug": "pm_probe",
+      "status": "CHARACTER_MARKERS_MANIFEST_PARTIAL",
+      "origin": "ANIM-03 manifest",
+      "character": "grog",
+      "required_fields": [
+        "character_markers",
+        "character_markers_provenance_source_path",
+        "character_markers_provenance_sha256",
+        "character_markers_provenance_field"
+      ],
+      "present_fields": [
+        "character_markers",
+        "character_markers_provenance_source_path",
+        "character_markers_provenance_field"
+      ]
+    },
+    "CHARACTER_MARKERS_VALUE_MISMATCH_from_manifest": {
+      "status": "CHARACTER_MARKERS_VALUE_MISMATCH",
+      "source_path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/shot_list.json",
+      "field": "grog_identifiers",
+      "recorded_markers": "fabricated wrong text \u2014 not from source",
+      "actual_in_source": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers",
+      "slug": "vm_probe",
+      "origin": "ANIM-03 manifest",
+      "character": "grog"
+    },
+    "CHARACTER_MARKERS_SOURCE_CONFLICT": {
+      "slug": "conf_probe",
+      "status": "CHARACTER_MARKERS_SOURCE_CONFLICT",
+      "character": "grog",
+      "projects_json_value": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers",
+      "anim03_manifest_value": "tiny toddler ogre with warm beige skin, smooth round clean-shaven cheeks, wide innocent warm brown eyes, stubby chubby fingers, already twice the height of a full-grown adult"
+    },
+    "OK_via_manifest_only": {
+      "status": "OK",
+      "character_markers": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers",
+      "character_markers_source_annotation": "ANIM-03 manifest (sha-verified against X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/shot_list.json)"
+    }
+  }
+}
