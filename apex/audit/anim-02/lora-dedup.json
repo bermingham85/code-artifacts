@@ -1,0 +1,27 @@
+{
+  "phase": "ANIM-02",
+  "moved_at": "2026-06-07T05-02-06Z",
+  "moves": [
+    {
+      "original": "C:\\ComfyUI\\models\\loras\\kontext-turnaround-sheet-v1 (1).safetensors",
+      "quarantine": "C:\\ComfyUI\\models\\loras\\_quarantine\\ANIM-02\\kontext-turnaround-sheet-v1 (1).safetensors",
+      "sha256": "ef5b51ba69f72dcec601469011d411a1ebb70ba7ca0237ae8f01807a5cb4fb60",
+      "size": 343806384,
+      "moved_at": "2026-06-07T05-02-06Z"
+    },
+    {
+      "original": "C:\\ComfyUI\\models\\loras\\kontext-turnaround-sheet-v1 (2).safetensors",
+      "quarantine": "C:\\ComfyUI\\models\\loras\\_quarantine\\ANIM-02\\kontext-turnaround-sheet-v1 (2).safetensors",
+      "sha256": "ef5b51ba69f72dcec601469011d411a1ebb70ba7ca0237ae8f01807a5cb4fb60",
+      "size": 343806384,
+      "moved_at": "2026-06-07T05-02-06Z"
+    },
+    {
+      "original": "C:\\ComfyUI\\models\\loras\\kontext-turnaround-sheet-v1 (3).safetensors",
+      "quarantine": "C:\\ComfyUI\\models\\loras\\_quarantine\\ANIM-02\\kontext-turnaround-sheet-v1 (3).safetensors",
+      "sha256": "ef5b51ba69f72dcec601469011d411a1ebb70ba7ca0237ae8f01807a5cb4fb60",
+      "size": 343806384,
+      "moved_at": "2026-06-07T05-02-06Z"
+    }
+  ]
+}
