@@ -37,8 +37,8 @@ This does NOT implement the fal.ai wrapper shim. It closes the key-resolution ha
 | Codex | gpt-5.5 | invoke | local |
 
 ## Inputs (verified at spec time)
-- `X:/env_sync/user_portable.json` contains `FAL_AI_API_KEY: "95de69b8-...:ea42a27df..."` (32-byte UUID + 32-hex secret format; treated as opaque string).
-- File parses as a valid JSON object.
+- `X:/env_sync/user_portable.json` contains `FAL_AI_API_KEY` (treated as opaque string; format documented to operator only — fingerprint = `95de:0714`, sha256[:12] = `be61d3851aac`, length = 69).
+- File parses as a valid JSON object (with UTF-8 BOM — resolver uses `utf-8-sig`).
 
 ## Schema extension (ANIM-05-tier-config.json FalCloud entry)
 

@@ -78,9 +78,10 @@
     "effective_tier_status_shim_ready": "FalCloud cfg with shim_status=READY returns READY (for the future post-shim state)"
   },
   "leak_check": {
-    "verification": "evidence file scanned for full key prefix ('95de69b8-50d2-45f6-85fd-615573ec9900') and full key suffix ('ea42a27df4643b6cfc394ce541cc0714'); neither present",
-    "method": "string search at evidence-mint time; failure aborts the harness",
-    "result": "PASS"
+    "verification": "evidence-emit harness scans this file for the full key prefix (the UUID-shaped part) and the full key suffix (the 32-hex part); only the approved fingerprint (95de:0714), sha256[:12] (be61d3851aac), and key_length (69) appear here. Full prefix/suffix literals are not stored in this evidence file.",
+    "method": "string search at evidence-mint time; failure aborts the harness. Patterns are computed at runtime by reading the env_sync value and assembling the search needles in process memory only — they are never written to this evidence file.",
+    "result": "PASS",
+    "anim17_r1_F1_F2_fix_note": "earlier draft of this evidence file (and SPEC §Inputs) literally interpolated the full key prefix and suffix strings as 'verification needles'; r1 F-1/F-2 caught the violation. Replaced with approved fingerprint-only references."
   },
   "security_review": {
     "secret_handling": "raw key bytes live in process memory only during resolve_env_key_from_env_sync() return → effective_tier_status() consumption. resolver returns include 'key' for inline use; all downstream consumers (plan_tier, --probe-key CLI, --list-tiers annotation) strip 'key' before json.dumps emission. Negative-paths probe verifies this stripping discipline.",
@@ -91,7 +92,10 @@
   "open_followons": [
     "ANIM-18 (or later): build the fal.ai animation-agent shim — wraps the resolved key + shot-list + storyboard payload and submits to fal.ai. On shim completion, ANIM-05 tier_config.FalCloud.shim_status flips PENDING -> READY, and effective_tier_status() resolves FalCloud to READY → --plan-tier FalCloud returns PLAN."
   ],
-  "codex_runs": [],
+  "codex_runs": [
+    {"round": 1, "transcript": "apex_governance/codex_runs/ANIM-17/round1.txt", "high_findings": 2, "med_findings": 0, "low_findings": 2, "fixed_in_commit": "[backfilled at next commit] (F-1 SPEC §Inputs key-substring leak redacted to fingerprint-only; F-2 evidence leak_check.verification key-substring needles replaced with descriptive labels; F-3 effective_tier_status failure key_resolution normalized to {status, fingerprint:None, approved diagnostics}; F-4 acknowledged — codex_runs ledger populates per round per ANIM-14 chain-ledger convention)"}
+  ],
+  "ledger_convention": "Per ANIM-14 chain-ledger convention: each round's fixed_in_commit is unknowable inside the commit it introduces; the next commit backfills the SHA. HIGH-empty rounds without fix commits omit the SHA field. Documented in detail in apex/docs/anim/ANIM-14-evidence.json:ledger_convention.",
   "built_at": "2026-06-07T13:40:00+00:00",
-  "last_updated_at": "2026-06-07T13:40:00+00:00"
+  "last_updated_at": "2026-06-07T13:44:00+00:00"
 }

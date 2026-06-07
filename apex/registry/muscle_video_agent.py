@@ -142,10 +142,21 @@ def effective_tier_status(tier_name: str, cfg: dict) -> dict:
                     ]}}
     probe = resolve_env_key_from_env_sync(env_path, env_field)
     if probe.get("status") != "OK":
-        # mask any partial leakage by stripping the key field if somehow set
-        probe.pop("key", None)
+        # ANIM-17 r1 F-3 fix: normalize the failure key_resolution to a
+        # fixed schema {status, fingerprint=None, plus approved diagnostics}
+        # so downstream consumers can rely on the field shape. Drop the raw
+        # key (defense in depth) and avoid leaking probe internals.
+        approved_failure_diag = {
+            k: probe.get(k) for k in
+            ("env_sync_path", "field", "error", "actual_type")
+            if probe.get(k) is not None
+        }
         return {"effective_status": "ENV_KEY_GATED",
-                "key_resolution": probe,
+                "key_resolution": {
+                    "status": probe.get("status"),
+                    "fingerprint": None,
+                    **approved_failure_diag,
+                },
                 "blocker": cfg.get("blocker"),
                 "tier_static_status": cfg.get("status")}
     # Key resolved successfully. Strip the raw key from output.

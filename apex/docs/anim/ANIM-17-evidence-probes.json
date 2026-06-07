@@ -13,9 +13,9 @@
       "pass": true,
       "result": {
         "status": "ENV_SYNC_PATH_MISSING",
-        "env_sync_path": "C:\\Users\\Owner\\AppData\\Local\\Temp\\anim17-s1eytc_w\\does-not-exist.json"
+        "env_sync_path": "C:\\Users\\Owner\\AppData\\Local\\Temp\\anim17-20s82dgb\\does-not-exist.json"
       },
-      "timestamp_utc": "2026-06-07T13:40:38+00:00"
+      "timestamp_utc": "2026-06-07T13:43:54+00:00"
     },
     {
       "probe_id": "env_sync_unparseable",
@@ -27,10 +27,10 @@
       "pass": true,
       "result": {
         "status": "ENV_SYNC_UNPARSEABLE",
-        "env_sync_path": "C:\\Users\\Owner\\AppData\\Local\\Temp\\anim17-s1eytc_w\\unparseable.json",
+        "env_sync_path": "C:\\Users\\Owner\\AppData\\Local\\Temp\\anim17-20s82dgb\\unparseable.json",
         "error": "Expecting value: line 1 column 1 (char 0)"
       },
-      "timestamp_utc": "2026-06-07T13:40:38+00:00"
+      "timestamp_utc": "2026-06-07T13:43:54+00:00"
     },
     {
       "probe_id": "env_sync_non_object",
@@ -42,10 +42,10 @@
       "pass": true,
       "result": {
         "status": "ENV_SYNC_UNPARSEABLE",
-        "env_sync_path": "C:\\Users\\Owner\\AppData\\Local\\Temp\\anim17-s1eytc_w\\array_top_level.json",
+        "env_sync_path": "C:\\Users\\Owner\\AppData\\Local\\Temp\\anim17-20s82dgb\\array_top_level.json",
         "error": "top-level JSON must be an object; got list"
       },
-      "timestamp_utc": "2026-06-07T13:40:38+00:00"
+      "timestamp_utc": "2026-06-07T13:43:54+00:00"
     },
     {
       "probe_id": "env_key_missing",
@@ -57,10 +57,10 @@
       "pass": true,
       "result": {
         "status": "ENV_KEY_MISSING",
-        "env_sync_path": "C:\\Users\\Owner\\AppData\\Local\\Temp\\anim17-s1eytc_w\\no_field.json",
+        "env_sync_path": "C:\\Users\\Owner\\AppData\\Local\\Temp\\anim17-20s82dgb\\no_field.json",
         "field": "FAL_AI_API_KEY"
       },
-      "timestamp_utc": "2026-06-07T13:40:38+00:00"
+      "timestamp_utc": "2026-06-07T13:43:54+00:00"
     },
     {
       "probe_id": "env_key_not_string",
@@ -72,11 +72,11 @@
       "pass": true,
       "result": {
         "status": "ENV_KEY_NOT_STRING",
-        "env_sync_path": "C:\\Users\\Owner\\AppData\\Local\\Temp\\anim17-s1eytc_w\\not_string.json",
+        "env_sync_path": "C:\\Users\\Owner\\AppData\\Local\\Temp\\anim17-20s82dgb\\not_string.json",
         "field": "FAL_AI_API_KEY",
         "actual_type": "int"
       },
-      "timestamp_utc": "2026-06-07T13:40:38+00:00"
+      "timestamp_utc": "2026-06-07T13:43:54+00:00"
     },
     {
       "probe_id": "env_key_empty",
@@ -88,10 +88,10 @@
       "pass": true,
       "result": {
         "status": "ENV_KEY_EMPTY",
-        "env_sync_path": "C:\\Users\\Owner\\AppData\\Local\\Temp\\anim17-s1eytc_w\\empty.json",
+        "env_sync_path": "C:\\Users\\Owner\\AppData\\Local\\Temp\\anim17-20s82dgb\\empty.json",
         "field": "FAL_AI_API_KEY"
       },
-      "timestamp_utc": "2026-06-07T13:40:38+00:00"
+      "timestamp_utc": "2026-06-07T13:43:54+00:00"
     },
     {
       "probe_id": "env_key_ok_live",
@@ -109,7 +109,7 @@
         "env_sync_path": "X:/env_sync/user_portable.json",
         "field": "FAL_AI_API_KEY"
       },
-      "timestamp_utc": "2026-06-07T13:40:38+00:00"
+      "timestamp_utc": "2026-06-07T13:43:54+00:00"
     },
     {
       "probe_id": "effective_tier_status_pending_shim",
@@ -132,7 +132,7 @@
         "shim_blocker": "shim not built",
         "tier_static_status": "ENV_KEY_GATED"
       },
-      "timestamp_utc": "2026-06-07T13:40:38+00:00"
+      "timestamp_utc": "2026-06-07T13:43:54+00:00"
     },
     {
       "probe_id": "effective_tier_status_shim_ready",
@@ -154,7 +154,7 @@
         },
         "tier_static_status": "ENV_KEY_GATED"
       },
-      "timestamp_utc": "2026-06-07T13:40:38+00:00"
+      "timestamp_utc": "2026-06-07T13:43:54+00:00"
     }
   ],
   "summary": {
@@ -163,5 +163,5 @@
     "fail": 0
   },
   "leak_check": "no probe result dict in this file should carry a 'key' field with the raw secret; resolver strips it before record",
-  "built_at": "2026-06-07T13:40:38+00:00"
+  "built_at": "2026-06-07T13:43:54+00:00"
 }
