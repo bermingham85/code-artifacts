@@ -56,10 +56,10 @@ Unresolved rows: none.
 
 ## Definition of Done (objective)
 - **F1 resolution (from ANIM-02 handover)**: documented in `ANIM-03-evidence.json` — PHASE_STATE.json `phase2_2_signoff` at 2026-04-07T10:32:00Z is authoritative; PHASES.md "⬜ PENDING" row is stale. Galinda IS production-ready.
-- **Agent**: parses a `--character <name>` arg, reads canon sources (status.json or PROJECT_SPEC canon table), writes the bible markdown + reference-pack manifest entry. `--dry-run` prints what would be written. Idempotent: rerunning overwrites the v1 deliverables only if `--force` passed; otherwise appends `_v2` etc.
+- **Agent**: parses a `--character <name>` arg matching the regex `^[a-z][a-z0-9_]{0,31}$` (path-traversal safe; rejects with exit 6 otherwise), reads canon sources (status.json or PROJECT_SPEC canon table — first-cell exact match to avoid the Emma/Gemma F-1 bug), writes the bible markdown + reference-pack manifest entry. `--dry-run` prints what would be written. Idempotent: rerunning **refuses to overwrite an existing v1** and returns exit code 5; `--force` overwrites. (Earlier draft proposed `_v2` auto-appending — removed in round-1 alignment with the actual exit-5 guard.)
 - **Galinda bible**: cites both status.json AND README.md, surfaces the age discrepancy as F-ANIM03-01, locks the canon for ANIM-04+ as the **status.json** "young adult woman (early 20s)" version because that matches the 2026-04-07 production-ready PHASE_STATE sign-off and the existing 15/15 renders in `galinda/angles/`.
 - **Emma bible**: built from PROJECT_SPEC.md §1.8 row "Emma | Sarah | Dragon vessel, amethyst/emerald scales, blonde, long hair" plus existing emma render set (alt_form_00001 = dragon form). Notes ONE OPEN finding: Emma has no `status.json` or `README.md` (F-ANIM03-02), bible is built from PROJECT_SPEC + render-set inference only.
-- **Reference pack**: 4–7 anchor images per character chosen from existing renders, with role tags + sha256 + size for each entry.
+- **Reference pack**: 4–7 anchor images per character chosen from existing renders, with role tags + **full sha256** + size for each entry. Agent enforces the 4-minimum at write time (`PACK_TOO_SMALL` exit code 7 if unmet); 7-maximum enforced by picker slice.
 - **Codex adversarial-review** to silent-twice per R15 on the spec + diff bundle. Transcripts to `apex_governance/codex_runs/ANIM-03/`.
 - **PR**: opened via `gh pr create` (same pattern as ANIM-02 PR #8).
 - **Cert + handover**: minted, appended to `certs/index.json`.

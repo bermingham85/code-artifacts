@@ -13,38 +13,38 @@
         {
           "role": "primary_ref",
           "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\galinda\\primary_ref.png",
-          "sha256_prefix": "ca1124612b3fe370",
+          "sha256": "ca1124612b3fe370cad1d0d5764b68db6f9fc2dca3ca74974b88ded86b6907bc",
           "size": 1478739
         },
         {
           "role": "angle_front",
           "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\galinda\\angles\\galinda_front_00003_.png",
-          "sha256_prefix": "e73222b04c407a09",
+          "sha256": "e73222b04c407a09ef9b450594840dfb3147808a72079556141b2ccb34dc9cc3",
           "size": 854144
         },
         {
           "role": "angle_three_quarter",
           "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\galinda\\angles\\galinda_front_three_quarter_00003_.png",
-          "sha256_prefix": "9016893634ecddaf",
+          "sha256": "9016893634ecddafe83964a1903c1f6da8e504fdbfd1974dd4a52b662f3da8f7",
           "size": 756394
         },
         {
           "role": "angle_side",
           "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\galinda\\angles\\galinda_side_left_00003_.png",
-          "sha256_prefix": "034a0d61f95f2d7d",
+          "sha256": "034a0d61f95f2d7d457a919fb1813cca504f6d4db8884c0d5d1641d4a0e08872",
           "size": 718478
         },
         {
           "role": "angle_back",
           "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\galinda\\angles\\galinda_back_00003_.png",
-          "sha256_prefix": "30ca9a8560ea3192",
+          "sha256": "30ca9a8560ea31925aaa07319ea84d6def1a541632fe77c1ce4cb12cc38af311",
           "size": 601208
         }
       ],
       "findings": [
-        "F-ANIM03-01: canon mismatch on galinda age \u2014 status.json says 'young adult woman (early 20s)', README.md describes a child. Bible locks the status.json value as authoritative because it matches the 2026-04-07 PHASE_STATE.json formal sign-off; operator to merge or fork the README."
+        "F-ANIM03-01: canon mismatch on galinda age \u2014 status.json says 'young adult woman (early 20s)'; README.md line 15 reads '| Age | 4-5 (child) |'. Bible locks the status.json value as authoritative because it matches the 2026-04-07 PHASE_STATE.json formal sign-off and the 15/15 production-ready renders; operator to merge or fork the README."
       ],
-      "built_at": "2026-06-07T05:26:20+00:00"
+      "built_at": "2026-06-07T05:30:57+00:00"
     },
     "emma": {
       "brand": "Jesse-Adventures",
@@ -56,44 +56,44 @@
         {
           "role": "angle_front",
           "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\emma\\emma_angle_front_00001_.png",
-          "sha256_prefix": "2f20ede22c2a2568",
+          "sha256": "2f20ede22c2a25681bf25b6c3398e7efe3789d145aa31fd66482fe6a5d85fdbb",
           "size": 396949
         },
         {
           "role": "angle_three_quarter",
           "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\emma\\emma_angle_three_quarter_00001_.png",
-          "sha256_prefix": "da8480f406f6a473",
+          "sha256": "da8480f406f6a473d5bdcf8fcc32397ad1b9a545ec3f1f6e80d2ded5d6502add",
           "size": 368516
         },
         {
           "role": "angle_side",
           "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\emma\\emma_angle_side_00001_.png",
-          "sha256_prefix": "4e63070c754fb888",
+          "sha256": "4e63070c754fb888474651d17dd90277e409242d2df46c57234ccea775cd11dc",
           "size": 369887
         },
         {
           "role": "angle_back",
           "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\emma\\emma_angle_back_00001_.png",
-          "sha256_prefix": "9a4fc7e692767107",
+          "sha256": "9a4fc7e6927671079ce16d788cd72b2abf710eb18d164106b1d0aaa108c6b7f9",
           "size": 336591
         },
         {
           "role": "expression_neutral",
           "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\emma\\emma_expr_neutral_00001_.png",
-          "sha256_prefix": "a39c872ad17e3c2a",
+          "sha256": "a39c872ad17e3c2a53fc97cb831f924f4f8db57e804d40fdf33e01429954f8c9",
           "size": 361635
         },
         {
           "role": "alt_form",
           "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\emma\\emma_alt_form_00001_.png",
-          "sha256_prefix": "4ae010d1aba24f9a",
+          "sha256": "4ae010d1aba24f9a9ff6675efc5f19f96bfe0c01c84dff4becb20ce663626e92",
           "size": 509793
         }
       ],
       "findings": [
         "F-ANIM03-02: emma has no status.json under X:\\Automations\\apex\\projects\\jesse_animate\\characters\\emma; bible built from PROJECT_SPEC + render-set inference."
       ],
-      "built_at": "2026-06-07T05:26:13+00:00"
+      "built_at": "2026-06-07T05:30:58+00:00"
     }
   }
 }

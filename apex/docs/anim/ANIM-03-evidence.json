@@ -7,8 +7,14 @@
   "f1_resolution_from_anim_02_handover": {
     "finding": "PHASES.md says Phase 2.2 ⬜ PENDING; PHASE_STATE.json says formally signed off.",
     "verdict": "PHASE_STATE.json is authoritative (2026-04-07T10:32:00Z signoff with galinda.animation_status=production_ready, kontext_validated=PRODUCTION_READY, 15/15 renders 0 failures, consistency_score=0.95). PHASES.md row is stale.",
+    "phases_md_path": "X:/Automations/apex/projects/jesse_animate/PHASES.md",
+    "phases_md_row_quoted_verbatim": "| 2.2 | Galinda Proof | ⬜ PENDING | One character end-to-end through factory. Pipeline validated. |",
+    "phase_state_json_path": "X:/Automations/apex/projects/jesse_animate/PHASE_STATE.json",
     "phase_state_quoted_key_path": "phase2_2_signoff.gate_met_at = 2026-04-07T10:32:00Z",
-    "next_action_quote": "PHASE 8 PREREQUISITE MARCH (kickstart 2026-04-07): 1) Phase 2.2 ✅ FORMAL SIGN-OFF DONE — galinda.animation_status=production_ready in Supabase, kontext_validated=PRODUCTION_READY, 15/15 renders 0 failures, identity confirmed."
+    "phase_state_proof_character": "phase2_2_signoff.proof_character = galinda",
+    "phase_state_consistency_score": "phase2_2_signoff.consistency_score = 0.95",
+    "phase_state_next_action_quoted_verbatim": "PHASE 8 PREREQUISITE MARCH (kickstart 2026-04-07): 1) Phase 2.2 ✅ FORMAL SIGN-OFF DONE — galinda.animation_status=production_ready in Supabase, kontext_validated=PRODUCTION_READY, 15/15 renders 0 failures, identity confirmed.",
+    "authority_rule": "When PHASES.md (checklist artifact) and PHASE_STATE.json (machine-tracked phase ledger with timestamped signoff blocks) disagree, the timestamped signoff in PHASE_STATE.json wins. PHASES.md is updated as a manual cleanup task; staleness there is not authoritative."
   },
   "agent_build": {
     "muscle": "APEX-MB-PY-00112 (apex/registry/muscle_character_build_agent.py)",
@@ -19,7 +25,7 @@
     "audit_dir": "apex/audit/anim-03/"
   },
   "galinda_build": {
-    "audit_path": "apex/audit/anim-03/galinda-build-2026-06-07T05-26-20Z.json",
+    "audit_path": "apex/audit/anim-03/galinda-build-2026-06-07T05-30-57Z.json",
     "render_source_root": "X:/Automations/apex/projects/jesse_animate/characters/galinda",
     "render_count_under_root": 211,
     "reference_pack_size": 5,
@@ -37,11 +43,11 @@
     "trigger_word_from_status_json": "galinda_character",
     "supabase_id_from_status_json": "ad4214a8-5b32-4c85-9f83-afad25d68bdf",
     "findings": [
-      "F-ANIM03-01: canon mismatch on galinda age — status.json (last updated 2026-03-26T23:59:00Z) describes a young adult woman (early 20s); README.md describes a child (age 4-5). Bible locked the status.json value because it matches the 2026-04-07T10:32:00Z PHASE_STATE.json formal sign-off and the 15/15 renders in galinda/angles/ depict a young adult woman. README.md is stale; operator review pending — see ANIM-03.handover.md §5."
+      "F-ANIM03-01: canon mismatch on galinda age — status.json (last updated 2026-03-26T23:59:00Z) describes 'young adult woman (early 20s)'; README.md line 15 reads '| Age | 4-5 (child) |' (verbatim quote in galinda bible §6, and in audit JSON findings array). Bible locked the status.json value because it matches the 2026-04-07T10:32:00Z PHASE_STATE.json formal sign-off and the 15/15 renders in galinda/angles/ depict a young adult woman. README.md is stale; operator review pending — see ANIM-03.handover.md §5."
     ]
   },
   "emma_build": {
-    "audit_path": "apex/audit/anim-03/emma-build-2026-06-07T05-26-13Z.json",
+    "audit_path": "apex/audit/anim-03/emma-build-2026-06-07T05-30-58Z.json",
     "render_source_root": "X:/Automations/apex/projects/jesse_animate/characters/emma",
     "render_count_under_root": 12,
     "reference_pack_size": 6,

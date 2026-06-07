@@ -1,7 +1,7 @@
 # Character Bible — Galinda
 
 **File:** `ANIM_Jesse-Adventures_Galinda_bible_v1.md`
-**Authored:** 2026-06-07T05:26:20+00:00
+**Authored:** 2026-06-07T05:30:57+00:00
 **Brand:** Jesse-Adventures
 **Phase:** ANIM-03 (WO `APEX-ANIM-MB-WO-00001`)
 
@@ -51,18 +51,18 @@
 - **Story role:** see README.md if present; otherwise leave for next bible version.
 
 ## 4. Reference pack (S3)
-- **primary_ref** — `X:\Automations\apex\projects\jesse_animate\characters\galinda\primary_ref.png` (sha256=ca1124612b3fe370…, 1478739 B)
-- **angle_front** — `X:\Automations\apex\projects\jesse_animate\characters\galinda\angles\galinda_front_00003_.png` (sha256=e73222b04c407a09…, 854144 B)
-- **angle_three_quarter** — `X:\Automations\apex\projects\jesse_animate\characters\galinda\angles\galinda_front_three_quarter_00003_.png` (sha256=9016893634ecddaf…, 756394 B)
-- **angle_side** — `X:\Automations\apex\projects\jesse_animate\characters\galinda\angles\galinda_side_left_00003_.png` (sha256=034a0d61f95f2d7d…, 718478 B)
-- **angle_back** — `X:\Automations\apex\projects\jesse_animate\characters\galinda\angles\galinda_back_00003_.png` (sha256=30ca9a8560ea3192…, 601208 B)
+- **primary_ref** — `X:\Automations\apex\projects\jesse_animate\characters\galinda\primary_ref.png` (sha256=ca1124612b3fe370cad1d0d5764b68db6f9fc2dca3ca74974b88ded86b6907bc, 1478739 B)
+- **angle_front** — `X:\Automations\apex\projects\jesse_animate\characters\galinda\angles\galinda_front_00003_.png` (sha256=e73222b04c407a09ef9b450594840dfb3147808a72079556141b2ccb34dc9cc3, 854144 B)
+- **angle_three_quarter** — `X:\Automations\apex\projects\jesse_animate\characters\galinda\angles\galinda_front_three_quarter_00003_.png` (sha256=9016893634ecddafe83964a1903c1f6da8e504fdbfd1974dd4a52b662f3da8f7, 756394 B)
+- **angle_side** — `X:\Automations\apex\projects\jesse_animate\characters\galinda\angles\galinda_side_left_00003_.png` (sha256=034a0d61f95f2d7d457a919fb1813cca504f6d4db8884c0d5d1641d4a0e08872, 718478 B)
+- **angle_back** — `X:\Automations\apex\projects\jesse_animate\characters\galinda\angles\galinda_back_00003_.png` (sha256=30ca9a8560ea31925aaa07319ea84d6def1a541632fe77c1ce4cb12cc38af311, 601208 B)
 
 ## 5. Do / Don't
 - **Do**: lock the trigger word listed in `status.json` (when present); use it on every prompt.
 - **Don't**: regenerate or replace `primary_ref` without an ADR — it is the consistency anchor for FaceID + LoRA.
 
 ## 6. Findings logged for follow-up
-- F-ANIM03-01: canon mismatch on galinda age — status.json says 'young adult woman (early 20s)', README.md describes a child. Bible locks the status.json value as authoritative because it matches the 2026-04-07 PHASE_STATE.json formal sign-off; operator to merge or fork the README.
+- F-ANIM03-01: canon mismatch on galinda age — status.json says 'young adult woman (early 20s)'; README.md line 15 reads '| Age | 4-5 (child) |'. Bible locks the status.json value as authoritative because it matches the 2026-04-07 PHASE_STATE.json formal sign-off and the 15/15 production-ready renders; operator to merge or fork the README.
 
 ## 7. Copyright / differentiation
 - Source inspiration: Good Witch from Oz — sufficiently differentiated as original Pixar-style young woman

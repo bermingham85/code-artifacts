@@ -18,8 +18,12 @@ import datetime
 import hashlib
 import json
 import os
+import re
 import sys
 from pathlib import Path
+
+CHARACTER_NAME_RE = re.compile(r"^[a-z][a-z0-9_]{0,31}$")
+PACK_MIN, PACK_MAX = 4, 7
 
 BRAND_DEFAULT = "Jesse-Adventures"
 REPO_ROOT = Path(os.environ.get("APEX_REPO", "."))
@@ -47,7 +51,7 @@ PACK_ROLES = [
 ]
 
 
-def sha256_short(p: Path, chunk: int = 1 << 20) -> str:
+def sha256_of(p: Path, chunk: int = 1 << 20) -> str:
     h = hashlib.sha256()
     with p.open("rb") as f:
         while True:
@@ -55,7 +59,7 @@ def sha256_short(p: Path, chunk: int = 1 << 20) -> str:
             if not b:
                 break
             h.update(b)
-    return h.hexdigest()[:16]
+    return h.hexdigest()
 
 
 def discover_render_set(char_dir: Path) -> list[Path]:
@@ -98,7 +102,7 @@ def annotate_pack(picked: list[dict]) -> list[dict]:
         if not p.is_file():
             out.append({**e, "missing": True})
             continue
-        out.append({**e, "sha256_prefix": sha256_short(p), "size": p.stat().st_size})
+        out.append({**e, "sha256": sha256_of(p), "size": p.stat().st_size})
     return out
 
 
@@ -120,12 +124,35 @@ def read_readme(char_dir: Path) -> str | None:
 
 
 def project_spec_canon_row(character: str) -> str | None:
+    """Find the §1.8 character-canon row whose first cell exactly equals the character name.
+
+    Strict first-column equality avoids the F-1 bug where 'emma' matched 'Gemma' inside a
+    model-list table. Returns the trimmed row, or None if no exact match (or multiple).
+    """
     if not PROJECT_SPEC.is_file():
         return None
-    name = character.lower()
+    target = character.strip().lower()
+    matches: list[str] = []
     for line in PROJECT_SPEC.read_text(encoding="utf-8").splitlines():
-        if line.startswith("|") and name in line.lower() and "|" in line[1:]:
-            return line.strip()
+        stripped = line.strip()
+        if not stripped.startswith("|"):
+            continue
+        cells = [c.strip() for c in stripped.strip("|").split("|")]
+        if not cells:
+            continue
+        if cells[0].lower() == target:
+            matches.append(stripped)
+    if len(matches) == 1:
+        return matches[0]
+    return None  # 0 = no canon row; 2+ = ambiguous, refuse to guess
+
+
+def readme_line_matching(readme: str, needle: str) -> tuple[int, str] | None:
+    """Return (1-based line, line text) of the first line containing needle (case-insensitive)."""
+    n = needle.lower()
+    for i, line in enumerate(readme.splitlines(), start=1):
+        if n in line.lower():
+            return i, line
     return None
 
 
@@ -190,8 +217,9 @@ def render_bible(character: str, brand: str, status: dict | None,
     else:
         for e in pack:
             line = f"- **{e['role']}** — `{e['path']}`"
-            if e.get("sha256_prefix"):
-                line += f" (sha256={e['sha256_prefix']}…, {e.get('size', '?')} B)"
+            sha = e.get("sha256")
+            if sha:
+                line += f" (sha256={sha}, {e.get('size', '?')} B)"
             if e.get("missing"):
                 line += " — MISSING"
             lines.append(line)
@@ -215,7 +243,23 @@ def render_bible(character: str, brand: str, status: dict | None,
 
 
 def build_character(character: str, brand: str, force: bool) -> dict:
-    char_dir = CHAR_ROOT / character.lower()
+    # F-2 fix: bound --character against a tight regex; reject anything that could traverse paths.
+    if not CHARACTER_NAME_RE.match(character):
+        return {"character": character, "status": "INVALID_CHARACTER_NAME",
+                "expected_regex": CHARACTER_NAME_RE.pattern,
+                "hint": "lowercase a-z, 0-9, underscore; must start with a-z; max 32 chars"}
+
+    char_dir = CHAR_ROOT / character
+    # Defense in depth: ensure resolved char_dir stays under CHAR_ROOT.
+    try:
+        resolved = char_dir.resolve(strict=False)
+        if Path(os.path.commonpath([str(resolved), str(CHAR_ROOT.resolve(strict=False))])) != CHAR_ROOT.resolve(strict=False):
+            return {"character": character, "status": "PATH_ESCAPE_REJECTED",
+                    "resolved": str(resolved), "char_root": str(CHAR_ROOT.resolve(strict=False))}
+    except ValueError:
+        return {"character": character, "status": "PATH_ESCAPE_REJECTED",
+                "char_root": str(CHAR_ROOT)}
+
     status = read_status_json(char_dir)
     readme = read_readme(char_dir)
     spec_row = project_spec_canon_row(character)
@@ -223,18 +267,28 @@ def build_character(character: str, brand: str, force: bool) -> dict:
     pack = annotate_pack(pick_pack(renders))
 
     findings: list[str] = []
+    # F-4 fix: when flagging the README-vs-status canon mismatch, quote the exact README line
+    # that triggered the flag (with 1-based line number) so the claim is anchored.
     if status and readme:
         s_age = (status.get("canon") or {}).get("age")
-        if s_age and ("child" in readme.lower() and "child" not in (s_age or "").lower()):
+        match = readme_line_matching(readme, "child")
+        if s_age and match and "child" not in (s_age or "").lower():
+            line_no, line_txt = match
             findings.append(
-                f"F-ANIM03-01: canon mismatch on {character} age — status.json says '{s_age}', "
-                f"README.md describes a child. Bible locks the status.json value as authoritative because "
-                f"it matches the 2026-04-07 PHASE_STATE.json formal sign-off; operator to merge or fork the README."
+                f"F-ANIM03-01: canon mismatch on {character} age — status.json says '{s_age}'; "
+                f"README.md line {line_no} reads '{line_txt.strip()}'. Bible locks the status.json "
+                f"value as authoritative because it matches the 2026-04-07 PHASE_STATE.json formal "
+                f"sign-off and the 15/15 production-ready renders; operator to merge or fork the README."
             )
     if not status:
         findings.append(f"F-ANIM03-02: {character} has no status.json under {char_dir}; bible built from PROJECT_SPEC + render-set inference.")
     if not renders:
         findings.append(f"F-ANIM03-03: {character} has no PNG renders under {char_dir}; reference pack is empty.")
+    # F-6 fix: enforce pack-size pass criterion BEFORE writing deliverables.
+    if len(pack) < PACK_MIN:
+        return {"character": character, "status": "PACK_TOO_SMALL",
+                "pack_size": len(pack), "required_min": PACK_MIN,
+                "hint": "Re-render missing angles or add status.json/PROJECT_SPEC canon to widen role coverage."}
 
     bible_md = render_bible(character, brand, status, readme, spec_row, pack, findings)
     BIBLE_ROOT.mkdir(parents=True, exist_ok=True)
@@ -305,9 +359,14 @@ def main() -> int:
         return 0
     result = build_character(args.character, args.brand, args.force)
     print(json.dumps(result, indent=2))
-    if result.get("status") == "WILL_OVERWRITE_REFUSED":
-        return 5
-    return 0 if result.get("status") == "OK" else 4
+    code_for = {
+        "OK": 0,
+        "WILL_OVERWRITE_REFUSED": 5,
+        "INVALID_CHARACTER_NAME": 6,
+        "PATH_ESCAPE_REJECTED": 6,
+        "PACK_TOO_SMALL": 7,
+    }
+    return code_for.get(result.get("status", ""), 4)
 
 
 if __name__ == "__main__":
