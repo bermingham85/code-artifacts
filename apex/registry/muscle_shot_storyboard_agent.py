@@ -237,20 +237,12 @@ def resolve_character_markers(project_slug: str, cfg: dict, ref_pack: dict) -> d
     manifest_path_complete = len(manifest_present) == len(_MARKER_FIELDS)
     manifest_has_partial = 0 < len(manifest_present) < len(_MARKER_FIELDS)
 
-    if project_has_partial:
-        return {"slug": project_slug,
-                "status": "CHARACTER_MARKERS_PROVENANCE_MISSING",
-                "origin": "projects.json",
-                "required_fields": list(_MARKER_FIELDS),
-                "present_fields": project_present}
-    # ANIM-14 r3 F-6 fix (supersedes r1 F-3 softening): SPEC-ANIM-14 §"Schema
-    # extension" says the manifest's marker block must be all-four-fields or
-    # all-absent, and "the agent re-validates this at runtime". Re-validation
-    # is unconditional — a partial manifest marker block is a registry
-    # inconsistency and the agent must surface it before any project that
-    # binds this character can run, even if that project carries its own
-    # full marker block. Forcing the registry fix is safer than silently
-    # tolerating drift in a certed manifest.
+    # ANIM-14 r6 F-14 fix: SPEC-ANIM-14 §Schema-extension says manifest
+    # partial surfaces "BEFORE the project path is even evaluated". Order
+    # the checks accordingly — when both project and manifest are partial,
+    # the registry inconsistency in ANIM-03 takes precedence over the
+    # project-level provenance gap. (r3 F-6 already made this unconditional;
+    # r6 F-14 fixes the precedence relative to project_has_partial.)
     if manifest_has_partial:
         return {"slug": project_slug,
                 "status": "CHARACTER_MARKERS_MANIFEST_PARTIAL",
@@ -258,6 +250,12 @@ def resolve_character_markers(project_slug: str, cfg: dict, ref_pack: dict) -> d
                 "character": char_slug,
                 "required_fields": list(_MARKER_FIELDS),
                 "present_fields": manifest_present}
+    if project_has_partial:
+        return {"slug": project_slug,
+                "status": "CHARACTER_MARKERS_PROVENANCE_MISSING",
+                "origin": "projects.json",
+                "required_fields": list(_MARKER_FIELDS),
+                "present_fields": project_present}
     if not project_path_complete and not manifest_path_complete:
         return {"slug": project_slug,
                 "status": "CHARACTER_MARKERS_NOT_FOUND",

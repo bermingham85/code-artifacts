@@ -20,7 +20,7 @@
           "ANIM-03 manifest:characters['grog']"
         ]
       },
-      "timestamp_utc": "2026-06-07T13:14:13+00:00"
+      "timestamp_utc": "2026-06-07T13:24:24+00:00"
     },
     {
       "probe_id": "pm_probe",
@@ -47,7 +47,7 @@
           "character_markers_provenance_field"
         ]
       },
-      "timestamp_utc": "2026-06-07T13:14:13+00:00"
+      "timestamp_utc": "2026-06-07T13:24:24+00:00"
     },
     {
       "probe_id": "vm_probe",
@@ -67,7 +67,7 @@
         "origin": "ANIM-03 manifest",
         "character": "grog"
       },
-      "timestamp_utc": "2026-06-07T13:14:13+00:00"
+      "timestamp_utc": "2026-06-07T13:24:24+00:00"
     },
     {
       "probe_id": "conf_probe",
@@ -84,7 +84,7 @@
         "projects_json_value": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers",
         "anim03_manifest_value": "tiny toddler ogre with warm beige skin, smooth round clean-shaven cheeks, wide innocent warm brown eyes, stubby chubby fingers, already twice the height of a full-grown adult"
       },
-      "timestamp_utc": "2026-06-07T13:14:13+00:00"
+      "timestamp_utc": "2026-06-07T13:24:24+00:00"
     },
     {
       "probe_id": "ok_probe",
@@ -99,7 +99,7 @@
         "character_markers": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers",
         "character_markers_source_annotation": "ANIM-03 manifest (sha-verified against X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/shot_list.json)"
       },
-      "timestamp_utc": "2026-06-07T13:14:13+00:00"
+      "timestamp_utc": "2026-06-07T13:24:24+00:00"
     },
     {
       "probe_id": "proj_full_manifest_partial_probe",
@@ -126,7 +126,34 @@
           "character_markers_provenance_field"
         ]
       },
-      "timestamp_utc": "2026-06-07T13:14:13+00:00"
+      "timestamp_utc": "2026-06-07T13:24:24+00:00"
+    },
+    {
+      "probe_id": "both_partial_probe",
+      "harness": "apex/audit/anim-14/negative_paths_probe.py",
+      "function_under_test": "resolve_character_markers(project_slug, cfg, ref_pack)",
+      "mutation": "project has 1-of-4 marker fields (partial) AND manifest has 3-of-4 (partial); per SPEC-ANIM-14 manifest precedence surfaces MANIFEST_PARTIAL first",
+      "expected_status": "CHARACTER_MARKERS_MANIFEST_PARTIAL",
+      "actual_status": "CHARACTER_MARKERS_MANIFEST_PARTIAL",
+      "pass": true,
+      "result": {
+        "slug": "both_partial_probe",
+        "status": "CHARACTER_MARKERS_MANIFEST_PARTIAL",
+        "origin": "ANIM-03 manifest",
+        "character": "grog",
+        "required_fields": [
+          "character_markers",
+          "character_markers_provenance_source_path",
+          "character_markers_provenance_sha256",
+          "character_markers_provenance_field"
+        ],
+        "present_fields": [
+          "character_markers",
+          "character_markers_provenance_source_path",
+          "character_markers_provenance_field"
+        ]
+      },
+      "timestamp_utc": "2026-06-07T13:24:24+00:00"
     },
     {
       "probe_id": "non_object_source_probe",
@@ -144,13 +171,13 @@
         "origin": "ANIM-03 manifest",
         "character": "grog"
       },
-      "timestamp_utc": "2026-06-07T13:14:13+00:00"
+      "timestamp_utc": "2026-06-07T13:24:24+00:00"
     }
   ],
   "summary": {
-    "total_probes": 7,
-    "pass": 7,
+    "total_probes": 8,
+    "pass": 8,
     "fail": 0
   },
-  "built_at": "2026-06-07T13:14:13+00:00"
+  "built_at": "2026-06-07T13:24:24+00:00"
 }

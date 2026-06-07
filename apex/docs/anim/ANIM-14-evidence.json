@@ -107,13 +107,19 @@
     {"round": 5, "transcript": "apex_governance/codex_runs/ANIM-14/round5.txt", "high_findings": 2, "med_findings": 0, "low_findings": 0, "fixed_in_commit": "3262a20 [ANIM-14] Codex round-5 fix (F-10 R4 commit-hash backfill; F-11 happy-path audit-history alignment with 13:14:28Z final)"}
   ],
   "ledger_convention": "Each round-N's fixed_in_commit references the SHA of the commit that landed the fixes for round-N. That commit's own ledger entry for round-N necessarily uses a forward-placeholder until the NEXT commit backfills the SHA (a chain-ledger pattern; the SHA is unknowable inside the commit that introduces it). When the agent author can resolve the prior SHA before bundling the next codex round, they do so in the same fix commit. The final un-backfilled placeholder is resolved at cert-mint time by a single ledger-only follow-up commit. If a round is HIGH-empty, no fix commit is needed and the SHA field for that round is omitted; the round entry records only transcript + counts.",
+  "round_6_followups": [
+    {"round": 6, "transcript": "apex_governance/codex_runs/ANIM-14/round6.txt", "high_findings": 2, "med_findings": 1, "low_findings": 0, "fixed_in_commit": "[backfilled at next commit] (F-12 timestamp split: built_at frozen at first emission, last_updated_at refreshed on every evidence update; F-13 ANIM-14-evidence-probes.json was already committed at c296feb and is in HEAD — review bundle inclusion gap, fixed by including the JSON inline in next bundle; F-14 manifest_has_partial precedence over project_has_partial restored per SPEC-ANIM-14 §Schema-extension)"}
+  ],
   "silent_twice_progress": {
     "rule": "Two consecutive HIGH-empty rounds = closed.",
     "round_2_high_count": 0,
     "round_3_high_count": 0,
     "round_4_high_count": 2,
     "round_5_high_count": 2,
-    "comment": "R5 surfaced 2 HIGH on stale evidence (R4 commit-hash placeholder + happy-path timestamp mismatch); R5 confirmed no code-path HIGH. silent-twice clock reset again — R6 + R7 must both be HIGH-empty to close. Per R16 phase has used 5 fix rounds (R1-R5) of the 5-round cap; remaining rounds must be silent."
+    "round_6_high_count": 2,
+    "comment": "R6 surfaced 2 HIGH (built_at staleness + probe-output not in bundle) + 1 MED (manifest_partial precedence over project_partial). The MED was a real code precedence fix; HIGH F-12 split built_at into built_at + last_updated_at; HIGH F-13 was a bundle-inclusion gap (probe JSON was already committed at c296feb). silent-twice clock reset to 0/2. R7 + R8 must both be HIGH-empty. R16 5-round cap exceeded; doctrine permits continuation when each new round reveals a real defect being fixed (per ANIM-13 precedent: 'F-6 r5 reset the clock, did real work')."
   },
-  "built_at": "2026-06-07T13:06:33+00:00"
+  "built_at": "2026-06-07T13:06:33+00:00",
+  "last_updated_at": "2026-06-07T13:24:00+00:00",
+  "timestamp_semantics": "built_at = first emission of this evidence file; last_updated_at = wall-clock of the most recent edit. Final audit JSONs land at apex/audit/anim-14/storyboard-grog_playground-2026-06-07T13-14-28Z.json + validate-grog_playground-2026-06-07T13-14-28Z.json (the 13:14:28Z regen post r3 strict semantics)."
 }

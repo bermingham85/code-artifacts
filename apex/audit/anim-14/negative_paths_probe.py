@@ -149,7 +149,30 @@ r6 = _probe(
     mutation="project carries full verifiable marker block; manifest has 3-of-4 (registry inconsistency); r3 F-6 surfaces MANIFEST_PARTIAL to force registry fix",
 )
 
-# 7. F-5 fix evidence: source file top-level non-dict JSON
+# 7. r6 F-14 evidence: both project AND manifest partial → MANIFEST_PARTIAL
+#    surfaces first (manifest precedence over project-level gap).
+r_both_partial = _probe(
+    "both_partial_probe",
+    {
+        "character": "grog",
+        # 1-of-4: just character_markers, no provenance fields → project partial
+        "character_markers": GROG_MARKERS,
+    },
+    {"characters": {"grog": {
+        # 3-of-4: missing sha256 → manifest partial
+        "character_markers": GROG_MARKERS,
+        "character_markers_provenance_source_path": GROG_SRC,
+        "character_markers_provenance_field": "grog_identifiers",
+    }}},
+    expected_status="CHARACTER_MARKERS_MANIFEST_PARTIAL",
+    mutation=(
+        "project has 1-of-4 marker fields (partial) AND manifest has 3-of-4 "
+        "(partial); per SPEC-ANIM-14 manifest precedence surfaces "
+        "MANIFEST_PARTIAL first"
+    ),
+)
+
+# 8. F-5 fix evidence: source file top-level non-dict JSON
 #    Build a temp file containing a JSON array to exercise the
 #    isinstance(src_data, dict) guard in _verify_markers_against_source().
 _tmp_dir = REPO / "apex" / "audit" / "anim-14" / "tmp"
@@ -175,15 +198,16 @@ r7 = _probe(
     ),
 )
 
+_all_probes = [r1, r2, r3, r4, r5, r6, r_both_partial, r7]
 out = {
     "phase": "ANIM-14",
     "harness": HARNESS,
     "doctrine_evidence_class": "O9 (auditable probe trail)",
-    "probes": [r1, r2, r3, r4, r5, r6, r7],
+    "probes": _all_probes,
     "summary": {
-        "total_probes": 7,
-        "pass": sum(1 for r in [r1, r2, r3, r4, r5, r6, r7] if r["pass"]),
-        "fail": sum(1 for r in [r1, r2, r3, r4, r5, r6, r7] if not r["pass"]),
+        "total_probes": len(_all_probes),
+        "pass": sum(1 for r in _all_probes if r["pass"]),
+        "fail": sum(1 for r in _all_probes if not r["pass"]),
     },
     "built_at": _now_utc(),
 }
