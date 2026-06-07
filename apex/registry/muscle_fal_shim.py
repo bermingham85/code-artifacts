@@ -168,6 +168,28 @@ def resolve_fal_key() -> dict:
         probe = va.resolve_env_key_from_env_sync(env_path, env_field)
     except (OSError, AttributeError, TypeError):
         return {"status": "RESOLVER_CRASHED"}
+    # ANIM-18 r8 MED-2 fix: the upstream resolver is external code that this
+    # shim must treat as untrusted output. Three failure modes were unguarded:
+    #   (a) non-dict return value — would crash callers at .get() with an
+    #       AttributeError when they expect a dict;
+    #   (b) status == "OK" but `key` missing / wrong type / empty — would
+    #       reach Authorization formatting without a raw_key for the seal
+    #       pass, producing a false READY / PAYLOAD path with the credential
+    #       silently absent (or worse, a non-string in the header);
+    #   (c) probe missing `status` field entirely — callers branch on it.
+    # Each is collapsed into a structured enum here so downstream code can
+    # rely on the documented dict-with-status contract.
+    if not isinstance(probe, dict):
+        return {"status": "RESOLVER_INVALID_SHAPE",
+                "actual_type": type(probe).__name__}
+    if "status" not in probe or not isinstance(probe.get("status"), str):
+        return {"status": "RESOLVER_INVALID_SHAPE",
+                "actual_type": "dict-missing-status"}
+    if probe["status"] == "OK":
+        k = probe.get("key")
+        if not isinstance(k, str) or not k:
+            return {"status": "RESOLVER_OK_WITHOUT_KEY",
+                    "actual_type": type(k).__name__}
     return probe
 
 
@@ -192,7 +214,11 @@ FINGERPRINT_FREE_FORM = ("error",)
 # legitimate values used by ANIM-17 resolve_env_key_from_env_sync() + this
 # shim are short, ASCII-only, and structurally narrow.
 _STATUS_RE = re.compile(r"^[A-Z][A-Z0-9_]{0,63}$")
-_FINGERPRINT_RE = re.compile(r"^[A-Za-z0-9]{1,16}:[A-Za-z0-9]{1,16}$")
+# ANIM-18 r8 MED-1 fix: previous regex (`[A-Za-z0-9]{1,16}:{1,16}`) accepted
+# non-hex alphanumerics up to 33 chars. The documented fingerprint shape from
+# ANIM-17 is `first4_hex:last4_hex`; anything else lets a tampered resolver
+# stuff substantial raw-key bytes through fingerprint when no key is in scope.
+_FINGERPRINT_RE = re.compile(r"^[a-f0-9]{4}:[a-f0-9]{4}$")
 _HEX12_RE = re.compile(r"^[a-f0-9]{12}$")
 _FIELD_NAME_RE = re.compile(r"^[A-Z_][A-Z0-9_]{0,63}$")
 # env_sync_path is either a Windows / POSIX JSON path or the literal

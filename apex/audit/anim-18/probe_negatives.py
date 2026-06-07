@@ -448,6 +448,83 @@ def main() -> int:
     finally:
         shim.load_tier_config = original_load_tier_config
 
+    # ---- P22-P25: ANIM-18 r8 MED-2 fix. resolve_fal_key() must validate
+    # the upstream resolver's return shape — non-dict, OK-without-key,
+    # non-string-key, missing-status. Monkeypatch _import_video_agent so
+    # resolve_fal_key actually runs (the prior P7/P12-P17 patches replace
+    # resolve_fal_key wholesale and so cannot exercise its internal validation).
+
+    class _FakeVideoAgent:
+        def __init__(self, returns):
+            self._returns = returns
+        def resolve_env_key_from_env_sync(self, path, field):
+            return self._returns
+
+    original_import_video_agent = shim._import_video_agent
+    try:
+        # P22 — resolver returns a non-dict string. RESOLVER_INVALID_SHAPE.
+        shim._import_video_agent = lambda: (_FakeVideoAgent("not-a-dict"), None)
+        r = shim.resolve_fal_key()
+        _record(out, "RESOLVER_RETURNS_NON_DICT", "RESOLVER_INVALID_SHAPE",
+                r, real_key)
+
+        # P23 — resolver returns dict missing 'status'. RESOLVER_INVALID_SHAPE.
+        shim._import_video_agent = lambda: (
+            _FakeVideoAgent({"key": "anything"}), None)
+        r = shim.resolve_fal_key()
+        _record(out, "RESOLVER_DICT_WITHOUT_STATUS", "RESOLVER_INVALID_SHAPE",
+                r, real_key)
+
+        # P24 — resolver returns status=OK but key absent. RESOLVER_OK_WITHOUT_KEY.
+        shim._import_video_agent = lambda: (
+            _FakeVideoAgent({"status": "OK"}), None)
+        r = shim.resolve_fal_key()
+        _record(out, "RESOLVER_OK_MISSING_KEY", "RESOLVER_OK_WITHOUT_KEY",
+                r, real_key)
+
+        # P25 — resolver returns status=OK with non-string key (int).
+        # RESOLVER_OK_WITHOUT_KEY (non-string treated as missing for safety).
+        shim._import_video_agent = lambda: (
+            _FakeVideoAgent({"status": "OK", "key": 12345}), None)
+        r = shim.resolve_fal_key()
+        _record(out, "RESOLVER_OK_NONSTRING_KEY", "RESOLVER_OK_WITHOUT_KEY",
+                r, real_key)
+    finally:
+        shim._import_video_agent = original_import_video_agent
+
+    # ---- P26: ANIM-18 r8 MED-1 fix. _FINGERPRINT_RE tightened to strict
+    # 4-hex:4-hex. Any value with non-hex chars or wider 5-16:5-16 windows
+    # gets suppressed by fingerprint_only.
+
+    loose_fp_probes = [
+        ("abcd:1234abcd", "fingerprint with extended trailing"),  # too long
+        ("ABCD:1234", "uppercase hex"),                            # case
+        ("abc:1234", "3-char left lobe"),                          # length
+        ("ghij:1234", "non-hex letters"),                          # not hex
+    ]
+    fp_results = {}
+    for raw_fp, why in loose_fp_probes:
+        synthetic = {
+            "status": "OK", "fingerprint": raw_fp,
+            "key_sha256_first_12": "deadbeefcafe",
+            "key_length": 64,
+            "env_sync_path": "<sentinel>", "field": "FAL_AI_API_KEY",
+        }
+        sealed = shim.fingerprint_only(synthetic)
+        fp_results[raw_fp] = sealed.get("fingerprint")
+    all_suppressed = all(
+        v == "<suppressed-by-fingerprint_only>" for v in fp_results.values())
+    out["probes"].append({
+        "id": "FINGERPRINT_REGEX_STRICT_HEX",
+        "expected_status": "ALL_LOOSE_FORMS_SUPPRESSED",
+        "actual_status": "ALL_LOOSE_FORMS_SUPPRESSED" if all_suppressed
+                         else "SOME_LOOSE_FORMS_PASSED",
+        "pass": all_suppressed,
+        "result": fp_results,
+        **_assert_no_leaks("FINGERPRINT_REGEX_STRICT_HEX",
+                           json.dumps(fp_results), real_key),
+    })
+
     # ---- Aggregate + fail-closed scrub before any print ----
 
     out["probe_count"] = len(out["probes"])
