@@ -203,6 +203,17 @@ def build_scene(slug: str, force: bool) -> dict:
                 "hint": "rerun with --force to overwrite"}
 
     brand_tokens = load_brand_tokens()
+    # F-1 r2 fix: fail closed when shot_list.json is missing or either required brand-token
+    # field is null/empty — bibles MUST cite both verbatim per the WO §2.S4 "style-locked" rule.
+    if (brand_tokens.get("missing")
+            or not isinstance(brand_tokens.get("style_anchor"), str)
+            or not brand_tokens["style_anchor"].strip()
+            or not isinstance(brand_tokens.get("prompt_rules"), str)
+            or not brand_tokens["prompt_rules"].strip()):
+        return {"slug": slug, "status": "BRAND_TOKENS_MISSING",
+                "source": brand_tokens.get("source"),
+                "style_anchor": brand_tokens.get("style_anchor"),
+                "prompt_rules_present": bool(brand_tokens.get("prompt_rules"))}
     substr = descriptor.get("source_path_substr") or slug.lower()
     # F-3 fix: enforce minimum prefix length AND a valid lowercase token-sequence so
     # path fragments / special chars can never reach the catalog query.
@@ -293,7 +304,8 @@ def main() -> int:
                 "BRAND_NOT_ALLOWED": 7,
                 "ASSET_CATALOG_EMPTY": 8,
                 "SUBSTR_INVALID": 8,
-                "DESCRIPTOR_NOT_FOUND": 9}
+                "DESCRIPTOR_NOT_FOUND": 9,
+                "BRAND_TOKENS_MISSING": 10}
     return code_for.get(result.get("status", ""), 4)
 
 
