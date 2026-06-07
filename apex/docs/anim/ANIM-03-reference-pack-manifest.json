@@ -1,0 +1,99 @@
+{
+  "phase": "ANIM-03",
+  "schema_version": 1,
+  "brand": "Jesse-Adventures",
+  "characters": {
+    "galinda": {
+      "brand": "Jesse-Adventures",
+      "bible_path": "apex/docs/anim/bibles/ANIM_Jesse-Adventures_Galinda_bible_v1.md",
+      "status_json_path": "X:/Automations/apex/projects/jesse_animate/characters/galinda/status.json",
+      "render_source_root": "X:/Automations/apex/projects/jesse_animate/characters/galinda",
+      "render_count": 211,
+      "reference_pack": [
+        {
+          "role": "primary_ref",
+          "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\galinda\\primary_ref.png",
+          "sha256_prefix": "ca1124612b3fe370",
+          "size": 1478739
+        },
+        {
+          "role": "angle_front",
+          "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\galinda\\angles\\galinda_front_00003_.png",
+          "sha256_prefix": "e73222b04c407a09",
+          "size": 854144
+        },
+        {
+          "role": "angle_three_quarter",
+          "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\galinda\\angles\\galinda_front_three_quarter_00003_.png",
+          "sha256_prefix": "9016893634ecddaf",
+          "size": 756394
+        },
+        {
+          "role": "angle_side",
+          "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\galinda\\angles\\galinda_side_left_00003_.png",
+          "sha256_prefix": "034a0d61f95f2d7d",
+          "size": 718478
+        },
+        {
+          "role": "angle_back",
+          "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\galinda\\angles\\galinda_back_00003_.png",
+          "sha256_prefix": "30ca9a8560ea3192",
+          "size": 601208
+        }
+      ],
+      "findings": [
+        "F-ANIM03-01: canon mismatch on galinda age \u2014 status.json says 'young adult woman (early 20s)', README.md describes a child. Bible locks the status.json value as authoritative because it matches the 2026-04-07 PHASE_STATE.json formal sign-off; operator to merge or fork the README."
+      ],
+      "built_at": "2026-06-07T05:26:20+00:00"
+    },
+    "emma": {
+      "brand": "Jesse-Adventures",
+      "bible_path": "apex/docs/anim/bibles/ANIM_Jesse-Adventures_Emma_bible_v1.md",
+      "status_json_path": null,
+      "render_source_root": "X:/Automations/apex/projects/jesse_animate/characters/emma",
+      "render_count": 12,
+      "reference_pack": [
+        {
+          "role": "angle_front",
+          "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\emma\\emma_angle_front_00001_.png",
+          "sha256_prefix": "2f20ede22c2a2568",
+          "size": 396949
+        },
+        {
+          "role": "angle_three_quarter",
+          "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\emma\\emma_angle_three_quarter_00001_.png",
+          "sha256_prefix": "da8480f406f6a473",
+          "size": 368516
+        },
+        {
+          "role": "angle_side",
+          "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\emma\\emma_angle_side_00001_.png",
+          "sha256_prefix": "4e63070c754fb888",
+          "size": 369887
+        },
+        {
+          "role": "angle_back",
+          "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\emma\\emma_angle_back_00001_.png",
+          "sha256_prefix": "9a4fc7e692767107",
+          "size": 336591
+        },
+        {
+          "role": "expression_neutral",
+          "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\emma\\emma_expr_neutral_00001_.png",
+          "sha256_prefix": "a39c872ad17e3c2a",
+          "size": 361635
+        },
+        {
+          "role": "alt_form",
+          "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\emma\\emma_alt_form_00001_.png",
+          "sha256_prefix": "4ae010d1aba24f9a",
+          "size": 509793
+        }
+      ],
+      "findings": [
+        "F-ANIM03-02: emma has no status.json under X:\\Automations\\apex\\projects\\jesse_animate\\characters\\emma; bible built from PROJECT_SPEC + render-set inference."
+      ],
+      "built_at": "2026-06-07T05:26:13+00:00"
+    }
+  }
+}

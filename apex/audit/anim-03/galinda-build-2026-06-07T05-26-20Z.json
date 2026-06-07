@@ -1,0 +1,13 @@
+{
+  "character": "galinda",
+  "brand": "Jesse-Adventures",
+  "bible_path": "apex/docs/anim/bibles/ANIM_Jesse-Adventures_Galinda_bible_v1.md",
+  "manifest_path": "apex/docs/anim/ANIM-03-reference-pack-manifest.json",
+  "render_count": 211,
+  "pack_size": 5,
+  "findings": [
+    "F-ANIM03-01: canon mismatch on galinda age \u2014 status.json says 'young adult woman (early 20s)', README.md describes a child. Bible locks the status.json value as authoritative because it matches the 2026-04-07 PHASE_STATE.json formal sign-off; operator to merge or fork the README."
+  ],
+  "timestamp": "2026-06-07T05-26-20Z",
+  "status": "OK"
+}

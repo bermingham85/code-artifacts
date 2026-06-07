@@ -1,0 +1,68 @@
+{
+  "phase": "ANIM-03",
+  "wo_id": "APEX-ANIM-MB-WO-00001",
+  "issued_utc": "2026-06-07T05:26:00Z",
+  "author": "APEX orchestrator (Claude Opus 4.7)",
+  "anchor_policy": "Every claim cites either (a) an audit JSON path produced by an ANIM-03 muscle run, (b) a filesystem read at a specified path, or (c) a verbatim quote from PROJECT_SPEC / PHASE_STATE / status.json.",
+  "f1_resolution_from_anim_02_handover": {
+    "finding": "PHASES.md says Phase 2.2 ⬜ PENDING; PHASE_STATE.json says formally signed off.",
+    "verdict": "PHASE_STATE.json is authoritative (2026-04-07T10:32:00Z signoff with galinda.animation_status=production_ready, kontext_validated=PRODUCTION_READY, 15/15 renders 0 failures, consistency_score=0.95). PHASES.md row is stale.",
+    "phase_state_quoted_key_path": "phase2_2_signoff.gate_met_at = 2026-04-07T10:32:00Z",
+    "next_action_quote": "PHASE 8 PREREQUISITE MARCH (kickstart 2026-04-07): 1) Phase 2.2 ✅ FORMAL SIGN-OFF DONE — galinda.animation_status=production_ready in Supabase, kontext_validated=PRODUCTION_READY, 15/15 renders 0 failures, identity confirmed."
+  },
+  "agent_build": {
+    "muscle": "APEX-MB-PY-00112 (apex/registry/muscle_character_build_agent.py)",
+    "dry_run_command": "python apex/registry/muscle_character_build_agent.py --character <name> --dry-run",
+    "live_run_command": "python apex/registry/muscle_character_build_agent.py --character <name> [--force]",
+    "rerun_guard_exit_code": 5,
+    "verified_idempotent": true,
+    "audit_dir": "apex/audit/anim-03/"
+  },
+  "galinda_build": {
+    "audit_path": "apex/audit/anim-03/galinda-build-2026-06-07T05-26-20Z.json",
+    "render_source_root": "X:/Automations/apex/projects/jesse_animate/characters/galinda",
+    "render_count_under_root": 211,
+    "reference_pack_size": 5,
+    "reference_pack_roles": ["primary_ref", "angle_front", "angle_three_quarter", "angle_side", "angle_back"],
+    "bible_path": "apex/docs/anim/bibles/ANIM_Jesse-Adventures_Galinda_bible_v1.md",
+    "canon_source_authoritative": "X:/Automations/apex/projects/jesse_animate/characters/galinda/status.json",
+    "canon_source_sibling": "X:/Automations/apex/projects/jesse_animate/characters/galinda/README.md",
+    "canon_locked": {
+      "age": "young adult woman (early 20s)",
+      "hair": "blonde curly, shoulder-length, bouncy waves",
+      "eyes": "large blue eyes, Pixar-style expressive",
+      "personality": "sassy, dramatic, secretly kind, loves sparkles",
+      "signature_items": ["crystal tiara", "sparkly star-tipped wand", "pink sparkly ruffled layered dress (knee-length)", "pink high-heeled shoes"]
+    },
+    "trigger_word_from_status_json": "galinda_character",
+    "supabase_id_from_status_json": "ad4214a8-5b32-4c85-9f83-afad25d68bdf",
+    "findings": [
+      "F-ANIM03-01: canon mismatch on galinda age — status.json (last updated 2026-03-26T23:59:00Z) describes a young adult woman (early 20s); README.md describes a child (age 4-5). Bible locked the status.json value because it matches the 2026-04-07T10:32:00Z PHASE_STATE.json formal sign-off and the 15/15 renders in galinda/angles/ depict a young adult woman. README.md is stale; operator review pending — see ANIM-03.handover.md §5."
+    ]
+  },
+  "emma_build": {
+    "audit_path": "apex/audit/anim-03/emma-build-2026-06-07T05-26-13Z.json",
+    "render_source_root": "X:/Automations/apex/projects/jesse_animate/characters/emma",
+    "render_count_under_root": 12,
+    "reference_pack_size": 6,
+    "reference_pack_roles": ["angle_front", "angle_three_quarter", "angle_side", "angle_back", "expression_neutral", "alt_form"],
+    "bible_path": "apex/docs/anim/bibles/ANIM_Jesse-Adventures_Emma_bible_v1.md",
+    "canon_source_authoritative": "X:/Automations/apex/projects/jesse_animate/PROJECT_SPEC.md §1.8 canon row",
+    "canon_quoted_row": "| Emma | Sarah | Dragon vessel, amethyst/emerald scales, blonde, long hair |",
+    "phase_state_priority_quote": "user_agreements.character_priority = Order of appearance in story. Emma first. Build character DB before any animation.",
+    "audiobook_anchor_quote": "audiobook_status.emmas_song.file = suno_music_raw/Still_The_Same_EMMA_FINAL.mp3",
+    "findings": [
+      "F-ANIM03-02: emma has no status.json or README.md under X:/Automations/apex/projects/jesse_animate/characters/emma/. Bible built from PROJECT_SPEC §1.8 canon row + render-set inference (alt_form_00001 used as dragon-form anchor). When operator authorizes Emma's character DB build per PHASE_STATE phase8_prerequisite_march.current_blocker, populate emma/status.json and rerun the agent with --force to produce v2 bible."
+    ]
+  },
+  "reference_pack_manifest": {
+    "path": "apex/docs/anim/ANIM-03-reference-pack-manifest.json",
+    "schema_version": 1,
+    "characters_covered": ["galinda", "emma"]
+  },
+  "operator_gated_blockers": [
+    "MA-ANIM-001 (PR #7 phase/ANIM-01)",
+    "MA-ANIM-002 (PR #8 phase/ANIM-02)",
+    "Emma character DB build (per PHASE_STATE current_blocker — populating emma/status.json is operator scope)"
+  ]
+}
