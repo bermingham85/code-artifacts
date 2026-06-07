@@ -59,13 +59,15 @@
       "result": {"status": "OK", "shot_count": 43, "section_count": 9},
       "character_markers_source_annotation": "ANIM-03 manifest (sha-verified against X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/shot_list.json)",
       "character_markers_value_matches_pre_migration": true,
-      "audit_landed_at_final": "apex/audit/anim-14/storyboard-grog_playground-2026-06-07T13-14-28Z.json",
+      "audit_landed_at_final": "apex/audit/anim-14/storyboard-grog_playground-2026-06-07T13-25-05Z.json",
       "audit_history": [
         "apex/audit/anim-14/storyboard-grog_playground-2026-06-07T13-06-33Z.json (r1 fix run)",
         "apex/audit/anim-14/storyboard-grog_playground-2026-06-07T13-10-43Z.json (r2 fix run)",
-        "apex/audit/anim-14/storyboard-grog_playground-2026-06-07T13-14-28Z.json (r3 fix run; final post-strict-manifest_partial)"
+        "apex/audit/anim-14/storyboard-grog_playground-2026-06-07T13-14-28Z.json (r3 fix run; first post-strict-manifest_partial)",
+        "apex/audit/anim-14/storyboard-grog_playground-2026-06-07T13-25-05Z.json (r6 fix run; final after manifest_partial precedence reorder)"
       ],
-      "note": "ANIM-03 lookup path; emitted markers byte-equal to pre-migration value; final regen is the 13:14:28Z run after r3 F-6 strict semantics commit"
+      "frozen_final_run": true,
+      "note": "ANIM-03 lookup path; emitted markers byte-equal to pre-migration value; final regen is the 13:25:05Z run after r6 F-14 precedence reorder commit 011d3fc. No further regens will be triggered for ANIM-14; subsequent codex rounds review the frozen final state."
     },
     "3_validate_post_migration": {
       "command": "APEX_PHASE_AUDIT_DIR=apex/audit/anim-14 python apex/registry/muscle_shot_storyboard_agent.py --validate grog_playground",
@@ -75,13 +77,15 @@
       "mean_section_boundary_delta_seconds": 0.0,
       "coverage_ratio": 1.0,
       "status": "OK",
-      "audit_landed_at_final": "apex/audit/anim-14/validate-grog_playground-2026-06-07T13-14-28Z.json",
+      "audit_landed_at_final": "apex/audit/anim-14/validate-grog_playground-2026-06-07T13-25-05Z.json",
       "audit_history": [
         "apex/audit/anim-14/validate-grog_playground-2026-06-07T13-06-33Z.json (r1 fix run)",
         "apex/audit/anim-14/validate-grog_playground-2026-06-07T13-10-43Z.json (r2 fix run)",
-        "apex/audit/anim-14/validate-grog_playground-2026-06-07T13-14-28Z.json (r3 fix run; final post-strict-manifest_partial)"
+        "apex/audit/anim-14/validate-grog_playground-2026-06-07T13-14-28Z.json (r3 fix run; first post-strict-manifest_partial)",
+        "apex/audit/anim-14/validate-grog_playground-2026-06-07T13-25-05Z.json (r6 fix run; final after manifest_partial precedence reorder)"
       ],
-      "note": "section deltas + coverage identical to ANIM-13 baseline across all three regens; ANIM-03 lookup path produces wire-equivalent output"
+      "frozen_final_run": true,
+      "note": "section deltas + coverage identical to ANIM-13 baseline across all four regens; ANIM-03 lookup path produces wire-equivalent output"
     }
   },
   "negative_path_evidence_file": "apex/docs/anim/ANIM-14-evidence-probes.json",
@@ -108,7 +112,10 @@
   ],
   "ledger_convention": "Each round-N's fixed_in_commit references the SHA of the commit that landed the fixes for round-N. That commit's own ledger entry for round-N necessarily uses a forward-placeholder until the NEXT commit backfills the SHA (a chain-ledger pattern; the SHA is unknowable inside the commit that introduces it). When the agent author can resolve the prior SHA before bundling the next codex round, they do so in the same fix commit. The final un-backfilled placeholder is resolved at cert-mint time by a single ledger-only follow-up commit. If a round is HIGH-empty, no fix commit is needed and the SHA field for that round is omitted; the round entry records only transcript + counts.",
   "round_6_followups": [
-    {"round": 6, "transcript": "apex_governance/codex_runs/ANIM-14/round6.txt", "high_findings": 2, "med_findings": 1, "low_findings": 0, "fixed_in_commit": "[backfilled at next commit] (F-12 timestamp split: built_at frozen at first emission, last_updated_at refreshed on every evidence update; F-13 ANIM-14-evidence-probes.json was already committed at c296feb and is in HEAD — review bundle inclusion gap, fixed by including the JSON inline in next bundle; F-14 manifest_has_partial precedence over project_has_partial restored per SPEC-ANIM-14 §Schema-extension)"}
+    {"round": 6, "transcript": "apex_governance/codex_runs/ANIM-14/round6.txt", "high_findings": 2, "med_findings": 1, "low_findings": 0, "fixed_in_commit": "011d3fc [ANIM-14] Codex round-6 fix (F-12 timestamp split: built_at frozen + last_updated_at refresh; F-13 ANIM-14-evidence-probes.json inlined in next bundle; F-14 manifest_has_partial precedence over project_has_partial per SPEC-ANIM-14 §Schema-extension)"}
+  ],
+  "round_7_followups": [
+    {"round": 7, "transcript": "apex_governance/codex_runs/ANIM-14/round7.txt", "high_findings": 1, "med_findings": 0, "low_findings": 0, "fixed_in_commit": "[backfilled at next commit] (F-15 audit_landed_at_final pointed at 13:14:28Z but committed regens were at 13:25:05Z; freeze final audit pointer + add frozen_final_run flag to prevent further drift)"}
   ],
   "silent_twice_progress": {
     "rule": "Two consecutive HIGH-empty rounds = closed.",
@@ -117,9 +124,10 @@
     "round_4_high_count": 2,
     "round_5_high_count": 2,
     "round_6_high_count": 2,
-    "comment": "R6 surfaced 2 HIGH (built_at staleness + probe-output not in bundle) + 1 MED (manifest_partial precedence over project_partial). The MED was a real code precedence fix; HIGH F-12 split built_at into built_at + last_updated_at; HIGH F-13 was a bundle-inclusion gap (probe JSON was already committed at c296feb). silent-twice clock reset to 0/2. R7 + R8 must both be HIGH-empty. R16 5-round cap exceeded; doctrine permits continuation when each new round reveals a real defect being fixed (per ANIM-13 precedent: 'F-6 r5 reset the clock, did real work')."
+    "round_7_high_count": 1,
+    "comment": "R7 surfaced 1 HIGH (audit_landed_at_final pointed at 13:14:28Z but post-r6 regens were 13:25:05Z); confirmed no code-path HIGH. silent-twice clock at 0/2. R8 + R9 must both be HIGH-empty. Final audit JSONs now FROZEN at 13:25:05Z to prevent the storyboard/validate regen + evidence timestamp drift loop that was burning rounds. R16 cap exceeded; ANIM-13 precedent supports continuation when each round finds real defects."
   },
   "built_at": "2026-06-07T13:06:33+00:00",
-  "last_updated_at": "2026-06-07T13:24:00+00:00",
-  "timestamp_semantics": "built_at = first emission of this evidence file; last_updated_at = wall-clock of the most recent edit. Final audit JSONs land at apex/audit/anim-14/storyboard-grog_playground-2026-06-07T13-14-28Z.json + validate-grog_playground-2026-06-07T13-14-28Z.json (the 13:14:28Z regen post r3 strict semantics)."
+  "last_updated_at": "2026-06-07T13:27:00+00:00",
+  "timestamp_semantics": "built_at = first emission of this evidence file; last_updated_at = wall-clock of the most recent edit. Final FROZEN audit JSONs are apex/audit/anim-14/storyboard-grog_playground-2026-06-07T13-25-05Z.json + validate-grog_playground-2026-06-07T13-25-05Z.json (the 13:25:05Z regen post r6 F-14 precedence reorder commit 011d3fc). No further regens are planned for ANIM-14; the frozen_final_run flag in happy_path_runs §2 + §3 marks this freeze. Subsequent codex rounds review the frozen state without triggering new audit JSON writes."
 }
