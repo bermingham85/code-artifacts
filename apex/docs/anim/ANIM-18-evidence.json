@@ -240,14 +240,22 @@
                     "F-1 MED": "R10 recomputed fingerprint / key_sha256_first_12 / key_length only on OK path. For non-OK paths the resolver could still return planted well-shaped values for those fields (e.g. status=ENV_KEY_MISSING + fingerprint='abcd:1234' + key_sha256_first_12='deadbeefcafe'); they pass the syntactic value-shape validators and _seal_outward has no raw_key in scope to scrub against. Strip those three fields on non-OK paths",
                     "F-2 MED": "actual_type = type(probe).__name__ is attacker-controlled via dynamic subclass creation (`type('95de0714SECRET', (), {})()`); the planted class name passes _ACTUAL_TYPE_RE and reaches output as a 'structured' diagnostic. Same for exception class names returned by broad-except (`raise type('SECRET', (Exception,), {})()`). Map known stdlib types/exceptions to coarse allowlist; default 'other' / 'OtherException'",
                     "F-3 MED": "_http_post_json + poll_job caught only HTTPError / URLError / TimeoutError / OSError. raw_key is in scope as the Authorization header value; any other Exception (RuntimeError / ValueError / library-internal class / test-seam raiser) could escape as a traceback on CLI stderr with the key bytes in its message. Add broad-except backstop at both HTTP boundaries, redact message against raw_key, coarse-enum the class name"},
-      "fixed_in_commit": null
+      "fixed_in_commit": "68e826a"
+    },
+    {
+      "round": 12,
+      "transcript_path": "apex_governance/codex_runs/ANIM-18/round12.txt",
+      "findings": "BLOCKED_CHATGPT_USAGE_CAP",
+      "fixed_in_commit": null,
+      "note": "codex exec attempted 2026-06-07T18:54Z against R11 fix (commit 68e826a) with bundle-r12.txt (91kB) and -m gpt-5.5; ChatGPT-account usage cap returned 'You\\u2019ve hit your usage limit. Try again at Jun 11th, 2026 3:28 PM.' Per feedback_codex_chatgpt_cap_hardstop memory: OPENAI_API_KEY does NOT bypass. Per CLAUDE_CODEX_DOCTRINE: no Claude self-review fallback. Resumption: rerun bundle-r12.txt with same invocation after 2026-06-11T15:28 local."
     }
   ],
   "silent_twice_progress": {
     "target_rounds": "two consecutive empty",
-    "current_state": "AWAITING_R12_REVIEW (R11 surfaced 3 MED; R11-fix in flight)",
+    "current_state": "PAUSED_CHATGPT_CAP_RESET_2026-06-11T15-28 (R11 fix landed; R12 cap-blocked)",
     "fix_round_cap_R16": 5,
-    "overage_justification": "ANIM-13/14 precedent: overage permitted when each round delivers a real fix and findings converge. R1-R11 each surfaced and fixed real defects on the credential-trust-boundary surface; convergence accelerating (R11's three findings are all refinements of R10's 'trust the resolver less' insight — extending it to non-OK paths, dynamic class names, and HTTP backstops)."
+    "overage_justification": "ANIM-13/14 precedent: overage permitted when each round delivers a real fix and findings converge. R1-R11 each surfaced and fixed real defects on the credential-trust-boundary surface; convergence accelerating (R11's three findings are all refinements of R10's 'trust the resolver less' insight — extending it to non-OK paths, dynamic class names, and HTTP backstops). R12 pause is not a doctrine breach — codex was the gate, codex was unreachable, no Claude self-review attempted.",
+    "next_action_when_unblocked": "cd C:/Users/Owner/Repos/code-artifacts && unset OPENAI_API_KEY && cat C:/Users/Owner/apex_governance/codex_runs/ANIM-18/bundle-r12.txt | codex exec -m gpt-5.5 -s read-only --skip-git-repo-check -o C:/Users/Owner/apex_governance/codex_runs/ANIM-18/round12.last.txt > C:/Users/Owner/apex_governance/codex_runs/ANIM-18/round12.txt 2>&1"
   },
   "exit_code_map": {
     "0": ["PAYLOAD","DRY_RUN","FAL_OK","READY"],
