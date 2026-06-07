@@ -35,8 +35,13 @@ import re
 import sys
 from pathlib import Path
 
+# Byte-mode regex: matches the marker pair on the raw transcript bytes so
+# offsets are true byte offsets and bodies are the exact captured byte slice
+# (no newline normalisation, no errors='replace' substitutions, no text-mode
+# decoding). Per doctrine R20 (verbatim recovery) this is the only valid mode
+# for the "byte-exact" provenance claim.
 MARKER = re.compile(
-    r"=== FILE: (.+?) ===\r?\n(.*?)\r?\n=== END FILE ===",
+    rb"=== FILE: (.+?) ===\r?\n(.*?)\r?\n=== END FILE ===",
     re.DOTALL,
 )
 
@@ -46,14 +51,18 @@ def sha256_hex(b: bytes) -> str:
 
 
 def extract(transcript_path: Path) -> list[dict]:
-    """Return [{src_path, basename, body_bytes, sha256, byte_start, byte_end}]."""
-    text = transcript_path.read_text(encoding="utf-8", errors="replace")
+    """Return [{src_path, basename, body_bytes, sha256, byte_start, byte_end}].
+
+    transcript_path is read as raw bytes; the body returned is the exact byte
+    slice between the markers; byte_start/byte_end are true byte offsets into
+    the raw transcript.
+    """
+    raw = transcript_path.read_bytes()
     out: list[dict] = []
-    for m in MARKER.finditer(text):
-        src_path = m.group(1).strip()
-        body = m.group(2)
+    for m in MARKER.finditer(raw):
+        src_path = m.group(1).strip().decode("utf-8", errors="strict")
+        body_bytes = m.group(2)
         basename = src_path.replace("\\", "/").rsplit("/", 1)[-1]
-        body_bytes = body.encode("utf-8")
         out.append({
             "src_path_in_transcript": src_path,
             "basename": basename,
