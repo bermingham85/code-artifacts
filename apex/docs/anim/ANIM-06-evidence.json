@@ -19,7 +19,7 @@
       "slug_regex": "INVALID_SLUG exit 6 on --catalog-deliverable '../etc'",
       "deliverable_missing": "DELIVERABLE_MISSING exit 8 if MP4 absent",
       "rerun_guard": "WILL_OVERWRITE_REFUSED exit 5 on second catalog without --force",
-      "concat_plan_order": "production clips sorted by numeric shot_id; 20 entries (production_count) for Grog"
+      "concat_plan_order": "production clips sorted by ANIM-05 manifest `index` (canonical playback order); shot_id reported only for cross-reference + inversion audit; 20 entries (production_count) for Grog"
     }
   },
   "grog_deliverable_registration": {

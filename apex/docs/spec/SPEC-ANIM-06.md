@@ -55,13 +55,13 @@
 
 ## Test plan
 - `--catalog-deliverable MagicalRealmPlayground` → registers MP4 with expected sha256 + size 47,983,724.
-- `--plan-concat MagicalRealmPlayground` → emits a 20-line concat plan in clip index order.
+- `--plan-concat MagicalRealmPlayground` → emits a 20-line concat plan ordered by **ANIM-05 manifest `index`** (canonical playback order; `shot_id` reported only for cross-reference and inversion audit).
 - `--catalog-deliverable '../etc'` → INVALID_SLUG exit 6.
 - Rerun guard: `--catalog-deliverable MagicalRealmPlayground` twice → WILL_OVERWRITE_REFUSED exit 5.
 
 ## Pass criteria
 - [ ] Assembly manifest contains MRP entry with sha256, size, duration.
-- [ ] Concat plan = 20 clip paths in shot_id order.
+- [ ] Concat plan = 20 clip paths ordered by ANIM-05 manifest `index` (canonical playback order); `shot_id` reported only for cross-reference + inversion audit.
 - [ ] Agent safety surface matches ANIM-05's pattern.
 - [ ] Codex silent-twice.
 - [ ] PR + cert.
