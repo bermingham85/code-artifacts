@@ -82,7 +82,9 @@ Same gpt-5.5 inline-stdin pattern; persist to `apex_governance/codex_runs/ANIM-0
 
 ## Trust assumption (recorded for R15 closure of residual TOCTOU finding)
 
-The clip root `X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/` is on the operator's own local filesystem on the operator's own machine. There is no untrusted-attacker model for this path: no shared filesystem with untrusted writers, no remote write, no other-user write. The agent runs interactively as the operator.
+The clip root `X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/` is a Windows drive-letter mapping to an SMB/UNC share on the operator's home-LAN QNAP NAS at `\\192.168.50.246\Extra\Automations\...` (the runtime hook surfaces this as station `QNAP-NAS  nas  192.168.50.246`). The NAS is operator-owned, sits behind the operator's home router/firewall, and is administered only by the operator. There are no untrusted writers to that share: no public-internet ACL grants, no other-user SMB credentials with write to this path, and no third-party services with mount access. The agent runs interactively as the operator on a workstation on the same LAN.
+
+This is the actual deployment for ANIM-05 — confirmed by the manifest's `resolved_path` field which surfaces the underlying `//192.168.50.246/Extra/...` UNC form of every X: drive entry. The trust boundary therefore is: operator-controlled QNAP NAS share + operator-controlled local LAN + operator-interactive agent. No untrusted-attacker model applies.
 
 On Windows + Python, fully atomic file open with reparse-point / symlink refusal binding (the Linux `openat(O_NOFOLLOW)` equivalent) is not available without C extensions or Win32 `CreateFile`-with-`FILE_FLAG_OPEN_REPARSE_POINT` ctypes shims. The agent does the best it can in pure Python: lstat refuses pre-resolve symlinks, resolve+commonpath pre-check, handle-bound `os.open` + `fstat` + `os.read` for the byte read, then post-read resolve+commonpath re-check.
 
