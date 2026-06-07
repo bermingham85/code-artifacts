@@ -80,6 +80,16 @@ Same gpt-5.5 inline-stdin pattern; persist to `apex_governance/codex_runs/ANIM-0
 ## Doctrine
 - P3/R15/R16/O2/O6/O9 — same pattern.
 
+## Trust assumption (recorded for R15 closure of residual TOCTOU finding)
+
+The clip root `X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/` is on the operator's own local filesystem on the operator's own machine. There is no untrusted-attacker model for this path: no shared filesystem with untrusted writers, no remote write, no other-user write. The agent runs interactively as the operator.
+
+On Windows + Python, fully atomic file open with reparse-point / symlink refusal binding (the Linux `openat(O_NOFOLLOW)` equivalent) is not available without C extensions or Win32 `CreateFile`-with-`FILE_FLAG_OPEN_REPARSE_POINT` ctypes shims. The agent does the best it can in pure Python: lstat refuses pre-resolve symlinks, resolve+commonpath pre-check, handle-bound `os.open` + `fstat` + `os.read` for the byte read, then post-read resolve+commonpath re-check.
+
+The residual TOCTOU window — between `os.open(target_pre)` and the kernel completing the open with our handle — is theoretically exploitable by a parallel writer with write access to the clip root who can swap `target_pre` to a reparse-point target during that single open call. Under the trust assumption above, that adversary does not exist for this deployment. Codex round 5 surfaced this as the only remaining HIGH and explicitly named "treat the catalog root as trusted-only and document that assumption explicitly" as the acceptable resolution.
+
+This is logged as a policy contribution to absorbing SP-ANIM (pattern: `platform-windows-python-fs-toctou`) per R15 / R17(c) "accept-as-is" rationale and is not a phase blocker. If/when the agent is repurposed for an untrusted clip root, the resolution is to swap `os.open` for a Win32 `CreateFile` ctypes call with `FILE_FLAG_OPEN_REPARSE_POINT` and validate `GetFileInformationByHandle` matches the pre-resolved target.
+
 ## Lifecycle modes
 | Mode | Evidence | Status |
 |---|---|---|

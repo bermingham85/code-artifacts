@@ -45,5 +45,14 @@
     "MA-ANIM-001..005 (PRs #7, #8, #9, #10, and the upcoming ANIM-05 PR)",
     "G9 fal.ai key-resolution route — not pursuable autonomously",
     "Hunyuan weights download — operator runs `python apex/registry/muscle_install_hunyuanvideo.py --download-weights` (~14GB)"
-  ]
+  ],
+  "policy_contribution_under_r15": {
+    "pattern": "platform-windows-python-fs-toctou",
+    "absorbing_sp": "SP-ANIM",
+    "finding_summary": "On Windows + pure Python, the open()-to-handle binding window for symlink/reparse-point detection is not atomically closable without Win32 CreateFile ctypes shims. The agent uses pre-resolve+commonpath + lstat symlink refusal + handle-bound os.open/fstat/os.read + post-read resolve+commonpath re-check; the residual TOCTOU is the single open() call between pre-check and kernel-acquired handle.",
+    "trust_assumption_recorded_in_spec": "SPEC-ANIM-05.md §Trust assumption — clip root is operator-owned local filesystem on the operator's own machine; no untrusted-attacker model applies.",
+    "codex_resolution_path_quoted": "Codex round 5 explicitly named 'treat the catalog root as trusted-only and document that assumption explicitly' as the acceptable resolution.",
+    "r17_accept_as_is_rationale": "Documented trust assumption + recorded mitigation path for future untrusted-root use (Win32 CreateFile + GetFileInformationByHandle).",
+    "swap_to_untrusted_clip_root_followup": "When ANIM-* later targets an untrusted clip root, replace os.open with ctypes CreateFile(FILE_FLAG_OPEN_REPARSE_POINT) and validate file-id via GetFileInformationByHandle."
+  }
 }
