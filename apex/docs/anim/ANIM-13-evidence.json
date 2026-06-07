@@ -1,0 +1,95 @@
+{
+  "phase": "ANIM-13",
+  "wo_id": "APEX-ANIM-MB-WO-00001",
+  "agent": "APEX-MB-PY-00117 muscle_shot_storyboard_agent.py",
+  "spec_path": "apex/docs/spec/SPEC-ANIM-13.md",
+  "built_at": "2026-06-07T12:03:00Z",
+  "wo_stage": "S5 (Shot generation / Storyboard from lyrics)",
+  "wo_agent_index": 3,
+  "deliverables": [
+    {
+      "path": "apex/registry/muscle_shot_storyboard_agent.py",
+      "sha256": "a5953deaa926f19cc47826cb8d59b42d6c85d2c14c56359545ef76ba21beda05",
+      "kind": "muscle"
+    },
+    {
+      "path": "apex/docs/anim/ANIM-13-projects.json",
+      "sha256": "80be9602433c367b4381b93ea51e8bac12443900e31aa91f8cb7db973e12cdeb",
+      "kind": "config"
+    },
+    {
+      "path": "apex/docs/anim/ANIM-13-storyboard-grog_playground.json",
+      "sha256": "c2d888fbd9d1d2ed5b51ff75bc200ef9ca341714b08b708a3d8fc00d7a5ca6c7",
+      "kind": "deterministic output"
+    },
+    {
+      "path": "apex/docs/anim/ANIM-13-validation-grog.json",
+      "sha256": "fe9ede2058e7b1290b7d7ea1681b1533bd08ba9b2014e68fd0eebbbd55b27554",
+      "kind": "gold-reference validation report"
+    }
+  ],
+  "test_runs": [
+    {
+      "cmd": "python apex/registry/muscle_shot_storyboard_agent.py --list-projects",
+      "exit": 0,
+      "status": "OK",
+      "expected": "lists grog_playground binding (brand+character+scene+song)",
+      "result": "OK"
+    },
+    {
+      "cmd": "python apex/registry/muscle_shot_storyboard_agent.py --storyboard grog_playground",
+      "exit": 0,
+      "status": "OK",
+      "expected": "produces 30-60 shots over 238.9s",
+      "result": "43 shots over 9 sections; first shot 0.0s, last shot 238.9s; coverage 1.0"
+    },
+    {
+      "cmd": "python apex/registry/muscle_shot_storyboard_agent.py --validate grog_playground",
+      "exit": 0,
+      "status": "OK",
+      "expected": "validation report with shot count + section deltas",
+      "result": "emitted 43 vs gold 38; section_count 9 vs 9; section-boundary deltas all 0.0s (perfect alignment)"
+    },
+    {
+      "cmd": "python apex/registry/muscle_shot_storyboard_agent.py --storyboard grog_playground (rerun)",
+      "exit": 5,
+      "status": "WILL_OVERWRITE_REFUSED",
+      "expected": "idempotency guard fires without --force",
+      "result": "OK"
+    },
+    {
+      "cmd": "python apex/registry/muscle_shot_storyboard_agent.py --storyboard '../etc'",
+      "exit": 6,
+      "status": "INVALID_SLUG",
+      "expected": "path-escape regex bounds reject ../etc",
+      "result": "OK"
+    }
+  ],
+  "verbatim_provenance": {
+    "principle": "P3 + R20 — every brand-token / character-marker / scene-marker / section-table string copied verbatim from on-disk authoritative source.",
+    "sources": {
+      "character_markers": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/shot_list.json:grog_identifiers",
+      "scene_markers": "apex/docs/anim/scenes/ANIM_Jesse-Adventures_MagicalRealmPlayground_bg_v1.md:Section 2 (which itself was verbatim from shot_list.json)",
+      "style_anchor": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/shot_list.json:style_anchor",
+      "prompt_rules": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/shot_list.json:prompt_rules",
+      "sections": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/shot_list.json:sections",
+      "lyrics": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/lyrics_timestamped.json (Whisper word-level text field per line)"
+    },
+    "no_invention_assertion": "kontext_prompt_template uses the verbatim character_markers + scene_markers + style_anchor and a literal {action} placeholder. The downstream creative content (action description) is explicitly marked in needs_fill[] for operator/LLM completion in a separate phase. The agent does not generate any prompt body text."
+  },
+  "validation_summary": {
+    "section_boundary_alignment": "perfect (max delta 0.000s) because the agent reads the same section table the gold was authored against",
+    "shot_count_delta": "+5 (43 emitted vs 38 gold)",
+    "shot_count_delta_root_cause": "the agent uses equal-width slices at target_shot_seconds=5.5 per section; the hand-authored gold groups by lyric phrasing instead. This is a recorded deterministic-vs-artisanal tradeoff, not a defect; recommended downstream behaviour is to use the emitted skeleton as a starting point and let operator/LLM adjust shot boundaries per lyric phrasing.",
+    "lyric_attribution": "each emitted shot has 0+ lyric lines whose Whisper start falls inside [shot.start, shot.end). Lines straddling a section boundary (e.g. the first verse-1 line at Whisper-start 11.46 vs section.start 11.5) attach to the prior section; this is the deterministic policy."
+  },
+  "doctrine_conformance": {
+    "P3_no_invention": "PASS — kontext_prompt_template stays a literal concat of marker+placeholder+marker+placeholder+marker; needs_fill explicitly enumerates the un-filled fields.",
+    "R15_silent_twice": "in flight — codex_runs/ANIM-13/round1+round2",
+    "R16_loop_cap": "5 fix rounds max — TBD",
+    "R20_preserve_detail": "PASS — lyric.text copied verbatim from lyrics_timestamped.json; markers copied verbatim; section table copied verbatim.",
+    "O2_O6_O9": "PASS — schema_version present; ISO8601 UTC built_at on all outputs; per-run audit JSONs at apex/audit/anim-13/."
+  },
+  "blocks_followups": [],
+  "status": "BUILD_DONE_PENDING_CODEX"
+}

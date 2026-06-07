@@ -1,0 +1,36 @@
+{
+  "phase": "ANIM-13",
+  "schema_version": 1,
+  "doctrine_note": "Project bindings for the Shot/Storyboard agent. character_markers + scene_markers + style_anchor + prompt_rules are copied verbatim from the most-authoritative on-disk source (shot_list.json for the Grog MV; ANIM-04 scene bible for the scene). The agent does not parse character bibles for these strings.",
+  "projects": {
+    "grog_playground": {
+      "brand": "Jesse-Adventures",
+      "character": "grog",
+      "scene": "MagicalRealmPlayground",
+      "song_title": "too big for the playground (piano power Ballad) Remix",
+      "lyrics_timestamped_path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/lyrics_timestamped.json",
+      "gold_shot_list_path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/shot_list.json",
+      "duration_seconds": 238.9,
+      "character_markers_source": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/shot_list.json:grog_identifiers (verbatim)",
+      "character_markers": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers",
+      "scene_markers_source": "apex/docs/anim/scenes/ANIM_Jesse-Adventures_MagicalRealmPlayground_bg_v1.md:Section 2 (verbatim)",
+      "scene_markers": "A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing",
+      "style_anchor_source": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/shot_list.json:style_anchor (verbatim)",
+      "style_anchor": "Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "prompt_rules_source": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/shot_list.json:prompt_rules (verbatim)",
+      "prompt_rules": "Subject in first 15 words. 30-80 words per kontext_prompt. No quality tags. No negation. Lighting described as interaction. Texture inline with subject. Style anchor once at end. Character identified by key visual markers not 'the same character'.",
+      "sections_source": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/shot_list.json:sections (verbatim)",
+      "sections": [
+        {"name": "intro", "start": 0.0, "end": 11.5, "energy": "LOW", "mood": "piano intro, establishing"},
+        {"name": "verse1", "start": 11.5, "end": 51.4, "energy": "MED", "mood": "childhood memories, longing, flashback"},
+        {"name": "chorus1", "start": 51.4, "end": 84.4, "energy": "HIGH", "mood": "heartbreak, rejection, resilience"},
+        {"name": "gap1", "start": 84.4, "end": 88.9, "energy": "LOW", "mood": "instrumental interstitial"},
+        {"name": "verse2", "start": 88.9, "end": 129.1, "energy": "MED", "mood": "school memories, humiliation, dreams"},
+        {"name": "chorus2", "start": 129.1, "end": 162.3, "energy": "HIGH", "mood": "frustration, determination"},
+        {"name": "gap2", "start": 162.3, "end": 165.1, "energy": "LOW", "mood": "instrumental interstitial"},
+        {"name": "outro", "start": 165.1, "end": 227.2, "energy": "HIGH", "mood": "resolution, building, triumph"},
+        {"name": "fade", "start": 227.2, "end": 238.9, "energy": "LOW", "mood": "peace, completion"}
+      ]
+    }
+  }
+}

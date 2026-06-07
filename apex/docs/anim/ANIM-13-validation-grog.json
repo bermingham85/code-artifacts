@@ -1,0 +1,99 @@
+{
+  "phase": "ANIM-13",
+  "project": "grog_playground",
+  "emitted_shot_count": 43,
+  "gold_shot_count": 38,
+  "shot_count_delta": 5,
+  "section_count_emitted": 9,
+  "section_count_gold": 9,
+  "section_deltas": [
+    {
+      "section": "chorus1",
+      "emitted_start": 51.4,
+      "gold_start": 51.4,
+      "start_delta": 0.0,
+      "emitted_end": 84.4,
+      "gold_end": 84.4,
+      "end_delta": 0.0
+    },
+    {
+      "section": "chorus2",
+      "emitted_start": 129.1,
+      "gold_start": 129.1,
+      "start_delta": 0.0,
+      "emitted_end": 162.3,
+      "gold_end": 162.3,
+      "end_delta": 0.0
+    },
+    {
+      "section": "fade",
+      "emitted_start": 227.2,
+      "gold_start": 227.2,
+      "start_delta": 0.0,
+      "emitted_end": 238.9,
+      "gold_end": 238.9,
+      "end_delta": 0.0
+    },
+    {
+      "section": "gap1",
+      "emitted_start": 84.4,
+      "gold_start": 84.4,
+      "start_delta": 0.0,
+      "emitted_end": 88.9,
+      "gold_end": 88.9,
+      "end_delta": 0.0
+    },
+    {
+      "section": "gap2",
+      "emitted_start": 162.3,
+      "gold_start": 162.3,
+      "start_delta": 0.0,
+      "emitted_end": 165.1,
+      "gold_end": 165.1,
+      "end_delta": 0.0
+    },
+    {
+      "section": "intro",
+      "emitted_start": 0.0,
+      "gold_start": 0.0,
+      "start_delta": 0.0,
+      "emitted_end": 11.5,
+      "gold_end": 11.5,
+      "end_delta": 0.0
+    },
+    {
+      "section": "outro",
+      "emitted_start": 165.1,
+      "gold_start": 165.1,
+      "start_delta": 0.0,
+      "emitted_end": 227.2,
+      "gold_end": 227.2,
+      "end_delta": 0.0
+    },
+    {
+      "section": "verse1",
+      "emitted_start": 11.5,
+      "gold_start": 11.5,
+      "start_delta": 0.0,
+      "emitted_end": 51.4,
+      "gold_end": 51.4,
+      "end_delta": 0.0
+    },
+    {
+      "section": "verse2",
+      "emitted_start": 88.9,
+      "gold_start": 88.9,
+      "start_delta": 0.0,
+      "emitted_end": 129.1,
+      "gold_end": 129.1,
+      "end_delta": 0.0
+    }
+  ],
+  "max_section_boundary_delta_seconds": 0.0,
+  "mean_section_boundary_delta_seconds": 0.0,
+  "duration_seconds": 238.9,
+  "coverage_ratio": 1.0,
+  "target_shot_seconds": 5.5,
+  "validated_at": "2026-06-07T12:02:34+00:00",
+  "status": "OK"
+}
