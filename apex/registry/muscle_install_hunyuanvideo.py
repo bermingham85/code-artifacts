@@ -60,7 +60,7 @@ def verify(node_dir: Path) -> dict:
             "has_nodes_py": has_nodes}
 
 
-def install_nodes(custom_nodes_root: Path) -> dict:
+def install_nodes(custom_nodes_root: Path, python_exe: str) -> dict:
     custom_nodes_root.mkdir(parents=True, exist_ok=True)
     node_dir = custom_nodes_root / NODE_DIR_NAME
     log: list[dict] = []
@@ -70,8 +70,8 @@ def install_nodes(custom_nodes_root: Path) -> dict:
         log.append(run(["git", "clone", GIT_URL, str(node_dir)]))
     req = node_dir / "requirements.txt"
     if req.is_file():
-        log.append(run([sys.executable, "-m", "pip", "install", "-r", str(req)]))
-    return {"steps": log, "verify": verify(node_dir)}
+        log.append(run([python_exe, "-m", "pip", "install", "-r", str(req)]))
+    return {"steps": log, "verify": verify(node_dir), "python_used": python_exe}
 
 
 def download_weights(target_root: Path) -> dict:
@@ -92,6 +92,10 @@ def download_weights(target_root: Path) -> dict:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--custom-nodes-root", default=str(DEFAULT_CUSTOM_NODES))
+    ap.add_argument("--python", default=sys.executable,
+                    help="Python interpreter to install requirements into. "
+                         "Defaults to sys.executable (this box's ComfyUI uses system Python; "
+                         "override when a venv is introduced).")
     ap.add_argument("--download-weights", action="store_true",
                     help="Operator-gated: pull multi-GB weight files from HuggingFace.")
     ap.add_argument("--verify-only", action="store_true")
@@ -103,7 +107,7 @@ def main() -> int:
     if args.verify_only:
         result["verify"] = verify(node_dir)
     else:
-        result["install"] = install_nodes(root)
+        result["install"] = install_nodes(root, args.python)
         if args.download_weights:
             result["weights"] = download_weights(COMFY_MODELS_ROOT)
         else:

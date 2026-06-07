@@ -68,34 +68,109 @@ def report(by_key: dict[tuple[str, int], list[Path]]) -> list[dict]:
     return findings
 
 
-def quarantine(root: Path, findings: list[dict], phase: str) -> dict:
+def _resolve(p: Path) -> Path:
+    """Resolve absolute path without requiring the file to exist (Path.resolve(strict=False))."""
+    return Path(os.path.abspath(str(p)))
+
+
+def _is_under(child: Path, parent: Path) -> bool:
+    try:
+        common = os.path.commonpath([str(_resolve(child)), str(_resolve(parent))])
+    except ValueError:
+        return False
+    return common == str(_resolve(parent))
+
+
+def quarantine(root: Path, findings: list[dict], phase: str, manifest_path: Path) -> dict:
+    """Atomic-ish dedup: preflight all moves (collision + path-bound check), write the
+    intent manifest BEFORE any filesystem mutation, then move each file. On any failure,
+    roll back already-moved files using the manifest record.
+
+    Bounds enforced:
+      - sources must exist and live directly under `root`
+      - destinations must be under `<root>/_quarantine/<phase>/`
+      - destination must not already exist
+    """
     ts = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H-%M-%SZ")
     qroot = root / "_quarantine" / phase
     qroot.mkdir(parents=True, exist_ok=True)
-    moved = []
+
+    planned: list[dict] = []
+    errors: list[str] = []
     for f in findings:
         for src in f["duplicates"]:
             srcp = Path(src)
             dst = qroot / srcp.name
-            shutil.move(str(srcp), str(dst))
-            moved.append({
-                "original": src,
-                "quarantine": str(dst),
-                "sha256": f["sha256"],
-                "size": f["size"],
-                "moved_at": ts,
-            })
-    return {"phase": phase, "moved_at": ts, "moves": moved}
+            if not srcp.is_file():
+                errors.append(f"missing source: {src}")
+                continue
+            if not _is_under(srcp, root):
+                errors.append(f"source outside LoRA root: {src}")
+                continue
+            if not _is_under(dst, qroot):
+                errors.append(f"destination escapes quarantine root: {dst}")
+                continue
+            if dst.exists():
+                errors.append(f"destination collision: {dst}")
+                continue
+            planned.append({"original": str(srcp), "quarantine": str(dst),
+                            "sha256": f["sha256"], "size": f["size"], "moved_at": ts})
+
+    intent = {"phase": phase, "planned_at": ts, "lora_root": str(root),
+              "quarantine_root": str(qroot), "moves": planned,
+              "preflight_errors": errors, "status": "INTENT"}
+    manifest_path.parent.mkdir(parents=True, exist_ok=True)
+    manifest_path.write_text(json.dumps(intent, indent=2))
+
+    if errors:
+        return {**intent, "status": "ABORTED_PREFLIGHT"}
+
+    completed: list[dict] = []
+    for m in planned:
+        try:
+            shutil.move(m["original"], m["quarantine"])
+            completed.append(m)
+        except Exception as exc:
+            for back in completed:
+                try:
+                    shutil.move(back["quarantine"], back["original"])
+                except Exception:
+                    pass
+            failed = {"phase": phase, "moved_at": ts, "lora_root": str(root),
+                      "quarantine_root": str(qroot), "moves": completed,
+                      "rolled_back": True, "error": f"{exc}", "status": "ROLLED_BACK"}
+            manifest_path.write_text(json.dumps(failed, indent=2))
+            return failed
+
+    final = {"phase": phase, "moved_at": ts, "lora_root": str(root),
+             "quarantine_root": str(qroot), "moves": completed, "status": "OK"}
+    manifest_path.write_text(json.dumps(final, indent=2))
+    return final
 
 
-def restore(manifest_path: Path) -> dict:
+def restore(manifest_path: Path, force: bool = False) -> dict:
     manifest = json.loads(manifest_path.read_text())
+    lora_root = Path(manifest.get("lora_root", ""))
+    qroot = Path(manifest.get("quarantine_root", ""))
+    if not lora_root.is_dir() or not qroot.is_dir():
+        return {"manifest": str(manifest_path), "error": "manifest missing lora_root or quarantine_root", "restored": []}
+
     restored = []
     for m in manifest.get("moves", []):
         src = Path(m["quarantine"])
         dst = Path(m["original"])
+        # Hard bounds: source under recorded quarantine, dest under recorded lora root.
+        if not _is_under(src, qroot):
+            restored.append({**m, "status": "rejected-source-out-of-quarantine"})
+            continue
+        if not _is_under(dst, lora_root):
+            restored.append({**m, "status": "rejected-dest-out-of-lora-root"})
+            continue
         if not src.exists():
             restored.append({**m, "status": "missing-in-quarantine"})
+            continue
+        if dst.exists() and not force:
+            restored.append({**m, "status": "skipped-dest-exists"})
             continue
         shutil.move(str(src), str(dst))
         restored.append({**m, "status": "restored"})
@@ -108,11 +183,13 @@ def main() -> int:
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--quarantine", metavar="PHASE")
     ap.add_argument("--restore", metavar="MANIFEST")
+    ap.add_argument("--force", action="store_true",
+                    help="With --restore: overwrite existing destination files.")
     ap.add_argument("--audit-out", default=None)
     args = ap.parse_args()
 
     if args.restore:
-        out = restore(Path(args.restore))
+        out = restore(Path(args.restore), force=args.force)
         print(json.dumps(out, indent=2))
         return 0
 
@@ -128,14 +205,13 @@ def main() -> int:
         print(json.dumps({"root": str(root), "duplicate_groups": findings}, indent=2))
         return 0
 
-    manifest = quarantine(root, findings, args.quarantine)
     out_path = Path(args.audit_out) if args.audit_out else Path(
         os.environ.get("APEX_REPO", ".")
     ) / "apex/audit/anim-02/lora-dedup.json"
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text(json.dumps(manifest, indent=2))
-    print(json.dumps({"manifest": str(out_path), "moves": len(manifest["moves"])}, indent=2))
-    return 0
+    manifest = quarantine(root, findings, args.quarantine, out_path)
+    print(json.dumps({"manifest": str(out_path), "status": manifest.get("status"),
+                      "moves": len(manifest.get("moves", []))}, indent=2))
+    return 0 if manifest.get("status") == "OK" else 3
 
 
 if __name__ == "__main__":

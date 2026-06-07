@@ -56,19 +56,29 @@
   },
   "document_register_G6": {
     "register_path": "apex/docs/DOCUMENT_REGISTER.md",
-    "new_rows": [
-      {"ref": "APEX-MB-PY-00106", "name": "muscle_music_video.py", "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/muscle_music_video.py"},
-      {"ref": "APEX-MB-PY-00107", "name": "muscle_mv_regenerate.py", "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/muscle_mv_regenerate.py"},
-      {"ref": "APEX-MB-PY-00108", "name": "stitch_video.py", "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/stitch_video.py"},
-      {"ref": "APEX-MB-PY-00109", "name": "muscle_lora_dedup.py", "path": "apex/registry/muscle_lora_dedup.py"},
-      {"ref": "APEX-MB-PY-00110", "name": "muscle_install_kohya_ss.py", "path": "apex/registry/muscle_install_kohya_ss.py"},
-      {"ref": "APEX-MB-PY-00111", "name": "muscle_install_hunyuanvideo.py", "path": "apex/registry/muscle_install_hunyuanvideo.py"}
+    "anchor_method": "Each row quoted verbatim from the post-commit file (commit 66cd657 on phase/ANIM-02). Reproduce via: grep '^| APEX-MB-PY-001\\(06\\|07\\|08\\|09\\|10\\|11\\) |' apex/docs/DOCUMENT_REGISTER.md",
+    "rows_quoted_verbatim": [
+      "| APEX-MB-PY-00106 | muscle_music_video.py | 1.0 | ACTIVE-EXTERNAL | 2026-04-01 | 2026-06-07 | Music-video production pipeline orchestrator — modes keyframes/animate/stitch/full; ComfyUI endpoint 127.0.0.1:8189; Wan 2.2 i2v two-stage MoE for animate; ffmpeg for stitch. Registered in ANIM-02 (G6 from ANIM-01 handover). | X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/muscle_music_video.py |",
+      "| APEX-MB-PY-00107 | muscle_mv_regenerate.py | 1.0 | ACTIVE-EXTERNAL | 2026-04-01 | 2026-06-07 | Music-video regeneration sibling of muscle_music_video.py — re-runs failed shots from a queue. Registered in ANIM-02 (G6). | X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/muscle_mv_regenerate.py |",
+      "| APEX-MB-PY-00108 | stitch_video.py | 1.0 | ACTIVE-EXTERNAL | 2026-04-01 | 2026-06-07 | ffmpeg stitcher for animated clips → final MP4 cut to lyrics timing. Registered in ANIM-02 (G6). | X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/stitch_video.py |",
+      "| APEX-MB-PY-00109 | muscle_lora_dedup.py | 1.0 | ACTIVE | 2026-06-07 | 2026-06-07 | SHA256+size LoRA dedup for C:/ComfyUI/models/loras/. Modes: --dry-run (report), --quarantine (move duplicates to _quarantine/<phase>/ with manifest), --restore <manifest> (reverse). Stdlib only. Built for ANIM-02 (G1). | apex/registry/muscle_lora_dedup.py |",
+      "| APEX-MB-PY-00110 | muscle_install_kohya_ss.py | 1.0 | ACTIVE | 2026-06-07 | 2026-06-07 | Idempotent installer for kohya_ss LoRA-training stack at C:/Users/Owner/Tools/kohya_ss/. Clones bmaltais/kohya_ss, runs setup, verifies import. Logs to apex/audit/anim-02/. Built for ANIM-02 (G5). | apex/registry/muscle_install_kohya_ss.py |",
+      "| APEX-MB-PY-00111 | muscle_install_hunyuanvideo.py | 1.0 | ACTIVE | 2026-06-07 | 2026-06-07 | Idempotent installer for ComfyUI-HunyuanVideoWrapper to C:/ComfyUI/custom_nodes/. Installs nodes + Python deps; lists weight URLs but gates the multi-GB download behind --download-weights flag. Logs to apex/audit/anim-02/. Built for ANIM-02 (G4). | apex/registry/muscle_install_hunyuanvideo.py |"
     ]
   },
   "subprojects_G8": {
-    "path": "apex_governance/SUBPROJECTS.md",
-    "section": "## SP-ANIM. Animation production system",
-    "phases_enumerated": ["ANIM-01", "ANIM-02", "ANIM-03", "ANIM-04", "ANIM-05", "ANIM-06", "ANIM-07+"]
+    "path": "C:/Users/Owner/apex_governance/SUBPROJECTS.md",
+    "section_header_quoted": "## SP-ANIM. Animation production system",
+    "section_first_para_quoted": "Pixar-styled character animation pipeline: brand tokens + character descriptors + lyrics → character bibles → turnarounds → backgrounds → shots → image-to-video clips → assembled videos cut to lyrics. Issued under Work Order `APEX-ANIM-MB-WO-00001` (operator-owned at `C:/Users/Owner/Documents/Claude/Projects/breaking down complex tasks/APEX-ANIM-Production-System.md`).",
+    "phase_rows_quoted_verbatim": [
+      "- ANIM-01 — Capability map of existing animation pipeline / models / character assets / governance state. Codex silent-twice rounds 11+12 (2026-06-07). Cert: `CERT-ANIM-01.json`. PR: bermingham85/code-artifacts#7 awaiting operator merge (MA-ANIM-001 in MISSING_SECRETS.queue.json).",
+      "- ANIM-02 — Install/verify missing models (HunyuanVideo + kohya_ss only — FLUX/Wan/LTX already present per ANIM-01); dedupe duplicate LoRAs; register music-video muscles APEX-MB-PY-00106..00108; record WO §0 R20 mislabel correction (F6).",
+      "- ANIM-03 — Character-Build agent (S1 bible + S2 turnaround + S3 reference pack). First subjects: galinda + one Jesse-Adventures lead. Pre-flight resolves F1 Galinda Phase 2.2 sign-off discrepancy.",
+      "- ANIM-04 — Environment/Imagery agent (S4 backgrounds from brand tokens + scene descriptors). Supabase QC schema row is operator-gated (G10).",
+      "- ANIM-05 — Video agent (S6 first shots → clips via Wan 2.2 i2v MoE local; fal.ai cloud fallback wired here per G9 — key-resolution route TBD at start of phase).",
+      "- ANIM-06 — Assembly (S7 first clip cut to existing lyrics via the real `muscle_music_video.py --mode stitch` path, NOT the WO's aspirational `music_video_pipeline/assemble_video.py` label). **First visible deliverable.**",
+      "- ANIM-07+ — Scale across remaining characters and brands; in parallel under the 3-cap, recover + commit the AGEN core-five (Specification/Verification/Architecture/Builder/Router) from `X:/Automations/apex/spawned_prompts/AGEN-*` and Codex transcripts. Note: AGEN-completion handover declares the build artifacts deleted from canonical mirrors — recovery is transcript-only rebuild, not checkout-and-commit (G11 + MA-AGEN-001 in MISSING_SECRETS.queue.json)."
+    ]
   },
   "wo_corrections_F4_F5_F6": {
     "path": "apex/docs/anim/ANIM-02-WO-corrections.md",
