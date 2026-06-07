@@ -238,7 +238,7 @@ def readme_line_matching(readme: str, needle: str) -> tuple[int, str] | None:
 
 def render_bible(character: str, brand: str, status: dict | None,
                  readme: str | None, spec_row: str | None,
-                 pack: list[dict], findings: list[str]) -> str:
+                 pack: list[dict], findings: list[str], phase: str) -> str:
     cap = character.capitalize()
     lines: list[str] = []
     lines.append(f"# Character Bible — {cap}")
@@ -246,7 +246,7 @@ def render_bible(character: str, brand: str, status: dict | None,
     lines.append(f"**File:** `ANIM_{brand}_{cap}_bible_v1.md`")
     lines.append(f"**Authored:** {datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='seconds')}")
     lines.append(f"**Brand:** {brand}")
-    lines.append(f"**Phase:** ANIM-03 (WO `APEX-ANIM-MB-WO-00001`)")
+    lines.append(f"**Phase:** {phase} (WO `APEX-ANIM-MB-WO-00001`)")
     lines.append("")
     lines.append("## 1. Source of canon (cited verbatim)")
     if status:
@@ -344,7 +344,10 @@ def validate_character_arg(character: str) -> tuple[bool, dict | Path]:
     return True, char_dir
 
 
-def build_character(character: str, brand: str, force: bool) -> dict:
+PHASE_NAME_RE = re.compile(r"^ANIM-\d{2}$")
+
+
+def build_character(character: str, brand: str, force: bool, phase: str = "ANIM-03") -> dict:
     ok, ret = validate_character_arg(character)
     if not ok:
         return ret  # type: ignore[return-value]
@@ -359,6 +362,10 @@ def build_character(character: str, brand: str, force: bool) -> dict:
         return {"character": character, "status": "INVALID_BRAND_NAME",
                 "brand": brand, "expected_regex": BRAND_NAME_RE.pattern,
                 "hint": "letters/digits/'-'/'_' only, must start with a letter, max 48 chars"}
+    if not PHASE_NAME_RE.match(phase):
+        return {"character": character, "status": "INVALID_PHASE_NAME",
+                "phase": phase, "expected_regex": PHASE_NAME_RE.pattern,
+                "hint": "ANIM-NN (two digits)"}
 
     # F-4 r2 fix: check overwrite guard BEFORE volatile render discovery and hashing so
     # rerunning an already-built bible always returns WILL_OVERWRITE_REFUSED (exit 5),
@@ -419,7 +426,7 @@ def build_character(character: str, brand: str, force: bool) -> dict:
                 "pack_size": len(pack), "required_min": PACK_MIN,
                 "hint": "Re-render missing angles or add status.json/PROJECT_SPEC canon to widen role coverage."}
 
-    bible_md = render_bible(character, brand, status, readme, spec_row, pack, findings)
+    bible_md = render_bible(character, brand, status, readme, spec_row, pack, findings, phase)
     BIBLE_ROOT.mkdir(parents=True, exist_ok=True)
     bible_path.write_text(bible_md, encoding="utf-8")
 
@@ -465,6 +472,9 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--character", required=True, help="Character name (matches dir at X:/.../characters/<name>/)")
     ap.add_argument("--brand", default=BRAND_DEFAULT)
+    ap.add_argument("--phase", default="ANIM-03",
+                    help="Phase label stamped on the bible header. Default ANIM-03 (the agent's origin). "
+                         "Scaling phases that reuse the agent pass their own phase (e.g. ANIM-07).")
     ap.add_argument("--force", action="store_true", help="Overwrite existing bible if present.")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
@@ -483,13 +493,14 @@ def main() -> int:
             "pack_preview": pack,
         }, indent=2))
         return 0
-    result = build_character(args.character, args.brand, args.force)
+    result = build_character(args.character, args.brand, args.force, args.phase)
     print(json.dumps(result, indent=2))
     code_for = {
         "OK": 0,
         "WILL_OVERWRITE_REFUSED": 5,
         "INVALID_CHARACTER_NAME": 6,
         "INVALID_BRAND_NAME": 6,
+        "INVALID_PHASE_NAME": 6,
         "PATH_ESCAPE_REJECTED": 6,
         "PACK_TOO_SMALL": 7,
         "NO_CANON_SOURCE": 8,

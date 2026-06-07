@@ -148,7 +148,7 @@
       "findings": [
         "F-ANIM03-02: grog has no status.json under X:\\Automations\\apex\\projects\\jesse_animate\\characters\\grog; bible built from PROJECT_SPEC + render-set inference."
       ],
-      "built_at": "2026-06-07T07:03:25+00:00"
+      "built_at": "2026-06-07T08:44:46+00:00"
     },
     "lirian": {
       "brand": "Jesse-Adventures",
@@ -203,7 +203,7 @@
       "findings": [
         "F-ANIM03-02: lirian has no status.json under X:\\Automations\\apex\\projects\\jesse_animate\\characters\\lirian; bible built from PROJECT_SPEC + render-set inference."
       ],
-      "built_at": "2026-06-07T07:03:30+00:00"
+      "built_at": "2026-06-07T08:44:47+00:00"
     }
   }
 }

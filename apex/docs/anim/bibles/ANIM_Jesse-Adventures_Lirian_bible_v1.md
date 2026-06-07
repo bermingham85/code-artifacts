@@ -1,9 +1,9 @@
 # Character Bible — Lirian
 
 **File:** `ANIM_Jesse-Adventures_Lirian_bible_v1.md`
-**Authored:** 2026-06-07T07:03:30+00:00
+**Authored:** 2026-06-07T08:44:47+00:00
 **Brand:** Jesse-Adventures
-**Phase:** ANIM-03 (WO `APEX-ANIM-MB-WO-00001`)
+**Phase:** ANIM-07 (WO `APEX-ANIM-MB-WO-00001`)
 
 ## 1. Source of canon (cited verbatim)
 - `PROJECT_SPEC.md` §1.8 canon row:

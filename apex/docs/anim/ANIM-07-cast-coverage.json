@@ -32,7 +32,8 @@
       "render_count": 45,
       "pack_size": 7,
       "has_status_json": false,
-      "built_at": "2026-06-07T07:03:25+00:00"
+      "built_at": "2026-06-07T08:44:46+00:00",
+      "audit_path": "apex/audit/anim-03/grog-build-2026-06-07T08-44-46Z.json"
     },
     "lirian": {
       "disposition": "BUILT-IN-ANIM-07",
@@ -41,7 +42,8 @@
       "render_count": 18,
       "pack_size": 7,
       "has_status_json": false,
-      "built_at": "2026-06-07T07:03:30+00:00"
+      "built_at": "2026-06-07T08:44:47+00:00",
+      "audit_path": "apex/audit/anim-03/lirian-build-2026-06-07T08-44-47Z.json"
     },
     "jesse": {
       "disposition": "NO_RENDERS",

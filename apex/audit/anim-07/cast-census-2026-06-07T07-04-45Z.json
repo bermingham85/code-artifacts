@@ -130,7 +130,7 @@
   ],
   "notes": [
     "agent_scan_breakdown columns sum to agent_scan_png_count by construction; both reproduce the agent's --dry-run render_count values reported in the per-character bibles and ANIM-03-reference-pack-manifest.json entries.",
-    "PROJECT_SPEC §1.8 canon at jesse_animate/PROJECT_SPEC.md lists 7 named characters. Galinda (already built in ANIM-03) is built outside the §1.8 table from her status.json. Emma (built in ANIM-03) is also outside §1.8.",
+    "PROJECT_SPEC §1.8 canon at jesse_animate/PROJECT_SPEC.md lines 125-132 lists 8 named characters (jesse, kevin, emma, amy, laura, grog, lirian, ann). Galinda is the only render-tree resident NOT in §1.8 and was built in ANIM-03 from her status.json. Emma is in §1.8 (line 127) but has no status.json on disk; her ANIM-03 manifest entry sets status_json_path=null accordingly.",
     "video_frames/ for grog is recorded under out_of_scan_universe because the agent does not scan it; it is video extraction artifact, not a reference render, and the operator has not requested its inclusion in the agent's universe.",
     "Two operator-actionable blockers raised at MA-ANIM-07-RENDERS-EMPTY (4 chars) and MA-ANIM-07-MIDJOURNEY-RAW (1 char) in apex_governance/MISSING_SECRETS.queue.json (the unified governance queue holding both MS-* and MA-* rows)."
   ]
