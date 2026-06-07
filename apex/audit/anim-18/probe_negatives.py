@@ -788,6 +788,193 @@ def main() -> int:
                            real_key),
     })
 
+    # ---- P35-P36: ANIM-18 R11 MED-1 fix. resolve_fal_key() must strip
+    # resolver-supplied fingerprint / key_sha256_first_12 / key_length on
+    # NON-OK paths (no key in scope to recompute from). Without stripping,
+    # a tampered resolver could plant well-shaped values in those fields
+    # under a failure status, and fingerprint_only() would emit them
+    # verbatim because they pass the syntactic value-shape validators.
+
+    shim._import_video_agent = lambda: (
+        _FakeVideoAgent({
+            "status": "ENV_KEY_MISSING",
+            "fingerprint": "abcd:1234",
+            "key_sha256_first_12": "deadbeefcafe",
+            "key_length": 64,
+            "env_sync_path": "X:/env_sync/user_portable.json",
+            "field": "FAL_AI_API_KEY",
+        }), None)
+    try:
+        r = shim.resolve_fal_key()
+        stripped = (
+            "fingerprint" not in r
+            and "key_sha256_first_12" not in r
+            and "key_length" not in r
+        )
+        out["probes"].append({
+            "id": "NON_OK_DIAG_FIELDS_STRIPPED",
+            "expected_status": "STRIPPED",
+            "actual_status": "STRIPPED" if stripped else "RESOLVER_VALUES_SURVIVED",
+            "pass": stripped and r.get("status") == "ENV_KEY_MISSING",
+            "result": r,
+            **_assert_no_leaks("NON_OK_DIAG_FIELDS_STRIPPED",
+                               json.dumps(r), real_key),
+        })
+    finally:
+        shim._import_video_agent = original_import_video_agent
+
+    # P36 — downstream: probe() / build_payload() / submit dry-run must
+    # never echo the planted diagnostic values regardless of mode.
+    shim._import_video_agent = lambda: (
+        _FakeVideoAgent({
+            "status": "ENV_KEY_MISSING",
+            "fingerprint": "abcd:1234",
+            "key_sha256_first_12": "deadbeefcafe",
+            "key_length": 64,
+            "env_sync_path": "X:/env_sync/user_portable.json",
+            "field": "FAL_AI_API_KEY",
+        }), None)
+    try:
+        r = shim.probe()
+        kr = r.get("key_resolution") or {}
+        downstream_clean = (
+            "fingerprint" not in kr
+            and "key_sha256_first_12" not in kr
+            and "key_length" not in kr
+        )
+        out["probes"].append({
+            "id": "NON_OK_DIAG_FIELDS_STRIPPED_DOWNSTREAM_PROBE",
+            "expected_status": "STRIPPED",
+            "actual_status": "STRIPPED" if downstream_clean else "RESOLVER_VALUES_SURVIVED",
+            "pass": downstream_clean and r.get("status") == "KEY_UNRESOLVED",
+            "result": r,
+            **_assert_no_leaks("NON_OK_DIAG_FIELDS_STRIPPED_DOWNSTREAM_PROBE",
+                               json.dumps(r), real_key),
+        })
+    finally:
+        shim._import_video_agent = original_import_video_agent
+
+    # ---- P37-P38: ANIM-18 R11 MED-2 fix. actual_type / error class names
+    # MUST be collapsed through a stdlib allowlist — `type(x).__name__` is
+    # attacker-controlled via dynamic class creation
+    # (`type("95de0714SECRET", (Exception,), {})`).
+
+    # P37: resolver returns a non-dict whose class name carries the sentinel.
+    class _MaliciousResponse:
+        pass
+    _MaliciousResponse.__name__ = f"95de{SENTINEL_KEY}SECRETCLASS"
+    shim._import_video_agent = lambda: (
+        _FakeVideoAgent(_MaliciousResponse()), None)
+    try:
+        r = shim.resolve_fal_key()
+        # actual_type must NOT contain the sentinel — it should collapse
+        # to the coarse enum "other" (or one of the known type names).
+        at = r.get("actual_type", "")
+        sentinel_absent = SENTINEL_KEY not in at and "95de" not in at
+        out["probes"].append({
+            "id": "MALICIOUS_RESOLVER_CLASSNAME_COARSE_ENUMED",
+            "expected_status": "RESOLVER_INVALID_SHAPE",
+            "actual_status": r.get("status"),
+            "pass": (r.get("status") == "RESOLVER_INVALID_SHAPE"
+                     and sentinel_absent
+                     and at == "other"),
+            "result": r,
+            **_assert_no_leaks("MALICIOUS_RESOLVER_CLASSNAME_COARSE_ENUMED",
+                               json.dumps(r), real_key),
+        })
+    finally:
+        shim._import_video_agent = original_import_video_agent
+
+    # P38: resolver raises an exception whose class name carries the sentinel.
+    _MaliciousException = type(f"95de{SENTINEL_KEY}SECRETEXC",
+                                (RuntimeError,), {})
+
+    class _RaisingMaliciousAgent:
+        def resolve_env_key_from_env_sync(self, path, field):
+            raise _MaliciousException("any message")
+
+    shim._import_video_agent = lambda: (_RaisingMaliciousAgent(), None)
+    try:
+        r = shim.resolve_fal_key()
+        err = r.get("error", "")
+        sentinel_absent = SENTINEL_KEY not in err and "95de" not in err
+        out["probes"].append({
+            "id": "MALICIOUS_EXCEPTION_CLASSNAME_COARSE_ENUMED",
+            "expected_status": "RESOLVER_CRASHED",
+            "actual_status": r.get("status"),
+            "pass": (r.get("status") == "RESOLVER_CRASHED"
+                     and sentinel_absent
+                     and err == "OtherException"),
+            "result": r,
+            **_assert_no_leaks("MALICIOUS_EXCEPTION_CLASSNAME_COARSE_ENUMED",
+                               json.dumps(r), real_key),
+        })
+    finally:
+        shim._import_video_agent = original_import_video_agent
+
+    # ---- P39-P40: ANIM-18 R11 MED-3 fix. _http_post_json + poll_job must
+    # broad-except so a RuntimeError / ValueError / custom-class exception
+    # reaching CLI stderr with raw_key in scope does not escape unredacted.
+
+    # P39: _http_post_json via submit --live; monkeypatch _urlopen to raise
+    # RuntimeError carrying the sentinel in its message; assert structured
+    # FAL_ENDPOINT_UNREACHABLE returned with sentinel redacted out of error.
+    shim.resolve_fal_key = lambda: dict(sentinel_probe)
+    try:
+        def _raise_runtime(req, timeout=30):
+            raise RuntimeError(
+                f"opaque library failure echoing auth: Key {SENTINEL_KEY}")
+
+        original_shim_urlopen2 = shim._urlopen
+        shim._urlopen = _raise_runtime
+        try:
+            r = shim.submit_shot("1", falcloud_plan, live=True)
+        finally:
+            shim._urlopen = original_shim_urlopen2
+
+        err_field = (r.get("fal_response") or {}).get("error", "")
+        sentinel_present = SENTINEL_KEY in json.dumps(r)
+        out["probes"].append({
+            "id": "HTTP_POST_BROAD_EXCEPT_REDACTS",
+            "expected_status": "FAL_ENDPOINT_UNREACHABLE",
+            "actual_status": r.get("status"),
+            "pass": (r.get("status") == "FAL_ENDPOINT_UNREACHABLE"
+                     and not sentinel_present),
+            "result": r,
+            **_assert_no_leaks("HTTP_POST_BROAD_EXCEPT_REDACTS",
+                               json.dumps(r), real_key),
+        })
+    finally:
+        shim.resolve_fal_key = original_resolver
+
+    # P40: poll_job — same broad-except backstop.
+    shim.resolve_fal_key = lambda: dict(sentinel_probe)
+    try:
+        def _raise_runtime2(req, timeout=30):
+            raise ValueError(
+                f"opaque poll failure echoing auth: Key {SENTINEL_KEY}")
+
+        original_shim_urlopen3 = shim._urlopen
+        shim._urlopen = _raise_runtime2
+        try:
+            r = shim.poll_job("test-job-id-12345")
+        finally:
+            shim._urlopen = original_shim_urlopen3
+
+        sentinel_present = SENTINEL_KEY in json.dumps(r)
+        out["probes"].append({
+            "id": "POLL_JOB_BROAD_EXCEPT_REDACTS",
+            "expected_status": "FAL_ENDPOINT_UNREACHABLE",
+            "actual_status": r.get("status"),
+            "pass": (r.get("status") == "FAL_ENDPOINT_UNREACHABLE"
+                     and not sentinel_present),
+            "result": r,
+            **_assert_no_leaks("POLL_JOB_BROAD_EXCEPT_REDACTS",
+                               json.dumps(r), real_key),
+        })
+    finally:
+        shim.resolve_fal_key = original_resolver
+
     # ---- Aggregate + fail-closed scrub before any print ----
 
     out["probe_count"] = len(out["probes"])

@@ -34,6 +34,66 @@ REPO_ROOT = Path(os.environ.get("APEX_REPO", "."))
 TIER_CONFIG_PATH = REPO_ROOT / "apex/docs/anim/ANIM-05-tier-config.json"
 AUDIT_ROOT = REPO_ROOT / "apex/audit/anim-18"
 
+# ANIM-18 R11 MED-2 fix: `type(x).__name__` is attacker-controlled. A
+# malicious resolver returning `type("95de0714SECRETBYTES", (), {})()` lets
+# the class name carry raw-key substrings; the value would pass the
+# permissive `_ACTUAL_TYPE_RE` (bounded identifier-like substring) and
+# reach the outward boundary intact. Map every plausible Python type to a
+# coarse, fixed enum; unknown types collapse to "other". The same defense
+# applies to exception class names — `raise type("SECRET", (Exception,),
+# {})()` would otherwise plant attacker-controlled strings into our
+# structured diagnostics. Two separate maps because the legitimate value
+# domains differ (resolver returns + raised exceptions).
+_COARSE_VALUE_TYPES = {
+    dict: "dict",
+    list: "list",
+    str: "str",
+    int: "int",
+    float: "float",
+    bool: "bool",
+    type(None): "NoneType",
+    tuple: "tuple",
+    bytes: "bytes",
+    set: "set",
+    frozenset: "frozenset",
+}
+_COARSE_EXCEPTION_NAMES = frozenset({
+    "Exception", "BaseException",
+    "OSError", "IOError", "FileNotFoundError", "PermissionError",
+    "IsADirectoryError", "NotADirectoryError",
+    "ImportError", "ModuleNotFoundError", "SyntaxError",
+    "AttributeError", "TypeError", "ValueError", "KeyError", "IndexError",
+    "RuntimeError", "RecursionError", "TimeoutError",
+    "UnicodeDecodeError", "UnicodeEncodeError",
+    "ConnectionError", "ConnectionResetError", "ConnectionAbortedError",
+    "ConnectionRefusedError", "BrokenPipeError",
+    "JSONDecodeError",
+    "URLError", "HTTPError", "ContentTooShortError",
+    "AssertionError", "StopIteration", "GeneratorExit",
+    "MemoryError", "OverflowError", "ZeroDivisionError",
+})
+
+
+def _coarse_type_name(value) -> str:
+    """Map an arbitrary Python value's type to a small fixed enum.
+
+    See _COARSE_VALUE_TYPES rationale. Default `"other"` survives the
+    enum check downstream without carrying any attacker-supplied bytes.
+    """
+    return _COARSE_VALUE_TYPES.get(type(value), "other")
+
+
+def _coarse_exception_name(exc_type) -> str:
+    """Map an exception class to a stable, allowlisted name.
+
+    Defence-in-depth: a resolver that raises `type("95de...SECRET",
+    (Exception,), {})()` would otherwise plant attacker-controlled
+    bytes inside `type(e).__name__`. Any class outside the stdlib
+    allowlist collapses to `"OtherException"`.
+    """
+    name = getattr(exc_type, "__name__", "OtherException")
+    return name if name in _COARSE_EXCEPTION_NAMES else "OtherException"
+
 # fal.ai queue endpoint surface (documented at fal.ai; pinned here so a future
 # API rename is a one-line code change rather than a redesign).
 FAL_QUEUE_BASE = "https://queue.fal.run"
@@ -121,10 +181,14 @@ def _import_video_agent():
         # ValueError, json.JSONDecodeError and any other Exception subclass
         # to escape as a stack trace on stderr — if module init had raw
         # credential bytes in the exception message, CLI stderr would leak
-        # them. Only the exception class name (a fixed identifier, structurally
-        # safe) is persisted.
+        # them.
+        # ANIM-18 R11 MED-2 fix: `type(e).__name__` itself is attacker-
+        # controllable via a dynamic subclass like
+        # `raise type("95de0714SECRET", (ImportError,), {})()`. The class
+        # name then carries raw-key bytes through our "structured" diagnostic.
+        # Collapse to a stdlib allowlist via _coarse_exception_name().
         return None, {"status": "VIDEO_AGENT_IMPORT_FAILED",
-                      "error": f"{type(e).__name__}"}
+                      "error": _coarse_exception_name(type(e))}
 
 
 def load_tier_config() -> dict:
@@ -160,8 +224,13 @@ def resolve_fal_key() -> dict:
     if cfg is None:
         return {"status": "TIER_NOT_CONFIGURED", "tier": "FalCloud"}
     if not isinstance(cfg, dict):
+        # ANIM-18 R11 MED-2 fix: coarse-enum the type name (see
+        # _coarse_type_name rationale at module top). A tampered tier-config
+        # in JSON cannot reach this branch (JSON has no custom classes), but
+        # the same defense is applied for consistency with the resolver path
+        # below where a malicious in-process resolver can set the class name.
         return {"status": "TIER_CONFIG_INVALID_SHAPE", "tier": "FalCloud",
-                "actual_type": type(cfg).__name__}
+                "actual_type": _coarse_type_name(cfg)}
     if not cfg:
         return {"status": "TIER_NOT_CONFIGURED", "tier": "FalCloud"}
     env_path = cfg.get("requires_env_key_from_env_sync_path")
@@ -195,11 +264,12 @@ def resolve_fal_key() -> dict:
         # escape as an unstructured traceback. If the resolver raised with
         # raw key bytes in the exception message, CLI stderr would leak them
         # AND callers would not receive the documented status-enum contract.
-        # Returning only the class name (a fixed identifier under the
-        # resolver's type hierarchy, structurally safe) preserves observability
-        # without exposing the message body.
+        # ANIM-18 R11 MED-2 fix: collapse `type(e).__name__` through the
+        # stdlib allowlist (_coarse_exception_name) so a malicious resolver
+        # cannot smuggle raw bytes via a dynamic exception subclass name
+        # (e.g. `raise type("95de0714SECRET", (RuntimeError,), {})()`).
         return {"status": "RESOLVER_CRASHED",
-                "error": f"{type(e).__name__}"}
+                "error": _coarse_exception_name(type(e))}
     # ANIM-18 r8 MED-2 fix: the upstream resolver is external code that this
     # shim must treat as untrusted output. Three failure modes were unguarded:
     #   (a) non-dict return value — would crash callers at .get() with an
@@ -213,7 +283,7 @@ def resolve_fal_key() -> dict:
     # rely on the documented dict-with-status contract.
     if not isinstance(probe, dict):
         return {"status": "RESOLVER_INVALID_SHAPE",
-                "actual_type": type(probe).__name__}
+                "actual_type": _coarse_type_name(probe)}
     if "status" not in probe or not isinstance(probe.get("status"), str):
         return {"status": "RESOLVER_INVALID_SHAPE",
                 "actual_type": "dict-missing-status"}
@@ -221,7 +291,7 @@ def resolve_fal_key() -> dict:
         k = probe.get("key")
         if not isinstance(k, str) or not k:
             return {"status": "RESOLVER_OK_WITHOUT_KEY",
-                    "actual_type": type(k).__name__}
+                    "actual_type": _coarse_type_name(k)}
         # ANIM-18 R10 MED-2 fix: derive diagnostic fields from the validated
         # key bytes inside the shim, overwriting resolver-supplied values.
         # A tampered resolver could plant attacker-controlled substrings of
@@ -238,6 +308,20 @@ def resolve_fal_key() -> dict:
         probe["fingerprint"] = f"{fp_prefix}:{fp_suffix}"
         probe["key_sha256_first_12"] = sha[:12]
         probe["key_length"] = len(k)
+        return probe
+    # ANIM-18 R11 MED-1 fix: on NON-OK paths the resolver has no `key` for
+    # the shim to recompute from, but it may still have planted (or
+    # legitimately echoed) `fingerprint` / `key_sha256_first_12` /
+    # `key_length` in the failure-shaped probe. _seal_outward() has nothing
+    # to scrub against on these paths, and fingerprint_only()'s syntactic
+    # value-shape validators accept any well-shaped value — including
+    # resolver-planted substrings. Strip those three diagnostic fields
+    # here so they cannot reach the outward boundary regardless of what
+    # the resolver supplied. The structured `status` + `field` +
+    # `env_sync_path` enum allowlists still convey the failure category
+    # to operators.
+    probe = {k: v for k, v in probe.items()
+             if k not in ("fingerprint", "key_sha256_first_12", "key_length")}
     return probe
 
 
@@ -602,6 +686,19 @@ def _http_post_json(url: str, body: bytes, headers: dict, raw_key: str | None,
         return {"status": "FAL_ENDPOINT_UNREACHABLE",
                 "error": _redact_key_from_text(
                     f"{type(e).__name__}: {e}", raw_key)}
+    except Exception as e:
+        # ANIM-18 R11 MED-3 fix: broad-except backstop at the live HTTP
+        # boundary. raw_key is in scope as the Authorization header value
+        # — any unanticipated exception subclass (RuntimeError / ValueError /
+        # custom test-seam raisers / library-internal class) reaching CLI
+        # stderr as an unstructured traceback could carry raw key bytes in
+        # the message. Three-layer defense: coarse-enum the class name
+        # against the stdlib allowlist; redact the message body against
+        # raw_key; return the documented FAL_ENDPOINT_UNREACHABLE status
+        # so caller code sees the contract dict.
+        return {"status": "FAL_ENDPOINT_UNREACHABLE",
+                "error": _redact_key_from_text(
+                    f"{_coarse_exception_name(type(e))}: {e}", raw_key)}
 
 
 def submit_shot(shot_id: str, tier_plan_path: str, live: bool) -> dict:
@@ -697,6 +794,17 @@ def poll_job(job_id: str) -> dict:
         return _seal({"status": "FAL_ENDPOINT_UNREACHABLE",
                       "error": _redact_key_from_text(
                           f"{type(e).__name__}: {e}", raw_key),
+                      "key_fingerprint": fingerprint_only(key_probe)})
+    except Exception as e:
+        # ANIM-18 R11 MED-3 fix: broad-except backstop at the live HTTP
+        # boundary for the poll path. Mirrors the _http_post_json fix —
+        # raw_key is in scope as the Authorization header value, any
+        # unanticipated exception class reaching CLI stderr could leak
+        # it. Coarse-enum the class name, redact the message, return
+        # the FAL_ENDPOINT_UNREACHABLE contract dict.
+        return _seal({"status": "FAL_ENDPOINT_UNREACHABLE",
+                      "error": _redact_key_from_text(
+                          f"{_coarse_exception_name(type(e))}: {e}", raw_key),
                       "key_fingerprint": fingerprint_only(key_probe)})
 
 

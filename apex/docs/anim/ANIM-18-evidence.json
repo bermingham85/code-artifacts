@@ -67,11 +67,11 @@
   },
   "negative_probe_results": {
     "harness": "apex/audit/anim-18/probe_negatives.py",
-    "probe_count": 35,
-    "passed": 35,
+    "probe_count": 41,
+    "passed": 41,
     "failed": 0,
     "global_leak_check": "CLEAN",
-    "snapshot_at": "post-R10-fix (commit pending)",
+    "snapshot_at": "post-R11-fix (commit pending)",
     "probe_ids": [
       "TIER_PLAN_NOT_FOUND",
       "TIER_PLAN_UNPARSEABLE",
@@ -107,7 +107,13 @@
       "FIELD_ENUM_BYPASS_SUPPRESSED",
       "RESOLVER_FINGERPRINT_RECOMPUTED",
       "RESOLVER_BROAD_EXCEPT_FAIL_CLOSED",
-      "IMPORT_VIDEO_AGENT_BROAD_EXCEPT_META"
+      "IMPORT_VIDEO_AGENT_BROAD_EXCEPT_META",
+      "NON_OK_DIAG_FIELDS_STRIPPED",
+      "NON_OK_DIAG_FIELDS_STRIPPED_DOWNSTREAM_PROBE",
+      "MALICIOUS_RESOLVER_CLASSNAME_COARSE_ENUMED",
+      "MALICIOUS_EXCEPTION_CLASSNAME_COARSE_ENUMED",
+      "HTTP_POST_BROAD_EXCEPT_REDACTS",
+      "POLL_JOB_BROAD_EXCEPT_REDACTS"
     ]
   },
   "leak_check": {
@@ -225,14 +231,23 @@
                     "F-1 MED": "resolve_fal_key did not enforce _ALLOWED_ENV_SYNC_PATHS BEFORE dereferencing tier config; allowlist was consulted only by fingerprint_only output sealing. Tampered ANIM-05-tier-config.json could point requires_env_key_from_env_sync_path at any local/UNC JSON path, still resolve OK, and allow live submit from a non-canonical credential source while the output merely suppressed the path. Add env_path + env_field allowlist check at trust boundary before resolver invocation",
                     "F-2 MED": "fingerprint_only safe-shape validators for status / field were regex-shape (`^[A-Z][A-Z0-9_]{0,63}$` / `^[A-Z_][A-Z0-9_]{0,63}$`) — admit arbitrary uppercase identifiers, so a tampered resolver could stuff planted strings into either field name. Also shim never recomputes fingerprint / key_sha256_first_12 / key_length from probe['key'] — a tampered resolver could plant attacker-controlled 12-hex substrings that pass the syntactic value-shape validator. Replace with exact-enum allowlists for status + field; derive diagnostic fields inside the shim from validated key bytes",
                     "F-3 MED": "_import_video_agent and resolve_fal_key resolver call caught only selected exception classes (OSError, ImportError, SyntaxError) and (OSError, AttributeError, TypeError) respectively; RuntimeError / ValueError / json.JSONDecodeError / etc could still escape as a traceback on CLI stderr. If a resolver raised with raw key bytes in its exception message, stderr would leak. Broad-except at both trust boundaries; return only type(e).__name__"},
+      "fixed_in_commit": "1807976"
+    },
+    {
+      "round": 11,
+      "transcript_path": "apex_governance/codex_runs/ANIM-18/round11.txt",
+      "findings": {"high": 0, "med": 3,
+                    "F-1 MED": "R10 recomputed fingerprint / key_sha256_first_12 / key_length only on OK path. For non-OK paths the resolver could still return planted well-shaped values for those fields (e.g. status=ENV_KEY_MISSING + fingerprint='abcd:1234' + key_sha256_first_12='deadbeefcafe'); they pass the syntactic value-shape validators and _seal_outward has no raw_key in scope to scrub against. Strip those three fields on non-OK paths",
+                    "F-2 MED": "actual_type = type(probe).__name__ is attacker-controlled via dynamic subclass creation (`type('95de0714SECRET', (), {})()`); the planted class name passes _ACTUAL_TYPE_RE and reaches output as a 'structured' diagnostic. Same for exception class names returned by broad-except (`raise type('SECRET', (Exception,), {})()`). Map known stdlib types/exceptions to coarse allowlist; default 'other' / 'OtherException'",
+                    "F-3 MED": "_http_post_json + poll_job caught only HTTPError / URLError / TimeoutError / OSError. raw_key is in scope as the Authorization header value; any other Exception (RuntimeError / ValueError / library-internal class / test-seam raiser) could escape as a traceback on CLI stderr with the key bytes in its message. Add broad-except backstop at both HTTP boundaries, redact message against raw_key, coarse-enum the class name"},
       "fixed_in_commit": null
     }
   ],
   "silent_twice_progress": {
     "target_rounds": "two consecutive empty",
-    "current_state": "AWAITING_R11_REVIEW (R10 surfaced 3 MED; R10-fix in flight)",
+    "current_state": "AWAITING_R12_REVIEW (R11 surfaced 3 MED; R11-fix in flight)",
     "fix_round_cap_R16": 5,
-    "overage_justification": "ANIM-13/14 precedent: overage permitted when each round delivers a real fix and findings converge. R1-R10 each surfaced and fixed real defects on the credential-trust-boundary surface; convergence visible (R10 issues all flow from a single insight — 'trust the resolver less, do more inside the shim')."
+    "overage_justification": "ANIM-13/14 precedent: overage permitted when each round delivers a real fix and findings converge. R1-R11 each surfaced and fixed real defects on the credential-trust-boundary surface; convergence accelerating (R11's three findings are all refinements of R10's 'trust the resolver less' insight — extending it to non-OK paths, dynamic class names, and HTTP backstops)."
   },
   "exit_code_map": {
     "0": ["PAYLOAD","DRY_RUN","FAL_OK","READY"],
