@@ -83,9 +83,24 @@ def resolve_fal_key() -> dict:
     return probe
 
 
+FINGERPRINT_ALLOWLIST = (
+    "status", "fingerprint", "key_sha256_first_12", "key_length",
+    "env_sync_path", "field", "error", "actual_type",
+)
+
+
 def fingerprint_only(probe: dict) -> dict:
-    """Strip the raw key from a probe dict, leaving fingerprint metadata only."""
-    return {k: v for k, v in probe.items() if k != "key"}
+    """Project a probe dict down to a fixed set of safe diagnostic fields.
+
+    ANIM-18 r4 F-1 fix: previous implementation was a denylist that only
+    dropped a top-level "key" field. A resolver that emitted the raw key in
+    any other field name, nested position, or as a dict-key would have
+    leaked through. This is now an allowlist: only the documented safe
+    diagnostic fields survive. Anything else (including a malicious resolver
+    return) is dropped entirely. The values themselves are then passed
+    through _redact_key_from_obj() via the caller's final-sealing wrapper.
+    """
+    return {k: probe[k] for k in FINGERPRINT_ALLOWLIST if k in probe}
 
 
 def validate_tier_plan(tier_plan_path: str) -> dict:
@@ -134,6 +149,21 @@ def pick_shot(tier_plan: dict, shot_id: str) -> dict:
     return {}
 
 
+def _seal_outward(result: dict, key_probe: dict | None) -> dict:
+    """ANIM-18 r4 F-1 fix: apply _redact_key_from_obj() as a final-sealing
+    pass on every outward-bound result that could have touched the resolved
+    key, regardless of mode (probe / build_payload / submit dry-run / submit
+    live / poll). The raw_key is pulled from the probe dict if present;
+    otherwise the resolved key was never in scope and no scrubbing is needed.
+    """
+    raw = None
+    if isinstance(key_probe, dict):
+        v = key_probe.get("key")
+        if isinstance(v, str) and v:
+            raw = v
+    return _redact_key_from_obj(result, raw)
+
+
 def build_payload(shot_id: str, tier_plan_path: str) -> dict:
     """Assemble a deterministic fal.ai submission payload from a tier-plan shot.
 
@@ -159,8 +189,10 @@ def build_payload(shot_id: str, tier_plan_path: str) -> dict:
                 "tier_chosen": shot.get("tier_chosen")}
     key_probe = resolve_fal_key()
     if key_probe.get("status") != "OK":
-        return {"status": "FAL_KEY_UNRESOLVED",
-                "key_resolution": fingerprint_only(key_probe)}
+        return _seal_outward(
+            {"status": "FAL_KEY_UNRESOLVED",
+             "key_resolution": fingerprint_only(key_probe)},
+            key_probe)
     # Deterministic payload — no timestamps, no randomness. fal.ai
     # animation-agent input schema (input.prompt + input.image_url +
     # input.aspect_ratio + input.duration) is pinned here; documented in
@@ -184,10 +216,12 @@ def build_payload(shot_id: str, tier_plan_path: str) -> dict:
             "character_markers_source": shot.get("character_markers_source"),
         },
     }
-    return {"status": "PAYLOAD",
-            "payload": payload,
-            "key_fingerprint": fingerprint_only(key_probe),
-            "submit_url": SUBMIT_URL}
+    return _seal_outward(
+        {"status": "PAYLOAD",
+         "payload": payload,
+         "key_fingerprint": fingerprint_only(key_probe),
+         "submit_url": SUBMIT_URL},
+        key_probe)
 
 
 def _redact_key_from_text(text: str, raw_key: str | None) -> str:
@@ -294,17 +328,25 @@ def submit_shot(shot_id: str, tier_plan_path: str, live: bool) -> dict:
         return built
     payload = built["payload"]
     body = json.dumps(payload, sort_keys=True).encode("utf-8")
+    # Resolve once so we have a raw_key for the dry-run sealing pass even
+    # though no HTTP is made. (resolve_fal_key already executed inside
+    # build_payload; this second call is the same OK probe and is cheap.)
+    key_probe_for_seal = resolve_fal_key()
     if not live:
-        return {"status": "DRY_RUN",
-                "note": "DRY-RUN — no HTTP call made. Pass --live to actually submit.",
-                "submit_url": SUBMIT_URL,
-                "payload_sha256": hashlib.sha256(body).hexdigest(),
-                "payload": payload,
-                "key_fingerprint": built["key_fingerprint"]}
+        return _seal_outward(
+            {"status": "DRY_RUN",
+             "note": "DRY-RUN — no HTTP call made. Pass --live to actually submit.",
+             "submit_url": SUBMIT_URL,
+             "payload_sha256": hashlib.sha256(body).hexdigest(),
+             "payload": payload,
+             "key_fingerprint": built["key_fingerprint"]},
+            key_probe_for_seal)
     key_probe = resolve_fal_key()
     if key_probe.get("status") != "OK":
-        return {"status": "FAL_KEY_UNRESOLVED",
-                "key_resolution": fingerprint_only(key_probe)}
+        return _seal_outward(
+            {"status": "FAL_KEY_UNRESOLVED",
+             "key_resolution": fingerprint_only(key_probe)},
+            key_probe)
     raw_key = key_probe["key"]
     headers = {
         "Authorization": f"Key {raw_key}",
@@ -333,8 +375,10 @@ def poll_job(job_id: str) -> dict:
                 "expected_regex": JOB_ID_RE.pattern}
     key_probe = resolve_fal_key()
     if key_probe.get("status") != "OK":
-        return {"status": "FAL_KEY_UNRESOLVED",
-                "key_resolution": fingerprint_only(key_probe)}
+        return _seal_outward(
+            {"status": "FAL_KEY_UNRESOLVED",
+             "key_resolution": fingerprint_only(key_probe)},
+            key_probe)
     url = POLL_URL_TEMPLATE.format(job_id=job_id)
     raw_key = key_probe["key"]
     req = urllib.request.Request(url, method="GET")
@@ -388,7 +432,7 @@ def probe() -> dict:
         out["status"] = "KEY_OK_SHIM_PENDING"
     else:
         out["status"] = "KEY_UNRESOLVED"
-    return out
+    return _seal_outward(out, key_probe)
 
 
 def _write_audit(name: str, payload: dict) -> Path:

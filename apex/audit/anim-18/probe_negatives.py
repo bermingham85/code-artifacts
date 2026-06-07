@@ -317,6 +317,80 @@ def main() -> int:
             **_assert_no_key_leak("P11", json.dumps(r), real_key),
         })
 
+    # Probes 12-14 — ANIM-18 r4 F-2 fix: non-live resolver leak surface.
+    # Monkeypatch resolve_fal_key() to return a "malicious" probe carrying
+    # the live key in extra value field, in a nested value, and as a dict
+    # key. The probe / build_payload / dry-run submit paths must scrub all
+    # three forms via the new _seal_outward() pass and allowlist
+    # fingerprint_only().
+    if real_key:
+        leaky_probe = {
+            "status": "OK",
+            "key": real_key,
+            # ANIM-18 r4 F-1 evidence: these are the positions fingerprint_only
+            # would NOT have stripped under the prior denylist.
+            "echo": real_key,
+            "nested": {"deeper": real_key},
+            real_key: "value-under-secret-key-name",
+            "fingerprint": "95de:0714",
+            "key_sha256_first_12": "be61d3851aac",
+            "key_length": 69,
+            "env_sync_path": "X:/env_sync/user_portable.json",
+            "field": "FAL_AI_API_KEY",
+        }
+        original_resolver = shim.resolve_fal_key
+        shim.resolve_fal_key = lambda: dict(leaky_probe)
+
+        # P12 — probe() non-live path.
+        try:
+            r = shim.probe()
+        finally:
+            shim.resolve_fal_key = original_resolver
+        out["probes"].append({
+            "id": "RESOLVER_LEAK_PROBE",
+            "expected_status": "READY",
+            "actual_status": r.get("status"),
+            "pass": r.get("status") in ("READY", "KEY_OK_SHIM_PENDING"),
+            "result": r,
+            **_assert_no_key_leak("P12", json.dumps(r), real_key),
+        })
+
+        # P13 — build_payload non-live path with same leaky resolver.
+        shim.resolve_fal_key = lambda: dict(leaky_probe)
+        try:
+            r = shim.build_payload(
+                "1", str(REPO_ROOT
+                         / "apex/docs/anim/ANIM-16-tier-plan-grog_playground-falcloud.json"))
+        finally:
+            shim.resolve_fal_key = original_resolver
+        out["probes"].append({
+            "id": "RESOLVER_LEAK_BUILD_PAYLOAD",
+            "expected_status": "PAYLOAD",
+            "actual_status": r.get("status"),
+            "pass": r.get("status") == "PAYLOAD",
+            "result": r,
+            **_assert_no_key_leak("P13", json.dumps(r), real_key),
+        })
+
+        # P14 — dry-run submit with same leaky resolver.
+        shim.resolve_fal_key = lambda: dict(leaky_probe)
+        try:
+            r = shim.submit_shot(
+                "1",
+                str(REPO_ROOT
+                    / "apex/docs/anim/ANIM-16-tier-plan-grog_playground-falcloud.json"),
+                live=False)
+        finally:
+            shim.resolve_fal_key = original_resolver
+        out["probes"].append({
+            "id": "RESOLVER_LEAK_DRY_RUN",
+            "expected_status": "DRY_RUN",
+            "actual_status": r.get("status"),
+            "pass": r.get("status") == "DRY_RUN",
+            "result": r,
+            **_assert_no_key_leak("P14", json.dumps(r), real_key),
+        })
+
     out["probe_count"] = len(out["probes"])
     passed = sum(1 for p in out["probes"] if p.get("pass"))
     out["passed"] = passed
