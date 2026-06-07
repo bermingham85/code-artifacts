@@ -1,0 +1,35 @@
+{
+  "status": "OK",
+  "dry_run": false,
+  "force": false,
+  "transcript": "C:\\Users\\Owner\\apex_governance\\codex_runs\\AGEN-builder-agent\\AGEN-builder-agent-review-20260525T125754Z-ed0ee8d2.txt",
+  "transcript_sha256": "e9f74bc668ff358771af18851112efd0891bd49bb76317453a8c45798ad1e318",
+  "out_dir": "AGENT_BUILD_SYSTEM\\06_BUILDER_AGENT",
+  "written": [],
+  "no_op_idempotent": [
+    {
+      "basename": "AGEN-WKFL-builder-agent-v1.json",
+      "dst": "AGENT_BUILD_SYSTEM\\06_BUILDER_AGENT\\AGEN-WKFL-builder-agent-v1.json",
+      "size_bytes": 75182,
+      "sha256": "0e91fbbb52293c997ba572ca1f520282b938ad1202154e2f69cb3571f3e8b018",
+      "note": "Destination already byte-identical to transcript slice; no write performed."
+    },
+    {
+      "basename": "AGEN-PRMPT-builder-system-prompt-v1.md",
+      "dst": "AGENT_BUILD_SYSTEM\\06_BUILDER_AGENT\\AGEN-PRMPT-builder-system-prompt-v1.md",
+      "size_bytes": 17496,
+      "sha256": "04f405ccd87ed935388fd8c936d47ca420e661d4949c11f86e9e837b74b65529",
+      "note": "Destination already byte-identical to transcript slice; no write performed."
+    },
+    {
+      "basename": "AGEN-TEST-builder-test-plan-v1.md",
+      "dst": "AGENT_BUILD_SYSTEM\\06_BUILDER_AGENT\\AGEN-TEST-builder-test-plan-v1.md",
+      "size_bytes": 11156,
+      "sha256": "d72243dbc6cd9b2ce804dd82bbe88cafa208a2739da230b5f9ab7460027681d7",
+      "note": "Destination already byte-identical to transcript slice; no write performed."
+    }
+  ],
+  "skipped": [],
+  "rejected": [],
+  "missing_from_transcript": []
+}
