@@ -57,18 +57,30 @@ def load_projects() -> dict:
     return json.loads(PROJECTS_PATH.read_text(encoding="utf-8"))
 
 
-def load_ref_pack_characters() -> set[str]:
+def load_ref_pack_manifest() -> dict | None:
+    """F-4 r2 fix: hard-fail if the ANIM-03 reference-pack manifest is missing.
+    Returns None when missing so the caller can surface REF_PACK_MANIFEST_MISSING."""
     if not REF_PACK_MANIFEST_PATH.is_file():
-        return set()
-    data = json.loads(REF_PACK_MANIFEST_PATH.read_text(encoding="utf-8"))
-    return set(data.get("characters", {}).keys())
+        return None
+    return json.loads(REF_PACK_MANIFEST_PATH.read_text(encoding="utf-8"))
 
 
-def load_scene_pack_scenes() -> set[str]:
+def load_scene_pack_manifest() -> dict | None:
+    """F-4 r2 fix: hard-fail if the ANIM-04 scene-pack manifest is missing."""
     if not SCENE_PACK_MANIFEST_PATH.is_file():
-        return set()
-    data = json.loads(SCENE_PACK_MANIFEST_PATH.read_text(encoding="utf-8"))
-    return set(data.get("scenes", {}).keys())
+        return None
+    return json.loads(SCENE_PACK_MANIFEST_PATH.read_text(encoding="utf-8"))
+
+
+def sha256_of(p: Path, chunk: int = 1 << 20) -> str:
+    h = hashlib.sha256()
+    with p.open("rb") as f:
+        while True:
+            b = f.read(chunk)
+            if not b:
+                break
+            h.update(b)
+    return h.hexdigest()
 
 
 def validate_slug(slug: str) -> dict | None:
@@ -143,23 +155,68 @@ def build_storyboard(project_slug: str, target_shot_seconds: float, force: bool)
         return {"slug": project_slug, "status": "WILL_OVERWRITE_REFUSED",
                 "existing_path": str(out_path).replace("\\", "/")}
 
-    # F-1 r1 fix: cross-check character + scene slugs against ANIM-03 and ANIM-04
-    # authoritative manifests. Marker strings stay verbatim from projects.json
-    # (the operator-controlled source), but membership is anchored to the
-    # certed manifests so a project cannot reference a non-existent character
-    # or scene.
-    known_chars = load_ref_pack_characters()
-    if known_chars and cfg["character"] not in known_chars:
+    # F-4 r2: hard-fail when either certed manifest is missing.
+    ref_pack = load_ref_pack_manifest()
+    if ref_pack is None:
+        return {"slug": project_slug, "status": "REF_PACK_MANIFEST_MISSING",
+                "manifest": str(REF_PACK_MANIFEST_PATH).replace("\\", "/")}
+    scene_pack = load_scene_pack_manifest()
+    if scene_pack is None:
+        return {"slug": project_slug, "status": "SCENE_PACK_MANIFEST_MISSING",
+                "manifest": str(SCENE_PACK_MANIFEST_PATH).replace("\\", "/")}
+
+    # F-1 r1: slug membership anchored to certed manifests.
+    if cfg["character"] not in ref_pack.get("characters", {}):
         return {"slug": project_slug, "status": "UNKNOWN_CHARACTER",
                 "character": cfg["character"],
-                "known_characters": sorted(known_chars),
+                "known_characters": sorted(ref_pack.get("characters", {}).keys()),
                 "manifest": str(REF_PACK_MANIFEST_PATH).replace("\\", "/")}
-    known_scenes = load_scene_pack_scenes()
-    if known_scenes and cfg["scene"] not in known_scenes:
+    scene_entry = scene_pack.get("scenes", {}).get(cfg["scene"])
+    if scene_entry is None:
         return {"slug": project_slug, "status": "UNKNOWN_SCENE",
                 "scene": cfg["scene"],
-                "known_scenes": sorted(known_scenes),
+                "known_scenes": sorted(scene_pack.get("scenes", {}).keys()),
                 "manifest": str(SCENE_PACK_MANIFEST_PATH).replace("\\", "/")}
+
+    # F-3 r2: scene markers / style anchor / prompt rules come from ANIM-04
+    # manifest directly, not from the project config. That makes the marker
+    # text traceable to the certed scene bible by construction, eliminating
+    # the "valid slug + fabricated marker text" failure mode.
+    scene_descriptor = scene_entry.get("descriptor", {}) or {}
+    scene_brand_tokens = scene_entry.get("brand_tokens", {}) or {}
+    scene_markers = scene_descriptor.get("prompt")
+    style_anchor = scene_brand_tokens.get("style_anchor")
+    prompt_rules = scene_brand_tokens.get("prompt_rules")
+    if not scene_markers or not style_anchor or not prompt_rules:
+        return {"slug": project_slug, "status": "SCENE_MANIFEST_INCOMPLETE",
+                "missing": [k for k, v in {
+                    "descriptor.prompt": scene_markers,
+                    "brand_tokens.style_anchor": style_anchor,
+                    "brand_tokens.prompt_rules": prompt_rules,
+                }.items() if not v]}
+
+    # F-3 r2: character_markers stays in projects.json (no canonical field for it
+    # in the ANIM-03 manifest yet) but its source file + content sha256 must be
+    # present and re-verified at runtime. Any drift between the recorded sha and
+    # the live source aborts before emission.
+    src_path_str = cfg.get("character_markers_provenance_source_path")
+    src_sha = cfg.get("character_markers_provenance_sha256")
+    if not src_path_str or not src_sha:
+        return {"slug": project_slug, "status": "CHARACTER_MARKERS_PROVENANCE_MISSING",
+                "required_fields": [
+                    "character_markers_provenance_source_path",
+                    "character_markers_provenance_sha256",
+                ]}
+    src_path = Path(src_path_str)
+    if not src_path.is_file():
+        return {"slug": project_slug, "status": "CHARACTER_MARKERS_SOURCE_MISSING",
+                "source_path": src_path_str}
+    actual_sha = sha256_of(src_path)
+    if actual_sha != src_sha:
+        return {"slug": project_slug, "status": "CHARACTER_MARKERS_PROVENANCE_DRIFT",
+                "source_path": src_path_str,
+                "recorded_sha256": src_sha,
+                "actual_sha256": actual_sha}
 
     lyrics = load_lyrics(cfg["lyrics_timestamped_path"])
     if not lyrics:
@@ -168,8 +225,6 @@ def build_storyboard(project_slug: str, target_shot_seconds: float, force: bool)
 
     sections = cfg["sections"]
     char_markers = cfg["character_markers"]
-    scene_markers = cfg["scene_markers"]
-    style_anchor = cfg["style_anchor"]
 
     shots: list[dict] = []
     shot_id = 0
@@ -200,7 +255,7 @@ def build_storyboard(project_slug: str, target_shot_seconds: float, force: bool)
 
     storyboard = {
         "phase": "ANIM-13",
-        "schema_version": 1,
+        "schema_version": 2,
         "project": project_slug,
         "song_title": cfg["song_title"],
         "character": cfg["character"],
@@ -209,9 +264,13 @@ def build_storyboard(project_slug: str, target_shot_seconds: float, force: bool)
         "duration_seconds": cfg["duration_seconds"],
         "target_shot_seconds": target_shot_seconds,
         "character_markers": char_markers,
+        "character_markers_source": "projects.json (sha-verified against " + src_path_str + ")",
         "scene_markers": scene_markers,
+        "scene_markers_source": "ANIM-04-scene-pack-manifest.json:scenes['" + cfg["scene"] + "'].descriptor.prompt",
         "style_anchor": style_anchor,
-        "prompt_rules": cfg["prompt_rules"],
+        "style_anchor_source": "ANIM-04-scene-pack-manifest.json:scenes['" + cfg["scene"] + "'].brand_tokens.style_anchor",
+        "prompt_rules": prompt_rules,
+        "prompt_rules_source": "ANIM-04-scene-pack-manifest.json:scenes['" + cfg["scene"] + "'].brand_tokens.prompt_rules",
         "section_count": len(sections),
         "shot_count": len(shots),
         "shots": shots,
@@ -363,7 +422,13 @@ def main() -> int:
         print(json.dumps(result, indent=2))
         code_for = {"OK": 0, "WILL_OVERWRITE_REFUSED": 5, "INVALID_SLUG": 6,
                     "UNKNOWN_PROJECT": 9, "LYRICS_MISSING": 8,
-                    "UNKNOWN_CHARACTER": 7, "UNKNOWN_SCENE": 7}
+                    "UNKNOWN_CHARACTER": 7, "UNKNOWN_SCENE": 7,
+                    "REF_PACK_MANIFEST_MISSING": 10,
+                    "SCENE_PACK_MANIFEST_MISSING": 10,
+                    "SCENE_MANIFEST_INCOMPLETE": 10,
+                    "CHARACTER_MARKERS_PROVENANCE_MISSING": 11,
+                    "CHARACTER_MARKERS_SOURCE_MISSING": 11,
+                    "CHARACTER_MARKERS_PROVENANCE_DRIFT": 11}
         return code_for.get(result.get("status", ""), 4)
 
     if args.validate:

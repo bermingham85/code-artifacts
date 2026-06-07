@@ -1,6 +1,6 @@
 {
   "phase": "ANIM-13",
-  "schema_version": 1,
+  "schema_version": 2,
   "project": "grog_playground",
   "song_title": "too big for the playground (piano power Ballad) Remix",
   "character": "grog",
@@ -9,9 +9,13 @@
   "duration_seconds": 238.9,
   "target_shot_seconds": 5.5,
   "character_markers": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers",
+  "character_markers_source": "projects.json (sha-verified against X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/shot_list.json)",
   "scene_markers": "A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing",
+  "scene_markers_source": "ANIM-04-scene-pack-manifest.json:scenes['MagicalRealmPlayground'].descriptor.prompt",
   "style_anchor": "Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+  "style_anchor_source": "ANIM-04-scene-pack-manifest.json:scenes['MagicalRealmPlayground'].brand_tokens.style_anchor",
   "prompt_rules": "Subject in first 15 words. 30-80 words per kontext_prompt. No quality tags. No negation. Lighting described as interaction. Texture inline with subject. Style anchor once at end. Character identified by key visual markers not 'the same character'.",
+  "prompt_rules_source": "ANIM-04-scene-pack-manifest.json:scenes['MagicalRealmPlayground'].brand_tokens.prompt_rules",
   "section_count": 9,
   "shot_count": 43,
   "shots": [
@@ -747,5 +751,5 @@
       ]
     }
   ],
-  "built_at": "2026-06-07T12:07:46+00:00"
+  "built_at": "2026-06-07T12:13:24+00:00"
 }

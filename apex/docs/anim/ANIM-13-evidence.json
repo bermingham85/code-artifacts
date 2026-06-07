@@ -9,26 +9,37 @@
   "deliverables": [
     {
       "path": "apex/registry/muscle_shot_storyboard_agent.py",
-      "sha256": "28f169513e78b8974e43ffd67c0b00f1936b80571e9c5905a8e43242088b1ce8",
+      "sha256": "a15f34211a4c2449cf29218091af41daa2a70db9775bc885663a71494002df0f",
       "kind": "muscle",
-      "post_round1": true
+      "post_round2": true
     },
     {
       "path": "apex/docs/anim/ANIM-13-projects.json",
-      "sha256": "80be9602433c367b4381b93ea51e8bac12443900e31aa91f8cb7db973e12cdeb",
-      "kind": "config"
+      "sha256": "ccab61626136b62f1a68f96d9d3e7af6100a16b611ef9fb471399d3defa41b7d",
+      "kind": "config",
+      "post_round2": true
     },
     {
       "path": "apex/docs/anim/ANIM-13-storyboard-grog_playground.json",
-      "sha256": "315d0e90e0b733df5b9eb7d6566e3377a531cd6d7eb00f6478f72e30b726c42c",
+      "sha256": "056c61d8eb69707d59cc957fe1d6969162365b7f0cbdfc65f96346ff1667cd75",
       "kind": "deterministic output",
-      "post_round1": true
+      "post_round2": true
     },
     {
       "path": "apex/docs/anim/ANIM-13-validation-grog.json",
-      "sha256": "54aa215f6eeaecec65c8c4fb208114368561a8f55084df52f6044dd6b1ee85ba",
+      "sha256": "f7dcb9b83f0a33cb8727f54eacd0a98bec01088edfed10f4eaf5a8d2723f231e",
       "kind": "gold-reference validation report",
-      "post_round1": true
+      "post_round2": true
+    }
+  ],
+  "codex_round2_fixes": [
+    {
+      "finding": "F-3 (P3, muscle:173) — marker/style/prompt_rules strings were still trusted from projects.json under a valid slug",
+      "fix": "scene_markers + style_anchor + prompt_rules now come straight from ANIM-04-scene-pack-manifest.json (scenes[<scene>].descriptor.prompt + brand_tokens.style_anchor + brand_tokens.prompt_rules). Dropped scene_markers / style_anchor / prompt_rules carry-fields from projects.json. character_markers stays in projects.json (ANIM-03 manifest doesn't have a canonical marker field) but requires character_markers_provenance_source_path + character_markers_provenance_sha256 fields and the agent hashes the source file at runtime and aborts on drift (status CHARACTER_MARKERS_PROVENANCE_DRIFT exit 11). schema_version bumped to 2. Verified: storyboard meta now carries scene_markers_source / style_anchor_source / prompt_rules_source pointing at the manifest fields; character_markers_source records the sha-verified provenance path."
+    },
+    {
+      "finding": "F-4 (P3, muscle:61) — missing ANIM-03/ANIM-04 manifests returned empty sets so membership checks were conditional, letting OK output emit without authoritative manifests present",
+      "fix": "load_ref_pack_manifest() + load_scene_pack_manifest() now return None when the file is missing; build_storyboard() hard-fails immediately with REF_PACK_MANIFEST_MISSING (exit 10) or SCENE_PACK_MANIFEST_MISSING (exit 10) before any marker is read. SCENE_MANIFEST_INCOMPLETE (exit 10) fires if the scene entry exists but is missing descriptor.prompt / brand_tokens.style_anchor / brand_tokens.prompt_rules. Verified via inline negative test: REF_PACK_MANIFEST_MISSING fires when the manifest path is repointed to a non-existent file."
     }
   ],
   "codex_round1_fixes": [
