@@ -74,8 +74,19 @@
   },
   "codex_runs": [
     {"round": 1, "transcript": "apex_governance/codex_runs/ANIM-16/round1.txt", "high_findings": 0, "med_findings": 5, "low_findings": 0, "fixed_in_commit": "2a49ba3 [ANIM-16] Codex round-1 fix (F-1 schema validation tightened; F-2 per-shot traceability passthrough; F-3 storyboard SHA drift detection; F-4 energy pre-validate for routing mode; F-5 codex_runs ledger)"},
-    {"round": 2, "transcript": "apex_governance/codex_runs/ANIM-16/round2.txt", "high_findings": 0, "med_findings": 5, "low_findings": 0, "fixed_in_commit": "[backfilled at next commit] (F-6 required_shot_fields expanded to all spec-listed fields; F-7 storyboard top-level character_markers + source field required as non-empty strings; F-8 energy validation runs for all shots regardless of routing mode + non-string energy rejected before set lookup; F-9 project string constrained to SHOT_ID_RE for path-traversal safety; F-10 new_exit_codes in evidence backfilled with all r1+r2 new statuses)"}
+    {"round": 2, "transcript": "apex_governance/codex_runs/ANIM-16/round2.txt", "high_findings": 0, "med_findings": 5, "low_findings": 0, "fixed_in_commit": "d4bf3df [ANIM-16] Codex round-2 fix (F-6 required_shot_fields expanded; F-7 traceability required; F-8 energy validation universal + hashable-safe; F-9 project SHOT_ID_RE; F-10 exit-code map updated)"},
+    {"round": 3, "transcript": "apex_governance/codex_runs/ANIM-16/round3.txt", "high_findings": 0, "med_findings": 0, "low_findings": 0, "fixed_in_commit": null, "outcome": "No findings — silent-twice CLOSED at R2+R3."}
   ],
+  "silent_twice_progress": {
+    "rule": "Two consecutive HIGH-empty rounds = closed.",
+    "round_1_high_count": 0,
+    "round_2_high_count": 0,
+    "round_3_high_count": 0,
+    "closed_at_rounds": [2, 3],
+    "fix_rounds_used": 2,
+    "fix_round_cap_R16": 5,
+    "comment": "Clean close. R1 + R2 were both 0 HIGH but found 5 MED each — every fix landed and R3 returned fully clean (0 HIGH/MED/LOW). Phase ready for cert + PR."
+  },
   "ledger_convention": "Per ANIM-14 chain-ledger convention — last entry's fixed_in_commit is backfilled by the next commit.",
   "new_negative_paths_post_r1": {
     "STORYBOARD_SCHEMA_TOO_OLD": {"command": "old schema_version=1 input", "expected_exit": 10, "actual_exit": 10},
@@ -83,5 +94,5 @@
     "STORYBOARD_DRIFT_FROM_PRIOR_PLAN": {"command": "rerun with stale prior_storyboard_sha256 in existing output", "expected_exit": 11, "actual_exit": 11}
   },
   "built_at": "2026-06-07T13:54:00+00:00",
-  "last_updated_at": "2026-06-07T13:58:00+00:00"
+  "last_updated_at": "2026-06-07T14:05:00+00:00"
 }
