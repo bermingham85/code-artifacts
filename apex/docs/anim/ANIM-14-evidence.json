@@ -77,11 +77,12 @@
   "negative_path_evidence_file": "apex/docs/anim/ANIM-14-evidence-probes.json",
   "negative_path_summary": {
     "CHARACTER_MARKERS_NOT_FOUND": "fires when project AND manifest both omit the marker block",
-    "CHARACTER_MARKERS_MANIFEST_PARTIAL_when_project_absent": "fires only when ANIM-03 manifest's marker block is 3-of-4 fields present AND projects.json declares nothing (r1 F-3 fix preserves project override)",
+    "CHARACTER_MARKERS_MANIFEST_PARTIAL_when_project_absent": "(probe pm_probe) fires when ANIM-03 manifest's marker block is 3-of-4 fields present; with this probe's cfg the project also declares nothing, so the fallback path needs the manifest",
+    "CHARACTER_MARKERS_MANIFEST_PARTIAL_unconditional": "(probe proj_full_manifest_partial_probe, r3 F-6 strict semantics) fires even when projects.json carries a full verifiable marker block — the manifest's partial registration is itself a doctrine violation, so the agent refuses to run any project bound to that character until the manifest is repaired",
     "CHARACTER_MARKERS_VALUE_MISMATCH (manifest path)": "fires when ANIM-03 records wrong character_markers text; sha + field still verified against named source",
     "CHARACTER_MARKERS_SOURCE_CONFLICT": "fires when projects.json AND ANIM-03 both verified-OK individually (against different fields in same source file) but recorded marker text differs",
     "OK_via_manifest_only": "happy path with markers from ANIM-03 lookup only",
-    "OK_project_complete_with_manifest_partial_tolerated": "r1 F-3 fix evidence: project_path_complete=True + manifest_has_partial=True returns OK with projects.json marker text"
+    "OK_via_projects_json_override": "happy path with markers from projects.json (manifest may or may not also declare them, but must NOT be partial; if both declare, marker text must be byte-equal)"
   },
   "open_followons": [
     "MA-ANIM-14-MARKERS-GALINDA — register a galinda canonical identifier source",
@@ -91,14 +92,15 @@
   "codex_runs": [
     {"round": 1, "transcript": "apex_governance/codex_runs/ANIM-14/round1.txt", "high_findings": 1, "med_findings": 2, "low_findings": 0, "fixed_in_commit": "4482385 [ANIM-14] Codex round-1 fix (F-1 bundle visibility, F-2 audit dir override, F-3 manifest_partial tolerance)"},
     {"round": 2, "transcript": "apex_governance/codex_runs/ANIM-14/round2.txt", "high_findings": 0, "med_findings": 1, "low_findings": 1, "fixed_in_commit": "c296feb [ANIM-14] Codex round-2 fix (F-4 probe audit-richness, F-5 non-object JSON source guard)"},
-    {"round": 3, "transcript": "apex_governance/codex_runs/ANIM-14/round3.txt", "high_findings": 0, "med_findings": 1, "low_findings": 1, "fixed_in_commit": "round-3 fix commit (F-6 strict manifest_partial restored; F-7 this codex_runs ledger update)"}
+    {"round": 3, "transcript": "apex_governance/codex_runs/ANIM-14/round3.txt", "high_findings": 0, "med_findings": 1, "low_findings": 1, "fixed_in_commit": "2174908 [ANIM-14] Codex round-3 fix (F-6 strict manifest_partial restored; F-7 codex_runs ledger update)"},
+    {"round": 4, "transcript": "apex_governance/codex_runs/ANIM-14/round4.txt", "high_findings": 2, "med_findings": 0, "low_findings": 0, "fixed_in_commit": "round-4 fix commit (F-8 negative_path_summary mismatch with r3 strict semantics; F-9 r3 placeholder commit hash replaced with actual 2174908)"}
   ],
   "silent_twice_progress": {
     "rule": "Two consecutive HIGH-empty rounds = closed.",
     "round_2_high_count": 0,
     "round_3_high_count": 0,
-    "round_4_required_to_confirm_after_r3_fixes": true,
-    "comment": "r3 F-6 reverted r1's F-3 softening, so the agent's behavior changed; a fresh round is needed to confirm no new HIGH findings emerged from the revert."
+    "round_4_high_count": 2,
+    "comment": "R4 surfaced 2 HIGH on stale evidence (not code); silent-twice clock reset. Resolver code itself was confirmed clean by R4: 'I found no code-path HIGH in muscle_shot_storyboard_agent.py'. R5 + R6 must both be HIGH-empty for silent-twice to close."
   },
   "built_at": "2026-06-07T13:06:33+00:00"
 }
