@@ -1,32 +1,30 @@
 {
   "phase": "ANIM-02",
-  "moved_at": "2026-06-07T05-02-06Z",
+  "moved_at": "2026-06-07T05-15-08Z",
   "lora_root": "C:\\ComfyUI\\models\\loras",
   "quarantine_root": "C:\\ComfyUI\\models\\loras\\_quarantine\\ANIM-02",
-  "status": "OK",
-  "schema_version": "2",
-  "schema_note": "Initial run on 2026-06-07T05-02-06Z used schema_v1 (no lora_root/quarantine_root fields). Manifest rewritten 2026-06-07T05:11Z to schema_v2 (matches hardened muscle_lora_dedup.py F-3/F-4 fix). Filesystem state unchanged — files still in quarantine_root listed below.",
   "moves": [
     {
       "original": "C:\\ComfyUI\\models\\loras\\kontext-turnaround-sheet-v1 (1).safetensors",
       "quarantine": "C:\\ComfyUI\\models\\loras\\_quarantine\\ANIM-02\\kontext-turnaround-sheet-v1 (1).safetensors",
       "sha256": "ef5b51ba69f72dcec601469011d411a1ebb70ba7ca0237ae8f01807a5cb4fb60",
       "size": 343806384,
-      "moved_at": "2026-06-07T05-02-06Z"
+      "moved_at": "2026-06-07T05-15-08Z"
     },
     {
       "original": "C:\\ComfyUI\\models\\loras\\kontext-turnaround-sheet-v1 (2).safetensors",
       "quarantine": "C:\\ComfyUI\\models\\loras\\_quarantine\\ANIM-02\\kontext-turnaround-sheet-v1 (2).safetensors",
       "sha256": "ef5b51ba69f72dcec601469011d411a1ebb70ba7ca0237ae8f01807a5cb4fb60",
       "size": 343806384,
-      "moved_at": "2026-06-07T05-02-06Z"
+      "moved_at": "2026-06-07T05-15-08Z"
     },
     {
       "original": "C:\\ComfyUI\\models\\loras\\kontext-turnaround-sheet-v1 (3).safetensors",
       "quarantine": "C:\\ComfyUI\\models\\loras\\_quarantine\\ANIM-02\\kontext-turnaround-sheet-v1 (3).safetensors",
       "sha256": "ef5b51ba69f72dcec601469011d411a1ebb70ba7ca0237ae8f01807a5cb4fb60",
       "size": 343806384,
-      "moved_at": "2026-06-07T05-02-06Z"
+      "moved_at": "2026-06-07T05-15-08Z"
     }
-  ]
+  ],
+  "status": "OK"
 }

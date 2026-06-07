@@ -76,7 +76,15 @@ def install(root: Path, skip_deps: bool = False) -> dict:
         sd_req = sd_scripts / "requirements.txt"
         if sd_req.is_file():
             log.append(run([sys.executable, "-m", "pip", "install", "-r", str(sd_req)]))
-    return {"steps": log, "verify": verify(root)}
+    failed_steps = [s for s in log if s["exit"] != 0]
+    v = verify(root)
+    if skip_deps:
+        # --skip-deps is the documented structural-install path; deferred-import is acceptable.
+        ok = (not failed_steps) and v["structure_ok"]
+    else:
+        # Full install: every step must exit 0 AND import_ok must pass.
+        ok = (not failed_steps) and v["structure_ok"] and v["import_ok"]
+    return {"steps": log, "failed_steps": failed_steps, "verify": v, "ok": ok, "skip_deps": skip_deps}
 
 
 def main() -> int:
@@ -99,8 +107,12 @@ def main() -> int:
         os.environ.get("APEX_REPO", ".")) / "apex/audit/anim-02" / f"install-kohya-{ts}.json"
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps(result, indent=2))
-    print(json.dumps({"audit": str(out_path), "ok": result.get("install", {}).get("verify", result.get("verify", {})).get("ok", False)}, indent=2))
-    return 0
+    if args.verify_only:
+        ok = result.get("verify", {}).get("structure_ok", False)
+    else:
+        ok = result.get("install", {}).get("ok", False)
+    print(json.dumps({"audit": str(out_path), "ok": ok}, indent=2))
+    return 0 if ok else 4
 
 
 if __name__ == "__main__":

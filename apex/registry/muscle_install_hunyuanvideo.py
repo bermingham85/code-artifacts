@@ -71,7 +71,10 @@ def install_nodes(custom_nodes_root: Path, python_exe: str) -> dict:
     req = node_dir / "requirements.txt"
     if req.is_file():
         log.append(run([python_exe, "-m", "pip", "install", "-r", str(req)]))
-    return {"steps": log, "verify": verify(node_dir), "python_used": python_exe}
+    failed_steps = [s for s in log if s["exit"] != 0]
+    v = verify(node_dir)
+    ok = (not failed_steps) and v["ok"]
+    return {"steps": log, "failed_steps": failed_steps, "verify": v, "python_used": python_exe, "ok": ok}
 
 
 def download_weights(target_root: Path) -> dict:
@@ -119,9 +122,16 @@ def main() -> int:
         os.environ.get("APEX_REPO", ".")) / "apex/audit/anim-02" / f"install-hunyuanvideo-{ts}.json"
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps(result, indent=2))
-    ok = (result.get("verify") or result.get("install", {}).get("verify") or {}).get("ok", False)
+    if args.verify_only:
+        ok = result.get("verify", {}).get("ok", False)
+    else:
+        # On install runs, success requires every install step to exit 0 AND verify to pass.
+        ok = result.get("install", {}).get("ok", False)
+        # Optional weight download must also have exited 0 if requested.
+        if args.download_weights:
+            ok = ok and all(s.get("exit", 1) == 0 for s in result.get("weights", {}).get("steps", []))
     print(json.dumps({"audit": str(out_path), "ok": ok}, indent=2))
-    return 0
+    return 0 if ok else 4
 
 
 if __name__ == "__main__":
