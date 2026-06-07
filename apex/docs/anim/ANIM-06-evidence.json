@@ -1,7 +1,7 @@
 {
   "phase": "ANIM-06",
   "wo_id": "APEX-ANIM-MB-WO-00001",
-  "issued_utc": "2026-06-07T06:18:00Z",
+  "issued_utc": "2026-06-07T06:24:00Z",
   "author": "APEX orchestrator (Claude Opus 4.7)",
   "anchor_policy": "Every claim cites an audit JSON, filesystem read, or verbatim PHASE_STATE/shot_list/lyrics quote. Inherits ANIM-05 trust assumption (operator-controlled QNAP NAS share).",
   "wo_milestone": {
