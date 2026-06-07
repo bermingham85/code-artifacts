@@ -31,25 +31,24 @@ def load_shim():
     return m
 
 
-def _read_real_key() -> str:
+def _read_real_key(shim) -> str:
     """Read the live FAL_AI_API_KEY for the leak-check assertion only.
+
+    ANIM-18 r1 F-4 fix: reuse the shim's own resolve_fal_key() (which itself
+    reuses muscle_video_agent.resolve_env_key_from_env_sync()). This avoids
+    reimplementing env_sync key lookup in the harness, satisfying the
+    ANIM-17 R20 no-new-env-key-resolver constraint.
 
     The value is held in process memory exclusively for the assertion; never
     returned to the caller, never logged, never written to disk by this
-    harness. If env_sync is unreachable, leak-check is skipped (probe still
-    runs).
+    harness. If env_sync is unreachable, leak-check is skipped (probes still
+    run).
     """
-    cfg_path = REPO_ROOT / "apex/docs/anim/ANIM-05-tier-config.json"
-    try:
-        cfg = json.loads(cfg_path.read_text(encoding="utf-8"))
-        fc = cfg["tiers"]["FalCloud"]
-        env_path = Path(fc["requires_env_key_from_env_sync_path"])
-        env_field = fc["requires_env_key_field"]
-        data = json.loads(env_path.read_text(encoding="utf-8-sig"))
-        v = data.get(env_field)
-        return v if isinstance(v, str) and v else ""
-    except (OSError, KeyError, json.JSONDecodeError):
+    probe = shim.resolve_fal_key()
+    if probe.get("status") != "OK":
         return ""
+    v = probe.get("key")
+    return v if isinstance(v, str) and v else ""
 
 
 def _assert_no_key_leak(label: str, blob: str, real_key: str) -> dict:
@@ -62,7 +61,7 @@ def _assert_no_key_leak(label: str, blob: str, real_key: str) -> dict:
 
 def main() -> int:
     shim = load_shim()
-    real_key = _read_real_key()
+    real_key = _read_real_key(shim)
     out = {"phase": "ANIM-18", "probe_count": 0, "probes": [],
            "leak_check_global": None}
 
@@ -148,6 +147,61 @@ def main() -> int:
         "pass": r.get("status") == "INVALID_SHOT_ID",
         "result": r,
         **_assert_no_key_leak("P6", json.dumps(r), real_key),
+    })
+
+    # Probe 7 — ANIM-18 r1 F-5 fix: key-unresolved regression. Monkeypatch
+    # resolve_fal_key() to simulate env_sync being missing/empty and assert
+    # build_payload returns FAL_KEY_UNRESOLVED with fingerprint-only metadata.
+    original_resolver = shim.resolve_fal_key
+    shim.resolve_fal_key = lambda: {"status": "ENV_KEY_MISSING",
+                                      "env_sync_path": "X:/env_sync/user_portable.json",
+                                      "field": "FAL_AI_API_KEY"}
+    try:
+        r = shim.build_payload(
+            "1", str(REPO_ROOT
+                     / "apex/docs/anim/ANIM-16-tier-plan-grog_playground-falcloud.json"))
+    finally:
+        shim.resolve_fal_key = original_resolver
+    out["probes"].append({
+        "id": "FAL_KEY_UNRESOLVED",
+        "expected_status": "FAL_KEY_UNRESOLVED",
+        "actual_status": r.get("status"),
+        "pass": (r.get("status") == "FAL_KEY_UNRESOLVED"
+                 and isinstance(r.get("key_resolution"), dict)
+                 and "key" not in r.get("key_resolution", {})),
+        "result": r,
+        **_assert_no_key_leak("P7", json.dumps(r), real_key),
+    })
+
+    # Probe 8 — ANIM-18 r1 F-5 fix: dry-run urlopen suppression spy. Monkeypatch
+    # urllib.request.urlopen to a tripwire that flips a flag if called. Default
+    # submit_shot() (live=False) MUST NOT call urlopen. If the tripwire fires,
+    # the probe fails — that is a HIGH regression (accidental cloud spend).
+    import urllib.request as _ulr
+    called = {"urlopen": False}
+
+    def _tripwire(*a, **kw):
+        called["urlopen"] = True
+        raise AssertionError("urlopen called in dry-run path")
+
+    original_urlopen = _ulr.urlopen
+    _ulr.urlopen = _tripwire
+    try:
+        r = shim.submit_shot(
+            "1",
+            str(REPO_ROOT
+                / "apex/docs/anim/ANIM-16-tier-plan-grog_playground-falcloud.json"),
+            live=False)
+    finally:
+        _ulr.urlopen = original_urlopen
+    out["probes"].append({
+        "id": "DRY_RUN_URLOPEN_SUPPRESSED",
+        "expected_status": "DRY_RUN",
+        "actual_status": r.get("status"),
+        "urlopen_called": called["urlopen"],
+        "pass": r.get("status") == "DRY_RUN" and not called["urlopen"],
+        "result": r,
+        **_assert_no_key_leak("P8", json.dumps(r), real_key),
     })
 
     out["probe_count"] = len(out["probes"])

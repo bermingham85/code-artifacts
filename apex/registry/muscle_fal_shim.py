@@ -94,8 +94,11 @@ def validate_tier_plan(tier_plan_path: str) -> dict:
         return {"status": "TIER_PLAN_NOT_FOUND",
                 "tier_plan_path": tier_plan_path}
     try:
+        # ANIM-18 r1 F-2 fix: catch UnicodeDecodeError as well so a non-UTF8
+        # tier-plan returns a stable failure enum instead of crashing with
+        # an unstructured stack trace.
         text = p.read_text(encoding="utf-8")
-    except OSError as e:
+    except (OSError, UnicodeDecodeError) as e:
         return {"status": "TIER_PLAN_UNREADABLE",
                 "tier_plan_path": tier_plan_path,
                 "error": f"{type(e).__name__}: {e}"}
@@ -120,7 +123,12 @@ def validate_tier_plan(tier_plan_path: str) -> dict:
 
 
 def pick_shot(tier_plan: dict, shot_id: str) -> dict:
+    # ANIM-18 r1 F-3 fix: guard isinstance(shot, dict) so a malformed
+    # tier-plan with e.g. [null] or [42] in shots does not crash with
+    # AttributeError on shot.get().
     for shot in tier_plan["shots"]:
+        if not isinstance(shot, dict):
+            continue
         if str(shot.get("id")) == shot_id:
             return shot
     return {}
@@ -182,7 +190,21 @@ def build_payload(shot_id: str, tier_plan_path: str) -> dict:
             "submit_url": SUBMIT_URL}
 
 
-def _http_post_json(url: str, body: bytes, headers: dict,
+def _redact_key_from_text(text: str, raw_key: str | None) -> str:
+    """Replace any occurrence of the raw key in `text` with a redaction marker.
+
+    ANIM-18 r1 F-1 fix: an upstream proxy or fal.ai error envelope may echo
+    the Authorization header back in the response body. Any persisted excerpt
+    of that body must redact the raw key before being printed, logged or
+    audited. Caller passes the raw key bytes for in-process scrubbing only —
+    the key itself is never returned by this function.
+    """
+    if not raw_key:
+        return text
+    return text.replace(raw_key, "[REDACTED_FAL_KEY]")
+
+
+def _http_post_json(url: str, body: bytes, headers: dict, raw_key: str | None,
                     timeout: int = DEFAULT_TIMEOUT_SECONDS) -> dict:
     req = urllib.request.Request(url, data=body, method="POST")
     for k, v in headers.items():
@@ -194,26 +216,33 @@ def _http_post_json(url: str, body: bytes, headers: dict,
                 parsed = json.loads(raw.decode("utf-8"))
             except (json.JSONDecodeError, UnicodeDecodeError) as e:
                 return {"status": "FAL_UNPARSEABLE_RESPONSE",
-                        "http_status": resp.status, "error": str(e)}
+                        "http_status": resp.status,
+                        "error": _redact_key_from_text(str(e), raw_key)}
+            # Defense-in-depth: redact the raw key from the parsed response
+            # JSON in case fal.ai's error envelope echoes the header value.
+            parsed_str = _redact_key_from_text(json.dumps(parsed), raw_key)
             return {"status": "FAL_OK",
                     "http_status": resp.status,
-                    "response": parsed}
+                    "response": json.loads(parsed_str)}
     except urllib.error.HTTPError as e:
         body_text = ""
         try:
             body_text = e.read().decode("utf-8", errors="replace")[:512]
-        except Exception:
+        except (OSError, AttributeError):
             body_text = ""
         return {"status": "FAL_HTTP_ERROR",
                 "http_status": getattr(e, "code", None),
-                "reason": getattr(e, "reason", None),
-                "body_excerpt": body_text}
+                "reason": _redact_key_from_text(
+                    str(getattr(e, "reason", "")), raw_key),
+                "body_excerpt": _redact_key_from_text(body_text, raw_key)}
     except urllib.error.URLError as e:
         return {"status": "FAL_ENDPOINT_UNREACHABLE",
-                "error": f"{type(e).__name__}: {e}"}
+                "error": _redact_key_from_text(
+                    f"{type(e).__name__}: {e}", raw_key)}
     except (TimeoutError, OSError) as e:
         return {"status": "FAL_ENDPOINT_UNREACHABLE",
-                "error": f"{type(e).__name__}: {e}"}
+                "error": _redact_key_from_text(
+                    f"{type(e).__name__}: {e}", raw_key)}
 
 
 def submit_shot(shot_id: str, tier_plan_path: str, live: bool) -> dict:
@@ -234,11 +263,12 @@ def submit_shot(shot_id: str, tier_plan_path: str, live: bool) -> dict:
     if key_probe.get("status") != "OK":
         return {"status": "FAL_KEY_UNRESOLVED",
                 "key_resolution": fingerprint_only(key_probe)}
+    raw_key = key_probe["key"]
     headers = {
-        "Authorization": f"Key {key_probe['key']}",
+        "Authorization": f"Key {raw_key}",
         "Content-Type": "application/json",
     }
-    http_result = _http_post_json(SUBMIT_URL, body, headers)
+    http_result = _http_post_json(SUBMIT_URL, body, headers, raw_key)
     # Wrap result with fingerprint-only key metadata.
     return {"status": http_result["status"],
             "submit_url": SUBMIT_URL,
@@ -258,8 +288,9 @@ def poll_job(job_id: str) -> dict:
         return {"status": "FAL_KEY_UNRESOLVED",
                 "key_resolution": fingerprint_only(key_probe)}
     url = POLL_URL_TEMPLATE.format(job_id=job_id)
+    raw_key = key_probe["key"]
     req = urllib.request.Request(url, method="GET")
-    req.add_header("Authorization", f"Key {key_probe['key']}")
+    req.add_header("Authorization", f"Key {raw_key}")
     try:
         with urllib.request.urlopen(req, timeout=DEFAULT_TIMEOUT_SECONDS) as resp:
             raw = resp.read()
@@ -267,20 +298,24 @@ def poll_job(job_id: str) -> dict:
                 parsed = json.loads(raw.decode("utf-8"))
             except (json.JSONDecodeError, UnicodeDecodeError) as e:
                 return {"status": "FAL_UNPARSEABLE_RESPONSE",
-                        "http_status": resp.status, "error": str(e),
+                        "http_status": resp.status,
+                        "error": _redact_key_from_text(str(e), raw_key),
                         "key_fingerprint": fingerprint_only(key_probe)}
+            parsed_str = _redact_key_from_text(json.dumps(parsed), raw_key)
             return {"status": "FAL_OK",
                     "http_status": resp.status,
-                    "response": parsed,
+                    "response": json.loads(parsed_str),
                     "key_fingerprint": fingerprint_only(key_probe)}
     except urllib.error.HTTPError as e:
         return {"status": "FAL_HTTP_ERROR",
                 "http_status": getattr(e, "code", None),
-                "reason": getattr(e, "reason", None),
+                "reason": _redact_key_from_text(
+                    str(getattr(e, "reason", "")), raw_key),
                 "key_fingerprint": fingerprint_only(key_probe)}
     except (urllib.error.URLError, TimeoutError, OSError) as e:
         return {"status": "FAL_ENDPOINT_UNREACHABLE",
-                "error": f"{type(e).__name__}: {e}",
+                "error": _redact_key_from_text(
+                    f"{type(e).__name__}: {e}", raw_key),
                 "key_fingerprint": fingerprint_only(key_probe)}
 
 
