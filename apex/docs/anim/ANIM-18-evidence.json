@@ -122,16 +122,69 @@
       "round": 1,
       "model": "gpt-5.5",
       "auth_mode": "ChatGPT-account subscription",
-      "command": "CODEX_MODEL=gpt-5.5 codex exec --model gpt-5.5 --skip-git-repo-check --cd /c/Users/Owner/Repos/code-artifacts < bundle.txt > round1.txt",
       "transcript_path": "apex_governance/codex_runs/ANIM-18/round1.txt",
-      "findings": "TO_BE_FILLED_AT_RUN",
-      "fixed_in_commit": "TO_BE_BACKFILLED"
+      "findings": {"high": 1, "med": 4, "low": 0,
+                    "F-1 HIGH": "HTTPError body raw-key leak — _http_post_json prints unredacted body_excerpt",
+                    "F-2 MED": "validate_tier_plan crashes on non-UTF8 (UnicodeDecodeError)",
+                    "F-3 MED": "pick_shot AttributeError on malformed shots[] entries",
+                    "F-4 MED": "probe harness reimplements env_sync lookup instead of reusing ANIM-17 resolver",
+                    "F-5 MED": "probes never assert dry-run urlopen suppression / key-unresolved regression"},
+      "fixed_in_commit": "b072a75"
+    },
+    {
+      "round": 2,
+      "transcript_path": "apex_governance/codex_runs/ANIM-18/round2.txt",
+      "findings": {"high": 1, "med": 1,
+                    "F-1 HIGH": "HTTPError body truncated BEFORE redaction (raw key prefix could survive boundary)",
+                    "F-2 MED": "parsed JSON redacted via json.dumps()->replace()->json.loads() round-trip misses JSON-escaped key forms"},
+      "fixed_in_commit": "0930fc3"
+    },
+    {
+      "round": 3,
+      "transcript_path": "apex_governance/codex_runs/ANIM-18/round3.txt",
+      "findings": {"high": 1, "med": 1,
+                    "F-1 HIGH": "_redact_key_from_obj missed dict KEYS (only redacted values) + submit_shot final json round-trip was no-op",
+                    "F-2 MED": "poll_job lacks final redaction pass before return"},
+      "fixed_in_commit": "2818cf6"
+    },
+    {
+      "round": 4,
+      "transcript_path": "apex_governance/codex_runs/ANIM-18/round4.txt",
+      "findings": {"high": 1, "med": 1,
+                    "F-1 HIGH": "fingerprint_only was a denylist (only dropped 'key'); resolver could leak through any other field name or nested position",
+                    "F-2 MED": "no final sealing pass on probe/build_payload paths that touched the resolved key"},
+      "fixed_in_commit": "a065bbf"
+    },
+    {
+      "round": 5,
+      "transcript_path": "apex_governance/codex_runs/ANIM-18/round5.txt",
+      "findings": {"high": 1, "med": 1,
+                    "F-1 HIGH": "harness printed real_key / sentinel to stdout when a regression was detected (fail-open)",
+                    "F-2 MED": "redaction-regression probes depended on env_sync availability; coverage was conditional"},
+      "fixed_in_commit": "b613ec6"
+    },
+    {
+      "round": 6,
+      "transcript_path": "apex_governance/codex_runs/ANIM-18/round6.txt",
+      "findings": {"high": 1, "med": 2,
+                    "F-1 HIGH": "fingerprint_only passed free-form 'error' field through unscrubbed when no raw key was in scope to seal against",
+                    "F-2 MED": "harness P12-P14 only tested leaky resolver with key in scope; missed no-key-in-scope leak path",
+                    "F-3 MED": "load_tier_config + _import_video_agent raised tracebacks on I/O / parse failure"},
+      "fixed_in_commit": "d0a22c6"
+    },
+    {
+      "round": 7,
+      "transcript_path": "apex_governance/codex_runs/ANIM-18/round7.txt",
+      "findings": "PENDING_RESUBMIT_AFTER_CHATGPT_CAP_RESET",
+      "fixed_in_commit": null,
+      "note": "First attempt 2026-06-07T14:58Z returned 'You've hit your usage limit'. Resubmit scheduled after cap clears."
     }
   ],
   "silent_twice_progress": {
-    "target_rounds": "1 + 2 (or until two consecutive empty)",
-    "current_state": "PRE_CODEX_REVIEW",
-    "fix_round_cap_R16": 5
+    "target_rounds": "two consecutive empty",
+    "current_state": "AWAITING_R7_RESUBMIT (R1-R6 produced real fixes; cap-blocked at R7)",
+    "fix_round_cap_R16": 5,
+    "overage_justification": "ANIM-13/14 precedent: overage permitted when each round delivers a real fix and findings converge. R1-R6 each fixed real defects."
   },
   "exit_code_map": {
     "0": ["PAYLOAD","DRY_RUN","FAL_OK","READY"],
