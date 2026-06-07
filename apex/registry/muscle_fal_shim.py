@@ -115,7 +115,14 @@ def _import_video_agent():
         mod = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(mod)
         return mod, None
-    except (OSError, ImportError, SyntaxError) as e:
+    except Exception as e:
+        # ANIM-18 R10 MED-3 fix: broad-except at the import trust boundary.
+        # Selective catch (OSError, ImportError, SyntaxError) left RuntimeError,
+        # ValueError, json.JSONDecodeError and any other Exception subclass
+        # to escape as a stack trace on stderr — if module init had raw
+        # credential bytes in the exception message, CLI stderr would leak
+        # them. Only the exception class name (a fixed identifier, structurally
+        # safe) is persisted.
         return None, {"status": "VIDEO_AGENT_IMPORT_FAILED",
                       "error": f"{type(e).__name__}"}
 
@@ -161,13 +168,38 @@ def resolve_fal_key() -> dict:
     env_field = cfg.get("requires_env_key_field")
     if not env_path or not env_field:
         return {"status": "TIER_CONFIG_INCOMPLETE", "tier": "FalCloud"}
+    # ANIM-18 R10 MED-1 fix: enforce env_path + env_field canonical allowlists
+    # at the TRUST BOUNDARY (before invoking the resolver), not just in the
+    # output-sealing layer. R9 added _ALLOWED_ENV_SYNC_PATHS but it was only
+    # consulted by fingerprint_only() when emitting diagnostics — a tampered
+    # ANIM-05-tier-config.json could still steer the resolver at any local /
+    # UNC JSON path holding a credential, and live submit would succeed using
+    # that non-canonical source while the env_sync_path was merely suppressed
+    # in audit output. Path/field allowlisting at this seam forces the
+    # live-submit credential source to remain canonical regardless of
+    # tier-config tampering, with no resolver round-trip on the rejected path.
+    if env_path not in _ALLOWED_ENV_SYNC_PATHS:
+        return {"status": "TIER_CONFIG_ENV_PATH_NOT_ALLOWED", "tier": "FalCloud"}
+    if env_field not in _ALLOWED_FIELD_NAMES:
+        return {"status": "TIER_CONFIG_FIELD_NOT_ALLOWED", "tier": "FalCloud"}
     va, import_err = _import_video_agent()
     if import_err is not None:
         return {"status": "VIDEO_AGENT_IMPORT_FAILED", **import_err}
     try:
         probe = va.resolve_env_key_from_env_sync(env_path, env_field)
-    except (OSError, AttributeError, TypeError):
-        return {"status": "RESOLVER_CRASHED"}
+    except Exception as e:
+        # ANIM-18 R10 MED-3 fix: broad-except at the resolver trust boundary.
+        # The resolver is external code (different muscle, separate change-
+        # management surface). Selective catch (OSError, AttributeError,
+        # TypeError) let RuntimeError, ValueError, json.JSONDecodeError, etc.
+        # escape as an unstructured traceback. If the resolver raised with
+        # raw key bytes in the exception message, CLI stderr would leak them
+        # AND callers would not receive the documented status-enum contract.
+        # Returning only the class name (a fixed identifier under the
+        # resolver's type hierarchy, structurally safe) preserves observability
+        # without exposing the message body.
+        return {"status": "RESOLVER_CRASHED",
+                "error": f"{type(e).__name__}"}
     # ANIM-18 r8 MED-2 fix: the upstream resolver is external code that this
     # shim must treat as untrusted output. Three failure modes were unguarded:
     #   (a) non-dict return value — would crash callers at .get() with an
@@ -190,6 +222,22 @@ def resolve_fal_key() -> dict:
         if not isinstance(k, str) or not k:
             return {"status": "RESOLVER_OK_WITHOUT_KEY",
                     "actual_type": type(k).__name__}
+        # ANIM-18 R10 MED-2 fix: derive diagnostic fields from the validated
+        # key bytes inside the shim, overwriting resolver-supplied values.
+        # A tampered resolver could plant attacker-controlled substrings of
+        # the key (or sentinel content) inside fingerprint / key_sha256_first_12
+        # / key_length. The downstream value-shape validators in
+        # _validate_safe_shape() would accept those planted values because
+        # they pass the syntactic shape contract (12-hex chars, hex:hex,
+        # bounded int). Recomputing here from `probe["key"]` is the only
+        # defense that holds when the resolver itself is the threat.
+        probe = dict(probe)  # copy so we don't mutate the resolver's dict
+        sha = hashlib.sha256(k.encode("utf-8")).hexdigest()
+        fp_prefix = k[:4] if len(k) >= 8 else "****"
+        fp_suffix = k[-4:] if len(k) >= 8 else "****"
+        probe["fingerprint"] = f"{fp_prefix}:{fp_suffix}"
+        probe["key_sha256_first_12"] = sha[:12]
+        probe["key_length"] = len(k)
     return probe
 
 
@@ -213,14 +261,44 @@ FINGERPRINT_FREE_FORM = ("error",)
 # the validators here are the last line of defense. Validators are tight: the
 # legitimate values used by ANIM-17 resolve_env_key_from_env_sync() + this
 # shim are short, ASCII-only, and structurally narrow.
-_STATUS_RE = re.compile(r"^[A-Z][A-Z0-9_]{0,63}$")
+#
+# ANIM-18 R10 MED-2 fix: status and field were previously shape-only regex
+# validators. A tampered resolver returning e.g. `status="FALAIAPIKEYSECRET123"`
+# (uppercase alpha-numeric, passes _STATUS_RE) would survive sealing intact.
+# Both are now exact-enum allowlists tied to the documented contract surface
+# (ANIM-17 resolver enum + resolve_fal_key() wrapper enum + the single field
+# this shim actually requests). Adding a new status / field is a phase +
+# cert-bumping change that already requires the allowlist update.
+_ALLOWED_STATUS_VALUES = frozenset({
+    # ANIM-17 muscle_video_agent.resolve_env_key_from_env_sync() statuses
+    "OK",
+    "ENV_SYNC_PATH_MISSING",
+    "ENV_SYNC_UNREADABLE",
+    "ENV_SYNC_UNPARSEABLE",
+    "ENV_KEY_MISSING",
+    "ENV_KEY_NOT_STRING",
+    "ENV_KEY_EMPTY",
+    # resolve_fal_key() wrapper statuses
+    "TIER_NOT_CONFIGURED",
+    "TIER_CONFIG_INVALID_SHAPE",
+    "TIER_CONFIG_INCOMPLETE",
+    "TIER_CONFIG_ENV_PATH_NOT_ALLOWED",
+    "TIER_CONFIG_FIELD_NOT_ALLOWED",
+    "RESOLVER_CRASHED",
+    "RESOLVER_INVALID_SHAPE",
+    "RESOLVER_OK_WITHOUT_KEY",
+    "VIDEO_AGENT_NOT_FOUND",
+    "VIDEO_AGENT_IMPORT_FAILED",
+})
+_ALLOWED_FIELD_NAMES = frozenset({
+    "FAL_AI_API_KEY",
+})
 # ANIM-18 r8 MED-1 fix: previous regex (`[A-Za-z0-9]{1,16}:{1,16}`) accepted
 # non-hex alphanumerics up to 33 chars. The documented fingerprint shape from
 # ANIM-17 is `first4_hex:last4_hex`; anything else lets a tampered resolver
 # stuff substantial raw-key bytes through fingerprint when no key is in scope.
 _FINGERPRINT_RE = re.compile(r"^[a-f0-9]{4}:[a-f0-9]{4}$")
 _HEX12_RE = re.compile(r"^[a-f0-9]{12}$")
-_FIELD_NAME_RE = re.compile(r"^[A-Z_][A-Z0-9_]{0,63}$")
 # ANIM-18 r9 MED-1 fix: env_sync_path was previously regex-validated as
 # "any path body ending in .json". That accepted credential-stuffed values
 # like `X:/env_sync/<raw_fal_key>.json` — the raw key sits inside a
@@ -240,8 +318,13 @@ _ACTUAL_TYPE_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_.]{0,31}$")
 
 def _validate_safe_shape(name: str, value) -> bool:
     """Return True iff `value` matches the strict shape contract for `name`."""
+    # ANIM-18 R10 MED-2 fix: status and field are exact-enum allowlists, not
+    # regex-shape — a name-shape regex (e.g. `^[A-Z][A-Z0-9_]{0,63}$`) admits
+    # arbitrary uppercase identifiers, which lets a tampered resolver stuff
+    # planted strings into the diagnostic surface when no raw key is in scope
+    # for _seal_outward() to scrub against.
     if name == "status":
-        return isinstance(value, str) and bool(_STATUS_RE.match(value))
+        return isinstance(value, str) and value in _ALLOWED_STATUS_VALUES
     if name == "fingerprint":
         return isinstance(value, str) and bool(_FINGERPRINT_RE.match(value))
     if name == "key_sha256_first_12":
@@ -252,7 +335,7 @@ def _validate_safe_shape(name: str, value) -> bool:
     if name == "env_sync_path":
         return isinstance(value, str) and value in _ALLOWED_ENV_SYNC_PATHS
     if name == "field":
-        return isinstance(value, str) and bool(_FIELD_NAME_RE.match(value))
+        return isinstance(value, str) and value in _ALLOWED_FIELD_NAMES
     if name == "actual_type":
         return isinstance(value, str) and bool(_ACTUAL_TYPE_RE.match(value))
     return False

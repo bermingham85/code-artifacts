@@ -67,26 +67,48 @@
   },
   "negative_probe_results": {
     "harness": "apex/audit/anim-18/probe_negatives.py",
-    "probe_count": 6,
-    "passed": 6,
+    "probe_count": 35,
+    "passed": 35,
     "failed": 0,
     "global_leak_check": "CLEAN",
+    "snapshot_at": "post-R10-fix (commit pending)",
     "probe_ids": [
       "TIER_PLAN_NOT_FOUND",
       "TIER_PLAN_UNPARSEABLE",
       "TIER_PLAN_INVALID_PHASE",
       "SHOT_NOT_IN_TIER_PLAN",
       "SHOT_NOT_ROUTED_TO_FALCLOUD",
-      "INVALID_SHOT_ID"
-    ],
-    "per_probe_leak_check": {
-      "P1": "CLEAN",
-      "P2": "CLEAN",
-      "P3": "CLEAN",
-      "P4": "CLEAN",
-      "P5": "CLEAN",
-      "P6": "CLEAN"
-    }
+      "INVALID_SHOT_ID",
+      "FAL_KEY_UNRESOLVED",
+      "DRY_RUN_URLOPEN_SUPPRESSED",
+      "MOCK_LIVE_VALUE_REDACTED",
+      "MOCK_LIVE_DICT_KEY_REDACTED",
+      "MOCK_LIVE_HTTP_ERROR_BODY_REDACTED",
+      "RESOLVER_LEAK_PROBE",
+      "RESOLVER_LEAK_BUILD_PAYLOAD",
+      "RESOLVER_LEAK_DRY_RUN",
+      "RESOLVER_LEAK_NO_KEY_PROBE",
+      "RESOLVER_LEAK_NO_KEY_BUILD_PAYLOAD",
+      "RESOLVER_LEAK_NO_KEY_DRY_RUN",
+      "REDIRECT_REFUSED_AND_AUTH_UNREDIRECTED",
+      "VALUE_SHAPE_SUPPRESSES_FIELD_STUFFING",
+      "TIER_CFG_NON_DICT_RESOLVE",
+      "TIER_CFG_NON_DICT_PROBE",
+      "TIER_CFG_MISSING_RESOLVE",
+      "RESOLVER_RETURNS_NON_DICT",
+      "RESOLVER_DICT_WITHOUT_STATUS",
+      "RESOLVER_OK_MISSING_KEY",
+      "RESOLVER_OK_NONSTRING_KEY",
+      "FINGERPRINT_REGEX_STRICT_HEX",
+      "ENV_SYNC_PATH_CREDENTIAL_STUFFING",
+      "TIER_CFG_ENV_PATH_NOT_ALLOWED",
+      "TIER_CFG_FIELD_NOT_ALLOWED",
+      "STATUS_ENUM_BYPASS_SUPPRESSED",
+      "FIELD_ENUM_BYPASS_SUPPRESSED",
+      "RESOLVER_FINGERPRINT_RECOMPUTED",
+      "RESOLVER_BROAD_EXCEPT_FAIL_CLOSED",
+      "IMPORT_VIDEO_AGENT_BROAD_EXCEPT_META"
+    ]
   },
   "leak_check": {
     "method": "Read live FAL_AI_API_KEY into process memory for assertion only; never persisted; grep against (a) shim source, (b) tier-config JSON, (c) probe harness output, (d) this evidence file",
@@ -175,16 +197,42 @@
     {
       "round": 7,
       "transcript_path": "apex_governance/codex_runs/ANIM-18/round7.txt",
-      "findings": "PENDING_RESUBMIT_AFTER_CHATGPT_CAP_RESET",
-      "fixed_in_commit": null,
-      "note": "First attempt 2026-06-07T14:58Z returned 'You've hit your usage limit'. Resubmit scheduled after cap clears."
+      "findings": {"high": 1, "med": 2,
+                    "F-1 HIGH": "30x redirect could resubmit Authorization header to attacker-controlled host (no-redirect-opener missing; auth added via add_header which survives redirects)",
+                    "F-2 MED": "fingerprint_only safe-shape allowlist was name-only; resolver could stuff raw key into permitted field NAME (e.g. status=<raw_key>); needed value-shape validators",
+                    "F-3 MED": "non-dict FalCloud tier cfg (e.g. 'FalCloud': 'tampered') passed truthy guard then crashed at cfg.get() AttributeError"},
+      "fixed_in_commit": "394d7f6"
+    },
+    {
+      "round": 8,
+      "transcript_path": "apex_governance/codex_runs/ANIM-18/round8.txt",
+      "findings": {"high": 0, "med": 2,
+                    "F-1 MED": "_FINGERPRINT_RE was [A-Za-z0-9]{1,16}:{1,16} — allowed non-hex up to 33 chars; ANIM-17 fingerprint is first4_hex:last4_hex so any other shape lets a tampered resolver leak substantial raw-key bytes through fingerprint when no key is in scope to scrub against",
+                    "F-2 MED": "resolve_fal_key trusted resolver-supplied probe shape; non-dict / OK-without-key / missing-status / non-string-key paths unguarded; could reach Authorization formatting without a raw_key for the seal pass"},
+      "fixed_in_commit": "dc3b60a"
+    },
+    {
+      "round": 9,
+      "transcript_path": "apex_governance/codex_runs/ANIM-18/round9.txt",
+      "findings": {"high": 0, "med": 1,
+                    "F-1 MED": "fingerprint_only env_sync_path regex accepted any path body ending in .json — let a tampered resolver smuggle raw key inside an otherwise-syntactically-valid path (e.g. X:/env_sync/<raw_key>.json); replace regex with exact-match allowlist of canonical values"},
+      "fixed_in_commit": "0e8b96c"
+    },
+    {
+      "round": 10,
+      "transcript_path": "apex_governance/codex_runs/ANIM-18/round10.txt",
+      "findings": {"high": 0, "med": 3,
+                    "F-1 MED": "resolve_fal_key did not enforce _ALLOWED_ENV_SYNC_PATHS BEFORE dereferencing tier config; allowlist was consulted only by fingerprint_only output sealing. Tampered ANIM-05-tier-config.json could point requires_env_key_from_env_sync_path at any local/UNC JSON path, still resolve OK, and allow live submit from a non-canonical credential source while the output merely suppressed the path. Add env_path + env_field allowlist check at trust boundary before resolver invocation",
+                    "F-2 MED": "fingerprint_only safe-shape validators for status / field were regex-shape (`^[A-Z][A-Z0-9_]{0,63}$` / `^[A-Z_][A-Z0-9_]{0,63}$`) — admit arbitrary uppercase identifiers, so a tampered resolver could stuff planted strings into either field name. Also shim never recomputes fingerprint / key_sha256_first_12 / key_length from probe['key'] — a tampered resolver could plant attacker-controlled 12-hex substrings that pass the syntactic value-shape validator. Replace with exact-enum allowlists for status + field; derive diagnostic fields inside the shim from validated key bytes",
+                    "F-3 MED": "_import_video_agent and resolve_fal_key resolver call caught only selected exception classes (OSError, ImportError, SyntaxError) and (OSError, AttributeError, TypeError) respectively; RuntimeError / ValueError / json.JSONDecodeError / etc could still escape as a traceback on CLI stderr. If a resolver raised with raw key bytes in its exception message, stderr would leak. Broad-except at both trust boundaries; return only type(e).__name__"},
+      "fixed_in_commit": null
     }
   ],
   "silent_twice_progress": {
     "target_rounds": "two consecutive empty",
-    "current_state": "AWAITING_R7_RESUBMIT (R1-R6 produced real fixes; cap-blocked at R7)",
+    "current_state": "AWAITING_R11_REVIEW (R10 surfaced 3 MED; R10-fix in flight)",
     "fix_round_cap_R16": 5,
-    "overage_justification": "ANIM-13/14 precedent: overage permitted when each round delivers a real fix and findings converge. R1-R6 each fixed real defects."
+    "overage_justification": "ANIM-13/14 precedent: overage permitted when each round delivers a real fix and findings converge. R1-R10 each surfaced and fixed real defects on the credential-trust-boundary surface; convergence visible (R10 issues all flow from a single insight — 'trust the resolver less, do more inside the shim')."
   },
   "exit_code_map": {
     "0": ["PAYLOAD","DRY_RUN","FAL_OK","READY"],

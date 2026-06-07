@@ -553,6 +553,241 @@ def main() -> int:
     finally:
         shim.resolve_fal_key = original_resolver
 
+    # ---- P28-P29: ANIM-18 R10 MED-1 fix. env_path + env_field allowlisting
+    # MUST happen at the trust boundary (before _import_video_agent /
+    # resolver invocation), not just in the output-sealing layer. R9 added
+    # _ALLOWED_ENV_SYNC_PATHS for fingerprint_only(); a tampered tier-config
+    # could still steer the resolver at any local/UNC JSON path. Verify
+    # resolve_fal_key short-circuits BEFORE the resolver is touched.
+
+    import_invoked = {"called": False}
+    def _record_import_attempt():
+        import_invoked["called"] = True
+        return (None, {"status": "VIDEO_AGENT_NOT_FOUND",
+                       "path": "should-not-be-reached"})
+
+    shim.load_tier_config = lambda: {
+        "schema_version": 3,
+        "tiers": {"FalCloud": {
+            "requires_env_key_from_env_sync_path": "\\\\evil-server\\fake.json",
+            "requires_env_key_field": "FAL_AI_API_KEY",
+            "shim_status": "READY",
+            "wrapper_invocation": "anything",
+        }},
+    }
+    shim._import_video_agent = _record_import_attempt
+    try:
+        r = shim.resolve_fal_key()
+        _record(out, "TIER_CFG_ENV_PATH_NOT_ALLOWED",
+                "TIER_CONFIG_ENV_PATH_NOT_ALLOWED", r, real_key,
+                extra={"resolver_imported": import_invoked["called"],
+                       "pass": (r.get("status") == "TIER_CONFIG_ENV_PATH_NOT_ALLOWED"
+                                and not import_invoked["called"])})
+    finally:
+        shim.load_tier_config = original_load_tier_config
+        shim._import_video_agent = original_import_video_agent
+
+    import_invoked["called"] = False
+    shim.load_tier_config = lambda: {
+        "schema_version": 3,
+        "tiers": {"FalCloud": {
+            "requires_env_key_from_env_sync_path": "X:/env_sync/user_portable.json",
+            "requires_env_key_field": "LEAKED_KEY_FIELD_NAME",
+            "shim_status": "READY",
+            "wrapper_invocation": "anything",
+        }},
+    }
+    shim._import_video_agent = _record_import_attempt
+    try:
+        r = shim.resolve_fal_key()
+        _record(out, "TIER_CFG_FIELD_NOT_ALLOWED",
+                "TIER_CONFIG_FIELD_NOT_ALLOWED", r, real_key,
+                extra={"resolver_imported": import_invoked["called"],
+                       "pass": (r.get("status") == "TIER_CONFIG_FIELD_NOT_ALLOWED"
+                                and not import_invoked["called"])})
+    finally:
+        shim.load_tier_config = original_load_tier_config
+        shim._import_video_agent = original_import_video_agent
+
+    # ---- P30-P31: ANIM-18 R10 MED-2 fix. fingerprint_only must reject
+    # status / field values that fall outside the documented enum allowlist.
+    # Previously status was regex-shape (`^[A-Z][A-Z0-9_]{0,63}$`) and field
+    # was regex-shape (`^[A-Z_][A-Z0-9_]{0,63}$`) — both accepted arbitrary
+    # uppercase identifiers, so a tampered resolver could stuff planted
+    # strings into either field name.
+
+    enum_bypass_probe_status = {
+        "status": "FALAIAPIKEYSECRETSTRINGTHATPASSEDOLDREGEX",
+        "fingerprint": "abcd:1234",
+        "key_sha256_first_12": "deadbeefcafe",
+        "key_length": 64,
+        "env_sync_path": "<sentinel>", "field": "FAL_AI_API_KEY",
+    }
+    sealed = shim.fingerprint_only(enum_bypass_probe_status)
+    status_suppressed = sealed.get("status") == "<suppressed-by-fingerprint_only>"
+    out["probes"].append({
+        "id": "STATUS_ENUM_BYPASS_SUPPRESSED",
+        "expected_status": "STATUS_SUPPRESSED",
+        "actual_status": "STATUS_SUPPRESSED" if status_suppressed
+                         else "STATUS_LEAKED_THROUGH",
+        "pass": status_suppressed,
+        "result": sealed,
+        **_assert_no_leaks("STATUS_ENUM_BYPASS_SUPPRESSED",
+                           json.dumps(sealed), real_key),
+    })
+
+    enum_bypass_probe_field = {
+        "status": "OK",
+        "fingerprint": "abcd:1234",
+        "key_sha256_first_12": "deadbeefcafe",
+        "key_length": 64,
+        "env_sync_path": "<sentinel>",
+        "field": "LEAKED_FIELD_NAME_THAT_PASSED_OLD_REGEX",
+    }
+    sealed = shim.fingerprint_only(enum_bypass_probe_field)
+    field_suppressed = sealed.get("field") == "<suppressed-by-fingerprint_only>"
+    out["probes"].append({
+        "id": "FIELD_ENUM_BYPASS_SUPPRESSED",
+        "expected_status": "FIELD_SUPPRESSED",
+        "actual_status": "FIELD_SUPPRESSED" if field_suppressed
+                         else "FIELD_LEAKED_THROUGH",
+        "pass": field_suppressed,
+        "result": sealed,
+        **_assert_no_leaks("FIELD_ENUM_BYPASS_SUPPRESSED",
+                           json.dumps(sealed), real_key),
+    })
+
+    # ---- P32: ANIM-18 R10 MED-2 fix. resolve_fal_key() must derive
+    # fingerprint / key_sha256_first_12 / key_length from the validated key
+    # bytes itself, overwriting whatever the resolver supplied. Without
+    # recomputation, a tampered resolver could plant arbitrary 12-hex
+    # substrings or short keys / sentinel slices that pass the syntactic
+    # value-shape validators in _validate_safe_shape() because those are
+    # syntactic shape checks, not semantic equality.
+
+    PLANTED_FP = "dead:beef"
+    PLANTED_SHA = "cafebabefade"
+    PLANTED_LEN = 12  # very wrong vs len(SENTINEL_KEY) = 69
+    shim._import_video_agent = lambda: (
+        _FakeVideoAgent({"status": "OK", "key": SENTINEL_KEY,
+                          "fingerprint": PLANTED_FP,
+                          "key_sha256_first_12": PLANTED_SHA,
+                          "key_length": PLANTED_LEN,
+                          "env_sync_path": "X:/env_sync/user_portable.json",
+                          "field": "FAL_AI_API_KEY"}), None)
+    try:
+        import hashlib as _hl
+        expected_sha12 = _hl.sha256(SENTINEL_KEY.encode("utf-8")).hexdigest()[:12]
+        expected_fp = f"{SENTINEL_KEY[:4]}:{SENTINEL_KEY[-4:]}"
+        expected_len = len(SENTINEL_KEY)
+        r = shim.resolve_fal_key()
+        recomputed = (
+            r.get("fingerprint") == expected_fp
+            and r.get("key_sha256_first_12") == expected_sha12
+            and r.get("key_length") == expected_len
+            and r.get("fingerprint") != PLANTED_FP
+            and r.get("key_sha256_first_12") != PLANTED_SHA
+            and r.get("key_length") != PLANTED_LEN
+        )
+        # The key field WILL be present in `r` (it is meant to flow to
+        # _http_post_json for live submit), so this assertion is about the
+        # DIAGNOSTIC fields being shim-derived, not about the absence of
+        # `key`. We scrub the printed result through _fail_closed_scrub
+        # at end-of-harness so the sentinel does not survive to stdout.
+        out["probes"].append({
+            "id": "RESOLVER_FINGERPRINT_RECOMPUTED",
+            "expected_status": "RECOMPUTED",
+            "actual_status": "RECOMPUTED" if recomputed else "PLANTED_VALUES_SURVIVED",
+            "pass": recomputed,
+            "result": {"fingerprint": r.get("fingerprint"),
+                       "key_sha256_first_12": r.get("key_sha256_first_12"),
+                       "key_length": r.get("key_length"),
+                       "expected_fingerprint": expected_fp,
+                       "expected_key_sha256_first_12": expected_sha12,
+                       "expected_key_length": expected_len},
+            # leak check intentionally excludes `key` from blob check — the
+            # raw key needs to survive resolve_fal_key for live submit and
+            # gets scrubbed at the printable boundary.
+            **_assert_no_leaks("RESOLVER_FINGERPRINT_RECOMPUTED",
+                               json.dumps({"fingerprint": r.get("fingerprint"),
+                                            "key_sha256_first_12": r.get("key_sha256_first_12"),
+                                            "key_length": r.get("key_length")}),
+                               real_key),
+        })
+    finally:
+        shim._import_video_agent = original_import_video_agent
+
+    # ---- P33: ANIM-18 R10 MED-3 fix. _import_video_agent and the resolver
+    # call site MUST use broad-except (catch Exception). Previously they
+    # caught only (OSError, ImportError, SyntaxError) and (OSError,
+    # AttributeError, TypeError) respectively, so a RuntimeError or
+    # ValueError raised inside the resolver with raw-key content in the
+    # exception message would escape as a traceback on CLI stderr.
+
+    class _RaisingVideoAgent:
+        def resolve_env_key_from_env_sync(self, path, field):
+            raise RuntimeError(
+                f"resolver synthetic failure carrying sentinel: {SENTINEL_KEY}")
+
+    shim._import_video_agent = lambda: (_RaisingVideoAgent(), None)
+    try:
+        r = shim.resolve_fal_key()
+        # Status must be the structured enum; sentinel must not appear in
+        # the returned dict at all (regardless of suppression policy at the
+        # output-sealing layer — broad-except returns only the type name).
+        raw_blob = json.dumps(r)
+        sentinel_present = SENTINEL_KEY in raw_blob
+        _record(out, "RESOLVER_BROAD_EXCEPT_FAIL_CLOSED",
+                "RESOLVER_CRASHED", r, real_key,
+                extra={"sentinel_in_returned_dict": sentinel_present,
+                       "pass": (r.get("status") == "RESOLVER_CRASHED"
+                                and not sentinel_present)})
+    finally:
+        shim._import_video_agent = original_import_video_agent
+
+    # ---- P34: ANIM-18 R10 MED-3 fix. _import_video_agent itself must
+    # broad-except. Replace it with a stub that raises RuntimeError on the
+    # import step; the call site MUST catch and return a structured enum
+    # rather than propagate the traceback. We exercise this by directly
+    # exercising the import wrapper logic, monkeypatched to raise.
+
+    def _raising_import():
+        raise RuntimeError(
+            f"import synthetic failure carrying sentinel: {SENTINEL_KEY}")
+
+    # We cannot replace _import_video_agent with a function that raises and
+    # have resolve_fal_key catch — because resolve_fal_key does not wrap the
+    # call in a try/except (it just unpacks the tuple return). The original
+    # _import_video_agent is what does the broad-except; its outer caller
+    # assumes it returns (module, status). So this probe directly calls the
+    # ORIGINAL _import_video_agent with a synthetic loader path that will
+    # provoke a non-ImportError/OSError/SyntaxError exception.
+    # The simplest provocation: point sys.path at a malformed module file
+    # that raises RuntimeError on exec. But that requires writing a file.
+    # Alternative: call the ORIGINAL _import_video_agent and verify its
+    # exception class set is broad-Exception by inspecting the function's
+    # source (a meta-test). We do the meta-test here.
+
+    import inspect as _inspect
+    src = _inspect.getsource(original_import_video_agent)
+    # The function body must catch broad Exception, not a narrow tuple.
+    broad_except = ("except Exception" in src
+                    or "except (BaseException" in src)
+    narrow_except = "except (OSError, ImportError, SyntaxError)" in src
+    out["probes"].append({
+        "id": "IMPORT_VIDEO_AGENT_BROAD_EXCEPT_META",
+        "expected_status": "BROAD_EXCEPT",
+        "actual_status": "BROAD_EXCEPT" if broad_except and not narrow_except
+                         else "NARROW_EXCEPT_REMAINS",
+        "pass": broad_except and not narrow_except,
+        "result": {"broad_except_present": broad_except,
+                   "narrow_except_remains": narrow_except},
+        **_assert_no_leaks("IMPORT_VIDEO_AGENT_BROAD_EXCEPT_META",
+                           json.dumps({"broad": broad_except,
+                                        "narrow": narrow_except}),
+                           real_key),
+    })
+
     # ---- Aggregate + fail-closed scrub before any print ----
 
     out["probe_count"] = len(out["probes"])
