@@ -123,31 +123,48 @@ _CLIP_INDEX_RE = re.compile(r"clip_(\d+)\.mp4$", re.IGNORECASE)
 def annotate_clip(p: Path, production_set_max: int, index: int,
                   scene_binding: dict, shot_meta: dict,
                   root_resolved: Path) -> dict | None:
-    """Hash and stat the clip with TOCTOU defense at the open-window:
-    re-lstat to ensure it's still not a symlink, re-resolve target, re-commonpath
-    against the validated root. Return None if any check fails between discovery
-    and hashing (the discover→annotate window).
+    """Hash and stat the clip via a single open file handle (bytes-to-fd binding) and
+    re-validate the path's containment AFTER the read so a swap mid-hash is detected.
 
-    F-6 r2 fix: closes the TOCTOU gap between discover_clips() validation and the
-    actual file-content read inside sha256_of().
+    F-6 r2 + F-1 r4 TOCTOU fixes:
+      1. lstat to refuse pre-resolve symlink.
+      2. Resolve target + commonpath check (pre-hash).
+      3. os.open + fstat for size (handle is bound to one inode for the lifetime of read).
+      4. Read+hash from the open fd (no path re-traversal during read).
+      5. After close: re-resolve + re-commonpath. If the path moved or its target no
+         longer resolves under root_resolved, drop the entry (recorded bytes are then
+         not asserted to be under the trusted root).
+
+    On Windows, Python lacks O_NOFOLLOW / openat for fully atomic close, but the
+    handle-bound read + pre-and-post resolve checks shrink the TOCTOU window to the
+    open() call only, with the post-check detecting swaps.
     """
     try:
         if p.is_symlink():
             return None
-        target = p.resolve(strict=True)
-        if Path(os.path.commonpath([str(target), str(root_resolved)])) != root_resolved:
+        target_pre = p.resolve(strict=True)
+        if Path(os.path.commonpath([str(target_pre), str(root_resolved)])) != root_resolved:
             return None
-        # Open and hash through the resolved target so the bytes we hash match the bytes
-        # whose containment we verified.
-        h = hashlib.sha256()
-        with target.open("rb") as f:
+        fd = os.open(str(target_pre), os.O_RDONLY | getattr(os, "O_BINARY", 0))
+        try:
+            st = os.fstat(fd)
+            size = st.st_size
+            h = hashlib.sha256()
             while True:
-                b = f.read(1 << 20)
+                b = os.read(fd, 1 << 20)
                 if not b:
                     break
                 h.update(b)
-        digest = h.hexdigest()
-        size = target.stat().st_size
+            digest = h.hexdigest()
+        finally:
+            os.close(fd)
+        # Post-read re-validation: target path and its containment must still hold.
+        target_post = p.resolve(strict=True)
+        if target_post != target_pre:
+            return None
+        if Path(os.path.commonpath([str(target_post), str(root_resolved)])) != root_resolved:
+            return None
+        target = target_post
     except (FileNotFoundError, OSError, ValueError):
         return None
     name = p.name
