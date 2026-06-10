@@ -2,7 +2,6 @@
   "version": "2.2",
   "last_updated": "2026-03-13T02:30:00Z",
   "token_estimate": 5500,
-
   "MACHINES": {
     "_README": "CONFIRMED facts only. Do not guess. Verify here before any deployment decision.",
     "laptop": {
@@ -10,12 +9,12 @@
       "tailscale_ip": "100.124.119.66",
       "os": "Windows 11",
       "user": "bermi",
-      "role": "DEV ONLY — Claude Desktop + Desktop Commander. Not always-on. Never run persistent services here.",
+      "role": "DEV ONLY \u2014 Claude Desktop + Desktop Commander. Not always-on. Never run persistent services here.",
       "remote_access": "Desktop Commander MCP (Claude Desktop)",
       "projects_path": "C:\\Users\\bermi\\Projects\\",
       "apex_path": "C:\\Users\\bermi\\Projects\\apex\\",
-      "claudeclaw_source": "C:\\Users\\bermi\\Projects\\claudeclaw\\ (LOCAL ONLY — not in GitHub yet)",
-      "ssh_to_others": "Use paramiko Python library — native SSH hangs on password prompt in cmd/powershell"
+      "claudeclaw_source": "C:\\Users\\bermi\\Projects\\claudeclaw\\ (LOCAL ONLY \u2014 not in GitHub yet)",
+      "ssh_to_others": "Use paramiko Python library \u2014 native SSH hangs on password prompt in cmd/powershell"
     },
     "mini_pc": {
       "hostname": "mini-pc",
@@ -24,12 +23,25 @@
       "os": "Debian 12 (Bookworm), x86_64, kernel 6.1.0-37-amd64",
       "user": "michael",
       "password": "Bedrooms1985!",
-      "role": "ALWAYS-ON SERVICES HOST — ClaudeClaw, supervisor, watchdog, Telegram bots run here.",
+      "role": "ALWAYS-ON SERVICES HOST \u2014 ClaudeClaw, supervisor, watchdog, Telegram bots run here.",
       "remote_access": "SSH via paramiko (password auth). Use paramiko, not native ssh command.",
-      "specs": {"ram": "7.5GB", "disk_free": "202GB", "node": "v20.20.1", "python": "3.11.2"},
+      "specs": {
+        "ram": "7.5GB",
+        "disk_free": "202GB",
+        "node": "v20.20.1",
+        "python": "3.11.2"
+      },
       "ssh_example": "import paramiko; c=paramiko.SSHClient(); c.set_missing_host_key_policy(paramiko.AutoAddPolicy()); c.connect('100.122.16.111', username='michael', password='Bedrooms1985!', timeout=10)",
-      "installed": ["node v20", "python3.11", "git"],
-      "not_installed": ["pm2", "claudeclaw", "supervisor"],
+      "installed": [
+        "node v20",
+        "python3.11",
+        "git"
+      ],
+      "not_installed": [
+        "pm2",
+        "claudeclaw",
+        "supervisor"
+      ],
       "projects_path": "/home/michael/Projects/"
     },
     "nas": {
@@ -45,26 +57,25 @@
       "n8n_port": 5678,
       "n8n_compose": "/share/CE_CACHEDEV1_DATA/Container/docker-compose.yml",
       "n8n_volume": "/share/Container/n8n:/home/node/.n8n",
-      "n8n_db_live": "/share/Container/n8n/.n8n/database.sqlite (167MB — LIVE)",
-      "n8n_db_stale": "/share/Container/n8n/database.sqlite (77MB — DO NOT USE)",
+      "n8n_db_live": "/share/Container/n8n/.n8n/database.sqlite (167MB \u2014 LIVE)",
+      "n8n_db_stale": "/share/Container/n8n/database.sqlite (77MB \u2014 DO NOT USE)",
       "n8n_critical": "N8N_USER_FOLDER=/home/node/.n8n MUST be set in docker-compose or n8n reads stale DB"
     },
     "gpu_box": {
       "hostname": "desktop-a2mf76f",
       "tailscale_ip": "100.95.160.48",
       "os": "Windows 11",
-      "role": "COMPUTE ONLY — ComfyUI, image gen, heavy AI workloads. NOT a server.",
+      "role": "COMPUTE ONLY \u2014 ComfyUI, image gen, heavy AI workloads. NOT a server.",
       "remote_access": "Parsec (visual/GUI only). No SSH. No WinRM working. Cannot script remotely.",
       "never_deploy_here": "Do not deploy Telegram bots, supervisors, or any always-on service. GPU box may sleep."
     }
   },
-
   "SERVICE_DEPLOYMENT_MAP": {
     "_README": "Where each service runs. Do not change without updating this map.",
     "claudeclaw_telegram_bot": {
       "target": "mini_pc",
       "reason": "Always-on Linux host. SSH accessible. Never sleeps.",
-      "status": "NOT YET DEPLOYED — source is on laptop only",
+      "status": "NOT YET DEPLOYED \u2014 source is on laptop only",
       "deploy_method": "Push source to GitHub, pull on mini-pc via paramiko, npm install, pm2 start",
       "port": 3000,
       "process_manager": "pm2"
@@ -78,22 +89,22 @@
     "watchdog_py": {
       "target": "mini_pc",
       "reason": "Monitors supervisor + claudeclaw + n8n. Must be on always-on machine.",
-      "status": "NOT YET DEPLOYED to mini-pc — currently written to laptop only as interim",
+      "status": "NOT YET DEPLOYED to mini-pc \u2014 currently written to laptop only as interim",
       "source": "C:\\Users\\bermi\\Projects\\apex\\watchdog\\watchdog.py",
-      "scheduler": "pm2 or cron (every 5 min) — NOT Windows Task Scheduler"
+      "scheduler": "pm2 or cron (every 5 min) \u2014 NOT Windows Task Scheduler"
     },
     "n8n_blind_postman": {
       "target": "nas",
-      "status": "ACTIVE — workflow ID CHk7hcqn2Kl1abdc",
+      "status": "ACTIVE \u2014 workflow ID CHk7hcqn2Kl1abdc",
       "polls": "hub/ every 30s"
     },
     "n8n_auto_runner": {
       "target": "nas",
-      "status": "ACTIVE — workflow ID ys22kpqJY9xJ4YhF"
+      "status": "ACTIVE \u2014 workflow ID ys22kpqJY9xJ4YhF"
     },
     "foreman_py": {
       "target": "laptop",
-      "reason": "Called by n8n via Execute Command node — runs on laptop where apex/ lives",
+      "reason": "Called by n8n via Execute Command node \u2014 runs on laptop where apex/ lives",
       "status": "ACTIVE"
     },
     "apex_hub": {
@@ -102,23 +113,56 @@
       "note": "n8n on NAS polls this via network share or Execute Command"
     }
   },
-
   "apex_factory": {
     "spec": "PROJECT_APEX_v2.2.md",
     "location": "C:\\Users\\bermi\\Projects\\apex\\",
     "phases": {
-      "PH-01": {"status": "CERTIFIED", "name": "Estate Structure"},
-      "PH-02": {"status": "CERTIFIED", "name": "Document Control", "note": "doc_controller.py active, 21 docs registered"},
-      "PH-03": {"status": "CERTIFIED", "name": "Work Order Contract"},
-      "PH-04": {"status": "CERTIFIED", "name": "Indexer + Foreman", "note": "75 skills / 19 files. Demo WO PASS.", "certified_at": "2026-03-07T22:24:27Z"},
-      "PH-05": {"status": "CERTIFIED", "name": "n8n Blind Postman", "note": "ACTIVE ID: CHk7hcqn2Kl1abdc", "certified_at": "2026-03-12T23:00:00Z"},
-      "PH-06": {"status": "CERTIFIED", "name": "ClaudeClaw TypeScript", "note": "@Brianbrainboxbot online on laptop. Annie bot 401 (separate issue).", "certified_at": "2026-03-12T23:00:00Z"},
-      "PH-07": {"status": "CERTIFIED", "name": "Supervisor + Demo E2E", "note": "supervisor.py complete. 48 workflows active.", "certified_at": "2026-03-13T01:45:00Z"},
+      "PH-01": {
+        "status": "CERTIFIED",
+        "name": "Estate Structure"
+      },
+      "PH-02": {
+        "status": "CERTIFIED",
+        "name": "Document Control",
+        "note": "doc_controller.py active, 21 docs registered"
+      },
+      "PH-03": {
+        "status": "CERTIFIED",
+        "name": "Work Order Contract"
+      },
+      "PH-04": {
+        "status": "CERTIFIED",
+        "name": "Indexer + Foreman",
+        "note": "75 skills / 19 files. Demo WO PASS.",
+        "certified_at": "2026-03-07T22:24:27Z"
+      },
+      "PH-05": {
+        "status": "CERTIFIED",
+        "name": "n8n Blind Postman",
+        "note": "ACTIVE ID: CHk7hcqn2Kl1abdc",
+        "certified_at": "2026-03-12T23:00:00Z"
+      },
+      "PH-06": {
+        "status": "CERTIFIED",
+        "name": "ClaudeClaw TypeScript",
+        "note": "@Brianbrainboxbot online on laptop. Annie bot 401 (separate issue).",
+        "certified_at": "2026-03-12T23:00:00Z"
+      },
+      "PH-07": {
+        "status": "CERTIFIED",
+        "name": "Supervisor + Demo E2E",
+        "note": "supervisor.py complete. 48 workflows active.",
+        "certified_at": "2026-03-13T01:45:00Z"
+      },
       "PH-08": {
         "status": "IN_PROGRESS",
-        "name": "Watchdog — migrate to mini-pc",
+        "name": "Watchdog \u2014 migrate to mini-pc",
         "note": "watchdog.py written to laptop. ARCHITECTURE DECISION: supervisor + claudeclaw + watchdog must move to mini-pc (always-on). Laptop deployment is wrong target.",
-        "blockers": ["claudeclaw source not in GitHub", "pm2 not installed on mini-pc", "SSH to mini-pc requires paramiko not native cmd"],
+        "blockers": [
+          "claudeclaw source not in GitHub",
+          "pm2 not installed on mini-pc",
+          "SSH to mini-pc requires paramiko not native cmd"
+        ],
         "next_actions": [
           "1. Push claudeclaw source to GitHub (exclude .env)",
           "2. Deploy to mini-pc via paramiko: clone, npm install, create .env, pm2 start",
@@ -130,26 +174,43 @@
         "started_at": "2026-03-13T10:00:00Z"
       }
     },
-    "manifest": {"skills": 75, "files": 19, "last_indexed": "2026-03-07T22:21:43Z"},
-    "muscles": ["muscle_file_copy", "muscle_text_transform", "muscle_json_merge", "muscle_health_check", "muscle_drop_ticket", "muscle_gdrive_watcher", "muscle_gdrive_download", "muscle_ocr_receipt", "muscle_ocr_batch_submit", "muscle_ocr_batch_retrieve", "muscle_classify_document", "muscle_receipt_dedup", "muscle_sheets_append"],
+    "manifest": {
+      "skills": 75,
+      "files": 19,
+      "last_indexed": "2026-03-07T22:21:43Z"
+    },
+    "muscles": [
+      "muscle_file_copy",
+      "muscle_text_transform",
+      "muscle_json_merge",
+      "muscle_health_check",
+      "muscle_drop_ticket",
+      "muscle_gdrive_watcher",
+      "muscle_gdrive_download",
+      "muscle_ocr_receipt",
+      "muscle_ocr_batch_submit",
+      "muscle_ocr_batch_retrieve",
+      "muscle_classify_document",
+      "muscle_receipt_dedup",
+      "muscle_sheets_append"
+    ],
     "health": {
       "overall": "OK",
-      "n8n": "HEALTHY — 48 workflows active",
+      "n8n": "HEALTHY \u2014 48 workflows active",
       "dead_letter": 1,
-      "annie_bot": "401 UNAUTHORIZED — token invalid (known issue, fix separately)"
+      "annie_bot": "401 UNAUTHORIZED \u2014 token invalid (known issue, fix separately)"
     }
   },
-
   "tool_knowledge": {
     "ssh_to_mini_pc": {
-      "method": "paramiko Python library ONLY — native ssh/cmd hangs on password prompt",
+      "method": "paramiko Python library ONLY \u2014 native ssh/cmd hangs on password prompt",
       "host": "100.122.16.111",
       "user": "michael",
       "password": "Bedrooms1985!",
       "snippet": "c.connect('100.122.16.111', username='michael', password='Bedrooms1985!', timeout=10)"
     },
     "ssh_to_nas": {
-      "method": "native SSH or pscp — key-based auth works",
+      "method": "native SSH or pscp \u2014 key-based auth works",
       "host": "192.168.50.246",
       "user": "admin",
       "pscp_example": "pscp.exe -pw 'Bedrooms1985!' -hostkey 'SHA256:dec3ibkIuioIEJwZMw7Xj6uOF6vX38es6boa+KnMtWU' file admin@192.168.50.246:/path/"
@@ -174,7 +235,6 @@
     },
     "n8n_docker_recreate": "export PATH=/share/CE_CACHEDEV1_DATA/.qpkg/container-station/bin:$PATH; cd /share/CE_CACHEDEV1_DATA/Container; docker rm -f n8n; docker compose up -d n8n"
   },
-
   "infrastructure": {
     "n8n": {
       "url": "https://n8n.bermech.com",
@@ -194,36 +254,56 @@
       "elevenlabs": "configured"
     },
     "telegram_bots": {
-      "brianbrainboxbot": {"status": "ACTIVE on laptop (temporary)", "target": "mini_pc"},
-      "annieaccountantbot": {"status": "401 UNAUTHORIZED — token expired", "fix": "update ANNIE_BOT_TOKEN in claudeclaw/.env"}
+      "brianbrainboxbot": {
+        "status": "ACTIVE on laptop (temporary)",
+        "target": "mini_pc"
+      },
+      "annieaccountantbot": {
+        "status": "401 UNAUTHORIZED \u2014 token expired",
+        "fix": "update ANNIE_BOT_TOKEN in claudeclaw/.env"
+      }
     }
   },
-
   "active_projects": {
-    "apex_factory": {"status": "PH-08-IN_PROGRESS", "next": "Migrate claudeclaw+supervisor+watchdog to mini-pc"},
-    "novel_writer": {"status": "validation-stack-complete", "next": "populate chapter_manifest and characters tables"},
-    "triple_rinse": {"status": "phase3-pending", "completed": "89 vendor rules extracted"},
-    "berm_receipt_ocr": {"status": "spec-complete-build-pending", "next": "Configure Google SA credentials + test pipeline"}
+    "apex_factory": {
+      "status": "PH-08-IN_PROGRESS",
+      "next": "Migrate claudeclaw+supervisor+watchdog to mini-pc"
+    },
+    "novel_writer": {
+      "status": "validation-stack-complete",
+      "next": "populate chapter_manifest and characters tables"
+    },
+    "triple_rinse": {
+      "status": "phase3-pending",
+      "completed": "89 vendor rules extracted"
+    },
+    "berm_receipt_ocr": {
+      "status": "spec-complete-build-pending",
+      "next": "Configure Google SA credentials + test pipeline"
+    }
   },
-
   "known_issues": {
     "annie_bot_401": "Update ANNIE_BOT_TOKEN in claudeclaw/.env and restart claudeclaw",
-    "hub_dead_letter_1": "1 item in hub/dead_letter/ — review manually",
+    "hub_dead_letter_1": "1 item in hub/dead_letter/ \u2014 review manually",
     "claudeclaw_wrong_machine": "ClaudeClaw currently runs on laptop (wrong). Must move to mini-pc.",
     "watchdog_wrong_machine": "watchdog.py written to laptop (wrong). Must deploy to mini-pc with Linux paths."
   },
-
   "file_locations": {
     "laptop_projects": "C:\\Users\\bermi\\Projects\\",
     "apex": "C:\\Users\\bermi\\Projects\\apex\\",
     "claudeclaw_source": "C:\\Users\\bermi\\Projects\\claudeclaw\\ (not in GitHub)",
     "mini_pc_projects": "/home/michael/Projects/",
     "prompt_library": "C:\\Users\\bermi\\Projects\\MASTER_PROMPT_LIBRARY.md",
-    "code_artifacts_repo": "https://github.com/bermingham85/code-artifacts"
+    "code_artifacts_repo": "https://github.com/bermingham85/code-artifacts",
+    "pod_auto_studio": {
+      "canonical": "pod-auto-studio/",
+      "register": "pod-auto-studio/REGISTER.json",
+      "raw_base": "https://raw.githubusercontent.com/bermingham85/code-artifacts/main/pod-auto-studio/",
+      "note": "POD Auto Studio build package + n8n skeletons. Read REGISTER.json first."
+    }
   },
-
   "session_start_protocol": [
-    "1. Read MACHINES section — confirm which machine a task targets before doing anything",
+    "1. Read MACHINES section \u2014 confirm which machine a task targets before doing anything",
     "2. SSH to mini-pc = paramiko only (not native cmd ssh)",
     "3. Check http://localhost:8765/context for live memory",
     "4. Check SERVICE_DEPLOYMENT_MAP for where each service should run",
