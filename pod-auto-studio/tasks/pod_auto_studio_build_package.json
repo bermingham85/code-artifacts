@@ -1,0 +1,3624 @@
+{
+  "generated_at": "2026-06-09T23:17:55.097304+00:00",
+  "authority": "AGEN-GOVN-001 v4.0",
+  "project": "BERM",
+  "namespace": "PODAS",
+  "origin": "MICH",
+  "user_authorisation": "Delegated to Codex 2nd-opinion. User not in the loop. Telegram is notify-only (digest), never an approval block.",
+  "governance_contract": {
+    "authority": "AGEN-GOVN-001 v4.0 (GOVERNANCE.md). Applies to EVERY task and process. No exceptions.",
+    "rule_0_audit_before_build": "Check Supabase tables+rowcounts, n8n workflows, GitHub bermingham85/code-artifacts for existing assets; report; build ONLY gaps; never drop populated tables.",
+    "rule_1_research_first": "Search prior work + open-source/n8n-community/Supabase templates; if existing covers 70%+ ADAPT not rebuild; log build|adapt|reuse decision.",
+    "rule_2_modular_connected_documented": "n8n webhooks orchestrate, Supabase persists, Notion documents; spec registered before build, completion after; tests prove spec.",
+    "rule_3_document_control": "Register every artifact via webhook http://192.168.50.246:5678/webhook/log-entry + Notion DB 22674ec0311480a7b76cc22a158c1fd4; name [PROJECT]-[TYPE]-[NAME]-v[VERSION].[EXT].",
+    "naming_authority": "QNAP:8767 / pipeline-governance SUB-04; muscle execution codes [PROJECT]-[ORIG]-MUSC-[SEQ5].",
+    "prompt_gate": "Every LLM dispatch: Registry Lookup -> Governance Auditor (12-check C1-C12) -> Peer Advisor if fail -> Register -> Dispatch.",
+    "governance_block": "Canonical 'GOVERNANCE RULES \u2014 APPLY AT ALL TIMES' block prepended verbatim to every LLM prompt at every layer.",
+    "twelve_check": "C1 gov-block present; C2 JSON-only; C3 token limit; C4 scope bounded; C5 no cross-task deps; C6 required fields; C7 confidence field; C8-C12 full-plan checks.",
+    "infra_safety": "Backup .bak.YYYY-MM-DD before live config edits; read-only first; infra 24/7.",
+    "state": "Live state in Supabase (pod.* + microprompter.*); tracking in system, never memory.",
+    "concurrency": "Wave cap 4 parallel HARD.",
+    "delivery": "PRs to main only; check docs/DOCUMENT_REGISTER.md before any build.",
+    "approval": "Human gate via Telegram @Brianbrainybot (BRIAN_BOT_TOKEN); 'Got it' callback; email escalation on no-ack 24h.",
+    "keys": "Resolve X:\\Automations\\claudeclaw\\.env -> Windows ENV -> QNAP /share/Container/<svc>/.env. Never ask/store/relocate keys.",
+    "codex_gate_policy": "Every approval/cert point runs: assemble packet -> outputs/.second-opinion/packet.json (strip all secrets) -> python3 scripts/review.py --packet <packet>. Decision map: PASS -> proceed/certify/auto-activate; REVISE -> apply feedback, re-review (max 2 iterations) then re-judge; REJECT -> block, keep DRAFT, write needs_revision to Supabase, Telegram notify. Provider order OpenAI(gpt-5)->Perplexity->Claude-CLI->persona-fallback; persona fallback is NOT accepted as a cert (must reach a true third-party model or the cert fails closed).",
+    "research_protocol": "MANDATORY per task before any build (Rule-0 + Rule-1): 1) Supabase existing tables+rowcounts; 2) n8n existing workflows same name; 3) GitHub bermingham85/code-artifacts; 4) conversation/Notion prior work; 5) open-source/n8n-community/Supabase templates. If existing covers >=70% ADAPT not rebuild. Log findings + build|adapt|reuse decision to Supabase pod.research_log. No build without this.",
+    "fail_closed": "If Codex provider unreachable or returns non-PASS, the gate fails CLOSED: artifact stays DRAFT/uncertified, run marked blocked, watchdog + Telegram notify. Never auto-proceed on a missing review."
+  },
+  "phase_map": {
+    "0": "Intake/normalise -> canonical record",
+    "1": "Plan/decompose, assign refs, set wave",
+    "2": "Retrieve context (brand-blocks, registry, content_hash) read-only",
+    "3": "Generate (LLM/image) behind Prompt Gate + Governance Block",
+    "4": "Validate/QC (12-check, vision QC, copyright gate)",
+    "5": "Transform/assemble (mockups, pricing, copy bundle)",
+    "6": "Persist/register (Supabase pod.*, Doc Control, content_hash dedup)",
+    "7": "Dispatch/act (Printify create, Shopify publish, social) post-approval",
+    "8": "Verify/close (acceptance, watchdog heartbeat, mark Done, digest)",
+    "_reconcile": "Reconcile vs /share/Container/apex-microprompter/standards/SPEC.md on QNAP via Rule-0 before build."
+  },
+  "flagship_specs": {
+    "BERM-MICH-MUSC-00017": {
+      "phases": {
+        "0": "Intake/normalise -> canonical record",
+        "1": "Plan/decompose, assign refs, set wave",
+        "2": "Retrieve context (brand-blocks, registry, content_hash) read-only",
+        "3": "Generate (LLM/image) behind Prompt Gate + Governance Block",
+        "4": "Validate/QC (12-check, vision QC, copyright gate)",
+        "5": "Transform/assemble (mockups, pricing, copy bundle)",
+        "6": "Persist/register (Supabase pod.*, Doc Control, content_hash dedup)",
+        "7": "Dispatch/act (Printify create, Shopify publish, social) post-approval",
+        "8": "Verify/close (acceptance, watchdog heartbeat, mark Done, digest)"
+      },
+      "wave_cap": 4,
+      "codeing": "{prompt}.{phase}.{micro}[.letterext]",
+      "state": "microprompter.* + pod.*"
+    },
+    "BERM-MICH-MUSC-00018": {
+      "role": "meta-muscle / spawner",
+      "pattern": "pipeline-governance master orchestrator fan-out/fan-in",
+      "trigger": "weekly schedule OR theme-list webhook",
+      "spawns": "BERM-MICH-MUSC-00017",
+      "wave_cap": 4,
+      "batch_approval": "single Telegram digest via @Brianbrainybot",
+      "tracking": "pod.drops rows per run, never memory"
+    }
+  },
+  "ingest_note": "Drop into GPU auto-completion queue. Honour depends_on. Apply governance_gates per task. Wave cap 4 hard. Approval via @Brianbrainybot.",
+  "task_count": 61,
+  "microtask_count": 347,
+  "tasks": [
+    {
+      "ref": "WO-PODAS-0001",
+      "doc_control_id": "BERM-DDL-PODAS-0001-v1",
+      "execution_code": "",
+      "title": "Create Supabase pod.* schema (themes, designs, drops, mockups, listings, qc_scores, approvals, social_posts; content_hash dedup)",
+      "task_type": "Schema",
+      "priority": "Critical",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [],
+      "tools_required": [
+        "Supabase MCP"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "DEPLOY_SCHEMA.sql conventions",
+        "microprompter.* template"
+      ],
+      "outputs": [
+        "pod.* schema live"
+      ],
+      "microtasks": [
+        "Rule-0: list pg_tables + rowcounts; never drop populated",
+        "Design DDL (tables, enums, FK, content_hash unique idx)",
+        "Apply migration on branch via Supabase MCP",
+        "Add RLS + indexes (status, content_hash)",
+        "Smoke insert/select then rollback",
+        "Doc Control register pre+post; PR to main"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "all tables+RLS+indexes created",
+        "content_hash unique",
+        "status enum present",
+        "migration in code-artifacts"
+      ],
+      "rollback": "drop branch migration; restore from .bak",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "WO-PODAS-0002",
+      "doc_control_id": "BERM-DOC-PODAS-0002-v1",
+      "execution_code": "",
+      "title": "Register PODAS project + all refs in DOCUMENT_REGISTER.md; open Naming Authority entries",
+      "task_type": "Governance",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "qnap",
+      "depends_on": [
+        "WO-PODAS-0001"
+      ],
+      "tools_required": [
+        "Naming Authority 8767",
+        "Doc Control webhook"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "DOCUMENT_REGISTER.md"
+      ],
+      "outputs": [
+        "registry rows"
+      ],
+      "microtasks": [
+        "Rule-0/Rule-1 research + log build|adapt|reuse decision",
+        "Define rule/gate logic",
+        "Wire into Prompt Gate / audit path",
+        "Test pass+fail cases",
+        "Doc Control register"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "every ref below registered, no duplicates"
+      ],
+      "rollback": "revert register commit",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "WO-PODAS-0003",
+      "doc_control_id": "BERM-CODE-PODAS-0003-v1",
+      "execution_code": "",
+      "title": "Verify all API keys (Printify, OpenAI, Replicate, Remove.bg, Cloudinary, Shopify, Google Trends, Telegram) resolve from ENV chain",
+      "task_type": "Integration",
+      "priority": "Critical",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [],
+      "tools_required": [
+        "bash",
+        "ENV"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "X:\\Automations\\claudeclaw\\.env",
+        "Windows ENV",
+        "QNAP .env"
+      ],
+      "outputs": [
+        "key presence report"
+      ],
+      "microtasks": [
+        "Rule-1 reuse check",
+        "Resolve keys from ENV chain (never prompt)",
+        "Adapter w/ JSON contract + retry/error-handler",
+        "Smoke live call read-only first",
+        "Doc Control register"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "all keys resolve; none missing; nothing written to repo/memory"
+      ],
+      "rollback": "n/a",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "WO-PODAS-0004",
+      "doc_control_id": "BERM-WKFL-PODAS-0004-v1",
+      "execution_code": "",
+      "title": "Import pod-orchestrator n8n shell (schedule + manual webhook) INACTIVE on QNAP n8n 5678",
+      "task_type": "Workflow Import",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "qnap",
+      "depends_on": [
+        "WO-PODAS-0001",
+        "WO-PODAS-0003"
+      ],
+      "tools_required": [
+        "n8n MCP 5678"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "empty orchestrator"
+      ],
+      "outputs": [
+        "inactive workflow id"
+      ],
+      "microtasks": [
+        "Rule-0 search existing wf same name",
+        "Backup live config .bak.YYYY-MM-DD",
+        "Import template INACTIVE",
+        "Rewire nodes (storage->Supabase, approval->@Brianbrainybot, brand->brand-blocks)",
+        "Validate connections + blind-Postman check",
+        "Activate behind flag; Doc Control register",
+        "Validate node types/typeVersions via n8n-mcp validate_workflow (no guessed params)",
+        "Complete every TODO@build field from the linked vendor doc before activation"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "imported inactive; .bak taken; connections valid"
+      ],
+      "rollback": "delete imported wf; restore .bak",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "WO-PODAS-0005",
+      "doc_control_id": "BERM-CODE-PODAS-0005-v1",
+      "execution_code": "",
+      "title": "Refactor printify-service.py -> muscle adapter (create/upload/variants/publish), JSON stdin/stdout",
+      "task_type": "Integration",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "WO-PODAS-0003"
+      ],
+      "tools_required": [
+        "python",
+        "Printify API"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "Drive n8n bots/printify-service.py",
+        "flow-agent-chain.json executeCommand pattern"
+      ],
+      "outputs": [
+        "printify_adapter.py"
+      ],
+      "microtasks": [
+        "Rule-1 reuse check",
+        "Resolve keys from ENV chain (never prompt)",
+        "Adapter w/ JSON contract + retry/error-handler",
+        "Smoke live call read-only first",
+        "Doc Control register"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "--InputFile JSON in/out; idempotent on content_hash; smoke passes"
+      ],
+      "rollback": "keep original; revert adapter",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "WO-PODAS-0006",
+      "doc_control_id": "BERM-CODE-PODAS-0006-v1",
+      "execution_code": "",
+      "title": "Refactor openai-service.py -> image+copy muscle adapter, JSON contract",
+      "task_type": "Integration",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "WO-PODAS-0003"
+      ],
+      "tools_required": [
+        "python",
+        "OpenAI/Replicate API"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "Drive n8n bots/openai-service.py"
+      ],
+      "outputs": [
+        "gen_adapter.py"
+      ],
+      "microtasks": [
+        "Rule-1 reuse check",
+        "Resolve keys from ENV chain (never prompt)",
+        "Adapter w/ JSON contract + retry/error-handler",
+        "Smoke live call read-only first",
+        "Doc Control register"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)",
+        "Prompt Gate 12-check before any LLM dispatch",
+        "Prepend Governance Block verbatim"
+      ],
+      "acceptance_criteria": [
+        "image+text endpoints callable; model configurable; smoke passes"
+      ],
+      "rollback": "revert adapter",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "WO-PODAS-0007",
+      "doc_control_id": "BERM-CODE-PODAS-0007-v1",
+      "execution_code": "",
+      "title": "Build brand-conditioning loader from brand-blocks tokens.json (palette/type/voice) for all design+copy prompts",
+      "task_type": "Integration",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "WO-PODAS-0006"
+      ],
+      "tools_required": [
+        "python"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "Drive brand-blocks-repo.zip",
+        "font-factory brand-blocks.json"
+      ],
+      "outputs": [
+        "brand_loader.py"
+      ],
+      "microtasks": [
+        "Rule-1 reuse check",
+        "Resolve keys from ENV chain (never prompt)",
+        "Adapter w/ JSON contract + retry/error-handler",
+        "Smoke live call read-only first",
+        "Doc Control register"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "tokens injected; per-brand selectable (Mickey Bubbles, Gremlo, BPIG)"
+      ],
+      "rollback": "revert loader",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "WO-PODAS-0008",
+      "doc_control_id": "BERM-DOC-PODAS-0008-v1",
+      "execution_code": "",
+      "title": "Version claude-design-pod-6concepts prompt into Supabase prompts_library (with Governance Block)",
+      "task_type": "Docs",
+      "priority": "Medium",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "WO-PODAS-0001"
+      ],
+      "tools_required": [
+        "Supabase MCP"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "Drive claude-design-pod-6concepts-prompt.md"
+      ],
+      "outputs": [
+        "prompts_library row"
+      ],
+      "microtasks": [
+        "Rule-0/Rule-1 research + log build|adapt|reuse decision",
+        "Draft doc/runbook/skill",
+        "Cross-link refs + kill-switch",
+        "Register in Doc Control / context server",
+        "Add playbook pathway"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)",
+        "Prompt Gate 12-check before any LLM dispatch",
+        "Prepend Governance Block verbatim"
+      ],
+      "acceptance_criteria": [
+        "stored, versioned, is_active, input_variables documented, Governance Block embedded"
+      ],
+      "rollback": "deactivate row",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "WO-PODAS-0009",
+      "doc_control_id": "BERM-WKFL-PODAS-0009-v1",
+      "execution_code": "",
+      "title": "Pull n8n 11175 (Trends->GPT4o->SD->VisionQC->Printify); rewire storage->Supabase, approval->Telegram",
+      "task_type": "Workflow Import",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "qnap",
+      "depends_on": [
+        "WO-PODAS-0004"
+      ],
+      "tools_required": [
+        "web_fetch",
+        "n8n MCP"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "n8n.io/workflows/11175"
+      ],
+      "outputs": [
+        "rewired wf inactive"
+      ],
+      "microtasks": [
+        "Rule-0 search existing wf same name",
+        "Backup live config .bak.YYYY-MM-DD",
+        "Import template INACTIVE",
+        "Rewire nodes (storage->Supabase, approval->@Brianbrainybot, brand->brand-blocks)",
+        "Validate connections + blind-Postman check",
+        "Activate behind flag; Doc Control register",
+        "Validate node types/typeVersions via n8n-mcp validate_workflow (no guessed params)",
+        "Complete every TODO@build field from the linked vendor doc before activation"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "Airtable->Supabase; Slack->@Brianbrainybot; validates"
+      ],
+      "rollback": "restore .bak; delete wf",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "WO-PODAS-0010",
+      "doc_control_id": "BERM-WKFL-PODAS-0010-v1",
+      "execution_code": "",
+      "title": "Pull n8n 11181 (Drive->Vision->Remove.bg->Cloudinary->Shopify draft->social); rewire to brand-blocks+Supabase",
+      "task_type": "Workflow Import",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "qnap",
+      "depends_on": [
+        "WO-PODAS-0004",
+        "WO-PODAS-0007"
+      ],
+      "tools_required": [
+        "web_fetch",
+        "n8n MCP"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "n8n.io/workflows/11181"
+      ],
+      "outputs": [
+        "rewired wf inactive"
+      ],
+      "microtasks": [
+        "Rule-0 search existing wf same name",
+        "Backup live config .bak.YYYY-MM-DD",
+        "Import template INACTIVE",
+        "Rewire nodes (storage->Supabase, approval->@Brianbrainybot, brand->brand-blocks)",
+        "Validate connections + blind-Postman check",
+        "Activate behind flag; Doc Control register",
+        "Validate node types/typeVersions via n8n-mcp validate_workflow (no guessed params)",
+        "Complete every TODO@build field from the linked vendor doc before activation"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "brand conditioning wired; Shopify draft path verified"
+      ],
+      "rollback": "restore .bak",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "WO-PODAS-0011",
+      "doc_control_id": "BERM-WKFL-PODAS-0011-v1",
+      "execution_code": "",
+      "title": "Pull n8n 8848 (brand SEO copy); map Brand Guidelines node -> brand-blocks",
+      "task_type": "Workflow Import",
+      "priority": "Medium",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "qnap",
+      "depends_on": [
+        "WO-PODAS-0007"
+      ],
+      "tools_required": [
+        "web_fetch",
+        "n8n MCP"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "n8n.io/workflows/8848"
+      ],
+      "outputs": [
+        "copy reference wf"
+      ],
+      "microtasks": [
+        "Rule-0 search existing wf same name",
+        "Backup live config .bak.YYYY-MM-DD",
+        "Import template INACTIVE",
+        "Rewire nodes (storage->Supabase, approval->@Brianbrainybot, brand->brand-blocks)",
+        "Validate connections + blind-Postman check",
+        "Activate behind flag; Doc Control register",
+        "Validate node types/typeVersions via n8n-mcp validate_workflow (no guessed params)",
+        "Complete every TODO@build field from the linked vendor doc before activation"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "copy node parameterised by brand; Printify/Printful swap confirmed"
+      ],
+      "rollback": "restore .bak",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00001-SPEC",
+      "doc_control_id": "BERM-SPEC-PODAS-SPEC-v1",
+      "execution_code": "BERM-MICH-MUSC-00001",
+      "title": "SPEC theme_intake: Intake theme/brief or schedule tick -> theme record",
+      "task_type": "Muscle Spec",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [],
+      "tools_required": [
+        "APEX Microprompter spec",
+        "Naming Authority"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "theme|tick",
+        "APEX-MICROPROMPTER-SPEC.md"
+      ],
+      "outputs": [
+        "SPEC doc"
+      ],
+      "microtasks": [
+        "Rule-1 reuse search; log build|adapt|reuse",
+        "Define stdin->stdout JSON contract",
+        "Map micro-steps to phases 0-8",
+        "Define content_hash gating + idempotency",
+        "Embed Governance Block + token limit",
+        "Write SPEC to standards/; Naming Authority + Doc Control register"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "I/O contract+phases 0-8+content_hash gating defined; registered"
+      ],
+      "rollback": "unregister spec",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00001-BUILD",
+      "doc_control_id": "BERM-CODE-PODAS-BUILD-v1",
+      "execution_code": "BERM-MICH-MUSC-00001",
+      "title": "BUILD+SMOKE+CERTIFY theme_intake",
+      "task_type": "Muscle Build",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "BERM-MICH-MUSC-00001-SPEC"
+      ],
+      "tools_required": [
+        "python",
+        "Supabase MCP"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "theme|tick"
+      ],
+      "outputs": [
+        "certified muscle"
+      ],
+      "microtasks": [
+        "Rule-0/Rule-1 research + log build|adapt|reuse decision",
+        "Pull SPEC; confirm contract",
+        "Implement adapter (JSON in/out, error-handler)",
+        "If LLM: wire Prompt Gate (registry->auditor 12-check->register->dispatch)",
+        "Step-1 atomic smoke test",
+        "Foreman/indexer certify",
+        "Write Supabase live state; Doc Control completion register",
+        "Validate node types/typeVersions via n8n-mcp validate_workflow (no guessed params)",
+        "Complete every TODO@build field from the linked vendor doc before activation"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "Step-1 smoke passes; certified; live state in Supabase"
+      ],
+      "rollback": "disable muscle; revert",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00002-SPEC",
+      "doc_control_id": "BERM-SPEC-PODAS-SPEC-v1",
+      "execution_code": "BERM-MICH-MUSC-00002",
+      "title": "SPEC trend_scan: Google Trends + marketplace/social signals -> ranked candidate themes",
+      "task_type": "Muscle Spec",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "BERM-MICH-MUSC-00001-SPEC"
+      ],
+      "tools_required": [
+        "APEX Microprompter spec",
+        "Naming Authority"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "seeds",
+        "region",
+        "APEX-MICROPROMPTER-SPEC.md"
+      ],
+      "outputs": [
+        "SPEC doc"
+      ],
+      "microtasks": [
+        "Rule-1 reuse search; log build|adapt|reuse",
+        "Define stdin->stdout JSON contract",
+        "Map micro-steps to phases 0-8",
+        "Define content_hash gating + idempotency",
+        "Embed Governance Block + token limit",
+        "Write SPEC to standards/; Naming Authority + Doc Control register"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "I/O contract+phases 0-8+content_hash gating defined; registered"
+      ],
+      "rollback": "unregister spec",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00002-BUILD",
+      "doc_control_id": "BERM-CODE-PODAS-BUILD-v1",
+      "execution_code": "BERM-MICH-MUSC-00002",
+      "title": "BUILD+SMOKE+CERTIFY trend_scan",
+      "task_type": "Muscle Build",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "BERM-MICH-MUSC-00002-SPEC"
+      ],
+      "tools_required": [
+        "OpenAI/Replicate",
+        "python",
+        "Supabase MCP"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "seeds",
+        "region"
+      ],
+      "outputs": [
+        "certified muscle"
+      ],
+      "microtasks": [
+        "Rule-0/Rule-1 research + log build|adapt|reuse decision",
+        "Pull SPEC; confirm contract",
+        "Implement adapter (JSON in/out, error-handler)",
+        "If LLM: wire Prompt Gate (registry->auditor 12-check->register->dispatch)",
+        "Step-1 atomic smoke test",
+        "Foreman/indexer certify",
+        "Write Supabase live state; Doc Control completion register",
+        "Validate node types/typeVersions via n8n-mcp validate_workflow (no guessed params)",
+        "Complete every TODO@build field from the linked vendor doc before activation"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)",
+        "Prompt Gate 12-check before any LLM dispatch",
+        "Prepend Governance Block verbatim"
+      ],
+      "acceptance_criteria": [
+        "Step-1 smoke passes; certified; live state in Supabase"
+      ],
+      "rollback": "disable muscle; revert",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00003-SPEC",
+      "doc_control_id": "BERM-SPEC-PODAS-SPEC-v1",
+      "execution_code": "BERM-MICH-MUSC-00003",
+      "title": "SPEC concept_brainstorm: LLM theme -> N brand-conditioned concepts",
+      "task_type": "Muscle Spec",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "BERM-MICH-MUSC-00002-SPEC",
+        "WO-PODAS-0008"
+      ],
+      "tools_required": [
+        "APEX Microprompter spec",
+        "Naming Authority"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "theme",
+        "brand",
+        "N",
+        "APEX-MICROPROMPTER-SPEC.md"
+      ],
+      "outputs": [
+        "SPEC doc"
+      ],
+      "microtasks": [
+        "Rule-1 reuse search; log build|adapt|reuse",
+        "Define stdin->stdout JSON contract",
+        "Map micro-steps to phases 0-8",
+        "Define content_hash gating + idempotency",
+        "Embed Governance Block + token limit",
+        "Write SPEC to standards/; Naming Authority + Doc Control register"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "I/O contract+phases 0-8+content_hash gating defined; registered"
+      ],
+      "rollback": "unregister spec",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00003-BUILD",
+      "doc_control_id": "BERM-CODE-PODAS-BUILD-v1",
+      "execution_code": "BERM-MICH-MUSC-00003",
+      "title": "BUILD+SMOKE+CERTIFY concept_brainstorm",
+      "task_type": "Muscle Build",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "BERM-MICH-MUSC-00003-SPEC"
+      ],
+      "tools_required": [
+        "OpenAI/Replicate",
+        "python",
+        "Supabase MCP"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "theme",
+        "brand",
+        "N"
+      ],
+      "outputs": [
+        "certified muscle"
+      ],
+      "microtasks": [
+        "Rule-0/Rule-1 research + log build|adapt|reuse decision",
+        "Pull SPEC; confirm contract",
+        "Implement adapter (JSON in/out, error-handler)",
+        "If LLM: wire Prompt Gate (registry->auditor 12-check->register->dispatch)",
+        "Step-1 atomic smoke test",
+        "Foreman/indexer certify",
+        "Write Supabase live state; Doc Control completion register",
+        "Validate node types/typeVersions via n8n-mcp validate_workflow (no guessed params)",
+        "Complete every TODO@build field from the linked vendor doc before activation"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)",
+        "Prompt Gate 12-check before any LLM dispatch",
+        "Prepend Governance Block verbatim"
+      ],
+      "acceptance_criteria": [
+        "Step-1 smoke passes; certified; live state in Supabase"
+      ],
+      "rollback": "disable muscle; revert",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00004-SPEC",
+      "doc_control_id": "BERM-SPEC-PODAS-SPEC-v1",
+      "execution_code": "BERM-MICH-MUSC-00004",
+      "title": "SPEC brand_conditioner: Inject brand-blocks tokens into prompts",
+      "task_type": "Muscle Spec",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "WO-PODAS-0007"
+      ],
+      "tools_required": [
+        "APEX Microprompter spec",
+        "Naming Authority"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "brand id",
+        "APEX-MICROPROMPTER-SPEC.md"
+      ],
+      "outputs": [
+        "SPEC doc"
+      ],
+      "microtasks": [
+        "Rule-1 reuse search; log build|adapt|reuse",
+        "Define stdin->stdout JSON contract",
+        "Map micro-steps to phases 0-8",
+        "Define content_hash gating + idempotency",
+        "Embed Governance Block + token limit",
+        "Write SPEC to standards/; Naming Authority + Doc Control register"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "I/O contract+phases 0-8+content_hash gating defined; registered"
+      ],
+      "rollback": "unregister spec",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00004-BUILD",
+      "doc_control_id": "BERM-CODE-PODAS-BUILD-v1",
+      "execution_code": "BERM-MICH-MUSC-00004",
+      "title": "BUILD+SMOKE+CERTIFY brand_conditioner",
+      "task_type": "Muscle Build",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "BERM-MICH-MUSC-00004-SPEC"
+      ],
+      "tools_required": [
+        "python",
+        "Supabase MCP"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "brand id"
+      ],
+      "outputs": [
+        "certified muscle"
+      ],
+      "microtasks": [
+        "Rule-0/Rule-1 research + log build|adapt|reuse decision",
+        "Pull SPEC; confirm contract",
+        "Implement adapter (JSON in/out, error-handler)",
+        "If LLM: wire Prompt Gate (registry->auditor 12-check->register->dispatch)",
+        "Step-1 atomic smoke test",
+        "Foreman/indexer certify",
+        "Write Supabase live state; Doc Control completion register",
+        "Validate node types/typeVersions via n8n-mcp validate_workflow (no guessed params)",
+        "Complete every TODO@build field from the linked vendor doc before activation"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "Step-1 smoke passes; certified; live state in Supabase"
+      ],
+      "rollback": "disable muscle; revert",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00005-SPEC",
+      "doc_control_id": "BERM-SPEC-PODAS-SPEC-v1",
+      "execution_code": "BERM-MICH-MUSC-00005",
+      "title": "SPEC image_generate: Replicate Flux/SD or openai adapter -> raw design",
+      "task_type": "Muscle Spec",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "BERM-MICH-MUSC-00003-SPEC",
+        "BERM-MICH-MUSC-00004-SPEC",
+        "WO-PODAS-0006"
+      ],
+      "tools_required": [
+        "APEX Microprompter spec",
+        "Naming Authority"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "concept",
+        "APEX-MICROPROMPTER-SPEC.md"
+      ],
+      "outputs": [
+        "SPEC doc"
+      ],
+      "microtasks": [
+        "Rule-1 reuse search; log build|adapt|reuse",
+        "Define stdin->stdout JSON contract",
+        "Map micro-steps to phases 0-8",
+        "Define content_hash gating + idempotency",
+        "Embed Governance Block + token limit",
+        "Write SPEC to standards/; Naming Authority + Doc Control register"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "I/O contract+phases 0-8+content_hash gating defined; registered"
+      ],
+      "rollback": "unregister spec",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00005-BUILD",
+      "doc_control_id": "BERM-CODE-PODAS-BUILD-v1",
+      "execution_code": "BERM-MICH-MUSC-00005",
+      "title": "BUILD+SMOKE+CERTIFY image_generate",
+      "task_type": "Muscle Build",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "BERM-MICH-MUSC-00005-SPEC"
+      ],
+      "tools_required": [
+        "OpenAI/Replicate",
+        "python",
+        "Supabase MCP"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "concept"
+      ],
+      "outputs": [
+        "certified muscle"
+      ],
+      "microtasks": [
+        "Rule-0/Rule-1 research + log build|adapt|reuse decision",
+        "Pull SPEC; confirm contract",
+        "Implement adapter (JSON in/out, error-handler)",
+        "If LLM: wire Prompt Gate (registry->auditor 12-check->register->dispatch)",
+        "Step-1 atomic smoke test",
+        "Foreman/indexer certify",
+        "Write Supabase live state; Doc Control completion register",
+        "Validate node types/typeVersions via n8n-mcp validate_workflow (no guessed params)",
+        "Complete every TODO@build field from the linked vendor doc before activation"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)",
+        "Prompt Gate 12-check before any LLM dispatch",
+        "Prepend Governance Block verbatim"
+      ],
+      "acceptance_criteria": [
+        "Step-1 smoke passes; certified; live state in Supabase"
+      ],
+      "rollback": "disable muscle; revert",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00006-SPEC",
+      "doc_control_id": "BERM-SPEC-PODAS-SPEC-v1",
+      "execution_code": "BERM-MICH-MUSC-00006",
+      "title": "SPEC copyright_risk_check: Vision/LLM IP/trademark risk gate; reject risky",
+      "task_type": "Muscle Spec",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "BERM-MICH-MUSC-00005-SPEC"
+      ],
+      "tools_required": [
+        "APEX Microprompter spec",
+        "Naming Authority"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "image",
+        "APEX-MICROPROMPTER-SPEC.md"
+      ],
+      "outputs": [
+        "SPEC doc"
+      ],
+      "microtasks": [
+        "Rule-1 reuse search; log build|adapt|reuse",
+        "Define stdin->stdout JSON contract",
+        "Map micro-steps to phases 0-8",
+        "Define content_hash gating + idempotency",
+        "Embed Governance Block + token limit",
+        "Write SPEC to standards/; Naming Authority + Doc Control register"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "I/O contract+phases 0-8+content_hash gating defined; registered"
+      ],
+      "rollback": "unregister spec",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00006-BUILD",
+      "doc_control_id": "BERM-CODE-PODAS-BUILD-v1",
+      "execution_code": "BERM-MICH-MUSC-00006",
+      "title": "BUILD+SMOKE+CERTIFY copyright_risk_check",
+      "task_type": "Muscle Build",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "BERM-MICH-MUSC-00006-SPEC"
+      ],
+      "tools_required": [
+        "OpenAI/Replicate",
+        "python",
+        "Supabase MCP"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "image"
+      ],
+      "outputs": [
+        "certified muscle"
+      ],
+      "microtasks": [
+        "Rule-0/Rule-1 research + log build|adapt|reuse decision",
+        "Pull SPEC; confirm contract",
+        "Implement adapter (JSON in/out, error-handler)",
+        "If LLM: wire Prompt Gate (registry->auditor 12-check->register->dispatch)",
+        "Step-1 atomic smoke test",
+        "Foreman/indexer certify",
+        "Write Supabase live state; Doc Control completion register",
+        "Validate node types/typeVersions via n8n-mcp validate_workflow (no guessed params)",
+        "Complete every TODO@build field from the linked vendor doc before activation"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)",
+        "Prompt Gate 12-check before any LLM dispatch",
+        "Prepend Governance Block verbatim"
+      ],
+      "acceptance_criteria": [
+        "Step-1 smoke passes; certified; live state in Supabase"
+      ],
+      "rollback": "disable muscle; revert",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00007-SPEC",
+      "doc_control_id": "BERM-SPEC-PODAS-SPEC-v1",
+      "execution_code": "BERM-MICH-MUSC-00007",
+      "title": "SPEC bg_remove_cleanup: Remove.bg/rembg -> transparent print-ready PNG",
+      "task_type": "Muscle Spec",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "BERM-MICH-MUSC-00006-SPEC"
+      ],
+      "tools_required": [
+        "APEX Microprompter spec",
+        "Naming Authority"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "image",
+        "APEX-MICROPROMPTER-SPEC.md"
+      ],
+      "outputs": [
+        "SPEC doc"
+      ],
+      "microtasks": [
+        "Rule-1 reuse search; log build|adapt|reuse",
+        "Define stdin->stdout JSON contract",
+        "Map micro-steps to phases 0-8",
+        "Define content_hash gating + idempotency",
+        "Embed Governance Block + token limit",
+        "Write SPEC to standards/; Naming Authority + Doc Control register"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "I/O contract+phases 0-8+content_hash gating defined; registered"
+      ],
+      "rollback": "unregister spec",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00007-BUILD",
+      "doc_control_id": "BERM-CODE-PODAS-BUILD-v1",
+      "execution_code": "BERM-MICH-MUSC-00007",
+      "title": "BUILD+SMOKE+CERTIFY bg_remove_cleanup",
+      "task_type": "Muscle Build",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "BERM-MICH-MUSC-00007-SPEC"
+      ],
+      "tools_required": [
+        "python",
+        "Supabase MCP"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "image"
+      ],
+      "outputs": [
+        "certified muscle"
+      ],
+      "microtasks": [
+        "Rule-0/Rule-1 research + log build|adapt|reuse decision",
+        "Pull SPEC; confirm contract",
+        "Implement adapter (JSON in/out, error-handler)",
+        "If LLM: wire Prompt Gate (registry->auditor 12-check->register->dispatch)",
+        "Step-1 atomic smoke test",
+        "Foreman/indexer certify",
+        "Write Supabase live state; Doc Control completion register",
+        "Validate node types/typeVersions via n8n-mcp validate_workflow (no guessed params)",
+        "Complete every TODO@build field from the linked vendor doc before activation"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "Step-1 smoke passes; certified; live state in Supabase"
+      ],
+      "rollback": "disable muscle; revert",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00008-SPEC",
+      "doc_control_id": "BERM-SPEC-PODAS-SPEC-v1",
+      "execution_code": "BERM-MICH-MUSC-00008",
+      "title": "SPEC vision_qc_score: Rate 1-10 quality/printability; gate <7 reject",
+      "task_type": "Muscle Spec",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "BERM-MICH-MUSC-00007-SPEC"
+      ],
+      "tools_required": [
+        "APEX Microprompter spec",
+        "Naming Authority"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "image",
+        "APEX-MICROPROMPTER-SPEC.md"
+      ],
+      "outputs": [
+        "SPEC doc"
+      ],
+      "microtasks": [
+        "Rule-1 reuse search; log build|adapt|reuse",
+        "Define stdin->stdout JSON contract",
+        "Map micro-steps to phases 0-8",
+        "Define content_hash gating + idempotency",
+        "Embed Governance Block + token limit",
+        "Write SPEC to standards/; Naming Authority + Doc Control register"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "I/O contract+phases 0-8+content_hash gating defined; registered"
+      ],
+      "rollback": "unregister spec",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00008-BUILD",
+      "doc_control_id": "BERM-CODE-PODAS-BUILD-v1",
+      "execution_code": "BERM-MICH-MUSC-00008",
+      "title": "BUILD+SMOKE+CERTIFY vision_qc_score",
+      "task_type": "Muscle Build",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "BERM-MICH-MUSC-00008-SPEC"
+      ],
+      "tools_required": [
+        "OpenAI/Replicate",
+        "python",
+        "Supabase MCP"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "image"
+      ],
+      "outputs": [
+        "certified muscle"
+      ],
+      "microtasks": [
+        "Rule-0/Rule-1 research + log build|adapt|reuse decision",
+        "Pull SPEC; confirm contract",
+        "Implement adapter (JSON in/out, error-handler)",
+        "If LLM: wire Prompt Gate (registry->auditor 12-check->register->dispatch)",
+        "Step-1 atomic smoke test",
+        "Foreman/indexer certify",
+        "Write Supabase live state; Doc Control completion register",
+        "Validate node types/typeVersions via n8n-mcp validate_workflow (no guessed params)",
+        "Complete every TODO@build field from the linked vendor doc before activation"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)",
+        "Prompt Gate 12-check before any LLM dispatch",
+        "Prepend Governance Block verbatim"
+      ],
+      "acceptance_criteria": [
+        "Step-1 smoke passes; certified; live state in Supabase"
+      ],
+      "rollback": "disable muscle; revert",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00009-SPEC",
+      "doc_control_id": "BERM-SPEC-PODAS-SPEC-v1",
+      "execution_code": "BERM-MICH-MUSC-00009",
+      "title": "SPEC mockup_generate: Cloudinary overlay -> product mockups",
+      "task_type": "Muscle Spec",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "BERM-MICH-MUSC-00008-SPEC"
+      ],
+      "tools_required": [
+        "APEX Microprompter spec",
+        "Naming Authority"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "png",
+        "blanks",
+        "APEX-MICROPROMPTER-SPEC.md"
+      ],
+      "outputs": [
+        "SPEC doc"
+      ],
+      "microtasks": [
+        "Rule-1 reuse search; log build|adapt|reuse",
+        "Define stdin->stdout JSON contract",
+        "Map micro-steps to phases 0-8",
+        "Define content_hash gating + idempotency",
+        "Embed Governance Block + token limit",
+        "Write SPEC to standards/; Naming Authority + Doc Control register"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "I/O contract+phases 0-8+content_hash gating defined; registered"
+      ],
+      "rollback": "unregister spec",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00009-BUILD",
+      "doc_control_id": "BERM-CODE-PODAS-BUILD-v1",
+      "execution_code": "BERM-MICH-MUSC-00009",
+      "title": "BUILD+SMOKE+CERTIFY mockup_generate",
+      "task_type": "Muscle Build",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "BERM-MICH-MUSC-00009-SPEC"
+      ],
+      "tools_required": [
+        "python",
+        "Supabase MCP"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "png",
+        "blanks"
+      ],
+      "outputs": [
+        "certified muscle"
+      ],
+      "microtasks": [
+        "Rule-0/Rule-1 research + log build|adapt|reuse decision",
+        "Pull SPEC; confirm contract",
+        "Implement adapter (JSON in/out, error-handler)",
+        "If LLM: wire Prompt Gate (registry->auditor 12-check->register->dispatch)",
+        "Step-1 atomic smoke test",
+        "Foreman/indexer certify",
+        "Write Supabase live state; Doc Control completion register",
+        "Validate node types/typeVersions via n8n-mcp validate_workflow (no guessed params)",
+        "Complete every TODO@build field from the linked vendor doc before activation"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "Step-1 smoke passes; certified; live state in Supabase"
+      ],
+      "rollback": "disable muscle; revert",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00010-SPEC",
+      "doc_control_id": "BERM-SPEC-PODAS-SPEC-v1",
+      "execution_code": "BERM-MICH-MUSC-00010",
+      "title": "SPEC listing_copywrite: SEO title/desc/tags in brand voice",
+      "task_type": "Muscle Spec",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "BERM-MICH-MUSC-00004-SPEC",
+        "BERM-MICH-MUSC-00008-SPEC"
+      ],
+      "tools_required": [
+        "APEX Microprompter spec",
+        "Naming Authority"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "concept",
+        "brand",
+        "APEX-MICROPROMPTER-SPEC.md"
+      ],
+      "outputs": [
+        "SPEC doc"
+      ],
+      "microtasks": [
+        "Rule-1 reuse search; log build|adapt|reuse",
+        "Define stdin->stdout JSON contract",
+        "Map micro-steps to phases 0-8",
+        "Define content_hash gating + idempotency",
+        "Embed Governance Block + token limit",
+        "Write SPEC to standards/; Naming Authority + Doc Control register"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "I/O contract+phases 0-8+content_hash gating defined; registered"
+      ],
+      "rollback": "unregister spec",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00010-BUILD",
+      "doc_control_id": "BERM-CODE-PODAS-BUILD-v1",
+      "execution_code": "BERM-MICH-MUSC-00010",
+      "title": "BUILD+SMOKE+CERTIFY listing_copywrite",
+      "task_type": "Muscle Build",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "BERM-MICH-MUSC-00010-SPEC"
+      ],
+      "tools_required": [
+        "OpenAI/Replicate",
+        "python",
+        "Supabase MCP"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "concept",
+        "brand"
+      ],
+      "outputs": [
+        "certified muscle"
+      ],
+      "microtasks": [
+        "Rule-0/Rule-1 research + log build|adapt|reuse decision",
+        "Pull SPEC; confirm contract",
+        "Implement adapter (JSON in/out, error-handler)",
+        "If LLM: wire Prompt Gate (registry->auditor 12-check->register->dispatch)",
+        "Step-1 atomic smoke test",
+        "Foreman/indexer certify",
+        "Write Supabase live state; Doc Control completion register",
+        "Validate node types/typeVersions via n8n-mcp validate_workflow (no guessed params)",
+        "Complete every TODO@build field from the linked vendor doc before activation"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)",
+        "Prompt Gate 12-check before any LLM dispatch",
+        "Prepend Governance Block verbatim"
+      ],
+      "acceptance_criteria": [
+        "Step-1 smoke passes; certified; live state in Supabase"
+      ],
+      "rollback": "disable muscle; revert",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00011-SPEC",
+      "doc_control_id": "BERM-SPEC-PODAS-SPEC-v1",
+      "execution_code": "BERM-MICH-MUSC-00011",
+      "title": "SPEC price_calculator: 3x cost rule + premium for high QC -> retail",
+      "task_type": "Muscle Spec",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "BERM-MICH-MUSC-00008-SPEC"
+      ],
+      "tools_required": [
+        "APEX Microprompter spec",
+        "Naming Authority"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "cost",
+        "qc",
+        "APEX-MICROPROMPTER-SPEC.md"
+      ],
+      "outputs": [
+        "SPEC doc"
+      ],
+      "microtasks": [
+        "Rule-1 reuse search; log build|adapt|reuse",
+        "Define stdin->stdout JSON contract",
+        "Map micro-steps to phases 0-8",
+        "Define content_hash gating + idempotency",
+        "Embed Governance Block + token limit",
+        "Write SPEC to standards/; Naming Authority + Doc Control register"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "I/O contract+phases 0-8+content_hash gating defined; registered"
+      ],
+      "rollback": "unregister spec",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00011-BUILD",
+      "doc_control_id": "BERM-CODE-PODAS-BUILD-v1",
+      "execution_code": "BERM-MICH-MUSC-00011",
+      "title": "BUILD+SMOKE+CERTIFY price_calculator",
+      "task_type": "Muscle Build",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "BERM-MICH-MUSC-00011-SPEC"
+      ],
+      "tools_required": [
+        "python",
+        "Supabase MCP"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "cost",
+        "qc"
+      ],
+      "outputs": [
+        "certified muscle"
+      ],
+      "microtasks": [
+        "Rule-0/Rule-1 research + log build|adapt|reuse decision",
+        "Pull SPEC; confirm contract",
+        "Implement adapter (JSON in/out, error-handler)",
+        "If LLM: wire Prompt Gate (registry->auditor 12-check->register->dispatch)",
+        "Step-1 atomic smoke test",
+        "Foreman/indexer certify",
+        "Write Supabase live state; Doc Control completion register",
+        "Validate node types/typeVersions via n8n-mcp validate_workflow (no guessed params)",
+        "Complete every TODO@build field from the linked vendor doc before activation"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "Step-1 smoke passes; certified; live state in Supabase"
+      ],
+      "rollback": "disable muscle; revert",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00012-SPEC",
+      "doc_control_id": "BERM-SPEC-PODAS-SPEC-v1",
+      "execution_code": "BERM-MICH-MUSC-00012",
+      "title": "SPEC printify_product_create: Printify product via adapter (blueprint_id, provider, variants, images)",
+      "task_type": "Muscle Spec",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "WO-PODAS-0005",
+        "BERM-MICH-MUSC-00010-SPEC",
+        "BERM-MICH-MUSC-00011-SPEC"
+      ],
+      "tools_required": [
+        "APEX Microprompter spec",
+        "Naming Authority"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "png",
+        "copy",
+        "price",
+        "APEX-MICROPROMPTER-SPEC.md"
+      ],
+      "outputs": [
+        "SPEC doc"
+      ],
+      "microtasks": [
+        "Rule-1 reuse search; log build|adapt|reuse",
+        "Define stdin->stdout JSON contract",
+        "Map micro-steps to phases 0-8",
+        "Define content_hash gating + idempotency",
+        "Embed Governance Block + token limit",
+        "Write SPEC to standards/; Naming Authority + Doc Control register"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "I/O contract+phases 0-8+content_hash gating defined; registered"
+      ],
+      "rollback": "unregister spec",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00012-BUILD",
+      "doc_control_id": "BERM-CODE-PODAS-BUILD-v1",
+      "execution_code": "BERM-MICH-MUSC-00012",
+      "title": "BUILD+SMOKE+CERTIFY printify_product_create",
+      "task_type": "Muscle Build",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "BERM-MICH-MUSC-00012-SPEC"
+      ],
+      "tools_required": [
+        "python",
+        "Supabase MCP"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "png",
+        "copy",
+        "price"
+      ],
+      "outputs": [
+        "certified muscle"
+      ],
+      "microtasks": [
+        "Rule-0/Rule-1 research + log build|adapt|reuse decision",
+        "Pull SPEC; confirm contract",
+        "Implement adapter (JSON in/out, error-handler)",
+        "If LLM: wire Prompt Gate (registry->auditor 12-check->register->dispatch)",
+        "Step-1 atomic smoke test",
+        "Foreman/indexer certify",
+        "Write Supabase live state; Doc Control completion register",
+        "Validate node types/typeVersions via n8n-mcp validate_workflow (no guessed params)",
+        "Complete every TODO@build field from the linked vendor doc before activation"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "Step-1 smoke passes; certified; live state in Supabase"
+      ],
+      "rollback": "disable muscle; revert",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00013-SPEC",
+      "doc_control_id": "BERM-SPEC-PODAS-SPEC-v1",
+      "execution_code": "BERM-MICH-MUSC-00013",
+      "title": "SPEC shopify_publish_sync: Publish/sync Printify->Shopify (draft/active)",
+      "task_type": "Muscle Spec",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "BERM-MICH-MUSC-00012-SPEC"
+      ],
+      "tools_required": [
+        "APEX Microprompter spec",
+        "Naming Authority"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "printify product",
+        "APEX-MICROPROMPTER-SPEC.md"
+      ],
+      "outputs": [
+        "SPEC doc"
+      ],
+      "microtasks": [
+        "Rule-1 reuse search; log build|adapt|reuse",
+        "Define stdin->stdout JSON contract",
+        "Map micro-steps to phases 0-8",
+        "Define content_hash gating + idempotency",
+        "Embed Governance Block + token limit",
+        "Write SPEC to standards/; Naming Authority + Doc Control register"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "I/O contract+phases 0-8+content_hash gating defined; registered"
+      ],
+      "rollback": "unregister spec",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00013-BUILD",
+      "doc_control_id": "BERM-CODE-PODAS-BUILD-v1",
+      "execution_code": "BERM-MICH-MUSC-00013",
+      "title": "BUILD+SMOKE+CERTIFY shopify_publish_sync",
+      "task_type": "Muscle Build",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "BERM-MICH-MUSC-00013-SPEC"
+      ],
+      "tools_required": [
+        "python",
+        "Supabase MCP"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "printify product"
+      ],
+      "outputs": [
+        "certified muscle"
+      ],
+      "microtasks": [
+        "Rule-0/Rule-1 research + log build|adapt|reuse decision",
+        "Pull SPEC; confirm contract",
+        "Implement adapter (JSON in/out, error-handler)",
+        "If LLM: wire Prompt Gate (registry->auditor 12-check->register->dispatch)",
+        "Step-1 atomic smoke test",
+        "Foreman/indexer certify",
+        "Write Supabase live state; Doc Control completion register",
+        "Validate node types/typeVersions via n8n-mcp validate_workflow (no guessed params)",
+        "Complete every TODO@build field from the linked vendor doc before activation"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "Step-1 smoke passes; certified; live state in Supabase"
+      ],
+      "rollback": "disable muscle; revert",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00014-SPEC",
+      "doc_control_id": "BERM-SPEC-PODAS-SPEC-v1",
+      "execution_code": "BERM-MICH-MUSC-00014",
+      "title": "SPEC codex_review_gate: Codex 2nd-opinion PASS/REVISE/REJECT gate; Telegram notify-only digest; 24h escalation",
+      "task_type": "Muscle Spec",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "BERM-MICH-MUSC-00013-SPEC"
+      ],
+      "tools_required": [
+        "APEX Microprompter spec",
+        "Naming Authority"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "draft",
+        "APEX-MICROPROMPTER-SPEC.md"
+      ],
+      "outputs": [
+        "SPEC doc"
+      ],
+      "microtasks": [
+        "Assemble review packet (strip secrets) -> packet.json",
+        "Run scripts/review.py (OpenAI gpt-5)",
+        "Map PASS->activate / REVISE->iterate(max2) / REJECT->hold draft",
+        "Write decision to pod.approvals",
+        "Telegram notify digest (no block)"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "I/O contract+phases 0-8+content_hash gating defined; registered"
+      ],
+      "rollback": "unregister spec",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00014-BUILD",
+      "doc_control_id": "BERM-CODE-PODAS-BUILD-v1",
+      "execution_code": "BERM-MICH-MUSC-00014",
+      "title": "BUILD+SMOKE+CERTIFY codex_review_gate",
+      "task_type": "Muscle Build",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "BERM-MICH-MUSC-00014-SPEC"
+      ],
+      "tools_required": [
+        "python",
+        "Supabase MCP"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "draft"
+      ],
+      "outputs": [
+        "certified muscle"
+      ],
+      "microtasks": [
+        "Assemble review packet (strip secrets) -> packet.json",
+        "Run scripts/review.py (OpenAI gpt-5)",
+        "Map PASS->activate / REVISE->iterate(max2) / REJECT->hold draft",
+        "Write decision to pod.approvals",
+        "Telegram notify digest (no block)",
+        "Validate node types/typeVersions via n8n-mcp validate_workflow (no guessed params)",
+        "Complete every TODO@build field from the linked vendor doc before activation"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "Step-1 smoke passes; certified; live state in Supabase"
+      ],
+      "rollback": "disable muscle; revert",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00015-SPEC",
+      "doc_control_id": "BERM-SPEC-PODAS-SPEC-v1",
+      "execution_code": "BERM-MICH-MUSC-00015",
+      "title": "SPEC social_promo: Draft IG+Pinterest posts (no person names)",
+      "task_type": "Muscle Spec",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "BERM-MICH-MUSC-00014-SPEC"
+      ],
+      "tools_required": [
+        "APEX Microprompter spec",
+        "Naming Authority"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "listing",
+        "APEX-MICROPROMPTER-SPEC.md"
+      ],
+      "outputs": [
+        "SPEC doc"
+      ],
+      "microtasks": [
+        "Rule-1 reuse search; log build|adapt|reuse",
+        "Define stdin->stdout JSON contract",
+        "Map micro-steps to phases 0-8",
+        "Define content_hash gating + idempotency",
+        "Embed Governance Block + token limit",
+        "Write SPEC to standards/; Naming Authority + Doc Control register"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "I/O contract+phases 0-8+content_hash gating defined; registered"
+      ],
+      "rollback": "unregister spec",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00015-BUILD",
+      "doc_control_id": "BERM-CODE-PODAS-BUILD-v1",
+      "execution_code": "BERM-MICH-MUSC-00015",
+      "title": "BUILD+SMOKE+CERTIFY social_promo",
+      "task_type": "Muscle Build",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "BERM-MICH-MUSC-00015-SPEC"
+      ],
+      "tools_required": [
+        "OpenAI/Replicate",
+        "python",
+        "Supabase MCP"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "listing"
+      ],
+      "outputs": [
+        "certified muscle"
+      ],
+      "microtasks": [
+        "Rule-0/Rule-1 research + log build|adapt|reuse decision",
+        "Pull SPEC; confirm contract",
+        "Implement adapter (JSON in/out, error-handler)",
+        "If LLM: wire Prompt Gate (registry->auditor 12-check->register->dispatch)",
+        "Step-1 atomic smoke test",
+        "Foreman/indexer certify",
+        "Write Supabase live state; Doc Control completion register",
+        "Validate node types/typeVersions via n8n-mcp validate_workflow (no guessed params)",
+        "Complete every TODO@build field from the linked vendor doc before activation"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)",
+        "Prompt Gate 12-check before any LLM dispatch",
+        "Prepend Governance Block verbatim"
+      ],
+      "acceptance_criteria": [
+        "Step-1 smoke passes; certified; live state in Supabase"
+      ],
+      "rollback": "disable muscle; revert",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00016-SPEC",
+      "doc_control_id": "BERM-SPEC-PODAS-SPEC-v1",
+      "execution_code": "BERM-MICH-MUSC-00016",
+      "title": "SPEC registry_state: Write pod.* + Doc Control; dedup by content_hash",
+      "task_type": "Muscle Spec",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "WO-PODAS-0001"
+      ],
+      "tools_required": [
+        "APEX Microprompter spec",
+        "Naming Authority"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "stage outputs",
+        "APEX-MICROPROMPTER-SPEC.md"
+      ],
+      "outputs": [
+        "SPEC doc"
+      ],
+      "microtasks": [
+        "Rule-1 reuse search; log build|adapt|reuse",
+        "Define stdin->stdout JSON contract",
+        "Map micro-steps to phases 0-8",
+        "Define content_hash gating + idempotency",
+        "Embed Governance Block + token limit",
+        "Write SPEC to standards/; Naming Authority + Doc Control register"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "I/O contract+phases 0-8+content_hash gating defined; registered"
+      ],
+      "rollback": "unregister spec",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00016-BUILD",
+      "doc_control_id": "BERM-CODE-PODAS-BUILD-v1",
+      "execution_code": "BERM-MICH-MUSC-00016",
+      "title": "BUILD+SMOKE+CERTIFY registry_state",
+      "task_type": "Muscle Build",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "BERM-MICH-MUSC-00016-SPEC"
+      ],
+      "tools_required": [
+        "python",
+        "Supabase MCP"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "stage outputs"
+      ],
+      "outputs": [
+        "certified muscle"
+      ],
+      "microtasks": [
+        "Rule-0/Rule-1 research + log build|adapt|reuse decision",
+        "Pull SPEC; confirm contract",
+        "Implement adapter (JSON in/out, error-handler)",
+        "If LLM: wire Prompt Gate (registry->auditor 12-check->register->dispatch)",
+        "Step-1 atomic smoke test",
+        "Foreman/indexer certify",
+        "Write Supabase live state; Doc Control completion register",
+        "Validate node types/typeVersions via n8n-mcp validate_workflow (no guessed params)",
+        "Complete every TODO@build field from the linked vendor doc before activation"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "Step-1 smoke passes; certified; live state in Supabase"
+      ],
+      "rollback": "disable muscle; revert",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00017-SPEC",
+      "doc_control_id": "BERM-SPEC-PODAS-SPEC-v1",
+      "execution_code": "BERM-MICH-MUSC-00017",
+      "title": "SPEC drop_orchestrator: chain 00001->00016 single design end-to-end",
+      "task_type": "Muscle Spec",
+      "priority": "Critical",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "BERM-MICH-MUSC-00001-SPEC",
+        "BERM-MICH-MUSC-00002-SPEC",
+        "BERM-MICH-MUSC-00003-SPEC",
+        "BERM-MICH-MUSC-00004-SPEC",
+        "BERM-MICH-MUSC-00005-SPEC",
+        "BERM-MICH-MUSC-00006-SPEC",
+        "BERM-MICH-MUSC-00007-SPEC",
+        "BERM-MICH-MUSC-00008-SPEC",
+        "BERM-MICH-MUSC-00009-SPEC",
+        "BERM-MICH-MUSC-00010-SPEC",
+        "BERM-MICH-MUSC-00011-SPEC",
+        "BERM-MICH-MUSC-00012-SPEC",
+        "BERM-MICH-MUSC-00013-SPEC",
+        "BERM-MICH-MUSC-00014-SPEC",
+        "BERM-MICH-MUSC-00015-SPEC",
+        "BERM-MICH-MUSC-00016-SPEC"
+      ],
+      "tools_required": [
+        "APEX Microprompter spec"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "all muscle specs"
+      ],
+      "outputs": [
+        "DAG spec"
+      ],
+      "microtasks": [
+        "Rule-1 reuse search; log build|adapt|reuse",
+        "Define stdin->stdout JSON contract",
+        "Map micro-steps to phases 0-8",
+        "Define content_hash gating + idempotency",
+        "Embed Governance Block + token limit",
+        "Write SPEC to standards/; Naming Authority + Doc Control register"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "resumable by request_id; QC-reject skip; phases 0-8 mapped"
+      ],
+      "rollback": "unregister",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00017-BUILD",
+      "doc_control_id": "BERM-CODE-PODAS-BUILD-v1",
+      "execution_code": "BERM-MICH-MUSC-00017",
+      "title": "BUILD+CERTIFY drop_orchestrator",
+      "task_type": "Muscle Build",
+      "priority": "Critical",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "qnap",
+      "depends_on": [
+        "BERM-MICH-MUSC-00017-SPEC",
+        "BERM-MICH-MUSC-00001-BUILD",
+        "BERM-MICH-MUSC-00002-BUILD",
+        "BERM-MICH-MUSC-00003-BUILD",
+        "BERM-MICH-MUSC-00004-BUILD",
+        "BERM-MICH-MUSC-00005-BUILD",
+        "BERM-MICH-MUSC-00006-BUILD",
+        "BERM-MICH-MUSC-00007-BUILD",
+        "BERM-MICH-MUSC-00008-BUILD",
+        "BERM-MICH-MUSC-00009-BUILD",
+        "BERM-MICH-MUSC-00010-BUILD",
+        "BERM-MICH-MUSC-00011-BUILD",
+        "BERM-MICH-MUSC-00012-BUILD",
+        "BERM-MICH-MUSC-00013-BUILD",
+        "BERM-MICH-MUSC-00014-BUILD",
+        "BERM-MICH-MUSC-00015-BUILD",
+        "BERM-MICH-MUSC-00016-BUILD"
+      ],
+      "tools_required": [
+        "n8n MCP",
+        "Supabase MCP"
+      ],
+      "muscles_required": [
+        "BERM-MICH-MUSC-00001",
+        "BERM-MICH-MUSC-00002",
+        "BERM-MICH-MUSC-00003",
+        "BERM-MICH-MUSC-00004",
+        "BERM-MICH-MUSC-00005",
+        "BERM-MICH-MUSC-00006",
+        "BERM-MICH-MUSC-00007",
+        "BERM-MICH-MUSC-00008",
+        "BERM-MICH-MUSC-00009",
+        "BERM-MICH-MUSC-00010",
+        "BERM-MICH-MUSC-00011",
+        "BERM-MICH-MUSC-00012",
+        "BERM-MICH-MUSC-00013",
+        "BERM-MICH-MUSC-00014",
+        "BERM-MICH-MUSC-00015",
+        "BERM-MICH-MUSC-00016"
+      ],
+      "inputs": [
+        "all muscles built"
+      ],
+      "outputs": [
+        "1 theme -> 1 live draft"
+      ],
+      "microtasks": [
+        "Rule-0/Rule-1 research + log build|adapt|reuse decision",
+        "Pull SPEC; confirm contract",
+        "Implement adapter (JSON in/out, error-handler)",
+        "If LLM: wire Prompt Gate (registry->auditor 12-check->register->dispatch)",
+        "Step-1 atomic smoke test",
+        "Foreman/indexer certify",
+        "Write Supabase live state; Doc Control completion register",
+        "Validate node types/typeVersions via n8n-mcp validate_workflow (no guessed params)",
+        "Complete every TODO@build field from the linked vendor doc before activation"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "one theme produces one live draft listing fully automated; approval honoured"
+      ],
+      "rollback": "deactivate orchestrator",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00018-SPEC",
+      "doc_control_id": "BERM-SPEC-PODAS-SPEC-v1",
+      "execution_code": "BERM-MICH-MUSC-00018",
+      "title": "SPEC batch_spawner META-MUSCLE: theme list/tick -> spawn M orchestrator runs, fan-out/fan-in, wave cap 4, dedup, full Supabase tracking",
+      "task_type": "Muscle Spec",
+      "priority": "Critical",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "BERM-MICH-MUSC-00017-SPEC"
+      ],
+      "tools_required": [
+        "pipeline-governance master orchestrator template",
+        "APEX Microprompter spec"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "theme list|weekly tick"
+      ],
+      "outputs": [
+        "spawner SPEC"
+      ],
+      "microtasks": [
+        "Rule-1 reuse search; log build|adapt|reuse",
+        "Define stdin->stdout JSON contract",
+        "Map micro-steps to phases 0-8",
+        "Define content_hash gating + idempotency",
+        "Embed Governance Block + token limit",
+        "Write SPEC to standards/; Naming Authority + Doc Control register"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "fan-out/fan-in + wave cap 4 + per-run tracking + self-heal defined"
+      ],
+      "rollback": "unregister",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00018-BUILD",
+      "doc_control_id": "BERM-CODE-PODAS-BUILD-v1",
+      "execution_code": "BERM-MICH-MUSC-00018",
+      "title": "BUILD+CERTIFY batch_spawner (spawns + completes ALL POD work autonomously)",
+      "task_type": "Muscle Build",
+      "priority": "Critical",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "qnap",
+      "depends_on": [
+        "BERM-MICH-MUSC-00018-SPEC",
+        "BERM-MICH-MUSC-00017-BUILD"
+      ],
+      "tools_required": [
+        "n8n MCP",
+        "Supabase MCP",
+        "Telegram"
+      ],
+      "muscles_required": [
+        "BERM-MICH-MUSC-00017"
+      ],
+      "inputs": [
+        "orchestrator certified"
+      ],
+      "outputs": [
+        "N themes -> N live drafts, parallel, governed"
+      ],
+      "microtasks": [
+        "Rule-0/Rule-1 research + log build|adapt|reuse decision",
+        "Pull SPEC; confirm contract",
+        "Implement adapter (JSON in/out, error-handler)",
+        "If LLM: wire Prompt Gate (registry->auditor 12-check->register->dispatch)",
+        "Step-1 atomic smoke test",
+        "Foreman/indexer certify",
+        "Write Supabase live state; Doc Control completion register",
+        "Validate node types/typeVersions via n8n-mcp validate_workflow (no guessed params)",
+        "Complete every TODO@build field from the linked vendor doc before activation"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "weekly tick produces full drop set; wave cap 4 enforced; one Telegram digest for batch approval; watchdog covers"
+      ],
+      "rollback": "deactivate spawner; drain queue",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "WO-PODAS-0050",
+      "doc_control_id": "BERM-CODE-PODAS-0050-v1",
+      "execution_code": "",
+      "title": "Connect AutoDS account+API; map to Shopify",
+      "task_type": "Integration",
+      "priority": "Medium",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "WO-PODAS-0003"
+      ],
+      "tools_required": [
+        "AutoDS API"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "AutoDS"
+      ],
+      "outputs": [
+        "link"
+      ],
+      "microtasks": [
+        "Rule-1 reuse check",
+        "Resolve keys from ENV chain (never prompt)",
+        "Adapter w/ JSON contract + retry/error-handler",
+        "Smoke live call read-only first",
+        "Doc Control register"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "auth ok; store linked"
+      ],
+      "rollback": "disconnect",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00019-SPEC",
+      "doc_control_id": "BERM-SPEC-PODAS-SPEC-v1",
+      "execution_code": "BERM-MICH-MUSC-00019",
+      "title": "SPEC ds_product_finder: Pull AutoDS winning candidates by criteria",
+      "task_type": "Muscle Spec",
+      "priority": "Medium",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "WO-PODAS-0050"
+      ],
+      "tools_required": [
+        "APEX Microprompter spec"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "criteria"
+      ],
+      "outputs": [
+        "SPEC"
+      ],
+      "microtasks": [
+        "Rule-1 reuse search; log build|adapt|reuse",
+        "Define stdin->stdout JSON contract",
+        "Map micro-steps to phases 0-8",
+        "Define content_hash gating + idempotency",
+        "Embed Governance Block + token limit",
+        "Write SPEC to standards/; Naming Authority + Doc Control register"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "contract+phases defined"
+      ],
+      "rollback": "unregister",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00019-BUILD",
+      "doc_control_id": "BERM-CODE-PODAS-BUILD-v1",
+      "execution_code": "BERM-MICH-MUSC-00019",
+      "title": "BUILD ds_product_finder",
+      "task_type": "Muscle Build",
+      "priority": "Medium",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "BERM-MICH-MUSC-00019-SPEC"
+      ],
+      "tools_required": [
+        "python",
+        "AutoDS API"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "criteria"
+      ],
+      "outputs": [
+        "muscle"
+      ],
+      "microtasks": [
+        "Rule-0/Rule-1 research + log build|adapt|reuse decision",
+        "Pull SPEC; confirm contract",
+        "Implement adapter (JSON in/out, error-handler)",
+        "If LLM: wire Prompt Gate (registry->auditor 12-check->register->dispatch)",
+        "Step-1 atomic smoke test",
+        "Foreman/indexer certify",
+        "Write Supabase live state; Doc Control completion register",
+        "Validate node types/typeVersions via n8n-mcp validate_workflow (no guessed params)",
+        "Complete every TODO@build field from the linked vendor doc before activation"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)",
+        "Prompt Gate 12-check before any LLM dispatch",
+        "Prepend Governance Block verbatim"
+      ],
+      "acceptance_criteria": [
+        "smoke passes; certified"
+      ],
+      "rollback": "disable",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00020-SPEC",
+      "doc_control_id": "BERM-SPEC-PODAS-SPEC-v1",
+      "execution_code": "BERM-MICH-MUSC-00020",
+      "title": "SPEC ds_score_filter: Score $30-80, sell>=3x, rating, saturation; gate",
+      "task_type": "Muscle Spec",
+      "priority": "Medium",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "BERM-MICH-MUSC-00019-SPEC"
+      ],
+      "tools_required": [
+        "APEX Microprompter spec"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "candidates"
+      ],
+      "outputs": [
+        "SPEC"
+      ],
+      "microtasks": [
+        "Rule-1 reuse search; log build|adapt|reuse",
+        "Define stdin->stdout JSON contract",
+        "Map micro-steps to phases 0-8",
+        "Define content_hash gating + idempotency",
+        "Embed Governance Block + token limit",
+        "Write SPEC to standards/; Naming Authority + Doc Control register"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "contract+phases defined"
+      ],
+      "rollback": "unregister",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00020-BUILD",
+      "doc_control_id": "BERM-CODE-PODAS-BUILD-v1",
+      "execution_code": "BERM-MICH-MUSC-00020",
+      "title": "BUILD ds_score_filter",
+      "task_type": "Muscle Build",
+      "priority": "Medium",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "BERM-MICH-MUSC-00020-SPEC"
+      ],
+      "tools_required": [
+        "python",
+        "AutoDS API"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "candidates"
+      ],
+      "outputs": [
+        "muscle"
+      ],
+      "microtasks": [
+        "Rule-0/Rule-1 research + log build|adapt|reuse decision",
+        "Pull SPEC; confirm contract",
+        "Implement adapter (JSON in/out, error-handler)",
+        "If LLM: wire Prompt Gate (registry->auditor 12-check->register->dispatch)",
+        "Step-1 atomic smoke test",
+        "Foreman/indexer certify",
+        "Write Supabase live state; Doc Control completion register",
+        "Validate node types/typeVersions via n8n-mcp validate_workflow (no guessed params)",
+        "Complete every TODO@build field from the linked vendor doc before activation"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "smoke passes; certified"
+      ],
+      "rollback": "disable",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00021-SPEC",
+      "doc_control_id": "BERM-SPEC-PODAS-SPEC-v1",
+      "execution_code": "BERM-MICH-MUSC-00021",
+      "title": "SPEC ds_import_list: Import approved -> Shopify draft + auto-fulfilment",
+      "task_type": "Muscle Spec",
+      "priority": "Medium",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "BERM-MICH-MUSC-00020-SPEC",
+        "BERM-MICH-MUSC-00014-SPEC"
+      ],
+      "tools_required": [
+        "APEX Microprompter spec"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "approved"
+      ],
+      "outputs": [
+        "SPEC"
+      ],
+      "microtasks": [
+        "Rule-1 reuse search; log build|adapt|reuse",
+        "Define stdin->stdout JSON contract",
+        "Map micro-steps to phases 0-8",
+        "Define content_hash gating + idempotency",
+        "Embed Governance Block + token limit",
+        "Write SPEC to standards/; Naming Authority + Doc Control register"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "contract+phases defined"
+      ],
+      "rollback": "unregister",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "BERM-MICH-MUSC-00021-BUILD",
+      "doc_control_id": "BERM-CODE-PODAS-BUILD-v1",
+      "execution_code": "BERM-MICH-MUSC-00021",
+      "title": "BUILD ds_import_list",
+      "task_type": "Muscle Build",
+      "priority": "Medium",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "BERM-MICH-MUSC-00021-SPEC"
+      ],
+      "tools_required": [
+        "python",
+        "AutoDS API"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "approved"
+      ],
+      "outputs": [
+        "muscle"
+      ],
+      "microtasks": [
+        "Rule-0/Rule-1 research + log build|adapt|reuse decision",
+        "Pull SPEC; confirm contract",
+        "Implement adapter (JSON in/out, error-handler)",
+        "If LLM: wire Prompt Gate (registry->auditor 12-check->register->dispatch)",
+        "Step-1 atomic smoke test",
+        "Foreman/indexer certify",
+        "Write Supabase live state; Doc Control completion register",
+        "Validate node types/typeVersions via n8n-mcp validate_workflow (no guessed params)",
+        "Complete every TODO@build field from the linked vendor doc before activation"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "smoke passes; certified"
+      ],
+      "rollback": "disable",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "WO-PODAS-0060",
+      "doc_control_id": "BERM-DOC-PODAS-0060-v1",
+      "execution_code": "",
+      "title": "Post Make-MCP-connect: list scenarios, export any POD blueprints, diff vs 11175/11181, keep better",
+      "task_type": "Research",
+      "priority": "Low",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [],
+      "tools_required": [
+        "Make MCP"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "scenarios_list/get"
+      ],
+      "outputs": [
+        "decision log"
+      ],
+      "microtasks": [
+        "Rule-0/Rule-1 research + log build|adapt|reuse decision",
+        "Enumerate source",
+        "Extract + diff vs current",
+        "Log decision",
+        "No build without approval"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "scenarios enumerated; POD blueprints exported or confirmed absent"
+      ],
+      "rollback": "n/a",
+      "autonomous": false,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "WO-PODAS-0070",
+      "doc_control_id": "BERM-DOC-PODAS-0070-v1",
+      "execution_code": "",
+      "title": "Weekly schedule trigger -> BERM-MICH-MUSC-00018 (theme set -> drop batch) + manual webhook",
+      "task_type": "Orchestration",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "qnap",
+      "depends_on": [
+        "BERM-MICH-MUSC-00018-BUILD"
+      ],
+      "tools_required": [
+        "n8n MCP"
+      ],
+      "muscles_required": [
+        "BERM-MICH-MUSC-00018"
+      ],
+      "inputs": [
+        "theme set"
+      ],
+      "outputs": [
+        "cron+webhook"
+      ],
+      "microtasks": [
+        "Rule-0/Rule-1 research + log build|adapt|reuse decision",
+        "Define DAG fan-out/fan-in",
+        "Enforce wave cap 4 hard",
+        "Retry + self-heal + watchdog hook",
+        "Telegram batch digest node",
+        "Smoke end-to-end on 1 item",
+        "Doc Control register"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "weekly cron active; manual webhook live"
+      ],
+      "rollback": "disable trigger",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "WO-PODAS-0071",
+      "doc_control_id": "BERM-DOC-PODAS-0071-v1",
+      "execution_code": "",
+      "title": "Supervisor watchdog coverage for orchestrator+spawner (heartbeat, retry, Telegram alert)",
+      "task_type": "Orchestration",
+      "priority": "Medium",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "BERM-MICH-MUSC-00018-BUILD"
+      ],
+      "tools_required": [
+        "existing APEX watchdog"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "runs"
+      ],
+      "outputs": [
+        "watchdog rule"
+      ],
+      "microtasks": [
+        "Rule-0/Rule-1 research + log build|adapt|reuse decision",
+        "Define DAG fan-out/fan-in",
+        "Enforce wave cap 4 hard",
+        "Retry + self-heal + watchdog hook",
+        "Telegram batch digest node",
+        "Smoke end-to-end on 1 item",
+        "Doc Control register"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "alerts on stall; retries"
+      ],
+      "rollback": "remove rule",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "WO-PODAS-0072",
+      "doc_control_id": "BERM-DOC-PODAS-0072-v1",
+      "execution_code": "",
+      "title": "Cost-discipline guard: content_hash cache, skip unchanged regen, per-batch image-gen spend cap",
+      "task_type": "Governance",
+      "priority": "High",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "WO-PODAS-0001"
+      ],
+      "tools_required": [
+        "Supabase MCP"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "content_hash rule"
+      ],
+      "outputs": [
+        "guard"
+      ],
+      "microtasks": [
+        "Rule-0/Rule-1 research + log build|adapt|reuse decision",
+        "Define rule/gate logic",
+        "Wire into Prompt Gate / audit path",
+        "Test pass+fail cases",
+        "Doc Control register"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "no duplicate paid gen; spend cap enforced"
+      ],
+      "rollback": "relax cap",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "WO-PODAS-0073",
+      "doc_control_id": "BERM-DOC-PODAS-0073-v1",
+      "execution_code": "",
+      "title": "Run automated-review-system over drops before approval digest",
+      "task_type": "QA Review",
+      "priority": "Medium",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "BERM-MICH-MUSC-00017-BUILD"
+      ],
+      "tools_required": [
+        "automated-review-system skill"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "drops"
+      ],
+      "outputs": [
+        "review scores"
+      ],
+      "microtasks": [
+        "Rule-0/Rule-1 research + log build|adapt|reuse decision",
+        "Define scoring rubric",
+        "Run automated-review-system over outputs",
+        "Flag/route fails before approval",
+        "Log to Supabase"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "each drop scored/flagged pre-Telegram"
+      ],
+      "rollback": "skip review",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "WO-PODAS-0080",
+      "doc_control_id": "BERM-DOC-PODAS-0080-v1",
+      "execution_code": "",
+      "title": "Save 'pod-auto-studio' skill once spawner certified; POST localhost:8765/api/skills",
+      "task_type": "Docs",
+      "priority": "Medium",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "BERM-MICH-MUSC-00018-BUILD"
+      ],
+      "tools_required": [
+        "context server 8765"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "skill save rule"
+      ],
+      "outputs": [
+        "skill"
+      ],
+      "microtasks": [
+        "Rule-0/Rule-1 research + log build|adapt|reuse decision",
+        "Draft doc/runbook/skill",
+        "Cross-link refs + kill-switch",
+        "Register in Doc Control / context server",
+        "Add playbook pathway"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "saved+retrievable; playbook pathway added"
+      ],
+      "rollback": "delete skill",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    },
+    {
+      "ref": "WO-PODAS-0081",
+      "doc_control_id": "BERM-DOC-PODAS-0081-v1",
+      "execution_code": "",
+      "title": "Runbook + CLAUDE.md entry (inputs, brands, schedule, approval, kill-switch)",
+      "task_type": "Docs",
+      "priority": "Low",
+      "status": "Open",
+      "project": "BERM",
+      "namespace": "PODAS",
+      "orig": "MICH",
+      "target_machine": "gpu-workstation",
+      "depends_on": [
+        "WO-PODAS-0080"
+      ],
+      "tools_required": [
+        "operations runbook"
+      ],
+      "muscles_required": [],
+      "inputs": [
+        "ops"
+      ],
+      "outputs": [
+        "runbook"
+      ],
+      "microtasks": [
+        "Rule-0/Rule-1 research + log build|adapt|reuse decision",
+        "Draft doc/runbook/skill",
+        "Cross-link refs + kill-switch",
+        "Register in Doc Control / context server",
+        "Add playbook pathway"
+      ],
+      "governance_gates": [
+        "Rule-0 audit",
+        "Rule-1 research-first",
+        "Doc Control register pre",
+        "Naming Authority code",
+        "Doc Control register complete",
+        "Backup before live edit",
+        "Read-only-first infra",
+        "Foreman/indexer mechanical certify",
+        "Codex 2nd-opinion sign-off (PASS required to certify; fail-closed)"
+      ],
+      "acceptance_criteria": [
+        "complete; kill-switch documented"
+      ],
+      "rollback": "n/a",
+      "autonomous": true,
+      "created_at": "2026-06-09T23:11:11.508727+00:00",
+      "source": "conversation:pod-autodesign-2026-06-10",
+      "approval_authority": "Codex 2nd-opinion (gpt-5)",
+      "research_step": "Rule-0/Rule-1: check Supabase + n8n + code-artifacts + prior work + open-source templates; ADAPT if >=70% match; log decision to pod.research_log before building."
+    }
+  ],
+  "approval_authority": "Codex = OpenAI gpt-5 via second-opinion skill (scripts/review.py). Independent reviewer, different model from builder. Holds approval + certification authority. NO human gate.",
+  "revision": "v3 \u2014 platform specs verified against n8n docs + real exports + Printify API; Shopify REST product-write removed from POD path",
+  "platform_specs_verified": {
+    "verified_at": "2026-06-09T23:17:55.097304+00:00",
+    "n8n_node_versions": {
+      "code": "2 (jsCode, replaces Function)",
+      "httpRequest": "4.2",
+      "if": "2.2 (v2 conditions: operator{type,operation}, combinator)",
+      "scheduleTrigger": "1.2",
+      "splitInBatches": "3 (Loop Over Items; out0=done,out1=loop)",
+      "webhook": "2 (responseMode=responseNode)",
+      "respondToWebhook": "1.1",
+      "set": "3.4 (assignments)",
+      "merge": "3",
+      "supabase": "1",
+      "telegram": "1.2",
+      "executeCommand": "1"
+    },
+    "n8n_evidence": "n8n docs (Code node) + statistical extraction from 2061 real workflow exports (Zie619/n8n-workflows).",
+    "printify": {
+      "base": "https://api.printify.com/v1",
+      "create": "POST /shops/{shop_id}/products.json",
+      "upload": "POST /uploads/images.json",
+      "publish": "POST /shops/{shop_id}/products/{product_id}/publish.json (syncs to connected Shopify)",
+      "auth": "Bearer PAT",
+      "doc": "https://developers.printify.com/"
+    },
+    "shopify_note": "POD products are created in Printify and PUBLISHED to the connected Shopify store via Printify; do NOT use Shopify Admin REST product create (deprecated). Direct Shopify writes only on the AutoDS dropshipping track, via GraphQL Admin API \u2014 confirm at build.",
+    "removebg": "POST https://api.remove.bg/v1.0/removebg (X-Api-Key)",
+    "cloudinary": "POST https://api.cloudinary.com/v1_1/{cloud}/image/upload",
+    "codex_model": "second-opinion default gpt-5 via SECOND_OPINION_OPENAI_MODEL env; confirm current OpenAI model at build (do not hardcode).",
+    "open_items": "Every external HTTP node carries TODO@build with its doc URL; field-level bodies/credentials to be completed from those docs and validated by n8n-mcp validate_workflow before activation \u2014 never guessed."
+  }
+}
