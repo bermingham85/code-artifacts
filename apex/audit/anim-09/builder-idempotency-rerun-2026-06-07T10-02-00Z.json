@@ -1,0 +1,33 @@
+{
+  "audit_id": "anim-09-builder-idempotency-rerun-2026-06-07T10-02-00Z",
+  "phase": "ANIM-09",
+  "purpose": "Prove that the full 4-file restore is idempotent: re-running the extractor against the same transcripts with the same --restore set against the same live directory writes zero bytes and emits all-no_op_idempotent.",
+  "rerun_transcript_A": {
+    "transcript": "C:/Users/Owner/apex_governance/codex_runs/AGEN-builder-agent/AGEN-builder-agent-review-20260525T125754Z-ed0ee8d2.txt",
+    "out_dir": "AGENT_BUILD_SYSTEM/06_BUILDER_AGENT/",
+    "restore_set": ["AGEN-WKFL-builder-agent-v1.json", "AGEN-PRMPT-builder-system-prompt-v1.md", "AGEN-TEST-builder-test-plan-v1.md"],
+    "status": "OK",
+    "written_count": 0,
+    "no_op_idempotent_count": 3,
+    "rejected_count": 0,
+    "no_op_files": [
+      {"basename": "AGEN-WKFL-builder-agent-v1.json", "size_bytes": 75182, "sha256": "0e91fbbb52293c997ba572ca1f520282b938ad1202154e2f69cb3571f3e8b018"},
+      {"basename": "AGEN-PRMPT-builder-system-prompt-v1.md", "size_bytes": 17496, "sha256": "04f405ccd87ed935388fd8c936d47ca420e661d4949c11f86e9e837b74b65529"},
+      {"basename": "AGEN-TEST-builder-test-plan-v1.md", "size_bytes": 11156, "sha256": "d72243dbc6cd9b2ce804dd82bbe88cafa208a2739da230b5f9ab7460027681d7"}
+    ]
+  },
+  "rerun_transcript_B": {
+    "transcript": "C:/Users/Owner/apex_governance/codex_runs/AGEN-builder-agent/AGEN-builder-agent-review-20260525T115148Z-3da95056.txt",
+    "out_dir": "AGENT_BUILD_SYSTEM/06_BUILDER_AGENT/",
+    "restore_set": ["AGEN-SCRPT-builder-supabase-migration-v1.sql"],
+    "status": "OK",
+    "written_count": 0,
+    "no_op_idempotent_count": 1,
+    "rejected_count": 0,
+    "no_op_files": [
+      {"basename": "AGEN-SCRPT-builder-supabase-migration-v1.sql", "size_bytes": 28351, "sha256": "d9dfb5818c10d1efa346b62fdb9be6897e5f2a2730ca37a76f071e817539dd75"}
+    ]
+  },
+  "result": "PASS",
+  "interpretation": "All 4 destination files report SHA256 already-matching transcript slice; extractor performed zero writes; no rejected or missing items. This proves: (1) the BYTE-MODE extractor's existence-guard correctly identifies byte-identical destinations and short-circuits; (2) the original restore wrote the byte-exact transcript slice (no normalization drift); (3) re-running ANIM-09 is safe and produces the no-op state ANIM-08's round-3 fix introduced."
+}

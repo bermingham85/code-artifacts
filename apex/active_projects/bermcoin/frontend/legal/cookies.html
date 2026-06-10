@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cookie Policy - Shegoo</title>
+    <meta name="description" content="Shegoo Cookie Policy. Short version: we don't use tracking cookies.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --forest: #1a6b3a;
+            --cream: #faf8f4;
+            --ink: #1a1a18;
+            --gold: #c9a84c;
+        }
+        body { font-family: "DM Sans", sans-serif; background: var(--cream); color: var(--ink); line-height: 1.7; }
+        h1, h2, h3 { font-family: "Playfair Display", serif; }
+
+        nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: var(--cream); border-bottom: 1px solid rgba(26,107,58,.12); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 64px; }
+        .nav-logo { font-family: "Playfair Display", serif; font-size: 1.5rem; font-weight: 700; color: var(--forest); text-decoration: none; }
+        .nav-logo span { color: var(--gold); }
+        .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+        .nav-links a { text-decoration: none; color: var(--ink); font-size: .95rem; font-weight: 500; transition: color .2s; }
+        .nav-links a:hover { color: var(--forest); }
+        .nav-links .btn-login { background: var(--forest); color: #fff; padding: .45rem 1.2rem; border-radius: 6px; }
+        .nav-links .btn-login:hover { background: #155c30; color: #fff; }
+        .hamburger { display: none; background: none; border: none; cursor: pointer; padding: 4px; }
+        .hamburger svg { width: 28px; height: 28px; stroke: var(--ink); }
+
+        main { max-width: 760px; margin: 0 auto; padding: 100px 1.5rem 4rem; }
+        h1 { font-size: 2.2rem; color: var(--forest); margin-bottom: .5rem; }
+        .meta { color: #777; font-size: .9rem; margin-bottom: 2.5rem; }
+        h2 { font-size: 1.35rem; color: var(--forest); margin-top: 2.5rem; margin-bottom: .75rem; border-bottom: 2px solid var(--gold); padding-bottom: .3rem; }
+        p, li { font-size: 1rem; margin-bottom: .75rem; }
+        ul { padding-left: 1.5rem; margin-bottom: 1rem; }
+        li { margin-bottom: .35rem; }
+        a { color: var(--forest); }
+        strong { font-weight: 600; }
+        .highlight-box { background: #fff; border-left: 4px solid var(--gold); padding: 1rem 1.25rem; border-radius: 0 8px 8px 0; margin: 1.5rem 0; }
+        .good-news { background: rgba(26,107,58,.06); border-left: 4px solid var(--forest); padding: 1.25rem 1.5rem; border-radius: 0 8px 8px 0; margin: 2rem 0; font-size: 1.05rem; }
+
+        table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
+        th, td { text-align: left; padding: .65rem .75rem; border-bottom: 1px solid rgba(26,107,58,.12); font-size: .95rem; }
+        th { font-weight: 600; color: var(--forest); background: rgba(26,107,58,.04); }
+
+        footer { background: var(--ink); color: rgba(255,255,255,.7); padding: 2.5rem 2rem; margin-top: 4rem; }
+        .footer-inner { max-width: 960px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: start; gap: 2rem; }
+        .footer-brand { font-family: "Playfair Display", serif; font-size: 1.3rem; font-weight: 700; color: #fff; margin-bottom: .25rem; }
+        .footer-brand span { color: var(--gold); }
+        .footer-legal { font-size: .85rem; }
+        .footer-links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+        .footer-links a { color: rgba(255,255,255,.7); text-decoration: none; font-size: .85rem; transition: color .2s; }
+        .footer-links a:hover { color: var(--gold); }
+
+        @media (max-width: 640px) {
+            nav { padding: 0 1rem; }
+            .nav-links { display: none; position: absolute; top: 64px; left: 0; right: 0; background: var(--cream); flex-direction: column; padding: 1rem 1.5rem; border-bottom: 1px solid rgba(26,107,58,.12); }
+            .nav-links.open { display: flex; }
+            .hamburger { display: block; }
+            h1 { font-size: 1.6rem; }
+            main { padding-top: 84px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <a href="/" class="nav-logo">Shegoo<span>.</span></a>
+    <button class="hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/help/">Help</a>
+        <a href="/help/contact.html">Contact</a>
+        <a href="/dashboard" class="btn-login">Login</a>
+    </div>
+</nav>
+
+<main>
+    <h1>Cookie Policy</h1>
+    <p class="meta">Version 1.0 &mdash; Bermech Limited, Dublin, Ireland</p>
+
+    <div class="good-news">
+        <strong>The short version:</strong> Shegoo does not use tracking cookies. We do not run analytics. We do not serve ads. Your browsing is your business.
+    </div>
+
+    <h2>What We Use Instead</h2>
+    <p>Instead of cookies, Shegoo uses browser <strong>localStorage</strong> to remember two things:</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Purpose</th>
+                <th>Duration</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Email gate preference</td>
+                <td>Remembers your email so you do not have to re-enter it on the calculator each visit</td>
+                <td>Until you clear your browser data</td>
+            </tr>
+            <tr>
+                <td>Cookie consent preference</td>
+                <td>Remembers that you have seen and acknowledged the cookie notice</td>
+                <td>Until you clear your browser data</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p>localStorage is stored entirely in your browser. It is never sent to our servers automatically, and we cannot access it remotely.</p>
+
+    <h2>What We Do NOT Use</h2>
+    <ul>
+        <li><strong>No tracking cookies</strong> &mdash; we do not track your behaviour across pages or sessions.</li>
+        <li><strong>No third-party cookies</strong> &mdash; no advertising networks, no social media trackers.</li>
+        <li><strong>No analytics cookies</strong> &mdash; no Google Analytics, no Hotjar, no Mixpanel, nothing.</li>
+        <li><strong>No advertising cookies</strong> &mdash; we do not serve ads and never will.</li>
+    </ul>
+
+    <h2>Google Fonts</h2>
+    <p>We use Google Fonts to display our typefaces (Playfair Display and DM Sans). When your browser loads these fonts, Google may set a cookie for font caching purposes. This is a standard browser-level behaviour and is used solely to speed up font loading on return visits. We have no control over this cookie. You can learn more at <a href="https://developers.google.com/fonts/faq/privacy" target="_blank" rel="noopener">Google Fonts Privacy</a>.</p>
+
+    <h2>How to Clear localStorage</h2>
+    <p>If you want to remove the data Shegoo stores in your browser:</p>
+    <ul>
+        <li><strong>Chrome:</strong> Settings &gt; Privacy and Security &gt; Clear Browsing Data &gt; tick &ldquo;Cookies and other site data&rdquo;</li>
+        <li><strong>Firefox:</strong> Settings &gt; Privacy &amp; Security &gt; Cookies and Site Data &gt; Clear Data</li>
+        <li><strong>Safari:</strong> Preferences &gt; Privacy &gt; Manage Website Data &gt; find shegoo.money &gt; Remove</li>
+    </ul>
+    <p>Or simply open your browser&rsquo;s Developer Tools (F12), go to the Application tab, and delete the localStorage entries for shegoo.money.</p>
+
+    <h2>Questions?</h2>
+    <p>If you have any questions about our cookie practices, contact us at <a href="mailto:hello@shegoo.money">hello@shegoo.money</a> or visit our <a href="/help/contact.html">contact page</a>.</p>
+
+</main>
+
+<footer>
+    <div class="footer-inner">
+        <div>
+            <div class="footer-brand">Shegoo<span>.</span></div>
+            <p class="footer-legal">&copy; 2026 Bermech Limited, Dublin, Ireland. All rights reserved.</p>
+        </div>
+        <div class="footer-links">
+            <a href="/legal/privacy.html">Privacy</a>
+            <a href="/legal/terms.html">Terms</a>
+            <a href="/legal/cookies.html">Cookies</a>
+            <a href="/help/">Help</a>
+            <a href="/help/contact.html">Contact</a>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>

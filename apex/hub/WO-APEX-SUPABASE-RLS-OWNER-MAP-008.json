@@ -1,0 +1,72 @@
+{
+  "task_packet_version": "1.0",
+  "task_id": "WO-APEX-SUPABASE-RLS-OWNER-MAP-008",
+  "created_at": "2026-06-04T15:35:00Z",
+  "status": "READY_FOR_SQL_CAPABLE_AGENT",
+  "priority": "CRITICAL",
+  "goal": "Complete RLS-1 owner mapping and RLS-2 dependency mapping for the confirmed 71 RLS-disabled public tables before any RLS policy or grant changes.",
+  "requester": "Codex",
+  "assigned_to": "Claude or SQL-capable operator agent",
+  "source_of_truth": [
+    "docs/APEX_CONTEXT_INDEX.md",
+    "docs/APEX_ACTIVE_QUEUE.md",
+    "docs/policy/SUPABASE_SHARED_PROJECT_BOUNDARY.md",
+    "docs/policy/SUPABASE_PROJECT_ISOLATION.md",
+    "docs/policy/SUPABASE_RLS_ROLLOUT_PLAN.md",
+    "audit/2026-06-02/task_rls-0-postgrest-inventory/inventory.md"
+  ],
+  "authorization_boundary": {
+    "allowed_now": [
+      "Read SQL catalog metadata.",
+      "Read table comments, column lists, grants, policies, and row counts.",
+      "Read workflow/config references needed to identify active clients.",
+      "Run read-only sample queries only where approved and only enough to confirm owner attribution."
+    ],
+    "forbidden_without_explicit_followup_approval": [
+      "Enable or disable RLS.",
+      "Create, alter, or drop policies.",
+      "Revoke or grant privileges.",
+      "Update, insert, delete, or backfill rows.",
+      "Print secret values or raw sensitive row contents.",
+      "Treat shared agent_* or conv_* tables as APEX-only."
+    ],
+    "required_supabase_preflight": [
+      "Read docs/policy/SUPABASE_SHARED_PROJECT_BOUNDARY.md.",
+      "Read docs/policy/SUPABASE_PROJECT_ISOLATION.md.",
+      "Set APEX_BOUNDARY_DOC_READ=APEX-MB-DOC-00038-v1.0.",
+      "Run python registry/supabase_project_guard.py --expect-code APEX."
+    ]
+  },
+  "required_outputs": [
+    "RLS owner map grouped by table, project code/domain, ownership evidence, and confidence.",
+    "Dependency map showing active n8n/Make/workflow/API/client usage for each exposed table group.",
+    "Risk-ranked rollout batches with no policy SQL applied.",
+    "Tables requiring operator decision because ownership or client usage is ambiguous.",
+    "Smoke-test inventory needed before any future RLS or grant change."
+  ],
+  "minimum_queries": [
+    "List public tables, relrowsecurity, relforcerowsecurity, estimated row count, and table comment.",
+    "List grants for anon, authenticated, and service_role by table and privilege.",
+    "List existing policies by table.",
+    "List columns likely to identify ownership: project_id, user_id, owner_id, org_id, entity_id, series_id, created_by.",
+    "For shared coordination tables, count rows by project_id without printing row bodies."
+  ],
+  "success_criteria": [
+    "No database writes occurred.",
+    "Every one of the 71 RLS-disabled tables has an owner classification or explicit unknown marker.",
+    "Every table group has known or unknown active clients listed.",
+    "No raw secret values or sensitive row contents are captured.",
+    "Next RLS-3 policy drafting packet can be produced from the owner/dependency map."
+  ],
+  "rollback_plan": "No production changes are authorized by this packet. If an accidental write is attempted, stop immediately, record the command and result, and escalate with the affected object name and transaction/statement evidence.",
+  "blocker_policy": {
+    "stop_for": [
+      "Missing SQL metadata access",
+      "Authorization uncertainty",
+      "Need to inspect sensitive row contents",
+      "Any proposed RLS/grant/policy write",
+      "Ambiguous table ownership that cannot be resolved from metadata or safe aggregate counts"
+    ],
+    "safe_fallback_path": "Produce a partial owner/dependency map with unknowns and do not advance to policy drafting."
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "ref_code": "APEX-MB-WF-00003",
+  "name": "PH-08 Supervisor Watchdog — GPU deployment",
+  "type": "WF",
+  "originator": "MB",
+  "project": "APEX",
+  "version": "1.0",
+  "status": "COMPLETED",
+  "created_at": "2026-04-19T17:00:00Z",
+  "completed_at": "2026-04-19T17:40:00Z",
+  "executed_by": "claude.ai via Desktop Commander on DESKTOP-A2MF76F (GPU, TS 100.95.160.48)",
+  "phase": "PH-08",
+  "context": {
+    "goal": "Close PH-08 (Supervisor Watchdog persistence). Canonical APEX estate lives on QNAP \\\\192.168.50.246\\Automations\\apex\\. Laptop (original intended host) is unreliable for always-on operation. GPU is always-on and has network line-of-sight to both QNAP and Internet.",
+    "previous_state": "Watchdog code written in March 2026 used hardcoded C:\\Users\\bermi\\Projects paths (laptop-only). Never registered with Task Scheduler. Supervisor required manual launch after every boot.",
+    "root_cause_prior_build": "wmic deprecated on Windows 11 24H2 builds — the prior watchdog's process-detection helper silently returned 'assume alive' for every check, meaning it would never restart supervisor even when dead."
+  },
+  "implementation": [
+    "Built portable watchdog_gpu.py v1.1 (ref APEX-MB-PY-00011): env-driven APEX_ROOT, psutil-based process scan, Telegram-direct alerts (no ClaudeClaw dependency), state-transition alerting for n8n.",
+    "Fixed SyntaxWarning on UNC-path docstring with raw-string prefix.",
+    "Deployed to \\\\192.168.50.246\\Automations\\apex\\watchdog\\watchdog_gpu.py (canonical estate).",
+    "Created APEX-MB-CFG-00001 run_watchdog.bat wrapper pinning Python 3.11 (which has psutil+requests) and redirecting output to QNAP log.",
+    "Registered Windows Task Scheduler job APEX-Watchdog: every 5 minutes under desktop-a2mf76f\\owner (no elevation required, inherits user env for TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID)."
+  ],
+  "verification": {
+    "manual_check_run": "python watchdog_gpu.py --check returned supervisor=DOWN, n8n=OK (correct — supervisor was not running pre-bootstrap).",
+    "bootstrap_run": "Scheduled task fired, watchdog detected DOWN, started supervisor — confirmed running as PID 21440, Python 3.11.",
+    "recovery_test": "Killed supervisor PID 21440. Triggered APEX-Watchdog manually. New supervisor spawned as PID 39196 within 10s. State file updated.",
+    "log_location": "\\\\192.168.50.246\\Automations\\apex\\logs\\watchdog_task.log (cumulative) and \\\\192.168.50.246\\Automations\\apex\\logs\\watchdog.log (Python logger).",
+    "state_file": "\\\\192.168.50.246\\Automations\\apex\\watchdog_state.json"
+  },
+  "known_limitations": [
+    "APEX-Supervisor as a separate scheduled task was NOT created — /sc ONSTART requires elevation. Not needed: the watchdog handles supervisor restart on its first post-boot cycle (max 5-minute delay).",
+    "Telegram env vars are User-scope; inherited by the scheduled task running as Owner. If the task is ever migrated to SYSTEM account, the env vars must be promoted to Machine scope.",
+    "If the QNAP share is unreachable, the scheduled task will simply fail that cycle — no local fallback. Acceptable: n8n (on QNAP) is down in that scenario anyway, and 5 min later another attempt will be made."
+  ],
+  "artefacts_registered": [
+    "APEX-MB-PY-00011 watchdog_gpu.py v1.1",
+    "APEX-MB-CFG-00001 run_watchdog.bat",
+    "APEX-MB-CFG-00002 run_supervisor.bat (reserved, not scheduled)"
+  ],
+  "phase_status": "PH-08 CERTIFIED — supervisor now auto-recovers from crashes and from cold-start."
+}

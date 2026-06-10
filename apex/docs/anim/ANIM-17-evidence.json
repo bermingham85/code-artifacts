@@ -1,0 +1,113 @@
+{
+  "phase": "ANIM-17",
+  "title": "FalCloud tier env-key resolution via X:/env_sync",
+  "spec_path": "apex/docs/spec/SPEC-ANIM-17.md",
+  "branch": "phase/ANIM-17-fal-key",
+  "doctrine": ["P3", "R15", "R16", "R19", "R20", "O2", "O6", "O9"],
+  "schema_changes": {
+    "ANIM-05-tier-config.json": {
+      "schema_version_before": 1,
+      "schema_version_after": 2,
+      "FalCloud_entry_change": {
+        "before": {
+          "status": "OPERATOR_GATED",
+          "blocker": "G9 — fal.ai key-resolution route TBD; key NOT in env_sync; not pursuable autonomously"
+        },
+        "after": {
+          "status": "ENV_KEY_GATED",
+          "requires_env_key": "FAL_AI_API_KEY",
+          "requires_env_key_from_env_sync_path": "X:/env_sync/user_portable.json",
+          "requires_env_key_field": "FAL_AI_API_KEY",
+          "shim_status": "PENDING",
+          "shim_blocker": "fal.ai animation-agent wrapper script not yet built; ANIM-17 closes the key-resolution gate only — shim implementation is a follow-on phase",
+          "wrapper_invocation": null
+        }
+      }
+    },
+    "muscle_video_agent.py": {
+      "ref_code": "APEX-MB-PY-00114",
+      "new_helpers": [
+        "_key_fingerprint(key) -> dict (fingerprint + key_sha256_first_12 + key_length)",
+        "resolve_env_key_from_env_sync(env_sync_path, field) -> dict (probe with non-leaking output)",
+        "effective_tier_status(tier_name, cfg) -> dict (runtime status incorporating env-key probe)"
+      ],
+      "new_cli": ["--probe-key <tier>"],
+      "new_exit_codes": {"TIER_KEY_OK_SHIM_PENDING": 14},
+      "anim17_security_note": "agent never emits the raw key bytes. Only fingerprint (first4:last4) + sha256[:12] + key_length are exposed in probe/plan output. resolver strips key from any result dict before record."
+    }
+  },
+  "happy_path_runs": {
+    "probe_key": {
+      "command": "python apex/registry/muscle_video_agent.py --probe-key FalCloud",
+      "result": {
+        "tier": "FalCloud",
+        "effective_status": "KEY_OK_SHIM_PENDING",
+        "key_resolution": {
+          "status": "OK",
+          "fingerprint": "95de:0714",
+          "key_sha256_first_12": "be61d3851aac",
+          "key_length": 69,
+          "env_sync_path": "X:/env_sync/user_portable.json",
+          "field": "FAL_AI_API_KEY"
+        }
+      },
+      "exit": 0
+    },
+    "plan_tier_falcloud": {
+      "command": "python apex/registry/muscle_video_agent.py --plan-tier FalCloud --shot 1",
+      "result_status": "TIER_KEY_OK_SHIM_PENDING",
+      "exit": 14,
+      "shim_blocker": "fal.ai animation-agent wrapper script not yet built; ANIM-17 closes the key-resolution gate only — shim implementation is a follow-on phase"
+    },
+    "regression_plan_tier_wan22": {
+      "command": "python apex/registry/muscle_video_agent.py --plan-tier Wan22 --shot 1 --scene MagicalRealmPlayground",
+      "result_status": "PLAN",
+      "exit": 0,
+      "note": "non-env-keyed tiers unchanged; key_resolution=null in output"
+    }
+  },
+  "negative_path_evidence_file": "apex/docs/anim/ANIM-17-evidence-probes.json",
+  "negative_path_summary": {
+    "ENV_SYNC_PATH_MISSING": "fires when env_sync file does not exist",
+    "ENV_SYNC_UNPARSEABLE": "fires on non-JSON content OR top-level non-object JSON (array/string/etc.)",
+    "ENV_KEY_MISSING": "fires when env_sync file is a valid object but the named field is absent",
+    "ENV_KEY_NOT_STRING": "fires when the field exists but is not a string (e.g. integer)",
+    "ENV_KEY_EMPTY": "fires when the field is present but the empty string",
+    "OK (live env_sync)": "9-char fingerprint 95de:0714 + 12-hex sha prefix; key length 69",
+    "effective_tier_status_pending_shim": "FalCloud cfg with shim_status=PENDING returns KEY_OK_SHIM_PENDING with fingerprint exposed and no raw key bytes",
+    "effective_tier_status_shim_ready": "FalCloud cfg with shim_status=READY returns READY (for the future post-shim state)"
+  },
+  "leak_check": {
+    "verification": "evidence-emit harness scans this file for the full key prefix (the UUID-shaped part) and the full key suffix (the 32-hex part); only the approved fingerprint (95de:0714), sha256[:12] (be61d3851aac), and key_length (69) appear here. Full prefix/suffix literals are not stored in this evidence file.",
+    "method": "string search at evidence-mint time; failure aborts the harness. Patterns are computed at runtime by reading the env_sync value and assembling the search needles in process memory only — they are never written to this evidence file.",
+    "result": "PASS",
+    "anim17_r1_F1_F2_fix_note": "earlier draft of this evidence file (and SPEC §Inputs) literally interpolated the full key prefix and suffix strings as 'verification needles'; r1 F-1/F-2 caught the violation. Replaced with approved fingerprint-only references."
+  },
+  "security_review": {
+    "secret_handling": "raw key bytes live in process memory only during resolve_env_key_from_env_sync() return → effective_tier_status() consumption. resolver returns include 'key' for inline use; all downstream consumers (plan_tier, --probe-key CLI, --list-tiers annotation) strip 'key' before json.dumps emission. Negative-paths probe verifies this stripping discipline.",
+    "exposure_surface": ["fingerprint (first4:last4)", "key_sha256_first_12 (12 hex chars)", "key_length (integer)"],
+    "non_exposed": ["raw key bytes", "any substring of the key longer than 4 chars at either end"],
+    "env_sync_location_acceptability": "X:/env_sync/user_portable.json is already NAS-backed per existing feedback_settings_secrets_hygiene memory; ANIM-17 references the path but does not widen the leakage surface; key never copied to repo or non-X locations."
+  },
+  "open_followons": [
+    "ANIM-18 (or later): build the fal.ai animation-agent shim — wraps the resolved key + shot-list + storyboard payload and submits to fal.ai. On shim completion, ANIM-05 tier_config.FalCloud.shim_status flips PENDING -> READY, and effective_tier_status() resolves FalCloud to READY → --plan-tier FalCloud returns PLAN."
+  ],
+  "codex_runs": [
+    {"round": 1, "transcript": "apex_governance/codex_runs/ANIM-17/round1.txt", "high_findings": 2, "med_findings": 0, "low_findings": 2, "fixed_in_commit": "cf6bda1 [ANIM-17] Codex round-1 fix (F-1 SPEC §Inputs key-substring leak redacted to fingerprint-only; F-2 evidence leak_check.verification key-substring needles replaced with descriptive labels; F-3 effective_tier_status failure key_resolution normalized; F-4 codex_runs ledger pattern adopted)"},
+    {"round": 2, "transcript": "apex_governance/codex_runs/ANIM-17/round2.txt", "high_findings": 0, "med_findings": 1, "low_findings": 2, "fixed_in_commit": "bfa6bea [ANIM-17] Codex round-2 fix (F-5 tier_status in shim_pending path; F-6 UnicodeDecodeError+OSError -> ENV_SYNC_UNREADABLE; F-7 R1 SHA backfill cf6bda1)"},
+    {"round": 3, "transcript": "apex_governance/codex_runs/ANIM-17/round3.txt", "high_findings": 0, "med_findings": 0, "low_findings": 0, "fixed_in_commit": null, "outcome": "No findings — silent-twice CLOSED with R2+R3 both 0 HIGH."}
+  ],
+  "silent_twice_progress": {
+    "rule": "Two consecutive HIGH-empty rounds = closed.",
+    "round_1_high_count": 2,
+    "round_2_high_count": 0,
+    "round_3_high_count": 0,
+    "closed_at_rounds": [2, 3],
+    "fix_rounds_used": 2,
+    "fix_round_cap_R16": 5,
+    "comment": "Tight close. R1 caught two real HIGHs (secret leakage in spec + evidence) which were genuine doctrine violations — fixed at cf6bda1. R2 added robustness (tier_status field + I/O exception handling). R3 fully silent — no findings across HIGH/MED/LOW. Phase ready for cert + PR."
+  },
+  "ledger_convention": "Per ANIM-14 chain-ledger convention: each round's fixed_in_commit is unknowable inside the commit it introduces; the next commit backfills the SHA. HIGH-empty rounds without fix commits omit the SHA field. Documented in detail in apex/docs/anim/ANIM-14-evidence.json:ledger_convention.",
+  "built_at": "2026-06-07T13:40:00+00:00",
+  "last_updated_at": "2026-06-07T13:49:00+00:00"
+}

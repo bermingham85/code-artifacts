@@ -1,0 +1,23 @@
+{
+  "phase": "ANIM-02",
+  "tool": "kohya_ss",
+  "root": "C:\\Users\\Owner\\Tools\\kohya_ss",
+  "verify": {
+    "ok": true,
+    "structure_ok": true,
+    "import_ok": false,
+    "import_note": "deferred \u2014 sd-scripts deps (torch/accelerate/diffusers) not installed; rerun without --skip-deps when LoRA training is actually needed",
+    "probe": {
+      "cmd": [
+        "C:\\Program Files\\Python313\\python.exe",
+        "-c",
+        "import sys; sys.path.insert(0, r'C:\\Users\\Owner\\Tools\\kohya_ss\\sd-scripts'); import library.train_util as t; print('OK', t.__file__)"
+      ],
+      "cwd": null,
+      "exit": 1,
+      "stdout_tail": "",
+      "stderr_tail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n    import sys; sys.path.insert(0, r'C:\\Users\\Owner\\Tools\\kohya_ss\\sd-scripts'); import library.train_util as t; print('OK', t.__file__)\n                                                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Owner\\Tools\\kohya_ss\\sd-scripts\\library\\train_util.py\", line 25, in <module>\n    import toml\nModuleNotFoundError: No module named 'toml'\n"
+    }
+  },
+  "timestamp": "2026-06-07T05-15-52Z"
+}

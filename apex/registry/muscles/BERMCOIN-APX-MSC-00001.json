@@ -1,0 +1,30 @@
+{
+  "id": "BERMCOIN-APX-MSC-00001",
+  "name": "stripe-supabase-magic-link-onboard",
+  "project": "BERMCOIN",
+  "version": "1.0.0",
+  "description": "Stripe Checkout completed webhook triggers Supabase member row creation and magic-link email dispatch. Handles idempotent re-processing and maps Stripe price IDs to plan tiers.",
+  "trigger": "stripe.checkout.session.completed webhook",
+  "inputs": [
+    "stripe_session_id",
+    "customer_email",
+    "price_id"
+  ],
+  "outputs": [
+    "member_id",
+    "magic_link_url"
+  ],
+  "dependencies": [
+    "supabase",
+    "stripe",
+    "brevo"
+  ],
+  "n8n_workflows": [
+    "WF-01 Bermcoin Onboarding"
+  ],
+  "tables": [
+    "members"
+  ],
+  "created": "2026-04-11",
+  "status": "active"
+}

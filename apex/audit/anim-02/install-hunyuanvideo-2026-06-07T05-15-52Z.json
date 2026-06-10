@@ -1,0 +1,11 @@
+{
+  "phase": "ANIM-02",
+  "tool": "HunyuanVideoWrapper",
+  "verify": {
+    "ok": true,
+    "node_dir": "C:\\ComfyUI\\custom_nodes\\ComfyUI-HunyuanVideoWrapper",
+    "has_init_py": true,
+    "has_nodes_py": true
+  },
+  "timestamp": "2026-06-07T05-15-52Z"
+}

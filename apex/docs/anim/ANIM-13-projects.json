@@ -1,0 +1,32 @@
+{
+  "phase": "ANIM-13",
+  "schema_version": 2,
+  "doctrine_note": "Project bindings for the Shot/Storyboard agent. ANIM-14 hoists character_markers + provenance to the ANIM-03 reference-pack manifest's per-character entry; future project bindings should leave character_markers* out and let the storyboard agent resolve them from ANIM-03. Project bindings still own sections + sections_provenance (per-song) and the lyrics path. scene_markers / style_anchor / prompt_rules continue to be read from ANIM-04-scene-pack-manifest.json. The agent never parses character bibles for these strings.",
+  "anim14_note": "schema_version bumped from 1 → 2 when grog_playground's character_markers + provenance triple were removed; the storyboard agent now resolves them by lookup in ANIM-03-reference-pack-manifest.json:characters['grog']. The new exit codes 13 / CHARACTER_MARKERS_NOT_FOUND + CHARACTER_MARKERS_MANIFEST_PARTIAL + CHARACTER_MARKERS_SOURCE_CONFLICT cover the new failure modes. A project binding MAY still override by carrying its own marker block; if both are present, the agent cross-checks both for byte-equal marker text.",
+  "projects": {
+    "grog_playground": {
+      "brand": "Jesse-Adventures",
+      "character": "grog",
+      "scene": "MagicalRealmPlayground",
+      "song_title": "too big for the playground (piano power Ballad) Remix",
+      "lyrics_timestamped_path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/lyrics_timestamped.json",
+      "gold_shot_list_path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/shot_list.json",
+      "duration_seconds": 238.9,
+      "character_markers_note": "ANIM-14: removed from this binding; resolved at runtime from apex/docs/anim/ANIM-03-reference-pack-manifest.json:characters['grog'].character_markers + provenance triple. The resolved value + provenance fields must byte-equal the prior on-record values (which they do: the ANIM-03 entry was backfilled with the same source_path, field, sha256, and verbatim marker text).",
+      "sections_provenance_source_path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/shot_list.json",
+      "sections_provenance_field": "sections",
+      "f6_r5_note": "sections are present below for human-readable diff, but at runtime the agent re-reads them from the named source field and requires verbatim equality. Mismatch -> SECTIONS_VALUE_MISMATCH (exit 12).",
+      "sections": [
+        {"name": "intro", "start": 0.0, "end": 11.5, "energy": "LOW", "mood": "piano intro, establishing"},
+        {"name": "verse1", "start": 11.5, "end": 51.4, "energy": "MED", "mood": "childhood memories, longing, flashback"},
+        {"name": "chorus1", "start": 51.4, "end": 84.4, "energy": "HIGH", "mood": "heartbreak, rejection, resilience"},
+        {"name": "gap1", "start": 84.4, "end": 88.9, "energy": "LOW", "mood": "instrumental interstitial"},
+        {"name": "verse2", "start": 88.9, "end": 129.1, "energy": "MED", "mood": "school memories, humiliation, dreams"},
+        {"name": "chorus2", "start": 129.1, "end": 162.3, "energy": "HIGH", "mood": "frustration, determination"},
+        {"name": "gap2", "start": 162.3, "end": 165.1, "energy": "LOW", "mood": "instrumental interstitial"},
+        {"name": "outro", "start": 165.1, "end": 227.2, "energy": "HIGH", "mood": "resolution, building, triumph"},
+        {"name": "fade", "start": 227.2, "end": 238.9, "energy": "LOW", "mood": "peace, completion"}
+      ]
+    }
+  }
+}

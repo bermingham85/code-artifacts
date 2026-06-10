@@ -1,0 +1,756 @@
+#!/usr/bin/env python3
+"""APEX-MB-PY-00114 muscle_video_agent.py
+
+Video agent — S6 image-to-video routing + clip catalog.
+
+Modes:
+  --list-tiers
+  --catalog <scene-slug> [--force]
+  --plan-tier <Wan22|LTX|Hunyuan|FalCloud> --shot <id> [--scene <slug>]
+
+The live render path is delegated to the existing wrapper
+muscle_music_video.py for Wan22/LTX/Hunyuan, or to a fal.ai shim (operator-gated G9).
+The agent itself does not invoke heavy renders; --plan-tier is a dry-run plan.
+"""
+from __future__ import annotations
+import argparse
+import datetime
+import hashlib
+import json
+import os
+import re
+import sys
+from pathlib import Path
+
+SLUG_RE = re.compile(r"^[A-Z][A-Za-z0-9]{0,31}$")
+TIER_RE = re.compile(r"^(Wan22|LTX|Hunyuan|FalCloud)$")
+SHOT_ID_RE = re.compile(r"^[a-z0-9][a-z0-9_-]{0,31}$")
+
+REPO_ROOT = Path(os.environ.get("APEX_REPO", "."))
+TIER_CONFIG_PATH = REPO_ROOT / "apex/docs/anim/ANIM-05-tier-config.json"
+MANIFEST_PATH = REPO_ROOT / "apex/docs/anim/ANIM-05-clip-pack-manifest.json"
+AUDIT_ROOT = REPO_ROOT / "apex/audit/anim-05"
+
+# Per-scene clip-source bindings: clip root + shot list + character + brand.
+SCENE_BINDINGS = {
+    "MagicalRealmPlayground": {
+        "clip_root": Path(r"X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips"),
+        "shot_list_json": Path(r"X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/shot_list.json"),
+        "character": "grog",
+        "brand": "Jesse-Adventures",
+        "source": "Wan2.2 i2v two-stage MoE (per PHASE_STATE session_2026_04_01_mv)",
+    },
+}
+
+
+def sha256_of(p: Path, chunk: int = 1 << 20) -> str:
+    h = hashlib.sha256()
+    with p.open("rb") as f:
+        while True:
+            b = f.read(chunk)
+            if not b:
+                break
+            h.update(b)
+    return h.hexdigest()
+
+
+def load_tier_config() -> dict:
+    if not TIER_CONFIG_PATH.is_file():
+        return {"tiers": {}}
+    return json.loads(TIER_CONFIG_PATH.read_text(encoding="utf-8"))
+
+
+# ANIM-17: env-key resolver for tiers that need a cloud-API secret.
+# The resolved key bytes stay in process memory only; agent output exposes
+# a non-reversible fingerprint (first4:last4 of the key + first 12 hex of
+# sha256). The env_sync path itself is authoritative — never copy the key
+# elsewhere.
+
+def _key_fingerprint(key: str) -> dict:
+    if len(key) >= 8:
+        prefix = key[:4]
+        suffix = key[-4:]
+    else:
+        # very short keys: redact entirely
+        prefix = "****"
+        suffix = "****"
+    h = hashlib.sha256(key.encode("utf-8")).hexdigest()
+    return {
+        "fingerprint": f"{prefix}:{suffix}",
+        "key_sha256_first_12": h[:12],
+        "key_length": len(key),
+    }
+
+
+def resolve_env_key_from_env_sync(env_sync_path: str, field: str) -> dict:
+    """Read a named field from a JSON env_sync file. Never emits the key."""
+    p = Path(env_sync_path)
+    if not p.is_file():
+        return {"status": "ENV_SYNC_PATH_MISSING",
+                "env_sync_path": env_sync_path}
+    try:
+        # env_sync files are emitted with a UTF-8 BOM on Windows; use the
+        # BOM-tolerant codec so the resolver doesn't false-fail on legal
+        # input. The actual decoded text is identical with or without BOM.
+        text = p.read_text(encoding="utf-8-sig")
+    except (UnicodeDecodeError, OSError) as e:
+        # ANIM-17 r2 F-6 fix: surface structured failure for non-decodable
+        # bytes or I/O errors (locked file, permission, etc.) rather than
+        # letting the CLI crash with an unstructured stack.
+        return {"status": "ENV_SYNC_UNREADABLE",
+                "env_sync_path": env_sync_path,
+                "error": f"{type(e).__name__}: {e}"}
+    try:
+        data = json.loads(text)
+    except json.JSONDecodeError as e:
+        return {"status": "ENV_SYNC_UNPARSEABLE",
+                "env_sync_path": env_sync_path, "error": str(e)}
+    if not isinstance(data, dict):
+        return {"status": "ENV_SYNC_UNPARSEABLE",
+                "env_sync_path": env_sync_path,
+                "error": f"top-level JSON must be an object; got {type(data).__name__}"}
+    if field not in data:
+        return {"status": "ENV_KEY_MISSING",
+                "env_sync_path": env_sync_path, "field": field}
+    val = data[field]
+    if not isinstance(val, str):
+        return {"status": "ENV_KEY_NOT_STRING",
+                "env_sync_path": env_sync_path, "field": field,
+                "actual_type": type(val).__name__}
+    if not val:
+        return {"status": "ENV_KEY_EMPTY",
+                "env_sync_path": env_sync_path, "field": field}
+    fp = _key_fingerprint(val)
+    return {"status": "OK", "key": val, **fp,
+            "env_sync_path": env_sync_path, "field": field}
+
+
+def effective_tier_status(tier_name: str, cfg: dict) -> dict:
+    """Compute runtime status of a tier, resolving env-key requirement if any.
+
+    Returns a dict with effective_status + optional key_resolution sub-dict.
+    The full key value is NEVER included; only fingerprint + length + sha
+    prefix (12 hex). When effective_status reaches READY the caller may
+    proceed with plan emission; KEY_OK_SHIM_PENDING is a partial gate
+    surfaced as exit 14.
+    """
+    req_key = cfg.get("requires_env_key")
+    if not req_key:
+        # legacy path — static status drives the tier (no env probe)
+        return {"effective_status": cfg.get("status"),
+                "key_resolution": None}
+    env_path = cfg.get("requires_env_key_from_env_sync_path")
+    env_field = cfg.get("requires_env_key_field")
+    if not env_path or not env_field:
+        return {"effective_status": "ENV_KEY_CONFIG_INCOMPLETE",
+                "key_resolution": {
+                    "status": "MISSING_RESOLUTION_PATH",
+                    "required_fields": [
+                        "requires_env_key_from_env_sync_path",
+                        "requires_env_key_field",
+                    ]}}
+    probe = resolve_env_key_from_env_sync(env_path, env_field)
+    if probe.get("status") != "OK":
+        # ANIM-17 r1 F-3 fix: normalize the failure key_resolution to a
+        # fixed schema {status, fingerprint=None, plus approved diagnostics}
+        # so downstream consumers can rely on the field shape. Drop the raw
+        # key (defense in depth) and avoid leaking probe internals.
+        approved_failure_diag = {
+            k: probe.get(k) for k in
+            ("env_sync_path", "field", "error", "actual_type")
+            if probe.get(k) is not None
+        }
+        return {"effective_status": "ENV_KEY_GATED",
+                "key_resolution": {
+                    "status": probe.get("status"),
+                    "fingerprint": None,
+                    **approved_failure_diag,
+                },
+                "blocker": cfg.get("blocker"),
+                "tier_static_status": cfg.get("status")}
+    # Key resolved successfully. Strip the raw key from output.
+    fp = {k: probe[k] for k in
+          ("fingerprint", "key_sha256_first_12", "key_length",
+           "env_sync_path", "field")}
+    if cfg.get("shim_status") != "READY":
+        return {"effective_status": "KEY_OK_SHIM_PENDING",
+                "key_resolution": {"status": "OK", **fp},
+                "shim_blocker": cfg.get("shim_blocker"),
+                "tier_static_status": cfg.get("status")}
+    return {"effective_status": "READY",
+            "key_resolution": {"status": "OK", **fp},
+            "tier_static_status": cfg.get("status")}
+
+
+def validate_slug(slug: str) -> dict | None:
+    if not SLUG_RE.match(slug):
+        return {"slug": slug, "status": "INVALID_SLUG",
+                "expected_regex": SLUG_RE.pattern}
+    return None
+
+
+def discover_clips(scene_slug: str) -> list[Path]:
+    """Discover MP4 clips under the scene's clip root. F-4 r1 fix: reject symlinks
+    outright (lstat().is_symlink()) so the resolved-target window between check and
+    hash cannot be exploited; non-symlink files are hashed on the regular path."""
+    binding = SCENE_BINDINGS.get(scene_slug)
+    if not binding:
+        return []
+    root = binding["clip_root"]
+    if not root.is_dir():
+        return []
+    try:
+        root_resolved = root.resolve(strict=True)
+    except (FileNotFoundError, OSError):
+        return []
+    out: list[Path] = []
+    for p in sorted(root.glob("*.mp4")):
+        try:
+            if p.is_symlink():
+                continue  # F-4 r1: refuse symlinks outright; no TOCTOU window
+            target = p.resolve(strict=True)
+        except (FileNotFoundError, OSError):
+            continue
+        try:
+            if Path(os.path.commonpath([str(target), str(root_resolved)])) != root_resolved:
+                continue
+        except ValueError:
+            continue
+        out.append(p)
+    return out
+
+
+def load_shot_metadata(scene_slug: str) -> dict:
+    """Read shot_list.json and return {id_str: {start, end, duration}} per shot."""
+    binding = SCENE_BINDINGS.get(scene_slug)
+    if not binding:
+        return {}
+    sp = binding["shot_list_json"]
+    if not sp.is_file():
+        return {}
+    data = json.loads(sp.read_text(encoding="utf-8"))
+    out: dict[str, dict] = {}
+    for s in data.get("shots", []):
+        sid = str(s.get("id"))
+        start = s.get("start")
+        end = s.get("end")
+        if start is not None and end is not None:
+            out[sid] = {"start": start, "end": end, "duration_seconds": round(end - start, 3)}
+    return out
+
+
+_CLIP_INDEX_RE = re.compile(r"clip_(\d+)\.mp4$", re.IGNORECASE)
+
+
+def annotate_clip(p: Path, production_set_max: int, index: int,
+                  scene_binding: dict, shot_meta: dict,
+                  root_resolved: Path) -> dict | None:
+    """Hash and stat the clip via a single open file handle (bytes-to-fd binding) and
+    re-validate the path's containment AFTER the read so a swap mid-hash is detected.
+
+    F-6 r2 + F-1 r4 TOCTOU fixes:
+      1. lstat to refuse pre-resolve symlink.
+      2. Resolve target + commonpath check (pre-hash).
+      3. os.open + fstat for size (handle is bound to one inode for the lifetime of read).
+      4. Read+hash from the open fd (no path re-traversal during read).
+      5. After close: re-resolve + re-commonpath. If the path moved or its target no
+         longer resolves under root_resolved, drop the entry (recorded bytes are then
+         not asserted to be under the trusted root).
+
+    On Windows, Python lacks O_NOFOLLOW / openat for fully atomic close, but the
+    handle-bound read + pre-and-post resolve checks shrink the TOCTOU window to the
+    open() call only, with the post-check detecting swaps.
+    """
+    try:
+        if p.is_symlink():
+            return None
+        target_pre = p.resolve(strict=True)
+        if Path(os.path.commonpath([str(target_pre), str(root_resolved)])) != root_resolved:
+            return None
+        fd = os.open(str(target_pre), os.O_RDONLY | getattr(os, "O_BINARY", 0))
+        try:
+            st = os.fstat(fd)
+            size = st.st_size
+            h = hashlib.sha256()
+            while True:
+                b = os.read(fd, 1 << 20)
+                if not b:
+                    break
+                h.update(b)
+            digest = h.hexdigest()
+        finally:
+            os.close(fd)
+        # Post-read re-validation: target path and its containment must still hold.
+        target_post = p.resolve(strict=True)
+        if target_post != target_pre:
+            return None
+        if Path(os.path.commonpath([str(target_post), str(root_resolved)])) != root_resolved:
+            return None
+        target = target_post
+    except (FileNotFoundError, OSError, ValueError):
+        return None
+    name = p.name
+    m = _CLIP_INDEX_RE.search(name)
+    shot_id = None
+    duration = None
+    if m:
+        clip_num = int(m.group(1))
+        shot_id = str(clip_num)
+        if shot_id in shot_meta:
+            duration = shot_meta[shot_id]["duration_seconds"]
+    return {
+        "path": str(p).replace("\\", "/"),
+        "resolved_path": str(target).replace("\\", "/"),
+        "sha256": digest,
+        "size": size,
+        "role": "production" if index < production_set_max else "extra",
+        "index": index,
+        "shot_id": shot_id,
+        "character": scene_binding.get("character"),
+        "scene_slug": scene_binding.get("scene_slug_self"),
+        "brand": scene_binding.get("brand"),
+        "source": scene_binding.get("source"),
+        "duration_seconds": duration,
+        "duration_source": (
+            f"{scene_binding['shot_list_json'].name}:shots[id={shot_id}]"
+            if duration is not None else "unmapped"
+        ),
+    }
+
+
+def catalog_scene(scene_slug: str, force: bool) -> dict:
+    bad = validate_slug(scene_slug)
+    if bad:
+        return bad
+    if scene_slug not in SCENE_BINDINGS:
+        return {"slug": scene_slug, "status": "UNKNOWN_SCENE_ROOT",
+                "known_scenes": sorted(SCENE_BINDINGS.keys())}
+
+    manifest = (json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
+                if MANIFEST_PATH.is_file()
+                else {"phase": "ANIM-05", "schema_version": 2, "scenes": {}})
+    if scene_slug in manifest.get("scenes", {}) and not force:
+        return {"slug": scene_slug, "status": "WILL_OVERWRITE_REFUSED",
+                "existing_entry": str(SCENE_BINDINGS[scene_slug]["clip_root"])}
+
+    clips = discover_clips(scene_slug)
+    if not clips:
+        return {"slug": scene_slug, "status": "CLIP_CATALOG_EMPTY",
+                "clip_root": str(SCENE_BINDINGS[scene_slug]["clip_root"])}
+
+    binding = dict(SCENE_BINDINGS[scene_slug])
+    binding["scene_slug_self"] = scene_slug
+    shot_meta = load_shot_metadata(scene_slug)
+    # PHASE_STATE: first 20 of the Grog clips are the production set.
+    production_set_max = 20 if scene_slug == "MagicalRealmPlayground" else len(clips)
+    try:
+        root_resolved = binding["clip_root"].resolve(strict=True)
+    except (FileNotFoundError, OSError):
+        return {"slug": scene_slug, "status": "CLIP_CATALOG_EMPTY",
+                "clip_root": str(binding["clip_root"])}
+    raw_entries = [annotate_clip(p, production_set_max, i, binding, shot_meta, root_resolved)
+                   for i, p in enumerate(clips)]
+    entries = [e for e in raw_entries if e is not None]
+    rejected = len(raw_entries) - len(entries)
+    production_count = sum(1 for e in entries if e["role"] == "production")
+    extras_count = sum(1 for e in entries if e["role"] == "extra")
+
+    manifest.setdefault("scenes", {})[scene_slug] = {
+        "clip_root": str(binding["clip_root"]).replace("\\", "/"),
+        "shot_list_json": str(binding["shot_list_json"]).replace("\\", "/"),
+        "character": binding["character"],
+        "brand": binding["brand"],
+        "source": binding["source"],
+        "total_clips": len(entries),
+        "production_count": production_count,
+        "extras_count": extras_count,
+        "rejected_at_hash": rejected,
+        "mapped_durations": sum(1 for e in entries if e["duration_seconds"] is not None),
+        "clips": entries,
+        "built_at": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
+    }
+    MANIFEST_PATH.parent.mkdir(parents=True, exist_ok=True)
+    MANIFEST_PATH.write_text(json.dumps(manifest, indent=2))
+
+    AUDIT_ROOT.mkdir(parents=True, exist_ok=True)
+    ts = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H-%M-%SZ")
+    audit_path = AUDIT_ROOT / f"catalog-{scene_slug.lower()}-{ts}.json"
+    audit = {"scene_slug": scene_slug, "clip_root": str(binding["clip_root"]).replace("\\", "/"),
+             "total_clips": len(entries), "production_count": production_count,
+             "extras_count": extras_count, "mapped_durations": manifest["scenes"][scene_slug]["mapped_durations"],
+             "timestamp": ts, "status": "OK"}
+    audit_path.write_text(json.dumps(audit, indent=2))
+    return audit
+
+
+# ANIM-16: per-energy tier routing map. LOW-energy shots route to LTX
+# (90s preview-grade); MED + HIGH route to Wan22 (180s cinematic). Hunyuan
+# is reserved for explicit physics shots which the storyboard cannot
+# detect from `energy` alone, so it is never auto-routed. FalCloud is
+# shim-pending and never auto-routed either.
+ENERGY_TO_TIER_MAP = {"LOW": "LTX", "MED": "Wan22", "HIGH": "Wan22"}
+
+
+def plan_from_storyboard(storyboard_path: str, tier_or_routing: str,
+                          output_path: str | None, force: bool) -> dict:
+    """ANIM-16: bulk-plan every shot of an ANIM-13 storyboard JSON.
+
+    tier_or_routing is either a literal tier name (Wan22/LTX/Hunyuan/FalCloud)
+    or the keyword "energy" — in which case each shot is routed per
+    ENERGY_TO_TIER_MAP. Output is a single JSON file with per-shot tier_plan
+    records (each the same shape plan_tier() returns) plus a summary.
+    """
+    routing_mode = "energy" if tier_or_routing == "energy" else "fixed"
+    if routing_mode == "fixed" and not TIER_RE.match(tier_or_routing):
+        return {"status": "INVALID_TIER", "tier": tier_or_routing,
+                "expected_regex": TIER_RE.pattern + " | 'energy'"}
+    sb_path = Path(storyboard_path)
+    if not sb_path.is_file():
+        return {"status": "STORYBOARD_NOT_FOUND",
+                "storyboard_path": storyboard_path}
+    try:
+        sb = json.loads(sb_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as e:
+        return {"status": "STORYBOARD_UNPARSEABLE",
+                "storyboard_path": storyboard_path, "error": str(e)}
+    # ANIM-16 r1 F-1 fix: tighten storyboard schema validation up front so
+    # downstream emission can rely on well-formed input. We require:
+    #   - top-level dict
+    #   - phase == ANIM-13
+    #   - schema_version >= 2
+    #   - project (non-empty string)
+    #   - scene_slug matches SLUG_RE
+    #   - shots is a non-empty list
+    #   - each shot is a dict carrying id + section + energy + duration_seconds
+    if not isinstance(sb, dict):
+        return {"status": "STORYBOARD_UNPARSEABLE",
+                "storyboard_path": storyboard_path,
+                "error": "top-level JSON must be an object"}
+    if sb.get("phase") != "ANIM-13":
+        return {"status": "STORYBOARD_INVALID_PHASE",
+                "storyboard_path": storyboard_path,
+                "actual_phase": sb.get("phase")}
+    sv = sb.get("schema_version")
+    if not isinstance(sv, int) or sv < 2:
+        return {"status": "STORYBOARD_SCHEMA_TOO_OLD",
+                "storyboard_path": storyboard_path,
+                "actual_schema_version": sv,
+                "minimum_required": 2}
+    project = sb.get("project")
+    if not isinstance(project, str) or not project:
+        return {"status": "STORYBOARD_MISSING_PROJECT",
+                "storyboard_path": storyboard_path}
+    # ANIM-16 r2 F-9 fix: project string is interpolated into default
+    # output path. Constrain to a filename-safe slug to prevent path
+    # traversal (e.g. project="../escape") and unexpected directory
+    # creation. Use the same SHOT_ID_RE pattern (low-ASCII slug rules) as
+    # other agent inputs.
+    if not SHOT_ID_RE.match(project):
+        return {"status": "STORYBOARD_INVALID_PROJECT",
+                "storyboard_path": storyboard_path,
+                "project": project,
+                "expected_regex": SHOT_ID_RE.pattern}
+    # ANIM-16 r2 F-7 fix: storyboard traceability fields (character_markers
+    # + source annotation) must be present + non-empty strings on the
+    # storyboard top-level so they can be carried into every per-shot
+    # record. Null traceability defeats the round-1 F-2 fix.
+    for tf in ("character_markers", "character_markers_source"):
+        val = sb.get(tf)
+        if not isinstance(val, str) or not val.strip():
+            return {"status": "STORYBOARD_MISSING_TRACEABILITY_FIELD",
+                    "storyboard_path": storyboard_path,
+                    "field": tf,
+                    "hint": "ANIM-13 storyboards from ANIM-14+ always carry these"}
+    scene_slug = sb.get("scene_slug")
+    if not isinstance(scene_slug, str) or validate_slug(scene_slug):
+        return {"status": "STORYBOARD_INVALID_SCENE_SLUG",
+                "storyboard_path": storyboard_path,
+                "scene_slug": scene_slug,
+                "expected_regex": SLUG_RE.pattern}
+    shots = sb.get("shots")
+    if not isinstance(shots, list):
+        return {"status": "STORYBOARD_SHOTS_NOT_LIST",
+                "storyboard_path": storyboard_path}
+    if not shots:
+        return {"status": "STORYBOARD_EMPTY",
+                "storyboard_path": storyboard_path}
+    # ANIM-16 r2 F-6 fix: require every storyboard-shape field the §Outputs
+    # spec lists per shot, not just the four core identifier fields. The
+    # output JSON assumes all of these are present and downstream consumers
+    # rely on them. Malformed storyboards (e.g. truncated by a future
+    # generator change) must fail loud at this gate.
+    required_shot_fields = (
+        "id", "section", "start", "end", "duration_seconds",
+        "energy", "mood", "lyric", "lyric_word_count",
+        "camera_preset", "wan_motion_preset",
+        "kontext_prompt_template", "needs_fill",
+    )
+    for idx, shot in enumerate(shots):
+        if not isinstance(shot, dict):
+            return {"status": "STORYBOARD_SHOT_NOT_DICT",
+                    "storyboard_path": storyboard_path,
+                    "shot_index": idx}
+        missing = [f for f in required_shot_fields if f not in shot]
+        if missing:
+            return {"status": "STORYBOARD_SHOT_MISSING_FIELDS",
+                    "storyboard_path": storyboard_path,
+                    "shot_index": idx, "missing_fields": missing}
+    # ANIM-16 r2 F-8 fix: every shot's energy must be a string AND one of
+    # ENERGY_TO_TIER_MAP keys, regardless of routing mode. Fixed-tier runs
+    # don't use energy for selection but invalid energy values are still
+    # garbage data and should fail loud. Also defends against unhashable
+    # energy values (list/dict) that would crash the set-membership check
+    # below.
+    for idx, shot in enumerate(shots):
+        e = shot.get("energy")
+        if not isinstance(e, str):
+            return {"status": "STORYBOARD_INVALID_ENERGY",
+                    "storyboard_path": storyboard_path,
+                    "shot_index": idx,
+                    "energy_type": type(e).__name__,
+                    "known_energies": list(ENERGY_TO_TIER_MAP.keys())}
+        if e not in ENERGY_TO_TIER_MAP:
+            return {"status": "STORYBOARD_INVALID_ENERGY",
+                    "storyboard_path": storyboard_path,
+                    "shot_index": idx,
+                    "energy_value": e,
+                    "known_energies": list(ENERGY_TO_TIER_MAP.keys())}
+
+    # ANIM-16 r1 F-3 fix: compute storyboard SHA up front so the overwrite
+    # check can compare hashes and surface drift explicitly. If the existing
+    # output references a different storyboard SHA, we report
+    # STORYBOARD_DRIFT_FROM_PRIOR_PLAN with both hashes rather than a generic
+    # overwrite refusal.
+    sb_sha = sha256_of(sb_path)
+    if output_path is None:
+        out = REPO_ROOT / f"apex/docs/anim/ANIM-16-tier-plan-{project}.json"
+    else:
+        out = Path(output_path)
+    if out.exists() and not force:
+        prior_sha = None
+        try:
+            prior = json.loads(out.read_text(encoding="utf-8"))
+            prior_sha = prior.get("source_storyboard_sha256")
+        except (json.JSONDecodeError, OSError):
+            prior_sha = None
+        if prior_sha and prior_sha != sb_sha:
+            return {"status": "STORYBOARD_DRIFT_FROM_PRIOR_PLAN",
+                    "existing_path": str(out).replace("\\", "/"),
+                    "prior_storyboard_sha256": prior_sha,
+                    "current_storyboard_sha256": sb_sha,
+                    "hint": "rerun with --force to overwrite, or update the storyboard pointer"}
+        return {"status": "WILL_OVERWRITE_REFUSED",
+                "existing_path": str(out).replace("\\", "/"),
+                "prior_storyboard_sha256": prior_sha,
+                "current_storyboard_sha256": sb_sha}
+
+    per_shot: list[dict] = []
+    summary_by_status: dict[str, int] = {}
+    summary_by_tier: dict[str, int] = {}
+    total_render_seconds = 0.0
+    for shot in shots:
+        shot_id = str(shot.get("id"))
+        energy = shot.get("energy")
+        if routing_mode == "energy":
+            # r1 F-4 fix: pre-validation above ensures every energy is in the
+            # map; the get() is now safe but kept defensive.
+            tier_chosen = ENERGY_TO_TIER_MAP[energy]
+        else:
+            tier_chosen = tier_or_routing
+        plan = plan_tier(tier_chosen, shot_id, scene_slug)
+        # ANIM-16 r1 F-2 fix: per-shot record carries storyboard-level
+        # character traceability fields so downstream consumers don't have
+        # to chase the source storyboard separately. Marker text + provenance
+        # source annotation come from the storyboard top-level fields.
+        per_shot.append({**shot,
+                         "tier_chosen": tier_chosen,
+                         "character_markers": sb.get("character_markers"),
+                         "character_markers_source": sb.get("character_markers_source"),
+                         "tier_plan": plan})
+        st = plan.get("status", "UNKNOWN")
+        summary_by_status[st] = summary_by_status.get(st, 0) + 1
+        summary_by_tier[tier_chosen] = summary_by_tier.get(tier_chosen, 0) + 1
+        if st == "PLAN" and isinstance(plan.get("approx_seconds_per_clip"), (int, float)):
+            total_render_seconds += float(plan["approx_seconds_per_clip"])
+
+    plan_doc = {
+        "phase": "ANIM-16",
+        "schema_version": 1,
+        "source_storyboard_path": storyboard_path,
+        "source_storyboard_sha256": sb_sha,
+        "source_phase": sb.get("phase"),
+        "source_storyboard_schema_version": sb.get("schema_version"),
+        "tier_routing_mode": routing_mode,
+        "tier_routing_choice": tier_or_routing if routing_mode == "fixed" else "ENERGY_MAP",
+        "energy_to_tier_map": ENERGY_TO_TIER_MAP if routing_mode == "energy" else None,
+        "project": project,
+        "character": sb.get("character"),
+        "scene_slug": scene_slug,
+        "brand": sb.get("brand"),
+        "duration_seconds": sb.get("duration_seconds"),
+        "shot_count": len(per_shot),
+        "shots": per_shot,
+        "summary": {
+            "total_shots": len(per_shot),
+            "by_status": summary_by_status,
+            "by_tier_chosen": summary_by_tier,
+            "total_estimated_render_seconds": round(total_render_seconds, 1),
+        },
+        "built_at": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
+    }
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(plan_doc, indent=2), encoding="utf-8")
+
+    audit_root = REPO_ROOT / "apex/audit/anim-16"
+    audit_root.mkdir(parents=True, exist_ok=True)
+    ts = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H-%M-%SZ")
+    audit = {
+        "phase": "ANIM-16",
+        "project": project,
+        "tier_routing": tier_or_routing,
+        "output_path": str(out).replace("\\", "/"),
+        "shot_count": len(per_shot),
+        "summary_by_status": summary_by_status,
+        "summary_by_tier_chosen": summary_by_tier,
+        "timestamp": ts,
+        "status": "OK",
+    }
+    (audit_root / f"tier-plan-{project}-{tier_or_routing}-{ts}.json").write_text(
+        json.dumps(audit, indent=2), encoding="utf-8")
+    return audit
+
+
+def plan_tier(tier: str, shot_id: str, scene_slug: str | None) -> dict:
+    if not TIER_RE.match(tier):
+        return {"status": "INVALID_TIER", "tier": tier,
+                "expected_regex": TIER_RE.pattern}
+    if not SHOT_ID_RE.match(shot_id):
+        return {"status": "INVALID_SHOT_ID", "shot": shot_id,
+                "expected_regex": SHOT_ID_RE.pattern}
+    if scene_slug is not None and validate_slug(scene_slug):
+        return {"status": "INVALID_SLUG", "scene_slug": scene_slug}
+    cfg = load_tier_config().get("tiers", {}).get(tier)
+    if not cfg:
+        return {"status": "TIER_NOT_CONFIGURED", "tier": tier}
+    # ANIM-17: consult effective_tier_status() so tiers gated on an env-key
+    # (FalCloud) can flip status based on a successful env_sync probe at
+    # runtime. The static "status" field is preserved as tier_static_status
+    # in the resolution detail but does not gate PLAN by itself anymore for
+    # env-keyed tiers.
+    eff = effective_tier_status(tier, cfg)
+    eff_status = eff.get("effective_status")
+    if eff_status == "KEY_OK_SHIM_PENDING":
+        # ANIM-17 new path: env-key resolved but the cloud-side wrapper shim
+        # is not yet built. Surface fingerprint + shim_blocker; withhold PLAN.
+        # ANIM-17 r2 F-5 fix: include effective tier_status alongside
+        # tier_static_status so consumers can rely on the spec-mandated shape.
+        return {"status": "TIER_KEY_OK_SHIM_PENDING", "tier": tier,
+                "tier_status": eff_status,
+                "tier_static_status": eff.get("tier_static_status"),
+                "key_resolution": eff.get("key_resolution"),
+                "shim_blocker": eff.get("shim_blocker")}
+    if eff_status != "READY":
+        return {"status": "TIER_NOT_READY", "tier": tier,
+                "tier_status": eff_status,
+                "tier_static_status": eff.get("tier_static_status") or cfg.get("status"),
+                "key_resolution": eff.get("key_resolution"),
+                "blocker": eff.get("blocker") or cfg.get("blocker"),
+                "hint": cfg.get("weights_install_command")}
+    # F-2 r1 fix: refuse PLAN if wrapper_invocation is missing/empty for a runnable tier.
+    wrapper = cfg.get("wrapper_invocation")
+    if not isinstance(wrapper, str) or not wrapper.strip():
+        return {"status": "TIER_NOT_CONFIGURED", "tier": tier,
+                "missing": "wrapper_invocation"}
+    return {"status": "PLAN",
+            "tier": tier, "shot": shot_id, "scene": scene_slug,
+            "wrapper_invocation": wrapper,
+            "approx_seconds_per_clip": cfg.get("approx_seconds_per_clip"),
+            "vram_gb": cfg.get("vram_gb"),
+            "best_for": cfg.get("best_for"),
+            "key_resolution": eff.get("key_resolution")}
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--list-tiers", action="store_true")
+    ap.add_argument("--catalog")
+    ap.add_argument("--plan-tier")
+    ap.add_argument("--shot")
+    ap.add_argument("--scene")
+    ap.add_argument("--force", action="store_true")
+    # ANIM-17: standalone env-key probe — exposes fingerprint only, never key.
+    ap.add_argument("--probe-key", help="tier name; runs effective_tier_status() and prints fingerprint-only resolution")
+    # ANIM-16: bulk tier-plan from an ANIM-13 storyboard JSON.
+    ap.add_argument("--plan-from-storyboard", help="path to ANIM-13 storyboard JSON")
+    ap.add_argument("--tier", help="tier name OR 'energy' for ANIM-16 per-energy routing")
+    ap.add_argument("--output", help="output path for ANIM-16 tier-plan JSON; default apex/docs/anim/ANIM-16-tier-plan-<project>.json")
+    args = ap.parse_args()
+    if args.list_tiers:
+        # ANIM-17: annotate each tier with its effective_status + key fingerprint
+        # so operators can see at-a-glance which env-gated tiers are now live.
+        # The raw key value is never emitted.
+        raw = load_tier_config()
+        annotated = json.loads(json.dumps(raw))
+        for tname, tcfg in (annotated.get("tiers", {}) or {}).items():
+            eff = effective_tier_status(tname, tcfg)
+            tcfg["_runtime"] = eff
+        print(json.dumps(annotated, indent=2))
+        return 0
+    if args.probe_key:
+        cfg = load_tier_config().get("tiers", {}).get(args.probe_key)
+        if not cfg:
+            print(json.dumps({"status": "TIER_NOT_CONFIGURED", "tier": args.probe_key}, indent=2))
+            return 9
+        eff = effective_tier_status(args.probe_key, cfg)
+        out = {"tier": args.probe_key, **eff}
+        # paranoia: strip any "key" leak that might have entered the dict
+        kr = out.get("key_resolution")
+        if isinstance(kr, dict):
+            kr.pop("key", None)
+        print(json.dumps(out, indent=2))
+        return 0
+    if args.catalog:
+        result = catalog_scene(args.catalog, args.force)
+        print(json.dumps(result, indent=2))
+        code_for = {"OK": 0, "WILL_OVERWRITE_REFUSED": 5, "INVALID_SLUG": 6,
+                    "UNKNOWN_SCENE_ROOT": 9, "CLIP_CATALOG_EMPTY": 8}
+        return code_for.get(result.get("status", ""), 4)
+    if args.plan_tier:
+        if not args.shot:
+            print(json.dumps({"status": "MISSING_SHOT"}, indent=2))
+            return 6
+        result = plan_tier(args.plan_tier, args.shot, args.scene)
+        print(json.dumps(result, indent=2))
+        code_for = {"PLAN": 0, "INVALID_TIER": 6, "INVALID_SHOT_ID": 6,
+                    "INVALID_SLUG": 6, "TIER_NOT_CONFIGURED": 9,
+                    "TIER_NOT_READY": 7,
+                    "TIER_KEY_OK_SHIM_PENDING": 14}
+        return code_for.get(result.get("status", ""), 4)
+    if args.plan_from_storyboard:
+        if not args.tier:
+            print(json.dumps({"status": "MISSING_TIER",
+                              "hint": "--tier is required with --plan-from-storyboard"}, indent=2))
+            return 6
+        result = plan_from_storyboard(args.plan_from_storyboard, args.tier,
+                                       args.output, args.force)
+        print(json.dumps(result, indent=2))
+        code_for = {"OK": 0, "INVALID_TIER": 6, "STORYBOARD_NOT_FOUND": 10,
+                    "STORYBOARD_UNPARSEABLE": 10, "STORYBOARD_INVALID_PHASE": 10,
+                    "STORYBOARD_SCHEMA_TOO_OLD": 10,
+                    "STORYBOARD_MISSING_PROJECT": 10,
+                    "STORYBOARD_INVALID_PROJECT": 10,
+                    "STORYBOARD_MISSING_TRACEABILITY_FIELD": 10,
+                    "STORYBOARD_INVALID_SCENE_SLUG": 10,
+                    "STORYBOARD_SHOTS_NOT_LIST": 10,
+                    "STORYBOARD_SHOT_NOT_DICT": 10,
+                    "STORYBOARD_SHOT_MISSING_FIELDS": 10,
+                    "STORYBOARD_INVALID_ENERGY": 10,
+                    "STORYBOARD_DRIFT_FROM_PRIOR_PLAN": 11,
+                    "STORYBOARD_EMPTY": 10, "WILL_OVERWRITE_REFUSED": 5}
+        return code_for.get(result.get("status", ""), 4)
+    ap.print_help()
+    return 2
+
+
+if __name__ == "__main__":
+    sys.exit(main())

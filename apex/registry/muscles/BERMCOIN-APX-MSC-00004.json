@@ -1,0 +1,28 @@
+{
+  "id": "BERMCOIN-APX-MSC-00004",
+  "name": "supabase-rls-member-template",
+  "project": "BERMCOIN",
+  "version": "1.0.0",
+  "description": "Row-Level Security policy template ensuring members can only read/write their own data. Applied to members, rate_watches, and nudge_log tables. Public read policies on rates_history, rate_cache, and config.",
+  "trigger": "database policy (always active)",
+  "inputs": [
+    "auth.uid()"
+  ],
+  "outputs": [
+    "filtered row set"
+  ],
+  "dependencies": [
+    "supabase_rls"
+  ],
+  "n8n_workflows": [],
+  "tables": [
+    "members",
+    "rate_watches",
+    "nudge_log",
+    "rates_history",
+    "rate_cache",
+    "config"
+  ],
+  "created": "2026-04-11",
+  "status": "active"
+}

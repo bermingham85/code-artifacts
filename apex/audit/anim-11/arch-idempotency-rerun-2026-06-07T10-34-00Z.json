@@ -1,0 +1,59 @@
+{
+  "status": "OK",
+  "dry_run": false,
+  "force": false,
+  "transcript": "C:\\Users\\Owner\\apex_governance\\codex_runs\\AGEN-architecture-agent-post-migration\\AGEN-architecture-agent-post-migration-review-20260524T203145Z-3e4d1dcd.txt",
+  "transcript_sha256": "a2de5faaea9a97f8e9e9430137f824e327b7a4abf3b15faa1f3268b438b8edf0",
+  "out_dir": "AGENT_BUILD_SYSTEM\\05_ARCHITECTURE_AGENT",
+  "written": [],
+  "no_op_idempotent": [
+    {
+      "basename": "AGEN-PRMPT-architecture-system-prompt-v1.md",
+      "dst": "AGENT_BUILD_SYSTEM\\05_ARCHITECTURE_AGENT\\AGEN-PRMPT-architecture-system-prompt-v1.md",
+      "size_bytes": 11591,
+      "sha256": "559087f7cc74d449005c343d5895451a1d1b9466c9eaa3e72b2026aa5cb46545",
+      "note": "Destination already byte-identical to transcript slice; no write performed."
+    },
+    {
+      "basename": "AGEN-SCRPT-architecture-supabase-migration-v1.sql",
+      "dst": "AGENT_BUILD_SYSTEM\\05_ARCHITECTURE_AGENT\\AGEN-SCRPT-architecture-supabase-migration-v1.sql",
+      "size_bytes": 26908,
+      "sha256": "419d1d621535f8e74815aaecf5ee2d9a4044b3c754a2adce6437c7db80af5d63",
+      "note": "Destination already byte-identical to transcript slice; no write performed."
+    },
+    {
+      "basename": "AGEN-TEST-architecture-test-plan-v1.md",
+      "dst": "AGENT_BUILD_SYSTEM\\05_ARCHITECTURE_AGENT\\AGEN-TEST-architecture-test-plan-v1.md",
+      "size_bytes": 4162,
+      "sha256": "a3a963e1575684866f607cf65d35ca17f157e6476c6da31d30d127e44f9ed29a",
+      "note": "Destination already byte-identical to transcript slice; no write performed."
+    },
+    {
+      "basename": "AGEN-WKFL-architecture-agent-v1.json",
+      "dst": "AGENT_BUILD_SYSTEM\\05_ARCHITECTURE_AGENT\\AGEN-WKFL-architecture-agent-v1.json",
+      "size_bytes": 58973,
+      "sha256": "e6c9a5642854aac24f3e3319333812e4cbc07793a61412d58e787f740f46614f",
+      "note": "Destination already byte-identical to transcript slice; no write performed."
+    }
+  ],
+  "skipped": [
+    {
+      "basename": "CERT-APEX-AUTONOMOUS-DELIVERY.json",
+      "reason": "not in --restore set"
+    },
+    {
+      "basename": "DOCUMENT_REGISTER.md",
+      "reason": "not in --restore set"
+    },
+    {
+      "basename": "HANDOVER.md",
+      "reason": "not in --restore set"
+    },
+    {
+      "basename": "PROJECT_INSTRUCTIONS.md",
+      "reason": "not in --restore set"
+    }
+  ],
+  "rejected": [],
+  "missing_from_transcript": []
+}

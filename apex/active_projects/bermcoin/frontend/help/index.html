@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help Centre - Shegoo</title>
+    <meta name="description" content="Shegoo Help Centre. Find answers to common questions about rate watches, notifications, billing, and more.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --forest: #1a6b3a;
+            --cream: #faf8f4;
+            --ink: #1a1a18;
+            --gold: #c9a84c;
+        }
+        body { font-family: "DM Sans", sans-serif; background: var(--cream); color: var(--ink); line-height: 1.7; }
+        h1, h2, h3 { font-family: "Playfair Display", serif; }
+
+        nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: var(--cream); border-bottom: 1px solid rgba(26,107,58,.12); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 64px; }
+        .nav-logo { font-family: "Playfair Display", serif; font-size: 1.5rem; font-weight: 700; color: var(--forest); text-decoration: none; }
+        .nav-logo span { color: var(--gold); }
+        .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+        .nav-links a { text-decoration: none; color: var(--ink); font-size: .95rem; font-weight: 500; transition: color .2s; }
+        .nav-links a:hover { color: var(--forest); }
+        .nav-links .btn-login { background: var(--forest); color: #fff; padding: .45rem 1.2rem; border-radius: 6px; }
+        .nav-links .btn-login:hover { background: #155c30; color: #fff; }
+        .hamburger { display: none; background: none; border: none; cursor: pointer; padding: 4px; }
+        .hamburger svg { width: 28px; height: 28px; stroke: var(--ink); }
+
+        main { max-width: 820px; margin: 0 auto; padding: 100px 1.5rem 4rem; }
+        h1 { font-size: 2.2rem; color: var(--forest); margin-bottom: .35rem; }
+        .subtitle { color: #777; font-size: 1.05rem; margin-bottom: 2rem; }
+
+        /* SEARCH */
+        .search-wrap { margin-bottom: 2.5rem; }
+        .search-wrap input { width: 100%; padding: .85rem 1.2rem .85rem 3rem; border: 2px solid rgba(26,107,58,.2); border-radius: 10px; font-size: 1rem; font-family: "DM Sans", sans-serif; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E") 1rem center no-repeat; transition: border-color .2s; outline: none; }
+        .search-wrap input:focus { border-color: var(--forest); }
+
+        /* CATEGORIES */
+        .faq-category { margin-bottom: 2.5rem; }
+        .faq-category h2 { font-size: 1.3rem; color: var(--forest); margin-bottom: 1rem; border-bottom: 2px solid var(--gold); padding-bottom: .3rem; }
+
+        /* ACCORDION */
+        .faq-item { border-bottom: 1px solid rgba(26,107,58,.08); }
+        .faq-item.hidden { display: none; }
+        .faq-q { width: 100%; text-align: left; background: none; border: none; padding: 1rem 2.5rem 1rem 0; font-size: 1rem; font-family: "DM Sans", sans-serif; font-weight: 600; color: var(--ink); cursor: pointer; position: relative; line-height: 1.5; }
+        .faq-q::after { content: "+"; position: absolute; right: .5rem; top: 50%; transform: translateY(-50%); font-size: 1.4rem; color: var(--gold); font-weight: 400; transition: transform .2s; }
+        .faq-q.open::after { content: "\2212"; }
+        .faq-a { max-height: 0; overflow: hidden; transition: max-height .3s ease, padding .3s ease; padding: 0 0 0 0; }
+        .faq-a.open { max-height: 300px; padding: 0 0 1rem 0; }
+        .faq-a p { font-size: .95rem; color: #444; margin: 0; }
+        .faq-a a { color: var(--forest); }
+
+        .no-results { display: none; text-align: center; padding: 3rem 1rem; color: #999; font-size: 1.05rem; }
+        .no-results.show { display: block; }
+        .no-results a { color: var(--forest); }
+
+        footer { background: var(--ink); color: rgba(255,255,255,.7); padding: 2.5rem 2rem; margin-top: 4rem; }
+        .footer-inner { max-width: 960px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: start; gap: 2rem; }
+        .footer-brand { font-family: "Playfair Display", serif; font-size: 1.3rem; font-weight: 700; color: #fff; margin-bottom: .25rem; }
+        .footer-brand span { color: var(--gold); }
+        .footer-legal { font-size: .85rem; }
+        .footer-links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+        .footer-links a { color: rgba(255,255,255,.7); text-decoration: none; font-size: .85rem; transition: color .2s; }
+        .footer-links a:hover { color: var(--gold); }
+
+        @media (max-width: 640px) {
+            nav { padding: 0 1rem; }
+            .nav-links { display: none; position: absolute; top: 64px; left: 0; right: 0; background: var(--cream); flex-direction: column; padding: 1rem 1.5rem; border-bottom: 1px solid rgba(26,107,58,.12); }
+            .nav-links.open { display: flex; }
+            .hamburger { display: block; }
+            h1 { font-size: 1.6rem; }
+            main { padding-top: 84px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <a href="/" class="nav-logo">Shegoo<span>.</span></a>
+    <button class="hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/help/">Help</a>
+        <a href="/help/contact.html">Contact</a>
+        <a href="/dashboard" class="btn-login">Login</a>
+    </div>
+</nav>
+
+<main>
+    <h1>Help Centre</h1>
+    <p class="subtitle">Find answers to common questions about Shegoo.</p>
+
+    <div class="search-wrap">
+        <input type="text" id="faqSearch" placeholder="Search for answers..." autocomplete="off">
+    </div>
+
+    <div id="faqContainer">
+
+        <!-- GETTING STARTED -->
+        <div class="faq-category">
+            <h2>Getting Started</h2>
+
+            <div class="faq-item">
+                <button class="faq-q">What is Shegoo?</button>
+                <div class="faq-a"><p>Shegoo watches exchange rates for you and sends a notification when your target rate is hit. Think of it as a price alert for currency. We are an information service only &mdash; we do not move money or provide financial advice.</p></div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-q">How do I sign up?</button>
+                <div class="faq-a"><p>Enter your email on the homepage calculator to get started. No password needed &mdash; we use a magic link to sign you in. You will have an account within seconds.</p></div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-q">Is it really free?</button>
+                <div class="faq-a"><p>Yes. The free plan gives you one rate watch with email notifications. No credit card required, no time limit, no catch. Paid plans add more watches and more notification channels.</p></div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-q">How do I set a rate watch?</button>
+                <div class="faq-a"><p>From your Dashboard, click &ldquo;New Watch&rdquo;. Choose a money route (for example, EUR to GBP), set your target rate, and pick how you want to be notified. That is it &mdash; we will do the watching.</p></div>
+            </div>
+        </div>
+
+        <!-- RATE WATCHES -->
+        <div class="faq-category">
+            <h2>Rate Watches</h2>
+
+            <div class="faq-item">
+                <button class="faq-q">How often are rates checked?</button>
+                <div class="faq-a"><p>We check rates multiple times per day. The exact frequency depends on your plan and the currency pair. ECB reference rates update once daily around 16:00 CET. Revolut rates update more frequently during market hours.</p></div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-q">Where do rates come from?</button>
+                <div class="faq-a"><p>Our rates are sourced from the European Central Bank (ECB) and Revolut. We display both so you can compare. These are reference rates and may differ slightly from the rate you get when you actually exchange money.</p></div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-q">What is a money route?</button>
+                <div class="faq-a"><p>A money route is a currency pair with a direction. For example, &ldquo;EUR to GBP&rdquo; is one route and &ldquo;GBP to EUR&rdquo; is another. Each route represents the exchange direction you care about.</p></div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-q">Can I watch more than one rate?</button>
+                <div class="faq-a"><p>The free plan includes one active rate watch. The Plus plan gives you up to 5, and the Pro plan gives you up to 20. You can upgrade any time from your <a href="/dashboard">Dashboard</a>.</p></div>
+            </div>
+        </div>
+
+        <!-- MESSAGES -->
+        <div class="faq-category">
+            <h2>Messages</h2>
+
+            <div class="faq-item">
+                <button class="faq-q">How will I receive messages?</button>
+                <div class="faq-a"><p>By default, we send notifications via email. Paid plans can also receive notifications via Telegram and WhatsApp. You choose your preferred channels in your Dashboard settings.</p></div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-q">Can I choose Telegram and email at the same time?</button>
+                <div class="faq-a"><p>Yes. On paid plans, you can enable multiple notification channels simultaneously. Each watch can have its own channel preference if you like.</p></div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-q">What does a notification look like?</button>
+                <div class="faq-a"><p>A typical notification tells you the currency pair, the current rate, your target rate, and the source (ECB or Revolut). Every notification includes a &ldquo;not financial advice&rdquo; disclaimer.</p></div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-q">What if I run out of messages?</button>
+                <div class="faq-a"><p>Each plan has a monthly message allowance. If you reach your limit, we will let you know. You can upgrade your plan for more messages, or wait for the next billing cycle when your allowance resets.</p></div>
+            </div>
+        </div>
+
+        <!-- BILLING -->
+        <div class="faq-category">
+            <h2>Billing</h2>
+
+            <div class="faq-item">
+                <button class="faq-q">How do I upgrade?</button>
+                <div class="faq-a"><p>Go to Dashboard &gt; Plan and choose the plan you want. Payment is handled securely by Stripe. You can pay monthly or annually (annual plans save you money).</p></div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-q">How do I cancel?</button>
+                <div class="faq-a"><p>Go to Dashboard &gt; Plan &gt; Cancel. Your plan stays active until the end of the current billing period. After that, you will revert to the free plan. No questions asked.</p></div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-q">Will I be charged automatically?</button>
+                <div class="faq-a"><p>Yes. Paid plans renew automatically at the end of each billing period (monthly or annually). You will receive an email before each renewal. Cancel any time to stop future charges.</p></div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-q">Can I get a refund?</button>
+                <div class="faq-a"><p>We do not offer refunds for partial billing periods. If you cancel mid-cycle, you keep access until the period ends. If there is a genuine billing error, <a href="/help/contact.html">contact us</a> and we will sort it out.</p></div>
+            </div>
+        </div>
+
+        <!-- PRIVACY & SECURITY -->
+        <div class="faq-category">
+            <h2>Privacy &amp; Security</h2>
+
+            <div class="faq-item">
+                <button class="faq-q">What data do you store?</button>
+                <div class="faq-a"><p>We store your email, plan, rate watch preferences, notification preferences, and nudge history. We never store your card details &mdash; payments are handled by Stripe. Full details in our <a href="/legal/privacy.html">Privacy Policy</a>.</p></div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-q">Can I delete my account?</button>
+                <div class="faq-a"><p>Yes. Go to Dashboard &gt; Account &gt; Delete Account. There is a 30-day grace period in case you change your mind, after which all personal data is permanently deleted.</p></div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-q">Can I download my data?</button>
+                <div class="faq-a"><p>Yes. Under GDPR you have the right to data portability. Go to Dashboard &gt; Account &gt; Export Data, or email <a href="mailto:hello@shegoo.money">hello@shegoo.money</a> and we will send you a copy within 30 days.</p></div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-q">Who has access to my data?</button>
+                <div class="faq-a"><p>Only the Shegoo team at Bermech Limited and our third-party processors (Supabase, Stripe, Brevo, Telegram, Meta/WhatsApp) &mdash; and only to the extent necessary to run the service. We never sell your data. See our <a href="/legal/privacy.html">Privacy Policy</a> for details.</p></div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="no-results" id="noResults">
+        No results found. Try a different search term or <a href="/help/contact.html">contact us</a> directly.
+    </div>
+
+</main>
+
+<footer>
+    <div class="footer-inner">
+        <div>
+            <div class="footer-brand">Shegoo<span>.</span></div>
+            <p class="footer-legal">&copy; 2026 Bermech Limited, Dublin, Ireland. All rights reserved.</p>
+        </div>
+        <div class="footer-links">
+            <a href="/legal/privacy.html">Privacy</a>
+            <a href="/legal/terms.html">Terms</a>
+            <a href="/legal/cookies.html">Cookies</a>
+            <a href="/help/">Help</a>
+            <a href="/help/contact.html">Contact</a>
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Accordion toggle
+    document.querySelectorAll('.faq-q').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const answer = btn.nextElementSibling;
+            const isOpen = btn.classList.contains('open');
+            // Close all
+            document.querySelectorAll('.faq-q.open').forEach(b => {
+                b.classList.remove('open');
+                b.nextElementSibling.classList.remove('open');
+            });
+            // Toggle current
+            if (!isOpen) {
+                btn.classList.add('open');
+                answer.classList.add('open');
+            }
+        });
+    });
+
+    // Search filter
+    const searchInput = document.getElementById('faqSearch');
+    const faqItems = document.querySelectorAll('.faq-item');
+    const categories = document.querySelectorAll('.faq-category');
+    const noResults = document.getElementById('noResults');
+
+    searchInput.addEventListener('input', () => {
+        const query = searchInput.value.toLowerCase().trim();
+        let anyVisible = false;
+
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-q').textContent.toLowerCase();
+            const answer = item.querySelector('.faq-a').textContent.toLowerCase();
+            const match = !query || question.includes(query) || answer.includes(query);
+            item.classList.toggle('hidden', !match);
+            if (match) anyVisible = true;
+        });
+
+        // Hide empty categories
+        categories.forEach(cat => {
+            const hasVisible = cat.querySelectorAll('.faq-item:not(.hidden)').length > 0;
+            cat.style.display = hasVisible ? '' : 'none';
+        });
+
+        noResults.classList.toggle('show', !anyVisible);
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,29 @@
+{
+  "ref_code": "APEX-SYS-TST-00001",
+  "type": "TST",
+  "certifies": "APEX-MB-WF-00002",
+  "name": "Retro cert for CONV-PROC historical router backfill",
+  "certified_at": "2026-04-19T15:00:00Z",
+  "certified_by": "SYS (retroactive)",
+  "status": "PASS_WITH_GOVERNANCE_EXCEPTION",
+  "evidence": {
+    "supabase_project": "ylcepmvbjjnwmzvevxid",
+    "conv_skills_rows_after_backfill": 64,
+    "conv_n8n_ideas_rows_after_backfill": 43,
+    "conv_routing_log_rows_appended": 39,
+    "retagged_source_column": "APEX-MB-WF-00002/backfill-2026-04-19",
+    "retag_verified_counts": {
+      "conv_skills": 65,
+      "conv_n8n_ideas": 43,
+      "conv_routing_log.payload.wo_ref": 39
+    }
+  },
+  "governance_exceptions": [
+    "Executed via direct SQL, bypassing foreman",
+    "No pre-execution blueprint / guidance / test_record",
+    "Ref code issued after execution, not before"
+  ],
+  "rollback_tested": false,
+  "rollback_plan_documented": true,
+  "recommendation": "Accept retroactively. Improve session discipline: any future data remediation must be drafted as a WO in hub/, executed via foreman, archived to audit/ by the pipeline itself, not by the human session."
+}

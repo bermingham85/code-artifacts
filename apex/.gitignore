@@ -1,0 +1,35 @@
+﻿# Runtime state & generated data — never commit
+data/
+logs/
+store/
+claudeclaw/
+**/__pycache__/
+*.pyc
+*.pyo
+*.log
+*.db
+*.sqlite
+*.sqlite3
+
+# Top-level transient state
+watchdog_state.json
+bermcoin_runtime.json
+pending_notifications.json
+
+# Credentials & secrets — never commit (keep in Windows env vars)
+bermech_key_vault.json
+google_service_account.json
+*.pem
+*.key
+.env
+.env.*
+
+# DIAG audit noise — source of truth is audit/doc_audit.jsonl
+hub/DIAG-*.json
+hub/dead_letter/
+
+# UUID-form transient WOs (one-time tickets). Named WOs (e.g. WO-APEX-MB-WF-00004.json) are kept.
+hub/WO-????????-????-????-????-????????????.json
+
+# Nested clones (they are separate git repos)
+registry/clones/

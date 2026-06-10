@@ -1,0 +1,183 @@
+{
+  "phase": "ANIM-14",
+  "harness": "apex/audit/anim-14/negative_paths_probe.py",
+  "doctrine_evidence_class": "O9 (auditable probe trail)",
+  "probes": [
+    {
+      "probe_id": "nf_probe",
+      "harness": "apex/audit/anim-14/negative_paths_probe.py",
+      "function_under_test": "resolve_character_markers(project_slug, cfg, ref_pack)",
+      "mutation": "cfg = {character: grog} only; manifest['characters']['grog'] has no marker fields",
+      "expected_status": "CHARACTER_MARKERS_NOT_FOUND",
+      "actual_status": "CHARACTER_MARKERS_NOT_FOUND",
+      "pass": true,
+      "result": {
+        "slug": "nf_probe",
+        "status": "CHARACTER_MARKERS_NOT_FOUND",
+        "character": "grog",
+        "checked": [
+          "projects.json:projects['nf_probe']",
+          "ANIM-03 manifest:characters['grog']"
+        ]
+      },
+      "timestamp_utc": "2026-06-07T13:24:24+00:00"
+    },
+    {
+      "probe_id": "pm_probe",
+      "harness": "apex/audit/anim-14/negative_paths_probe.py",
+      "function_under_test": "resolve_character_markers(project_slug, cfg, ref_pack)",
+      "mutation": "manifest['characters']['grog'] has 3-of-4 marker fields (sha256 absent); project carries no marker fields, so fallback is required",
+      "expected_status": "CHARACTER_MARKERS_MANIFEST_PARTIAL",
+      "actual_status": "CHARACTER_MARKERS_MANIFEST_PARTIAL",
+      "pass": true,
+      "result": {
+        "slug": "pm_probe",
+        "status": "CHARACTER_MARKERS_MANIFEST_PARTIAL",
+        "origin": "ANIM-03 manifest",
+        "character": "grog",
+        "required_fields": [
+          "character_markers",
+          "character_markers_provenance_source_path",
+          "character_markers_provenance_sha256",
+          "character_markers_provenance_field"
+        ],
+        "present_fields": [
+          "character_markers",
+          "character_markers_provenance_source_path",
+          "character_markers_provenance_field"
+        ]
+      },
+      "timestamp_utc": "2026-06-07T13:24:24+00:00"
+    },
+    {
+      "probe_id": "vm_probe",
+      "harness": "apex/audit/anim-14/negative_paths_probe.py",
+      "function_under_test": "resolve_character_markers(project_slug, cfg, ref_pack)",
+      "mutation": "manifest carries provenance triple verifiable against source (sha matches), but character_markers text differs from the source field value",
+      "expected_status": "CHARACTER_MARKERS_VALUE_MISMATCH",
+      "actual_status": "CHARACTER_MARKERS_VALUE_MISMATCH",
+      "pass": true,
+      "result": {
+        "status": "CHARACTER_MARKERS_VALUE_MISMATCH",
+        "source_path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/shot_list.json",
+        "field": "grog_identifiers",
+        "recorded_markers": "fabricated wrong text \u2014 not from source",
+        "actual_in_source": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers",
+        "slug": "vm_probe",
+        "origin": "ANIM-03 manifest",
+        "character": "grog"
+      },
+      "timestamp_utc": "2026-06-07T13:24:24+00:00"
+    },
+    {
+      "probe_id": "conf_probe",
+      "harness": "apex/audit/anim-14/negative_paths_probe.py",
+      "function_under_test": "resolve_character_markers(project_slug, cfg, ref_pack)",
+      "mutation": "project + manifest both verifiable individually (against different fields in the same source file); recorded character_markers strings differ",
+      "expected_status": "CHARACTER_MARKERS_SOURCE_CONFLICT",
+      "actual_status": "CHARACTER_MARKERS_SOURCE_CONFLICT",
+      "pass": true,
+      "result": {
+        "slug": "conf_probe",
+        "status": "CHARACTER_MARKERS_SOURCE_CONFLICT",
+        "character": "grog",
+        "projects_json_value": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers",
+        "anim03_manifest_value": "tiny toddler ogre with warm beige skin, smooth round clean-shaven cheeks, wide innocent warm brown eyes, stubby chubby fingers, already twice the height of a full-grown adult"
+      },
+      "timestamp_utc": "2026-06-07T13:24:24+00:00"
+    },
+    {
+      "probe_id": "ok_probe",
+      "harness": "apex/audit/anim-14/negative_paths_probe.py",
+      "function_under_test": "resolve_character_markers(project_slug, cfg, ref_pack)",
+      "mutation": "manifest carries full verifiable marker block; project carries no marker fields",
+      "expected_status": "OK",
+      "actual_status": "OK",
+      "pass": true,
+      "result": {
+        "status": "OK",
+        "character_markers": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers",
+        "character_markers_source_annotation": "ANIM-03 manifest (sha-verified against X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/shot_list.json)"
+      },
+      "timestamp_utc": "2026-06-07T13:24:24+00:00"
+    },
+    {
+      "probe_id": "proj_full_manifest_partial_probe",
+      "harness": "apex/audit/anim-14/negative_paths_probe.py",
+      "function_under_test": "resolve_character_markers(project_slug, cfg, ref_pack)",
+      "mutation": "project carries full verifiable marker block; manifest has 3-of-4 (registry inconsistency); r3 F-6 surfaces MANIFEST_PARTIAL to force registry fix",
+      "expected_status": "CHARACTER_MARKERS_MANIFEST_PARTIAL",
+      "actual_status": "CHARACTER_MARKERS_MANIFEST_PARTIAL",
+      "pass": true,
+      "result": {
+        "slug": "proj_full_manifest_partial_probe",
+        "status": "CHARACTER_MARKERS_MANIFEST_PARTIAL",
+        "origin": "ANIM-03 manifest",
+        "character": "grog",
+        "required_fields": [
+          "character_markers",
+          "character_markers_provenance_source_path",
+          "character_markers_provenance_sha256",
+          "character_markers_provenance_field"
+        ],
+        "present_fields": [
+          "character_markers",
+          "character_markers_provenance_source_path",
+          "character_markers_provenance_field"
+        ]
+      },
+      "timestamp_utc": "2026-06-07T13:24:24+00:00"
+    },
+    {
+      "probe_id": "both_partial_probe",
+      "harness": "apex/audit/anim-14/negative_paths_probe.py",
+      "function_under_test": "resolve_character_markers(project_slug, cfg, ref_pack)",
+      "mutation": "project has 1-of-4 marker fields (partial) AND manifest has 3-of-4 (partial); per SPEC-ANIM-14 manifest precedence surfaces MANIFEST_PARTIAL first",
+      "expected_status": "CHARACTER_MARKERS_MANIFEST_PARTIAL",
+      "actual_status": "CHARACTER_MARKERS_MANIFEST_PARTIAL",
+      "pass": true,
+      "result": {
+        "slug": "both_partial_probe",
+        "status": "CHARACTER_MARKERS_MANIFEST_PARTIAL",
+        "origin": "ANIM-03 manifest",
+        "character": "grog",
+        "required_fields": [
+          "character_markers",
+          "character_markers_provenance_source_path",
+          "character_markers_provenance_sha256",
+          "character_markers_provenance_field"
+        ],
+        "present_fields": [
+          "character_markers",
+          "character_markers_provenance_source_path",
+          "character_markers_provenance_field"
+        ]
+      },
+      "timestamp_utc": "2026-06-07T13:24:24+00:00"
+    },
+    {
+      "probe_id": "non_object_source_probe",
+      "harness": "apex/audit/anim-14/negative_paths_probe.py",
+      "function_under_test": "resolve_character_markers(project_slug, cfg, ref_pack)",
+      "mutation": "temp source non_object_source.json contains a JSON array (top-level non-object); sha256 + path verifiable; isinstance(src_data, dict) guard returns CHARACTER_MARKERS_SOURCE_UNPARSEABLE rather than crashing on .get()",
+      "expected_status": "CHARACTER_MARKERS_SOURCE_UNPARSEABLE",
+      "actual_status": "CHARACTER_MARKERS_SOURCE_UNPARSEABLE",
+      "pass": true,
+      "result": {
+        "status": "CHARACTER_MARKERS_SOURCE_UNPARSEABLE",
+        "source_path": "C:/Users/Owner/Repos/code-artifacts/apex/audit/anim-14/tmp/non_object_source.json",
+        "error": "top-level JSON must be an object; got list",
+        "slug": "non_object_source_probe",
+        "origin": "ANIM-03 manifest",
+        "character": "grog"
+      },
+      "timestamp_utc": "2026-06-07T13:24:24+00:00"
+    }
+  ],
+  "summary": {
+    "total_probes": 8,
+    "pass": 8,
+    "fail": 0
+  },
+  "built_at": "2026-06-07T13:24:24+00:00"
+}

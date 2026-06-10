@@ -1,0 +1,128 @@
+{
+  "task_packet_version": "1.0",
+  "task_id": "WO-APEX-PROMOTE-COMPLIANCE-CHECK-001",
+  "phase": "APEX-PARALLEL-MERGE-PLAYBOOK / Step 3 / Batch 1 of 5",
+  "goal": "Approve registry/muscle_compliance_check.py as an Apex tool: review the code, allocate the canonical ref code via doc_controller, run TC-001..TC-008, complete docs/tools/muscle_compliance_check/test_record.md with real evidence and the Approved YES stamp, add the tool to APEX_TOOL_MENU.json + manifest.json + DOCUMENT_REGISTER.md + TOOL_INDEX.md, regenerate APEX_TOOL_MENU.md, and confirm validate_tool_docs --quiet still returns OK.",
+  "requester": "Claude (Opus 4.7, GPU-RTX5090, doc author per operating contract)",
+  "assigned_to": "Codex (code review + test execution + index/registry mutations per operating contract)",
+  "authorization_boundary": {
+    "allowed_assets": [
+      "C:/Users/Owner/Repos/code-artifacts/apex/ (this repo and branch only)"
+    ],
+    "forbidden_actions": [
+      "Promote any OTHER batch-#2..#5 artifacts in this packet — promotion is one batch at a time per playbook",
+      "Bulk-merge other parallel-Claude WIP files outside the muscle_compliance_check scope",
+      "Edit muscle_compliance_check.py beyond the header Ref:* line update unless a TC failure requires a fix (then attach the diff in the Task Result)",
+      "Bypass authentication",
+      "Expose or write plaintext secrets (this is the very thing the tool detects)",
+      "Perform destructive action without backup and rollback"
+    ]
+  },
+  "input_files": [
+    "registry/muscle_compliance_check.py — the source under review (711 lines, stdlib only)",
+    "docs/APEX_PARALLEL_MERGE_PLAYBOOK.md — controlling doctrine",
+    "docs/APEX_CONTEXT_INDEX.md — boot map (canonical baseline)",
+    "docs/NAMING_CONVENTION.md — ref-code format + 3-doc rule + approval gate",
+    "docs/APEX_TOOL_MENU.json — current approved tool catalogue (8 tools)",
+    "docs/DOCUMENT_REGISTER.md — ref-code register (last MB-PY: 00027 generate_repo_menu)",
+    "docs/tools/muscle_compliance_check/blueprint.md — drafted by Claude this packet",
+    "docs/tools/muscle_compliance_check/guidance.md — drafted by Claude this packet",
+    "docs/tools/muscle_compliance_check/test_record.md — STUB drafted by Claude; Codex fills with real results",
+    "docs/tools/muscle_compliance_check/troubleshoot.md — drafted by Claude this packet",
+    "docs/tools/muscle_resource_guard/*.md — reference for format/style consistency",
+    "registry/validate_tool_docs.py — must still return OK after this batch",
+    "registry/generate_tool_menu.py — used to regenerate the human menu",
+    "approve_tool.py — final approval gate"
+  ],
+  "write_scope": [
+    "docs/tools/muscle_compliance_check/test_record.md — REPLACE stub with real test evidence + Approved stamp",
+    "registry/muscle_compliance_check.py — header Ref: line ONLY (APEX-SYS-PY-00001 → real allocated code); also fix anything TC-001..TC-008 reveals as broken, with diff attached",
+    "docs/APEX_TOOL_MENU.json — add entry under approved_tools[]",
+    "docs/APEX_TOOL_MENU.md — REGENERATE from JSON via generate_tool_menu.py (do not hand-edit)",
+    "docs/DOCUMENT_REGISTER.md — add row with allocated ref code, file path, description, ACTIVE state",
+    "registry/manifest.json — add or refresh entry (per approve_tool.py behaviour)",
+    "registry/TOOL_INDEX.md — REGENERATE per approve_tool.py / indexer policy",
+    "audit/compliance/ — natural side effect of running TC-002 etc.; commit only the latest evidence JSON referenced from test_record.md",
+    "hub/WO-APEX-PROMOTE-COMPLIANCE-CHECK-001.json — append a `status` field with COMPLETED/BLOCKED + completion timestamp + result link"
+  ],
+  "constraints": [
+    "Make the smallest safe change that completes the task — do NOT refactor the muscle for style.",
+    "Follow the existing tool-doc convention exactly (mirror muscle_resource_guard's format).",
+    "Use doc_controller.py to allocate the ref code, not a hand-typed slot. The proposed APEX-MB-PY-00028 is a starting point only.",
+    "Idempotency: rerunning the promotion steps should not double-write register rows or menu entries.",
+    "No secrets in any committed artifact. (The tool flags them — don't let the promotion be ironic.)",
+    "Run validate_tool_docs --quiet after EACH register/menu edit, not just at the end.",
+    "Codex review the source code in addition to running tests — flag any concerns about the regex patterns, the stale-path remap behavior, or the secret-detection scope BEFORE approval."
+  ],
+  "expected_output": {
+    "files": [
+      "docs/tools/muscle_compliance_check/test_record.md (completed with real test evidence)",
+      "docs/APEX_TOOL_MENU.json (entry added)",
+      "docs/APEX_TOOL_MENU.md (regenerated)",
+      "docs/DOCUMENT_REGISTER.md (row added)",
+      "registry/manifest.json (entry added)",
+      "registry/TOOL_INDEX.md (entry added)",
+      "audit/compliance/<UTC-timestamp>.json (latest run kept as test evidence)",
+      "hub/WO-APEX-PROMOTE-COMPLIANCE-CHECK-001.json (status field appended)"
+    ],
+    "report": "TASK RESULT containing: status (OK|BLOCKED|FAIL), allocated ref code, files changed (with diffs for any source edits), all TC commands run with exit codes and JSON output paths, validate_tool_docs final result, link to evidence JSON, risks remaining, rollback instructions, recommended next batch (which should be #2 claude_codex_loop)."
+  },
+  "test_command": "python registry/validate_tool_docs.py --quiet && python registry/muscle_compliance_check.py --quiet && python registry/muscle_compliance_check.py --quiet --strict || echo \"see report for detail\"",
+  "success_criteria": [
+    "All 8 TCs in test_record.md have actual results filled in (no remaining `_pending_` values).",
+    "test_record.md ends with `**Approved:** YES — YYYY-MM-DD`.",
+    "`python registry/validate_tool_docs.py --quiet` returns {\"status\": \"OK\", \"findings\": []}.",
+    "`python registry/muscle_compliance_check.py --quiet` returns exit 0 (or exit 1 with documented FAILs that are pre-existing and unrelated to this promotion).",
+    "APEX_TOOL_MENU.json has a muscle_compliance_check entry under approved_tools[] AND it's removed from pending_tools[] if present.",
+    "APEX_TOOL_MENU.md regenerated from JSON (do NOT hand-edit) and the file mtime is later than the JSON mtime.",
+    "DOCUMENT_REGISTER.md has a row keyed on the allocated ref code, path `apex/registry/muscle_compliance_check.py`, status ACTIVE.",
+    "Source file header `Ref:` line updated to the allocated ref code.",
+    "No secrets committed (verify with `python registry/muscle_compliance_check.py --quiet --strict` showing secrets_on_disk = 0)."
+  ],
+  "rollback_plan": "If approval cannot be completed: (1) git restore docs/APEX_TOOL_MENU.json docs/APEX_TOOL_MENU.md docs/DOCUMENT_REGISTER.md registry/manifest.json registry/TOOL_INDEX.md to undo registry mutations; (2) leave the four docs/tools/muscle_compliance_check/*.md in place (they're harmless DRAFTs); (3) leave registry/muscle_compliance_check.py header as-is (no need to revert the Ref: change); (4) append BLOCKED status + reason to this Task Packet; (5) escalate via the Task Result `blocker_report_fields`.",
+  "evidence_required": [
+    "Exact commands run for each TC plus stdout / exit code (paste into test_record.md per template format).",
+    "Path to the latest audit/compliance/*.json proving TC-002 actually executed.",
+    "validate_tool_docs.py final OK response.",
+    "approve_tool.py output if it was run as the final gate.",
+    "Diff of any source edit beyond the header Ref: line."
+  ],
+  "blocker_policy": {
+    "stop_for": [
+      "TC-001 syntax check fails (source has a parser error)",
+      "TC-005 missing-register graceful exit returns wrong code or hangs",
+      "TC-007 secret detection FAILS to find an obvious .env (positive control fails)",
+      "Allocated ref code collides with an existing register entry that isn't trivially renumberable",
+      "doc_controller.py errors during ref allocation",
+      "validate_tool_docs.py returns non-OK after the menu/register edits"
+    ],
+    "blocker_report_fields": [
+      "Exact blocker (which TC, which command, which file)",
+      "Why it blocks promotion (vs. being a pre-existing unrelated FAIL)",
+      "Lowest-friction resolution (e.g. source bug fix, register edit, doc clarification)",
+      "Safe fallback path (e.g. leave tool as DRAFT, absorb checks into validate_tool_docs.py per playbook option (b))",
+      "What can continue independently (e.g. batch #2 promotion of claude_codex_loop can start in parallel since it's a separate tool)"
+    ]
+  },
+  "promotion_provenance": {
+    "playbook": "docs/APEX_PARALLEL_MERGE_PLAYBOOK.md",
+    "playbook_step": 3,
+    "batch_in_playbook": "Promote the compliance checker first if it remains useful.",
+    "playbook_option_chosen": "(a) Approve as standalone tool — NOT (b) absorb into validate_tool_docs.py. Reason: distinct scope. validate_tool_docs.py is the narrow pre-commit gate; compliance_check is the broader audit including ref uniqueness, header/register agreement, register-path resolution, secret detection, three-doc rule, naming-format validation.",
+    "user_order_priority": 1,
+    "next_batch": "WO-APEX-PROMOTE-CLAUDE-CODEX-LOOP-002 (queued, not yet created)"
+  },
+  "doctrine_notes": [
+    "Per APEX_CONTEXT_INDEX.md operating contract: Claude owns architecture/docs/reviews; Codex owns code edits/tests/configs. This packet honors that split.",
+    "Per APEX_PARALLEL_MERGE_PLAYBOOK conflict rule: 'A WIP script is useful but undocumented → It remains WIP until approved docs and tests exist.' This packet provides the docs; Codex provides the tests.",
+    "Per user instruction 2026-05-25 13:53Z: 'Do not self-review around Codex where Codex review is required.' Claude must NOT mark this batch APPROVED on Codex's behalf."
+  ],
+  "codex_result": {
+    "status": "PARTIAL_BLOCKED",
+    "completed_at": "2026-05-25T14:30:00Z",
+    "result_summary": "Codex fixed recurring source defects in path resolution, approval stamp detection, missing-register exit handling, and external/stale path classification. Tool is not approved because it still reports real estate-level findings including secrets_on_disk, duplicate refs, header/register mismatches, stale/missing paths, and older undocumented muscles.",
+    "test_record": "docs/tools/muscle_compliance_check/test_record.md",
+    "latest_baseline_evidence": "audit/compliance/2026-05-25T14-20-30Z.json",
+    "safe_next_action": "Run a separate Apex document-control cleanup batch before stamping this tool approved."
+  }
+}

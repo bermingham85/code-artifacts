@@ -1,0 +1,368 @@
+{
+  "root": "C:\\Users\\Owner\\Repos\\code-artifacts\\apex",
+  "timestamp": "2026-05-30T04:45:34.559405+00:00",
+  "summary": {
+    "register_entries": 145,
+    "registered_resolved": 107,
+    "registered_missing": 0,
+    "registered_stale_path": 0,
+    "registered_external": 33,
+    "duplicate_refs": 0,
+    "header_register_mismatches": 0,
+    "invalid_ref_format": 0,
+    "unregistered_disk_files": 134,
+    "muscles_missing_docs": 0,
+    "muscles_unapproved": 8,
+    "secrets_on_disk": 1
+  },
+  "fails": 0,
+  "warns": 143,
+  "details": {
+    "duplicate_refs": [],
+    "header_register_mismatches": [],
+    "invalid_ref_format": [],
+    "registered_missing": [],
+    "registered_stale_path": [],
+    "registered_external": [
+      {
+        "ref": "CLAW-MB-TS-00000",
+        "name": "ClaudeClaw bot (src/ all modules)",
+        "path": "<external>/claudeclaw/src"
+      },
+      {
+        "ref": "CLAW-MB-DOC-00000",
+        "name": "CLAUDE.md",
+        "path": "<external>/claudeclaw/CLAUDE.md"
+      },
+      {
+        "ref": "CLAW-MB-DOC-00001",
+        "name": "CAPABILITIES.md",
+        "path": "<external>/claudeclaw/CAPABILITIES.md"
+      },
+      {
+        "ref": "SHEGOO-BCK-SES-00001",
+        "name": "Full build session",
+        "path": "N/A (session-metadata row; rationale: aggregate session record, no single resolvable file)"
+      },
+      {
+        "ref": "SHEGOO-BCK-SCH-00001",
+        "name": "001_members.sql",
+        "path": "/shegoo/backend/migrations/"
+      },
+      {
+        "ref": "SHEGOO-BCK-SCH-00002",
+        "name": "002_rate_watches.sql",
+        "path": "/shegoo/backend/migrations/"
+      },
+      {
+        "ref": "SHEGOO-BCK-SCH-00003",
+        "name": "003_rates_history.sql",
+        "path": "/shegoo/backend/migrations/"
+      },
+      {
+        "ref": "SHEGOO-BCK-SCH-00004",
+        "name": "004_rate_cache.sql",
+        "path": "/shegoo/backend/migrations/"
+      },
+      {
+        "ref": "SHEGOO-BCK-SCH-00005",
+        "name": "005_config.sql",
+        "path": "/shegoo/backend/migrations/"
+      },
+      {
+        "ref": "SHEGOO-BCK-SCH-00006",
+        "name": "006_audit_log.sql",
+        "path": "/shegoo/backend/migrations/"
+      },
+      {
+        "ref": "SHEGOO-BCK-SCH-00007",
+        "name": "007_nudge_log.sql",
+        "path": "/shegoo/backend/migrations/"
+      },
+      {
+        "ref": "SHEGOO-BCK-SCH-00008",
+        "name": "008_affiliate_conversions.sql",
+        "path": "/shegoo/backend/migrations/"
+      },
+      {
+        "ref": "SHEGOO-BCK-SCH-00009",
+        "name": "009_churn_log.sql",
+        "path": "/shegoo/backend/migrations/"
+      },
+      {
+        "ref": "SHEGOO-BCK-SCH-00010",
+        "name": "010_seeds.sql",
+        "path": "/shegoo/backend/migrations/"
+      },
+      {
+        "ref": "SHEGOO-BCK-RLS-00001",
+        "name": "rls.sql",
+        "path": "/shegoo/backend/policies/"
+      },
+      {
+        "ref": "SHEGOO-BCK-TRG-00001",
+        "name": "auth_trigger.sql",
+        "path": "/shegoo/backend/triggers/"
+      },
+      {
+        "ref": "SHEGOO-BCK-TRG-00002",
+        "name": "auto_reset_nudges",
+        "path": "/shegoo/backend/triggers/"
+      },
+      {
+        "ref": "SHEGOO-BCK-CFG-00001",
+        "name": "setup.ts",
+        "path": "/shegoo/stripe/"
+      },
+      {
+        "ref": "SHEGOO-BCK-WRK-00001",
+        "name": "WF-01 Onboarding",
+        "path": "/shegoo/n8n/workflows/"
+      },
+      {
+        "ref": "SHEGOO-BCK-WRK-00002",
+        "name": "WF-02 Rate Watchdog",
+        "path": "/shegoo/n8n/workflows/"
+      },
+      {
+        "ref": "SHEGOO-BCK-WRK-00003",
+        "name": "WF-03 Monthly Reset",
+        "path": "/shegoo/n8n/workflows/"
+      },
+      {
+        "ref": "SHEGOO-BCK-WRK-00004",
+        "name": "WF-04 Offboarding",
+        "path": "/shegoo/n8n/workflows/"
+      },
+      {
+        "ref": "SHEGOO-BCK-WRK-00005",
+        "name": "WF-05 Self Healing",
+        "path": "/shegoo/n8n/workflows/"
+      },
+      {
+        "ref": "SHEGOO-BCK-SCR-00001",
+        "name": "backfill-rates.ts",
+        "path": "/shegoo/scripts/"
+      },
+      {
+        "ref": "SHEGOO-BCK-SCR-00002",
+        "name": "smoke-test.ts",
+        "path": "/shegoo/scripts/"
+      },
+      {
+        "ref": "SHEGOO-BCK-SCR-00003",
+        "name": "reset-month.ts",
+        "path": "/shegoo/scripts/"
+      },
+      {
+        "ref": "SHEGOO-BCK-ENV-00001",
+        "name": ".env.example",
+        "path": "/shegoo/"
+      },
+      {
+        "ref": "SHEGOO-FRN-LND-00001",
+        "name": "landing/index.html",
+        "path": "/shegoo/frontend/landing/"
+      },
+      {
+        "ref": "SHEGOO-FRN-LGN-00001",
+        "name": "login/index.html",
+        "path": "/shegoo/frontend/login/"
+      },
+      {
+        "ref": "SHEGOO-FRN-APP-00001",
+        "name": "app/index.html",
+        "path": "/shegoo/frontend/app/"
+      },
+      {
+        "ref": "APEX-MB-CFG-00001",
+        "name": "run_watchdog.bat",
+        "path": "C:\\Users\\Owner\\apex_governance\\run_watchdog.bat"
+      },
+      {
+        "ref": "APEX-MB-CFG-00002",
+        "name": "run_supervisor.bat",
+        "path": "C:\\Users\\Owner\\apex_governance\\run_supervisor.bat"
+      },
+      {
+        "ref": "APEX-MB-PY-00012",
+        "name": "codex_bridge.py",
+        "path": "C:\\Users\\Owner\\apex_governance\\cc_runbook\\codex_bridge.py"
+      }
+    ],
+    "unregistered_disk_files": [
+      "docs\\tools\\muscle_classify_document\\test_record.md",
+      "audit\\claude_codex_loop\\AGEN-architecture-agent-post-migration\\attempt_01_changed_files.json",
+      "docs\\doctrine\\DOCTRINE_v1.0_LOCK_PROPOSAL.md",
+      "audit\\2026-02-27\\task_ef9c67df-bb4a-438a-9992-e199fb300568\\WorkOrder.json",
+      "docs\\tools\\muscle_sheets_append\\guidance.md",
+      "docs\\tools\\muscle_replit_builder_packet\\guidance.md",
+      "docs\\doctrine\\conformance-checklist.md",
+      "hub\\WO-APEX-SP-A.0-SPLIT-001.json",
+      "audit\\claude_codex_loop\\AGEN-verification-agent\\attempt_03_changed_files.json",
+      "docs\\tools\\muscle_gdrive_watcher\\test_record.md",
+      "audit\\2026-02-27\\task_33293d61-4a2d-46a6-b2f7-ffb105caa8c4\\WorkOrder.json",
+      "audit\\CERT-PH-08-WATCHDOG.json",
+      "audit\\2026-02-27\\task_c8291d4c-142d-492d-83a8-810355924d98\\WorkOrder.json",
+      "docs\\tools\\muscle_json_merge\\test_record.md",
+      "hub\\WO-APEX-SP-A.0-STUCK-001.json",
+      "audit\\2026-02-27\\task_436faab0-5870-4c09-b017-74806ff0df3d\\WorkOrder.json",
+      "docs\\tools\\muscle_json_merge\\blueprint.md",
+      "docs\\spec\\SCOPE-AGEN-AGENT-TASKS-SCHEMA-FIX-v1.md",
+      "registry\\manifest.json",
+      "hub\\WO-BERMCOIN-BUILD.json",
+      "docs\\tools\\muscle_ocr_receipt\\guidance.md",
+      "audit\\claude_codex_loop\\AGEN-architecture-agent-post-migration\\attempt_03_changed_files.json",
+      "audit\\2026-03-03\\task_PH05-TEST-f65794e6\\WorkOrder.json",
+      "docs\\tools\\muscle_compliance_check\\guidance.md",
+      "docs\\tools\\muscle_health_check\\blueprint.md",
+      "docs\\tools\\muscle_classify_document\\troubleshoot.md",
+      "docs\\tools\\muscle_file_copy\\guidance.md",
+      "audit\\CERT-PH-05-FOREMAN.json",
+      "audit\\health\\health_report.json",
+      "audit\\2026-02-27\\task_WO-DEMO-001\\WorkOrder.json",
+      "audit\\2026-03-03\\task_PH05-TEST-f65794e6\\CompletionReport.json",
+      "docs\\tools\\muscle_gdrive_download\\blueprint.md",
+      "audit\\CERT-PH-06-BLIND-POSTMAN.json",
+      "audit\\claude_codex_loop\\AGEN-migration-coordinator\\attempt_02_changed_files.json",
+      "audit\\work_gate\\2026-05-28T08-38-19Z-APEX.json",
+      "audit\\work_gate\\2026-05-28T21-49-31Z-APEX.json",
+      "docs\\tools\\muscle_gdrive_download\\guidance.md",
+      "docs\\tools\\muscle_replit_builder_packet\\test_record.md",
+      "audit\\claude_codex_loop\\AGEN-architecture-agent-v2\\DiagnosticTicket.json",
+      "docs\\tools\\muscle_gdrive_download\\troubleshoot.md",
+      "audit\\2026-02-27\\task_1e193873-5c38-45f5-a0bc-0feb5cd39a2a\\WorkOrder.json",
+      "docs\\tools\\muscle_text_transform\\guidance.md",
+      "docs\\tools\\muscle_receipt_dedup\\blueprint.md",
+      "audit\\claude_codex_loop\\AGEN-architecture-agent-post-migration\\attempt_04_changed_files.json",
+      "docs\\tools\\muscle_replit_builder_packet\\blueprint.md",
+      "docs\\tools\\muscle_gdrive_download\\test_record.md",
+      "audit\\claude_codex_loop\\AGEN-verification-agent\\SIGNED_OFF.json",
+      "docs\\tools\\muscle_health_check\\guidance.md",
+      "docs\\tools\\muscle_classify_document\\guidance.md",
+      "audit\\claude_codex_loop\\AGEN-architecture-agent\\LOOP_FAILED.json",
+      "audit\\claude_codex_loop\\AGEN-migration-coordinator\\SIGNED_OFF.json",
+      "docs\\tools\\muscle_sheets_append\\test_record.md",
+      "audit\\work_gate\\2026-05-30T04-19-55Z-APEX.json",
+      "registry\\muscles\\manifest.json",
+      "audit\\claude_codex_loop\\AGEN-verification-agent\\attempt_02_changed_files.json",
+      "hub\\WO-APEX-CODEX-UNREACHABLE-001.json",
+      "docs\\tools\\muscle_receipt_dedup\\test_record.md",
+      "audit\\2026-02-27\\task_fefa919c-a292-4df5-9407-6df963987f7f\\WorkOrder.json",
+      "docs\\tools\\muscle_compliance_check\\troubleshoot.md",
+      "docs\\tools\\muscle_compliance_check\\blueprint.md",
+      "docs\\tools\\muscle_text_transform\\test_record.md",
+      "audit\\CERT-PH-04-INDEXER.json",
+      "audit\\claude_codex_loop\\AGEN-architecture-agent-post-migration\\LOOP_FAILED.json",
+      "docs\\tools\\muscle_ocr_batch_submit\\blueprint.md",
+      "docs\\tools\\muscle_drop_ticket\\guidance.md",
+      "audit\\2026-02-27\\task_68905a4e-23c0-4aba-b5d1-1f41daccebe5\\WorkOrder.json",
+      "docs\\tools\\muscle_sheets_append\\blueprint.md",
+      "audit\\claude_codex_loop\\AGEN-verification-agent\\attempt_01_changed_files.json",
+      "hub\\WO-APEX-CLAUDE-CONTINUE-005.json",
+      "PROJECT_APEX_v2.2.md",
+      "hub\\WO-APEX-PROMOTE-DOCTRINE-003.json",
+      "docs\\doctrine\\CLAUDE_CODEX_DOCTRINE.md",
+      "docs\\doctrine\\NOTE_FOR_CODEX.md",
+      "docs\\doctrine\\media\\Fu5KIG2Jm1g.transcript.md",
+      "docs\\tools\\muscle_drop_ticket\\test_record.md",
+      "docs\\tools\\muscle_ocr_batch_retrieve\\troubleshoot.md",
+      "docs\\tools\\muscle_classify_document\\blueprint.md",
+      "audit\\WO-BERMCOIN-BUILD.json",
+      "docs\\tools\\muscle_health_check\\test_record.md",
+      "audit\\claude_codex_loop\\AGEN-architecture-agent-post-migration\\attempt_02_changed_files.json",
+      "audit\\2026-02-27\\task_6eadb8c3-2f90-43c0-9af0-4b0aa9fe8ff0\\WorkOrder.json",
+      "docs\\tools\\muscle_compliance_check\\test_record.md",
+      "docs\\tools\\muscle_gdrive_watcher\\guidance.md",
+      "audit\\work_gate\\2026-05-30T04-44-05Z-APEX.json",
+      "docs\\tools\\muscle_ocr_batch_submit\\guidance.md",
+      "audit\\claude_codex_loop\\AGEN-architecture-agent\\attempt_02_changed_files.json",
+      "docs\\tools\\muscle_ocr_receipt\\test_record.md",
+      "docs\\tools\\muscle_gdrive_watcher\\blueprint.md",
+      "docs\\tools\\muscle_drop_ticket\\blueprint.md",
+      "docs\\policy\\SP-A.0b-policy-contributions.md",
+      "docs\\tools\\muscle_file_copy\\test_record.md",
+      "docs\\tools\\muscle_receipt_dedup\\troubleshoot.md",
+      "audit\\2026-02-27\\task_a41149c9-a7b4-443d-8f81-585b3b69300b\\WorkOrder.json",
+      "docs\\BERM-RECEIPT-OCR-SETUP.md",
+      "docs\\spec\\SPEC-SP-A.0a.md",
+      "audit\\claude_codex_loop\\AGEN-architecture-agent\\attempt_03_changed_files.json",
+      "audit\\claude_codex_loop\\AGEN-architecture-agent\\SIGNED_OFF.json",
+      "audit\\claude_codex_loop\\SMOKE-001\\attempt_01_changed_files.json",
+      "docs\\tools\\muscle_ocr_batch_submit\\test_record.md",
+      "hub\\WO-PH05-TEST-f65794e6.json",
+      "hub\\WO-APEX-PROMOTE-COMPLIANCE-CHECK-001.json",
+      "docs\\tools\\muscle_ocr_batch_submit\\troubleshoot.md",
+      "hub\\WO-BERM-RECEIPT-OCR-001.json",
+      "docs\\tools\\muscle_ocr_receipt\\blueprint.md",
+      "audit\\claude_codex_loop\\AGEN-migration-coordinator\\attempt_01_changed_files.json",
+      "docs\\tools\\muscle_ocr_batch_retrieve\\test_record.md",
+      "audit\\work_gate\\2026-05-28T08-38-03Z-APEX.json",
+      "drop_project_tickets.py",
+      "docs\\tools\\muscle_ocr_batch_retrieve\\blueprint.md",
+      "audit\\work_gate\\2026-05-28T09-17-17Z-APEX.json",
+      "SETUP_GPU.ps1",
+      "audit\\claude_codex_loop\\AGEN-architecture-agent\\attempt_04_changed_files.json",
+      "docs\\spec\\SPEC-SP-A.0a.preflight-inventory.md",
+      "docs\\DOCUMENT_REGISTER.md",
+      "docs\\TRANSACTION_MODEL.md",
+      "audit\\claude_codex_loop\\AGEN-verification-agent\\LOOP_FAILED.json",
+      "hub\\WO-APEX-ESTATE-CLEANUP-004.json",
+      "docs\\tools\\muscle_receipt_dedup\\guidance.md",
+      "audit\\claude_codex_loop\\AGEN-architecture-agent-post-migration\\attempt_05_changed_files.json",
+      "docs\\tools\\muscle_json_merge\\guidance.md",
+      "docs\\tools\\muscle_ocr_batch_retrieve\\guidance.md",
+      "audit\\claude_codex_loop\\AGEN-architecture-agent\\attempt_01_changed_files.json",
+      "docs\\tools\\muscle_file_copy\\blueprint.md",
+      "audit\\work_gate\\2026-05-28T09-16-06Z-APEX.json",
+      "docs\\tools\\muscle_ocr_receipt\\troubleshoot.md",
+      "docs\\replit_builder_bridge.md",
+      "docs\\tools\\muscle_sheets_append\\troubleshoot.md",
+      "audit\\claude_codex_loop\\SMOKE-001\\LOOP_FAILED.json",
+      "docs\\spec\\SPEC-SP-A.0.md",
+      "docs\\tools\\muscle_gdrive_watcher\\troubleshoot.md",
+      "docs\\tools\\muscle_text_transform\\blueprint.md",
+      "audit\\work_gate\\2026-05-30T04-17-17Z-APEX.json",
+      "audit\\2026-04-19\\CERT-APEX-PH-08.json",
+      "audit\\2026-02-27\\task_89a7991a-c181-441d-ac5b-c684689a288b\\WorkOrder.json"
+    ],
+    "muscles_missing_docs": [],
+    "muscles_unapproved": [
+      {
+        "muscle": "muscle_classify_document.py",
+        "reason": "test_record lacks YES + date"
+      },
+      {
+        "muscle": "muscle_gdrive_download.py",
+        "reason": "test_record lacks YES + date"
+      },
+      {
+        "muscle": "muscle_gdrive_watcher.py",
+        "reason": "test_record lacks YES + date"
+      },
+      {
+        "muscle": "muscle_ocr_batch_retrieve.py",
+        "reason": "test_record lacks YES + date"
+      },
+      {
+        "muscle": "muscle_ocr_batch_submit.py",
+        "reason": "test_record lacks YES + date"
+      },
+      {
+        "muscle": "muscle_ocr_receipt.py",
+        "reason": "test_record lacks YES + date"
+      },
+      {
+        "muscle": "muscle_receipt_dedup.py",
+        "reason": "test_record lacks YES + date"
+      },
+      {
+        "muscle": "muscle_sheets_append.py",
+        "reason": "test_record lacks YES + date"
+      }
+    ],
+    "secrets_on_disk": [
+      "active_projects\\bermcoin\\.env"
+    ]
+  }
+}

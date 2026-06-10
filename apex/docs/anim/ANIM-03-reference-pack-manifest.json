@@ -1,0 +1,218 @@
+{
+  "phase": "ANIM-03",
+  "schema_version": 2,
+  "schema_version_history": [
+    {"version": 1, "introduced_in": "ANIM-03", "summary": "initial per-character bible_path + reference_pack[] + findings[]"},
+    {"version": 2, "introduced_in": "ANIM-14", "summary": "optional per-character character_markers + provenance triple (source_path/field/sha256) hoisted from ANIM-13 project bindings; extra fields are ignored by schema_version=1 readers (additive change)"}
+  ],
+  "brand": "Jesse-Adventures",
+  "characters": {
+    "galinda": {
+      "brand": "Jesse-Adventures",
+      "bible_path": "apex/docs/anim/bibles/ANIM_Jesse-Adventures_Galinda_bible_v1.md",
+      "status_json_path": "X:/Automations/apex/projects/jesse_animate/characters/galinda/status.json",
+      "render_source_root": "X:/Automations/apex/projects/jesse_animate/characters/galinda",
+      "render_count": 211,
+      "reference_pack": [
+        {
+          "role": "primary_ref",
+          "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\galinda\\primary_ref.png",
+          "sha256": "ca1124612b3fe370cad1d0d5764b68db6f9fc2dca3ca74974b88ded86b6907bc",
+          "size": 1478739
+        },
+        {
+          "role": "angle_front",
+          "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\galinda\\angles\\galinda_front_00003_.png",
+          "sha256": "e73222b04c407a09ef9b450594840dfb3147808a72079556141b2ccb34dc9cc3",
+          "size": 854144
+        },
+        {
+          "role": "angle_three_quarter",
+          "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\galinda\\angles\\galinda_front_three_quarter_00003_.png",
+          "sha256": "9016893634ecddafe83964a1903c1f6da8e504fdbfd1974dd4a52b662f3da8f7",
+          "size": 756394
+        },
+        {
+          "role": "angle_side",
+          "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\galinda\\angles\\galinda_side_left_00003_.png",
+          "sha256": "034a0d61f95f2d7d457a919fb1813cca504f6d4db8884c0d5d1641d4a0e08872",
+          "size": 718478
+        },
+        {
+          "role": "angle_back",
+          "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\galinda\\angles\\galinda_back_00003_.png",
+          "sha256": "30ca9a8560ea31925aaa07319ea84d6def1a541632fe77c1ce4cb12cc38af311",
+          "size": 601208
+        }
+      ],
+      "findings": [
+        "F-ANIM03-01: canon mismatch on galinda age \u2014 status.json says 'young adult woman (early 20s)'; README.md line 15 reads '| Age | 4-5 (child) |'. Bible locks the status.json value as authoritative because it matches the 2026-04-07 PHASE_STATE.json formal sign-off and the 15/15 production-ready renders; operator to merge or fork the README."
+      ],
+      "built_at": "2026-06-07T05:34:55+00:00"
+    },
+    "emma": {
+      "brand": "Jesse-Adventures",
+      "bible_path": "apex/docs/anim/bibles/ANIM_Jesse-Adventures_Emma_bible_v1.md",
+      "status_json_path": null,
+      "render_source_root": "X:/Automations/apex/projects/jesse_animate/characters/emma",
+      "render_count": 12,
+      "reference_pack": [
+        {
+          "role": "angle_front",
+          "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\emma\\emma_angle_front_00001_.png",
+          "sha256": "2f20ede22c2a25681bf25b6c3398e7efe3789d145aa31fd66482fe6a5d85fdbb",
+          "size": 396949
+        },
+        {
+          "role": "angle_three_quarter",
+          "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\emma\\emma_angle_three_quarter_00001_.png",
+          "sha256": "da8480f406f6a473d5bdcf8fcc32397ad1b9a545ec3f1f6e80d2ded5d6502add",
+          "size": 368516
+        },
+        {
+          "role": "angle_side",
+          "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\emma\\emma_angle_side_00001_.png",
+          "sha256": "4e63070c754fb888474651d17dd90277e409242d2df46c57234ccea775cd11dc",
+          "size": 369887
+        },
+        {
+          "role": "angle_back",
+          "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\emma\\emma_angle_back_00001_.png",
+          "sha256": "9a4fc7e6927671079ce16d788cd72b2abf710eb18d164106b1d0aaa108c6b7f9",
+          "size": 336591
+        },
+        {
+          "role": "expression_neutral",
+          "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\emma\\emma_expr_neutral_00001_.png",
+          "sha256": "a39c872ad17e3c2a53fc97cb831f924f4f8db57e804d40fdf33e01429954f8c9",
+          "size": 361635
+        },
+        {
+          "role": "alt_form",
+          "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\emma\\emma_alt_form_00001_.png",
+          "sha256": "4ae010d1aba24f9a9ff6675efc5f19f96bfe0c01c84dff4becb20ce663626e92",
+          "size": 509793
+        }
+      ],
+      "findings": [
+        "F-ANIM03-02: emma has no status.json under X:\\Automations\\apex\\projects\\jesse_animate\\characters\\emma; bible built from PROJECT_SPEC + render-set inference."
+      ],
+      "built_at": "2026-06-07T05:34:55+00:00"
+    },
+    "grog": {
+      "brand": "Jesse-Adventures",
+      "bible_path": "apex/docs/anim/bibles/ANIM_Jesse-Adventures_Grog_bible_v1.md",
+      "status_json_path": null,
+      "render_source_root": "X:/Automations/apex/projects/jesse_animate/characters/grog",
+      "render_count": 45,
+      "reference_pack": [
+        {
+          "role": "primary_ref",
+          "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\grog\\primary_ref.png",
+          "sha256": "8f3aa8c6f3b261c9326b4481b8b0671851eb3d8cb6a40ad5cd28109b1a3c7881",
+          "size": 1065787
+        },
+        {
+          "role": "turnaround_seed",
+          "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\grog\\kontext_sheets\\turnaround_seed256.png",
+          "sha256": "027147a829b956cb108e58956017f7764c436988bd2d614dba2cd833ba383b7d",
+          "size": 1108832
+        },
+        {
+          "role": "expression_happy",
+          "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\grog\\kontext_sheets\\expr_happy.png",
+          "sha256": "4e2a3f33397c3db4739a19117fd315c89a4e76746792aa172b435690c119e6d2",
+          "size": 1487011
+        },
+        {
+          "role": "expression_angry",
+          "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\grog\\kontext_sheets\\expr_angry.png",
+          "sha256": "8f102e6c10a680b49ce35aecd741a1817d0b33227fe15434126d7326b3671800",
+          "size": 1396719
+        },
+        {
+          "role": "expression_sad",
+          "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\grog\\kontext_sheets\\expr_sad.png",
+          "sha256": "e3e3482c1bff911159e83fe8b4731f6fd85158b030e892786322c62a2ded8d7c",
+          "size": 1519404
+        },
+        {
+          "role": "pose_action",
+          "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\grog\\kontext_sheets\\pose_lifting_boulder.png",
+          "sha256": "a5246da412e41fc3b2d79057791a44f9657334124ad1675b73340ce4c5c24aa6",
+          "size": 1650490
+        },
+        {
+          "role": "pose_idle",
+          "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\grog\\kontext_sheets\\pose_arms_crossed.png",
+          "sha256": "4f2ad90ed18ae398fe54f276d51c25f2f290e72c2ca36173fc47c2c09febcbf4",
+          "size": 1484912
+        }
+      ],
+      "findings": [
+        "F-ANIM03-02: grog has no status.json under X:\\Automations\\apex\\projects\\jesse_animate\\characters\\grog; bible built from PROJECT_SPEC + render-set inference."
+      ],
+      "character_markers": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers",
+      "character_markers_provenance_source_path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/shot_list.json",
+      "character_markers_provenance_field": "grog_identifiers",
+      "character_markers_provenance_sha256": "6414235bd985e2d90c4e5875846739a276da0f2c7388abff4a99377332f6a428",
+      "character_markers_registered_in": "ANIM-14",
+      "built_at": "2026-06-07T08:44:46+00:00"
+    },
+    "lirian": {
+      "brand": "Jesse-Adventures",
+      "bible_path": "apex/docs/anim/bibles/ANIM_Jesse-Adventures_Lirian_bible_v1.md",
+      "status_json_path": null,
+      "render_source_root": "X:/Automations/apex/projects/jesse_animate/characters/lirian",
+      "render_count": 18,
+      "reference_pack": [
+        {
+          "role": "primary_ref",
+          "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\lirian\\lirian_candidate_seed1337.png",
+          "sha256": "8c5b334fa4f9f4c7bade8f41347550da2034c0ba3c2f318108552c71e24451a1",
+          "size": 980022
+        },
+        {
+          "role": "turnaround_seed",
+          "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\lirian\\kontext_sheets\\turnaround_seed256.png",
+          "sha256": "2cc69ba8e78bbf00f26142ba95c83578b9e0c612c6766b884a74695d8c2deedd",
+          "size": 1039046
+        },
+        {
+          "role": "expression_happy",
+          "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\lirian\\kontext_sheets\\expr_happy.png",
+          "sha256": "8713de04f61fa3986e6c9a80698ab42246d824243aea650a243b234bf6fe9040",
+          "size": 1128744
+        },
+        {
+          "role": "expression_angry",
+          "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\lirian\\kontext_sheets\\expr_angry.png",
+          "sha256": "42d8ac76f07ec06450650acdc068921adf8b9119b6edcd8db873cce367a07628",
+          "size": 1000631
+        },
+        {
+          "role": "expression_sad",
+          "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\lirian\\kontext_sheets\\expr_sad.png",
+          "sha256": "d7cc266789a5e994e1d1d65281e20423573dec98d245c208cf353a9075b80660",
+          "size": 1128939
+        },
+        {
+          "role": "pose_action",
+          "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\lirian\\kontext_sheets\\pose_bow_drawn.png",
+          "sha256": "d3359da3e8140f5ced13ca24859c109d6814ed820f04409b02ad6babfdf3d912",
+          "size": 1397710
+        },
+        {
+          "role": "pose_idle",
+          "path": "X:\\Automations\\apex\\projects\\jesse_animate\\characters\\lirian\\kontext_sheets\\pose_listening.png",
+          "sha256": "b725f573d33078a7b077d583b05d994f8d3a7f3bb7d16c7cc6c80eb2fc5021fd",
+          "size": 1176718
+        }
+      ],
+      "findings": [
+        "F-ANIM03-02: lirian has no status.json under X:\\Automations\\apex\\projects\\jesse_animate\\characters\\lirian; bible built from PROJECT_SPEC + render-set inference."
+      ],
+      "built_at": "2026-06-07T08:44:47+00:00"
+    }
+  }
+}

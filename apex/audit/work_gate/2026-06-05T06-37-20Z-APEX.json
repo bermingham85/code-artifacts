@@ -1,0 +1,46 @@
+{
+  "tool": "muscle_work_gate",
+  "ref_code": "APEX-MB-PY-00029",
+  "version": "1.0",
+  "timestamp": "2026-06-05T06:37:20Z",
+  "project": "APEX",
+  "station": "DESKTOP-A2MF76F",
+  "mode": "normal",
+  "intent": "write",
+  "allow_dirty": true,
+  "authority": {
+    "committed_code": "GitHub protected branches",
+    "local_shared_artifacts": "X:/Apex/Canonical",
+    "artifact_intake": "X:/Apex/Inbox",
+    "machine_workspaces": "C:/Users/Owner/Repos and tool-native save locations"
+  },
+  "repo": {
+    "path": "C:\\Users\\Owner\\Repos\\code-artifacts\\apex",
+    "is_git_repo": true,
+    "fetch_attempted": true,
+    "fetch_ok": true,
+    "fetch_error": null,
+    "root": "C:\\Users\\Owner\\Repos\\code-artifacts",
+    "branch": "codex/1000-microprompter-spec",
+    "head": "61307add5e20c93c2972b1f816802d831ca25762",
+    "upstream": "origin/codex/1000-microprompter-spec",
+    "remote_url": "https://github.com/bermingham85/code-artifacts.git",
+    "status_short": "?? apex/audit/work_gate/2026-06-04T22-30-14Z-APEX.json\n?? apex/audit/work_gate/2026-06-05T06-36-17Z-APEX.json\n?? apex/audit/work_gate/2026-06-05T06-37-06Z-APEX.json",
+    "dirty": true,
+    "ahead": 0,
+    "behind": 0
+  },
+  "status": "WARN",
+  "blockers": [],
+  "warnings": [
+    "working tree is dirty; inspect user changes before editing"
+  ],
+  "promotion_allowed": false,
+  "official_write_allowed": true,
+  "provisional_write_allowed": false,
+  "required_route": [
+    "work on task branch",
+    "commit locally",
+    "push branch or open PR; do not push directly to protected branches"
+  ]
+}

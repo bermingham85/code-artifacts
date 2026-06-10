@@ -1,0 +1,44 @@
+{
+  "phase": "ANIM-12",
+  "agent": "AGEN-Router",
+  "issued": "2026-06-07T10:40:00Z",
+  "live_out_dir": "C:/Users/Owner/Repos/code-artifacts/AGENT_BUILD_SYSTEM/04_ROUTER_AGENT/",
+  "extractor": {
+    "id": "APEX-MB-PY-00116",
+    "path": "apex/registry/agen_recovery_extract.py",
+    "mode": "BYTE-MODE",
+    "frozen_since": "ANIM-08 (head 8be8daf)",
+    "modified_in_this_phase": false
+  },
+  "source_transcript": {
+    "path": "C:/Users/Owner/apex_governance/codex_runs/AGEN-migration-coordinator/AGEN-migration-coordinator-review-20260523T052539Z-3dd63aeb.txt",
+    "size_bytes": 711026,
+    "sha256": "0cad3c58f5825dbb486ffd4606a9220b301fc71583dda8eace9eef554f54b078",
+    "marker_count": 29,
+    "role": "AGEN-migration-coordinator review transcript — bundles per-agent migration SCRPTs for cross-agent coordination. Inlines AGEN-SCRPT-router-supabase-migration-v1.sql. No router runtime artifacts (WKFL/PRMPT/SPEC/TEST) anywhere in codex_runs."
+  },
+  "restored_files": [
+    {
+      "basename": "AGEN-SCRPT-router-supabase-migration-v1.sql",
+      "size_bytes": 21019,
+      "sha256": "e0ac899ff1f3cd5095ea5117e4a5659ff4d97d3ae40ee4908d613dbf34d1d9b4",
+      "live_dst": "AGENT_BUILD_SYSTEM/04_ROUTER_AGENT/AGEN-SCRPT-router-supabase-migration-v1.sql",
+      "src_path_in_transcript_header": "apex/registry/clones/code-artifacts/AGENT_BUILD_SYSTEM/04_ROUTER_AGENT/AGEN-SCRPT-router-supabase-migration-v1.sql",
+      "path_reconciled_from_clones_to_live": true,
+      "sql_lines": 458
+    }
+  ],
+  "missing_from_transcripts": [
+    {"basename_expected": "AGEN-WKFL-router-agent-v1.json", "tracked_as": "MA-AGEN-001-ROUTER-WKFL"},
+    {"basename_expected": "AGEN-PRMPT-router-system-prompt-v1.md", "tracked_as": "MA-AGEN-001-ROUTER-PRMPT"},
+    {"basename_expected": "AGEN-SPEC-router-integration-v1.md", "tracked_as": "MA-AGEN-001-ROUTER-SPEC"},
+    {"basename_expected": "AGEN-TEST-router-test-plan-v1.md", "tracked_as": "MA-AGEN-001-ROUTER-TEST"}
+  ],
+  "exhaustive_grep_check": {
+    "patterns_searched": ["AGEN-WKFL-router", "AGEN-PRMPT-router", "AGEN-SPEC-router", "AGEN-TEST-router"],
+    "scope": "All files under C:/Users/Owner/apex_governance/codex_runs/ (200+ transcripts)",
+    "hits": 0,
+    "interpretation": "None of the 4 router runtime artifacts are inlined anywhere in the codex_runs archive."
+  },
+  "doctrine_anchors": ["R15", "R19 (REUSE)", "R20 (verbatim)", "P1", "P2", "O2", "O6", "WO_clause_3"]
+}

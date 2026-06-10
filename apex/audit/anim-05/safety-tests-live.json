@@ -1,0 +1,32 @@
+{
+  "slug_traversal": {
+    "cmd": "python apex/registry/muscle_video_agent.py --catalog ../etc",
+    "exit": 6,
+    "stdout_tail": "{\n  \"slug\": \"../etc\",\n  \"status\": \"INVALID_SLUG\",\n  \"expected_regex\": \"^[A-Z][A-Za-z0-9]{0,31}$\"\n}"
+  },
+  "invalid_tier": {
+    "cmd": "python apex/registry/muscle_video_agent.py --plan-tier BadTier --shot 1",
+    "exit": 6,
+    "stdout_tail": "{\n  \"status\": \"INVALID_TIER\",\n  \"tier\": \"BadTier\",\n  \"expected_regex\": \"^(Wan22|LTX|Hunyuan|FalCloud)$\"\n}"
+  },
+  "invalid_shot": {
+    "cmd": "python apex/registry/muscle_video_agent.py --plan-tier Wan22 --shot *",
+    "exit": 6,
+    "stdout_tail": "{\n  \"status\": \"INVALID_SHOT_ID\",\n  \"shot\": \"*\",\n  \"expected_regex\": \"^[a-z0-9][a-z0-9_-]{0,31}$\"\n}"
+  },
+  "tier_not_ready_hunyuan": {
+    "cmd": "python apex/registry/muscle_video_agent.py --plan-tier Hunyuan --shot 1",
+    "exit": 7,
+    "stdout_tail": "{\n  \"status\": \"TIER_NOT_READY\",\n  \"tier\": \"Hunyuan\",\n  \"tier_status\": \"NODES_INSTALLED_WEIGHTS_DEFERRED\",\n  \"blocker\": null,\n  \"hint\": \"python apex/registry/muscle_install_hunyuanvideo.py --download-weights\"\n}"
+  },
+  "tier_not_ready_fal": {
+    "cmd": "python apex/registry/muscle_video_agent.py --plan-tier FalCloud --shot 1",
+    "exit": 7,
+    "stdout_tail": "{\n  \"status\": \"TIER_NOT_READY\",\n  \"tier\": \"FalCloud\",\n  \"tier_status\": \"OPERATOR_GATED\",\n  \"blocker\": \"G9 \\u2014 fal.ai key-resolution route TBD; key NOT in env_sync; not pursuable autonomously\",\n  \"hint\": null\n}"
+  },
+  "rerun_guard": {
+    "cmd": "python apex/registry/muscle_video_agent.py --catalog MagicalRealmPlayground",
+    "exit": 5,
+    "stdout_tail": "{\n  \"slug\": \"MagicalRealmPlayground\",\n  \"status\": \"WILL_OVERWRITE_REFUSED\",\n  \"existing_entry\": \"X:\\\\Automations\\\\apex\\\\projects\\\\jesse_animate\\\\music_video\\\\grog_playground\\\\clips\"\n}"
+  }
+}

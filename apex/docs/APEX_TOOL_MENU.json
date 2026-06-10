@@ -1,0 +1,188 @@
+{
+  "version": "1.0",
+  "generated_at": "2026-05-26T20:32:36Z",
+  "approved_tools": [
+    {
+      "need": "Inventory a headless laptop",
+      "name": "muscle_headless_inventory",
+      "ref_code": "APEX-MB-CFG-00003",
+      "category": "system",
+      "state": "APPROVED",
+      "exact_call": "powershell -ExecutionPolicy Bypass -File .\\registry\\muscle_headless_inventory.ps1 -OutputDir .\\audit\\headless_inventory",
+      "how_to": "docs/tools/muscle_headless_inventory/guidance.md",
+      "troubleshoot": "docs/tools/muscle_headless_inventory/troubleshoot.md"
+    },
+    {
+      "need": "Gate a scheduled or GPU job",
+      "name": "muscle_resource_guard",
+      "ref_code": "APEX-MB-CFG-00004",
+      "category": "system",
+      "state": "APPROVED",
+      "exact_call": "powershell -ExecutionPolicy Bypass -File .\\registry\\muscle_resource_guard.ps1 -JobName report-batch -MinDiskFreeGB 10 -MinMemoryFreeGB 2",
+      "how_to": "docs/tools/muscle_resource_guard/guidance.md",
+      "troubleshoot": "docs/tools/muscle_resource_guard/troubleshoot.md"
+    },
+    {
+      "need": "Gate repo edits, fallback work, or artifact promotion",
+      "name": "muscle_work_gate",
+      "ref_code": "APEX-MB-PY-00029",
+      "category": "governance",
+      "state": "APPROVED",
+      "exact_call": "python registry/muscle_work_gate.py --repo . --intent write --fetch",
+      "how_to": "docs/tools/muscle_work_gate/guidance.md",
+      "troubleshoot": "docs/tools/muscle_work_gate/troubleshoot.md"
+    },
+    {
+      "need": "Copy or back up a file",
+      "name": "muscle_file_copy",
+      "ref_code": "APEX-MB-PY-00004",
+      "category": "files",
+      "state": "APPROVED",
+      "exact_call": "python registry/muscle_file_copy.py --source \"C:/path/source.txt\" --dest \"C:/path/dest.txt\"",
+      "how_to": "docs/tools/muscle_file_copy/guidance.md",
+      "troubleshoot": "docs/tools/muscle_file_copy/troubleshoot.md"
+    },
+    {
+      "need": "Transform or count text",
+      "name": "muscle_text_transform",
+      "ref_code": "APEX-MB-PY-00005",
+      "category": "data",
+      "state": "APPROVED",
+      "exact_call": "python registry/muscle_text_transform.py --input in.txt --output out.txt --operation upper",
+      "how_to": "docs/tools/muscle_text_transform/guidance.md",
+      "troubleshoot": "docs/tools/muscle_text_transform/troubleshoot.md"
+    },
+    {
+      "need": "Merge JSON files",
+      "name": "muscle_json_merge",
+      "ref_code": "APEX-MB-PY-00006",
+      "category": "data",
+      "state": "APPROVED",
+      "exact_call": "python registry/muscle_json_merge.py --inputs \"base.json,override.json\" --output \"merged.json\"",
+      "how_to": "docs/tools/muscle_json_merge/guidance.md",
+      "troubleshoot": "docs/tools/muscle_json_merge/troubleshoot.md"
+    },
+    {
+      "need": "Check Apex health",
+      "name": "muscle_health_check",
+      "ref_code": "APEX-MB-PY-00007",
+      "category": "system",
+      "state": "APPROVED",
+      "exact_call": "python registry/muscle_health_check.py",
+      "how_to": "docs/tools/muscle_health_check/guidance.md",
+      "troubleshoot": "docs/tools/muscle_health_check/troubleshoot.md"
+    },
+    {
+      "need": "Drop a WorkOrder into the pipeline",
+      "name": "muscle_drop_ticket",
+      "ref_code": "APEX-MB-PY-00008",
+      "category": "system",
+      "state": "APPROVED",
+      "exact_call": "python registry/muscle_drop_ticket.py --action muscle_health_check --project APEX",
+      "how_to": "docs/tools/muscle_drop_ticket/guidance.md",
+      "troubleshoot": "docs/tools/muscle_drop_ticket/troubleshoot.md"
+    },
+    {
+      "need": "Build a Replit Agent packet",
+      "name": "muscle_replit_builder_packet",
+      "ref_code": "APEX-MB-PY-00024",
+      "category": "ai",
+      "state": "APPROVED",
+      "exact_call": "python registry/muscle_replit_builder_packet.py --instruction-file docs/spec/my_claude_build.md --mode create --project APEX",
+      "how_to": "docs/tools/muscle_replit_builder_packet/guidance.md",
+      "troubleshoot": "docs/tools/muscle_replit_builder_packet/troubleshoot.md"
+    },
+    {
+      "need": "Run a Claude build with Codex review loop",
+      "name": "claude_codex_loop",
+      "ref_code": "APEX-MB-PY-00023",
+      "category": "ai",
+      "state": "APPROVED",
+      "exact_call": "python registry/claude_codex_loop.py --prompt-file docs/spec/your_build.md --phase YOUR-PHASE-001 --max-attempts 3",
+      "how_to": "docs/tools/claude_codex_loop/guidance.md",
+      "troubleshoot": "docs/tools/claude_codex_loop/troubleshoot.md"
+    }
+  ],
+  "pending_tools": [
+    {
+      "name": "muscle_gdrive_download",
+      "state": "PENDING",
+      "missing": [
+        "blueprint.md",
+        "guidance.md",
+        "test_record.md",
+        "troubleshoot.md"
+      ]
+    },
+    {
+      "name": "muscle_gdrive_watcher",
+      "state": "PENDING",
+      "missing": [
+        "blueprint.md",
+        "guidance.md",
+        "test_record.md",
+        "troubleshoot.md"
+      ]
+    },
+    {
+      "name": "muscle_ocr_batch_retrieve",
+      "state": "PENDING",
+      "missing": [
+        "blueprint.md",
+        "guidance.md",
+        "test_record.md",
+        "troubleshoot.md"
+      ]
+    },
+    {
+      "name": "muscle_ocr_batch_submit",
+      "state": "PENDING",
+      "missing": [
+        "blueprint.md",
+        "guidance.md",
+        "test_record.md",
+        "troubleshoot.md"
+      ]
+    },
+    {
+      "name": "muscle_ocr_receipt",
+      "state": "PENDING",
+      "missing": [
+        "blueprint.md",
+        "guidance.md",
+        "test_record.md",
+        "troubleshoot.md"
+      ]
+    },
+    {
+      "name": "muscle_receipt_dedup_check",
+      "state": "PENDING",
+      "missing": [
+        "blueprint.md",
+        "guidance.md",
+        "test_record.md",
+        "troubleshoot.md"
+      ]
+    },
+    {
+      "name": "muscle_receipt_dedup_mark",
+      "state": "PENDING",
+      "missing": [
+        "blueprint.md",
+        "guidance.md",
+        "test_record.md",
+        "troubleshoot.md"
+      ]
+    },
+    {
+      "name": "muscle_sheets_append",
+      "state": "PENDING",
+      "missing": [
+        "blueprint.md",
+        "guidance.md",
+        "test_record.md",
+        "troubleshoot.md"
+      ]
+    }
+  ]
+}

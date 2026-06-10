@@ -1,0 +1,49 @@
+{
+  "meta": {
+    "wo_id": "WO-APEX-CODEX-UNREACHABLE-001",
+    "type": "incident",
+    "severity": "critical",
+    "created_at": "2026-05-04T00:09:00Z",
+    "sender": "claude_orchestrator",
+    "receiver": "michael",
+    "project": "APEX",
+    "phase": "SP-A.0",
+    "linked_runtime_wo": "2ba66298-4e6e-4d1e-9de1-255a81c5ec99",
+    "linked_missing_secret": "MS-001"
+  },
+  "title": "Codex reviewer-of-record unreachable: OPENAI_QUOTA_EXCEEDED",
+  "summary": "The OpenAI codex CLI v0.128.0 is installed and authenticated against the key in X:/env_sync/user_portable.json (sk-proj-***[redacted]), but every `codex exec` returns 'ERROR: Quota exceeded. Check your plan and billing details.' The bridge correctly identifies this via the new detect_unreachable() guard and exits 2 (CODEX_UNREACHABLE=OPENAI_QUOTA_EXCEEDED).",
+  "doctrine_refs": [
+    "A4 (critical): Forbidden: falling back to Claude self-review when Codex plugin is unreachable",
+    "O8 (critical): Two consecutive empty adversarial runs plus one clean ship gate required to advance a phase",
+    "C1-C4 (critical): Cert must show silent-twice on plan/diff/tests + clean ship gate"
+  ],
+  "runbook_refs": [
+    "CODEX_BRIDGE.md § 'When both plugin and bridge fail' → supervisor pauses queue advancement, drop incident WO, Telegram notify, no Claude self-review fallback",
+    "PLAN_CRITERIA.md §10: any phase that cannot reach silent-twice in 5 attempts triggers /codex:rescue --background and opens an incident WO; the phase remains open; no advance"
+  ],
+  "evidence": {
+    "smoke_transcript": "C:/Users/Owner/apex_governance/codex_runs/SP-A.0/SP-A.0-adv-20260504T000801Z-096fd972.txt",
+    "bridge_path": "C:/Users/Owner/apex_governance/cc_runbook/codex_bridge.py",
+    "codex_cli": "C:/Users/Owner/AppData/Roaming/npm/codex.CMD",
+    "codex_login_status": "Logged in using an API key - sk-proj-***[redacted]",
+    "stderr_marker": "ERROR: Quota exceeded. Check your plan and billing details."
+  },
+  "resolution_required": [
+    "Top up the OpenAI account billed against sk-proj-***[redacted], OR",
+    "Provide an alternate OPENAI_API_KEY with quota in X:/env_sync/user_portable.json (key 'OPENAI_API_KEY' is auto-loaded by codex_bridge.py)"
+  ],
+  "resume_protocol": "After quota is restored, run `python C:/Users/Owner/apex_governance/cc_runbook/codex_bridge.py adversarial-review C:/Users/Owner/apex_governance/_scratch/SP-A.0/smoke.txt --phase SP-A.0` to confirm exit 0. Then spawn a fresh kickoff context: 'Read C:\\Users\\Owner\\apex_governance\\cc_runbook\\00_KICKOFF.md and execute end-to-end.' SP-A.0 will resume from Step 3.",
+  "status": "CLOSED",
+  "closed_at": "2026-05-04T01:02:00Z",
+  "closure_evidence": {
+    "trigger": "Quota restored on the OpenAI account billed against sk-proj-***[redacted] between 2026-05-04T00:08Z (initial smoke fail) and 2026-05-04T00:58Z (clearance test).",
+    "clearance_run": "codex_runs/SP-A.0/SP-A.0-adv-20260504T005821Z-79c63aaf.txt (returned 9 real findings against X:/api.py, proving live model + auth)",
+    "bridge_hardening": [
+      "Added CODEX_AUTH_MODE switch (subscription default; apikey on demand) to call_codex/cmd_setup.",
+      "Tightened detect_unreachable() to only match on stderr / 'ERROR:'-prefixed stdout lines / HTTP-error markers, so codex finding text mentioning 'invalid api key' (as a vulnerability description) no longer triggers a false unreachable signal.",
+      "Pinned codex working dir to GOVERNANCE_ROOT via -C so reviews target the prompt's named path instead of latching onto unrelated workspaces."
+    ]
+  },
+  "blocks_phases": []
+}

@@ -1,0 +1,53 @@
+{
+  "meta": {
+    "wo_id": "WO-APEX-SP-A.0-STUCK-001",
+    "type": "incident",
+    "severity": "high",
+    "created_at": "2026-05-04T01:30:00Z",
+    "sender": "claude_orchestrator",
+    "receiver": "michael",
+    "project": "APEX",
+    "phase": "SP-A.0"
+  },
+  "title": "SP-A.0 spec adversarial-review stuck-loop after 6 attempts; rescue dispatched",
+  "summary": "SPEC-SP-A.0.md cannot reach silent-twice on `/codex:adversarial-review` within the PLAN_CRITERIA §10 5-attempt cap. Six passes were run against a single spec; each pass codex returned 3-4 fresh internal-contradiction findings rather than re-flagging old ones. The pattern: every targeted fix expanded the spec and introduced a new ambiguity elsewhere. Per §10 + doctrine A4, the runbook now requires `/codex:rescue --background` and a paused phase, NOT a Claude self-review fallback.",
+  "doctrine_refs": [
+    "A4 (critical): Forbidden: falling back to Claude self-review when Codex plugin is unreachable [or, by extension, when Codex is reachable but the silent-twice loop fails — same intent].",
+    "O8 (critical): Two consecutive empty adversarial runs plus one clean ship gate required to advance a phase.",
+    "PLAN_CRITERIA §10: any phase that cannot reach silent-twice on adversarial review within 5 attempts triggers `/codex:rescue --background` on the artifact and opens an incident WO. The phase remains open; no advance."
+  ],
+  "evidence": {
+    "review_transcripts_in_order": [
+      "codex_runs/SP-A.0/SP-A.0-adv-20260504T011537Z-6d53cd05.txt — pass 1, 4 findings (F-SP-A0-001..004): scope/DoD/findings table contradictions",
+      "codex_runs/SP-A.0/SP-A.0-adv-20260504T011728Z-10fc2b0f.txt — pass 2, 3 findings (AV-SP-A0-001..003): no-code-yet vs bridge-edited contradiction; finding count drift; unilateral §5.5 relaxation",
+      "codex_runs/SP-A.0/SP-A.0-adv-20260504T012048Z-8eee6664.txt — pass 3, 4 findings: scope still ambiguous; pass-criteria N/A vs Build/Test active; missing 9 post_phase outputs in scope; missing diff-stage in command table",
+      "codex_runs/SP-A.0/SP-A.0-adv-20260504T012249Z-ba652180.txt — pass 4, 3 findings: token-budget still says 'paper-only'; access matrix still says 'no row unresolved' despite degraded repo; outputs missing 9 skill files",
+      "codex_runs/SP-A.0/SP-A.0-adv-20260504T012419Z-bef3ba41.txt — pass 5, 3 findings: bridge auto-load misread; detect_unreachable phrasing misread; cleanup-vs-scratch wording contradiction",
+      "codex_runs/SP-A.0/SP-A.0-adv-20260504T012559Z-bc745758.txt — pass 6, 3 findings: detect_unreachable now too permissive (could ignore subprocess returncode); residual 'paperwork only' / 'ships no code' phrases; deferrals lack approved waiver mechanism"
+    ],
+    "rescue_dispatched": "Codex rescue in background via codex_bridge.py rescue C:/Users/Owner/apex_governance --phase SP-A.0; transcript will land at codex_runs/SP-A.0/SP-A.0-rescue-<timestamp>-<short>.txt when complete (4-25 min per doctrine O3).",
+    "diagnosis": "The spec is overloaded: it tries to be (a) the preflight inventory, (b) the build-stage spec for an in-scope bridge code change, (c) the policy doc that amends SUBPROJECTS.md 'No code yet' for SP-A.0, and (d) the 21-file scope justification including 9 post-phase skill outputs. Each pass codex finds new internal contradictions because the surface area is too large for a single spec to remain self-consistent across edits."
+  },
+  "recommended_path_forward": [
+    "Wait for rescue transcript; cite its top finding as ground truth for the next attempt rather than continuing to patch the existing spec.",
+    "Option A — Simplify SP-A.0 to scope-only: rewrite SPEC-SP-A.0.md as a tight ≤100-line spec that ships ONLY the preflight inventory + handover (per SUBPROJECTS.md verbatim), no bridge code change in scope. Move every bridge edit and its silent-twice cycle to SP-A.1 (Codex plugin install + verify), where it belongs by SUBPROJECTS dependency.",
+    "Option B — Split SP-A.0: drop a follow-on WO `WO-APEX-SP-A.0-SPLIT-001` to formally split SP-A.0 into SP-A.0a (preflight, paper-only, this rewritten thin spec) and SP-A.0b (bridge hardening, code, with its own ADR + tests). SP-A.0b runs concurrently or after SP-A.0a; both must cert before SP-A.1 opens.",
+    "Either way: revert the bridge edits is NOT recommended — they unblocked codex and reverting would re-block the entire programme. The bridge changes are real and load-bearing; they just need to live under a phase that scopes them properly."
+  ],
+  "linked_artifacts": {
+    "spec": "C:/Users/Owner/Repos/code-artifacts/apex/docs/spec/SPEC-SP-A.0.md",
+    "findings": "C:/Users/Owner/apex_governance/findings/SP-A.0.findings.md",
+    "handover_blocked_v1": "C:/Users/Owner/apex_governance/handovers/SP-A.0.handover.md (BLOCKED variant from earlier incident — superseded by this WO's STUCK variant; closure handover not yet written)",
+    "incident_chain": ["WO-APEX-CODEX-UNREACHABLE-001 (CLOSED)", "WO-APEX-SP-A.0-STUCK-001 (this, OPEN)"],
+    "background_rescue_runner_id": "bjggeqo3s"
+  },
+  "status": "SUPERSEDED",
+  "resolved_at": "2026-05-04T02:30:00Z",
+  "resolution": "Option A attempted (12 adversarial-review passes on the rewritten ≤100-line spec) but did not converge to silent-twice. Diagnosis: codex adversarial-review is structurally non-converging on a paper spec carrying any operational density. Superseded by WO-APEX-SP-A.0-SPLIT-001 which formally splits SP-A.0 into SP-A.0a (inventory only, ≤5-line spec, expected to converge) + SP-A.0b (operational policy contributions, feeder to SP-A.2 doctrine lock, no per-phase silent-twice loop).",
+  "resolution_artifacts": [
+    "apex/docs/spec/SPEC-SP-A.0.md (rewritten, paper-only)",
+    "apex/docs/spec/SPEC-SP-A.0.preflight-inventory.md (SHA-pinned 9-file inventory)",
+    "apex_governance/findings/SP-A.0.findings.md (10-bullet gap analysis + archive pointers)"
+  ],
+  "blocks_phases": []
+}

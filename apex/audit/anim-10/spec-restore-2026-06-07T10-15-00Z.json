@@ -1,0 +1,49 @@
+{
+  "status": "OK",
+  "dry_run": false,
+  "force": false,
+  "transcript": "C:\\Users\\Owner\\apex_governance\\codex_runs\\agen-spec-build\\agen-spec-build-review-20260505T043244Z-d5b8c121.txt",
+  "transcript_sha256": "94929417c8ec150c60c8d880378438466cf077e98b8cd57cc6593deae7d5ce95",
+  "out_dir": "AGENT_BUILD_SYSTEM\\03_SPECIFICATION_AGENT",
+  "written": [],
+  "no_op_idempotent": [
+    {
+      "basename": "AGEN-PRMPT-spec-system-prompt-v1.md",
+      "dst": "AGENT_BUILD_SYSTEM\\03_SPECIFICATION_AGENT\\AGEN-PRMPT-spec-system-prompt-v1.md",
+      "size_bytes": 13300,
+      "sha256": "29040602f343328355177ce0f2d42f7c8f1f1b441eb7173cd880c6473a37f6fd",
+      "note": "Destination already byte-identical to transcript slice; no write performed."
+    },
+    {
+      "basename": "AGEN-SCRPT-spec-supabase-migration-v1.sql",
+      "dst": "AGENT_BUILD_SYSTEM\\03_SPECIFICATION_AGENT\\AGEN-SCRPT-spec-supabase-migration-v1.sql",
+      "size_bytes": 24449,
+      "sha256": "449a4d210735b82ee81d9fa1e9c9487c72c04d84482907f8bd275f2a334e3509",
+      "note": "Destination already byte-identical to transcript slice; no write performed."
+    },
+    {
+      "basename": "AGEN-SPEC-spec-integration-v1.md",
+      "dst": "AGENT_BUILD_SYSTEM\\03_SPECIFICATION_AGENT\\AGEN-SPEC-spec-integration-v1.md",
+      "size_bytes": 16828,
+      "sha256": "bc1b9289f4ac115e2ee6cc30503f26b0bb167399fa798bdcf14e9b3517c26e87",
+      "note": "Destination already byte-identical to transcript slice; no write performed."
+    },
+    {
+      "basename": "AGEN-TEST-spec-test-plan-v1.md",
+      "dst": "AGENT_BUILD_SYSTEM\\03_SPECIFICATION_AGENT\\AGEN-TEST-spec-test-plan-v1.md",
+      "size_bytes": 14126,
+      "sha256": "7129209168efbba9e30faba9fb3e341ba44048881dd273d3cfc6b2c077d23428",
+      "note": "Destination already byte-identical to transcript slice; no write performed."
+    },
+    {
+      "basename": "AGEN-WKFL-spec-workflow-v1.json",
+      "dst": "AGENT_BUILD_SYSTEM\\03_SPECIFICATION_AGENT\\AGEN-WKFL-spec-workflow-v1.json",
+      "size_bytes": 45237,
+      "sha256": "8a4e86973ae595b739269467640a1e61931c99e9984e86eeb79b7e0d6fe248ed",
+      "note": "Destination already byte-identical to transcript slice; no write performed."
+    }
+  ],
+  "skipped": [],
+  "rejected": [],
+  "missing_from_transcript": []
+}

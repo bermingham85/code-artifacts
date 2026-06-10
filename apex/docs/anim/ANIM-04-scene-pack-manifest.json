@@ -1,0 +1,62 @@
+{
+  "phase": "ANIM-04",
+  "schema_version": 1,
+  "scenes": {
+    "MagicalRealmPlayground": {
+      "brand": "Jesse-Adventures",
+      "bible_path": "apex/docs/anim/scenes/ANIM_Jesse-Adventures_MagicalRealmPlayground_bg_v1.md",
+      "descriptor": {
+        "brand": "Jesse-Adventures",
+        "prompt": "A magical realm playground at sunset with weathered swings and a tall ornate carousel under red and orange evening summer sky, soft warm light catching painted wood, calm wide framing",
+        "source_path_substr": "magical_realm_playground",
+        "notes": "Anchor scene for the Grog music video; shipped MP4 at grog_too_big_for_playground_mv.mp4 uses Midjourney variants under this prefix. Pixar 3D animated feature style anchor applied at prompt tail per shot_list.json prompt_rules."
+      },
+      "brand_tokens": {
+        "style_anchor": "Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+        "prompt_rules": "Subject in first 15 words. 30-80 words per kontext_prompt. No quality tags. No negation. Lighting described as interaction. Texture inline with subject. Style anchor once at end. Character identified by key visual markers not 'the same character'.",
+        "source": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/shot_list.json",
+        "missing": false
+      },
+      "asset_count": 7,
+      "assets": [
+        {
+          "path": "X:/Automations/apex/projects/jesse_animate/characters/_source_refs/scenes/a_magical_realm_playground_in_the_evening_red_and_orange_summ_062ee06b-5d7f-4575-bd07-92178593cc61_0.png",
+          "sha256": "e48de4dcb082c9979be543799628385eaa137ddc47405b5436ab9cec83aca2b2",
+          "size": 2101851
+        },
+        {
+          "path": "X:/Automations/apex/projects/jesse_animate/characters/_source_refs/scenes/a_magical_realm_playground_in_the_evening_red_and_orange_summ_062ee06b-5d7f-4575-bd07-92178593cc61_1.png",
+          "sha256": "aa305f043de1d08d35404d8884558a841a2ac0a4fd57cb4f4efb181a0d28532a",
+          "size": 2123154
+        },
+        {
+          "path": "X:/Automations/apex/projects/jesse_animate/characters/_source_refs/scenes/a_magical_realm_playground_in_the_evening_red_and_orange_summ_062ee06b-5d7f-4575-bd07-92178593cc61_2.png",
+          "sha256": "9c7915b8c16b83db1aa154e1bd1b24a2a7b2b7dfe885d5dcf3203cb37b42193f",
+          "size": 2191312
+        },
+        {
+          "path": "X:/Automations/apex/projects/jesse_animate/characters/_source_refs/scenes/a_magical_realm_playground_in_the_evening_red_and_orange_summ_062ee06b-5d7f-4575-bd07-92178593cc61_3.png",
+          "sha256": "3148ada4f85004ac6de10de7558d6726f0da24ccd292f8ac8a432f9cbe5e5830",
+          "size": 2060393
+        },
+        {
+          "path": "X:/Automations/apex/projects/jesse_animate/characters/_source_refs/scenes/a_magical_realm_playground_in_the_evening_red_and_orange_summ_a7798b9a-1371-4914-8904-b1614152296a_0.png",
+          "sha256": "73813e52357dea69e0d117f0b0d0017516b65b6baadfd0796275ed8e9c7b6bea",
+          "size": 2022565
+        },
+        {
+          "path": "X:/Automations/apex/projects/jesse_animate/characters/_source_refs/scenes/a_magical_realm_playground_in_the_evening_red_and_orange_summ_a7798b9a-1371-4914-8904-b1614152296a_1.png",
+          "sha256": "8c9fd495ed818ffeb76bc79a459526430926c57ba73b6fd1b1c69900353ca603",
+          "size": 1525268
+        },
+        {
+          "path": "X:/Automations/apex/projects/jesse_animate/characters/_source_refs/scenes/a_magical_realm_playground_in_the_evening_red_and_orange_summ_a7798b9a-1371-4914-8904-b1614152296a_2.png",
+          "sha256": "aa2cd59f36c50285ac5cd54185a908c25d8c4ce94ddbd3e5f2159403bb7cc040",
+          "size": 1734109
+        }
+      ],
+      "findings": [],
+      "built_at": "2026-06-07T05:49:42+00:00"
+    }
+  }
+}

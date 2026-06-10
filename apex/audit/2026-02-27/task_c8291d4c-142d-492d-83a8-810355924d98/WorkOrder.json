@@ -1,0 +1,44 @@
+{
+  "meta": {
+    "job_id": "c8291d4c-142d-492d-83a8-810355924d98",
+    "ref_code": "APEX-SYS-WF-00000",
+    "created_at": "2026-02-27T11:24:58Z",
+    "sender": "human_originator",
+    "receiver": "foreman",
+    "project": "APEX",
+    "chain_next": null,
+    "idempotency_key": null,
+    "retry_count": 0,
+    "max_retries": 3,
+    "priority": "NORMAL"
+  },
+  "sop": {
+    "action": "muscle_health_check",
+    "inputs": [],
+    "parameters": {},
+    "requirements": [],
+    "timeout_seconds": 300
+  },
+  "task_folder": "C:\\Users\\bermi\\Projects\\apex\\active_projects\\tasks\\task_c8291d4c-142d-492d-83a8-810355924d98",
+  "qa_gate": {
+    "rule": "FILE_EXISTS",
+    "checks": [
+      {
+        "rule": "FILE_EXISTS",
+        "target": "",
+        "min_size_bytes": 0,
+        "expected_string": null
+      }
+    ]
+  },
+  "status": {
+    "state": "COMPLETE",
+    "started_at": "2026-02-27T11:25:03Z",
+    "completed_at": "2026-02-27T11:25:06Z",
+    "duration_seconds": 2.42,
+    "diagnostic": null,
+    "traceback": null,
+    "qa_result": "PASS",
+    "exit_code": 0
+  }
+}

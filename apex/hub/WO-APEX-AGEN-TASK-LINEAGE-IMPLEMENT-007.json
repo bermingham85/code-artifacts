@@ -1,0 +1,110 @@
+{
+  "task_packet_version": "1.0",
+  "task_id": "WO-APEX-AGEN-TASK-LINEAGE-IMPLEMENT-007",
+  "created_at": "2026-05-30T06:42:44Z",
+  "status": "INSPECTION_COMPLETE_READY_FOR_MIGRATION_DRAFT",
+  "priority": "HIGH",
+  "goal": "Implement AGEN task lineage only after live read-only schema inspection, operator approval, backup/rollback evidence, and Codex review.",
+  "source_of_truth": [
+    "docs/APEX_ACTIVE_QUEUE.md",
+    "docs/spec/SPEC-AGEN-TASK-LINEAGE-v1.md",
+    "docs/policy/AGEN_TASK_LINEAGE_DESIGN_v1.md",
+    "audit/codex_review/AGEN-tasks-schema/findings.md",
+    "hub/WO-APEX-AGEN-TASKS-SCHEMA-REVIEW-006.json"
+  ],
+  "authorization_boundary": {
+    "supabase_project_boundary": {
+      "default_project_code": "APEX",
+      "default_project_id": "243bed23-67d6-4f69-b382-e771c57abed7",
+      "protected_project_codes": [
+        "JESS"
+      ],
+      "policy": "docs/policy/SUPABASE_PROJECT_ISOLATION.md"
+    },
+    "allowed_now_without_credentials": [
+      "Read local governed docs and SQL/prompt/workflow files.",
+      "Prepare migration design, test matrix, and review checklist.",
+      "Inspect committed repository state."
+    ],
+    "blocked_until_operator_approval": [
+      "Connect to live Supabase project.",
+      "Read live schema via Supabase APIs or SQL console.",
+      "Create, alter, or drop any production table, function, policy, trigger, index, or workflow.",
+      "Read, print, move, stage, or commit secret-bearing files."
+    ]
+  },
+  "required_first_actions": [
+    "Pull origin/apex/estate-seed-00004.",
+    "Read docs/APEX_CONTEXT_INDEX.md.",
+    "Read docs/APEX_ACTIVE_QUEUE.md.",
+    "Run python registry/muscle_work_gate.py --repo . --intent write --fetch --allow-dirty.",
+    "Confirm branch head is d5a3678 or later."
+  ],
+  "implementation_sequence": [
+    {
+      "step": "S1_live_schema_inspection",
+      "status": "completed",
+      "requirement": "Obtain operator-approved read-only Supabase access and capture schema evidence for agent_tasks, agent_architectures, agent_task_dependencies, agent_build_artifacts, agent_verifications, and agent_routing_logs.",
+      "output": "audit/AGEN-task-lineage/live-schema-inspection.md"
+    },
+    {
+      "step": "S2_owner_decision",
+      "status": "completed",
+      "requirement": "Choose exactly one lineage writer owner: Architecture RPC fan-out, PM/Router fan-out, or read projection only.",
+      "output": "docs/policy/AGEN_TASK_LINEAGE_DESIGN_v1.md live inspection addendum"
+    },
+    {
+      "step": "S3_migration_draft",
+      "status": "drafted_local_review_improved_pending_sql_execution",
+      "requirement": "Draft idempotent SQL only after S1 and S2. Avoid ADD CONSTRAINT IF NOT EXISTS; prove partial-index conflict behavior if used.",
+      "output": "registry/clones/code-artifacts/AGENT_BUILD_SYSTEM/*/AGEN-SCRPT-task-lineage-migration-v1.sql"
+    },
+    {
+      "step": "S4_consumer_updates",
+      "status": "partial_architecture_rpc_source_updated",
+      "requirement": "Update the owning agent prompt/workflow/test plan and remove Builder/Verification/Router heuristic matching only after the lineage contract is implemented.",
+      "output": "prompt/workflow/test diffs under AGENT_BUILD_SYSTEM"
+    },
+    {
+      "step": "S5_codex_review",
+      "status": "external_cli_blocked_local_review_recorded",
+      "requirement": "Run Codex review against the migration, owner decision, consumer diffs, rollback, RLS, dependency translation, and null-lineage behavior.",
+      "output": "audit/codex_review/AGEN-task-lineage-implement/findings.md"
+    }
+  ],
+  "success_criteria": [
+    "Live schema evidence exists and is linked. COMPLETE: audit/AGEN-task-lineage/live-schema-inspection.md",
+    "One writer owner is chosen and documented. COMPLETE: Architecture RPC fan-out in docs/policy/AGEN_TASK_LINEAGE_DESIGN_v1.md",
+    "Dependency semantics reconcile with agent_task_dependencies. DRAFT IMPROVED: nested commit bd7f440 validates decomposition dependencies and recreates canonical agent_task_dependencies rows.",
+    "Legacy/null-lineage rows stay valid.",
+    "Rollback and backup plan exist before migration.",
+    "Codex review passes before any production write."
+  ],
+  "rollback_plan": "No production changes are authorized by this packet in its current status. Migration draft may proceed locally, but rollback must be defined and reviewed before any live write.",
+  "operator_resolution_needed": [
+    "Provide SQL execution route: Supabase SQL editor, Supabase CLI, psql/database URL, or approved disposable database.",
+    "Approve whether the implementation may proceed from local migration draft to live production migration.",
+    "Confirm backup destination/evidence requirement before any production migration."
+  ],
+  "inspection_evidence": {
+    "completed_at": "2026-05-30T06:56:41Z",
+    "method": "Supabase PostgREST OpenAPI metadata request",
+    "project_ref": "ylcepmvbjjnwmzvevxid",
+    "evidence_file": "audit/AGEN-task-lineage/live-schema-inspection.md",
+    "secrets_printed": false,
+    "data_rows_read": false
+  },
+  "owner_decision": {
+    "chosen_owner": "Architecture RPC fan-out",
+    "reason": "create_architecture_revision already receives the full decomposition and writes the canonical architecture revision transactionally.",
+    "backfill_mode": "future-only",
+    "dependency_model": "agent_task_dependencies remains canonical; jsonb dependencies, if added, are non-canonical projection only."
+  },
+  "migration_draft": {
+    "branch": "codex/agen-task-lineage-draft",
+    "commit": "bd7f440",
+    "production_applied": false,
+    "runtime_validated": false,
+    "blocker": "No SQL execution route available in this context; REST API keys cannot apply DDL."
+  }
+}
