@@ -1,0 +1,26 @@
+{
+  "id": "WO-BERMCOIN-BUILD",
+  "project": "BERMCOIN",
+  "status": "AUDIT",
+  "started": "2026-04-11T00:00:00Z",
+  "phases": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
+  "session": "BERMCOIN-BCK-SES-00001",
+  "note": "Full autonomous rebuild - prior session 2026-04-02 registered but tables not created",
+  "completed": "2026-04-11T08:15:44Z",
+  "pr_url": "https://github.com/bermingham85/code-artifacts/pull/3",
+  "smoke_tests": "13/13 PASS",
+  "phases_completed": 12
+}

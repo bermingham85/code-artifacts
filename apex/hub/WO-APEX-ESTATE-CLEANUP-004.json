@@ -1,0 +1,168 @@
+{
+  "task_packet_version": "1.0",
+  "task_id": "WO-APEX-ESTATE-CLEANUP-004",
+  "phase": "APEX-PARALLEL-MERGE-PLAYBOOK / post-Batch-3 / estate hygiene to unblock muscle_compliance_check",
+  "goal": "Close the FAIL findings + the load-bearing WARN findings that muscle_compliance_check.py correctly reports against the live estate, so that batch 1 (muscle_compliance_check) can flip from BLOCKED to APPROVED. The script itself is patched and documented per codex Batch 1 work; only the estate hygiene problems it surfaces remain.",
+  "requester": "Claude (Opus 4.7, BERMI-LAPTOP, doc author per operating contract); follow-on to Batch 3 doctrine lock (cc267b9)",
+  "assigned_to": "Codex (script-level edits + DOCUMENT_REGISTER.md repair + secrets handling are Codex's lane per operating contract)",
+  "authorization_boundary": {
+    "allowed_assets": [
+      "C:/Users/Owner/Repos/code-artifacts/apex/registry/*.py (header ref-code fixes)",
+      "C:/Users/Owner/Repos/code-artifacts/apex/docs/DOCUMENT_REGISTER.md (via doc_controller — no direct edits)",
+      "C:/Users/Owner/Repos/code-artifacts/apex/docs/tools/<muscle>/* (NEW 3-doc sets for the 8 listed muscles)",
+      "C:/Users/Owner/Repos/code-artifacts/apex/audit/compliance/*.json (compliance run evidence — natural side-effect of re-runs)",
+      "C:/Users/Owner/Repos/code-artifacts/apex/hub/WO-APEX-ESTATE-CLEANUP-004.json (this file — status appended on completion)"
+    ],
+    "forbidden_actions": [
+      "Touch any of the 10 already-promoted tool doc sets (claude_codex_loop, muscle_compliance_check, muscle_drop_ticket, muscle_file_copy, muscle_headless_inventory, muscle_health_check, muscle_json_merge, muscle_replit_builder_packet, muscle_resource_guard, muscle_text_transform) — those are Batch 1/2 work + earlier batches",
+      "Touch any docs/doctrine/* file (Batch 3 territory, just locked at cc267b9)",
+      "Delete the .env file directly — instead: (a) confirm it is actually a secret-bearing file vs an empty template, (b) if real secrets present, follow secret-removal procedure (git-filter-repo or BFG cleanup), (c) if template only, move to .env.example and add real path to .gitignore. Operator approval required before any destructive action.",
+      "Modify the SHEGOO / CLAW / BERM / JESS / TALE / BALP register rows EXCEPT to add a 'project_path_status: external' note — those are cross-project references, not stale-by-bug",
+      "Re-allocate ref codes (issue new ones) for files that already have a header — fix register-side instead, OR rename header to match register. Never both",
+      "Push to origin — that requires explicit operator instruction. Commit only.",
+      "Bypass authentication or expose plaintext secrets in the cleanup process"
+    ]
+  },
+  "input_files": [
+    "registry/muscle_compliance_check.py — APEX-MB-PY-00024, the validator that surfaces these findings (NOT touched by this WO)",
+    "audit/compliance/2026-05-26T18-40-44Z.json — latest detailed findings JSON (full machine-readable list)",
+    "docs/DOCUMENT_REGISTER.md — the register to repair",
+    "docs/doctrine/APEX_DOCTRINE_v1.0.md §11 — doc-control matrix (canonical WO naming separation: governance vs runtime)",
+    "docs/doctrine/APEX_DOCTRINE_v1.0.md §10 — paper-primary exemption + cleanup-report 3-category structure",
+    "docs/APEX_PARALLEL_MERGE_PLAYBOOK.md § Source Tracks → registry/muscle_compliance_check.py row ('Promote into approved tool docs or merge its checks into validate_tool_docs.py')",
+    "registry/validate_tool_docs.py — invoked after each phase of cleanup to confirm OK",
+    "registry/claude_codex_loop.py — APEX-MB-PY-00023, reference for the in-source header format codex's earlier patches established"
+  ],
+  "write_scope": [
+    "**Phase A — Duplicate ref resolution (1 finding, FAIL):** APEX-MB-PY-00015 currently maps to BOTH muscle_classify_document.py AND muscle_ocr_batch_submit.py. Decide which file keeps APEX-MB-PY-00015 (the older/earlier-registered one wins; check audit/doc_audit.jsonl for the original allocation timestamp), allocate a NEW ref for the other via doc_controller.issue_ref, update the loser's in-file header to the new ref, and update the loser's register row via version_bump or direct register edit. Re-run compliance check; duplicate_refs MUST drop to 0.",
+    "**Phase B — Header/register mismatch repair (8 findings, FAIL):** For each ref in {APEX-MB-PY-00015, APEX-SYS-PY-00001, APEX-MB-PY-00010, APEX-MB-PY-00011, APEX-MB-PY-00012, APEX-MB-PY-00013, APEX-MB-PY-00016, APEX-MB-PY-00002}, decide whether the header is authoritative or the register is, then bring them into agreement. Document the decision per ref in the cleanup-report. Re-run compliance check; header_register_mismatches MUST drop to 0.",
+    "**Phase C — Registered-but-missing repair (4 findings, FAIL):** Refs {CLAW-MB-TS-00000, CLAW-MB-DOC-00000, CLAW-MB-DOC-00001, SHEGOO-BCK-SES-00001} have BLANK paths in the register. Two paths: (1) if the artifact has moved into a known cross-project location, populate the register row's `path` field with the absolute path or the canonical external-project marker (e.g. `external://shegoo-repo/...`); (2) if the artifact is genuinely deleted/abandoned, flip the row's `status` from ACTIVE to ARCHIVED or DELETED (per the register convention) and document the rationale in the cleanup-report. Re-run compliance check; registered_missing MUST drop to 0.",
+    "**Phase D — Muscle 3-doc set authoring (8 findings, WARN):** For each of {muscle_classify_document, muscle_gdrive_download, muscle_gdrive_watcher, muscle_ocr_batch_retrieve, muscle_ocr_batch_submit, muscle_ocr_receipt, muscle_receipt_dedup, muscle_sheets_append}, author the missing blueprint.md + guidance.md + test_record.md following the muscle_resource_guard reference shape. Each muscle's 3-doc set is independent; can be parallelised. Doctrine §10 spec-template addenda apply (paper-primary exemption available if no test surface). Re-run compliance check; muscles_missing_docs MUST drop to 0.",
+    "**Phase E — Stale-path / external-ref classification (26 findings, WARN):** Most stale-path entries are SHEGOO-BCK-* and CLAW-MB-* — cross-project references that are correctly 'stale' relative to this repo because they belong to a different repo. Add an `external` or `cross_project` annotation to the register column (or a sibling column) so future compliance runs SHORT-CIRCUIT on them and don't re-flag. Acceptable alternative: extend muscle_compliance_check.py with a SCOPE filter that classifies refs by prefix (APEX-* = local; CLAW-* / SHEGOO-* / etc = external) — if you take this path, the doctrine §10 spec-template paper-primary exemption applies for the patch.",
+    "**Phase F — `.env` secret handling (1 finding, WARN, but actually critical):** `active_projects/bermcoin/.env` is on disk. STEPS: (1) inspect contents read-only and confirm whether it contains real secrets vs an example template; (2) if real secrets: STOP and surface to operator — secret removal requires git history rewrite (filter-repo or BFG) and is out of scope for an autonomous WO; (3) if template/empty: rename to `.env.example`, add `**/.env` to `.gitignore` if not already present, document in cleanup-report. Re-run compliance check; secrets_on_disk MUST drop to 0 OR the WO escalates as BLOCKED with the operator-required steps surfaced.",
+    "**Phase G — Final verification:** Run `python registry/muscle_compliance_check.py --strict` (strict mode flips warnings to fails). MUST exit 0 OR cleanly document any remaining WARNs as accepted residuals with rationale in cleanup-report. Then re-run `python registry/muscle_compliance_check.py` and confirm summary counts: duplicate_refs=0, header_register_mismatches=0, registered_missing=0, muscles_missing_docs=0, secrets_on_disk=0. unregistered_disk_files can remain non-zero (many are evidence transcripts, raw audit, etc — intentional)."
+  ],
+  "constraints": [
+    "Phases A-C are FAIL items and MUST close. Phases D-F are WARN items; D + F MUST close, E may stay as classification work if the prefix-filter path is rejected.",
+    "Doctrine §0 conflict precedence: when a fix would conflict with the APEX_CONTEXT_INDEX operating contract or APEX_DOCTRINE_v1.0, the doctrine wins; flag the conflict in cleanup-report.",
+    "Idempotency: re-running each phase should be a no-op on a clean estate. Use doc_controller.find_doc to detect already-registered entries before allocating new refs.",
+    "Run `python registry/validate_tool_docs.py --quiet` after each register edit (matches the Batch 1/2 codex pattern). MUST return OK.",
+    "Run `python registry/muscle_compliance_check.py` after each phase to track progress on the headline counters.",
+    "Doctrine O11 (full SHA-256) applies: any hashing in the cleanup process uses sha256 hex of raw bytes, no truncation, no normalisation.",
+    "No secrets in any committed artifact. If Phase F reveals real secrets, that becomes its own escalation WO — do NOT autonomously rewrite git history.",
+    "Commit per-phase if natural breakpoints exist (per the codex Batch 1/2 pattern), but a single 'estate cleanup' commit at the end is also acceptable. Commit message names the phase IDs closed."
+  ],
+  "expected_output": {
+    "files": [
+      "registry/*.py header edits (per Phase A/B per-file decisions)",
+      "docs/DOCUMENT_REGISTER.md updated rows (via doc_controller)",
+      "docs/tools/<muscle>/{blueprint,guidance,test_record}.md × 8 muscles (Phase D — NEW)",
+      "audit/compliance/<timestamp>.json (natural side-effect of re-runs; commit at most ONE final run, not the intermediates)",
+      "active_projects/bermcoin/.env.example (Phase F — IF template path applies)",
+      ".gitignore (Phase F — if `**/.env` not already present)",
+      "cleanup-report.md (Phase G — per doctrine §10 R7 three-category structure)",
+      "hub/WO-APEX-ESTATE-CLEANUP-004.json (this file — codex_result appended)"
+    ],
+    "report": "TASK RESULT with: status (COMPLETED|BLOCKED|PARTIAL), per-phase closure status (A through G), final compliance check summary numbers (compare before/after), list of files whose ref code changed and their old→new mapping, secrets findings disposition, cleanup-report path, recommended next action."
+  },
+  "test_command": "python registry/muscle_compliance_check.py --strict && python registry/validate_tool_docs.py --quiet",
+  "success_criteria": [
+    "muscle_compliance_check.py reports: duplicate_refs=0, header_register_mismatches=0, registered_missing=0, muscles_missing_docs=0, secrets_on_disk=0.",
+    "validate_tool_docs.py --quiet returns {\"status\":\"OK\",\"findings\":[]}.",
+    "All 8 muscles in Phase D have full {blueprint, guidance, test_record, troubleshoot}.md sets (troubleshoot.md already exists for some per codex's earlier work — verify and only author missing ones).",
+    "cleanup-report.md exists at the project root or audit/compliance/ with the 3-category structure (Created / Modified / Deleted-or-Reconciled) per doctrine §10.",
+    "muscle_compliance_check tool's batch 1 BLOCKED status can be flipped to APPROVED on the strength of this WO's closure (the operator does the flip in a follow-up minimal commit, not this WO).",
+    "Commit messages follow the codex Batch 1/2 pattern: imperative + phase-scoped (e.g. 'Estate cleanup phases A-C: ref/header/register repair'; 'Estate cleanup phase D: muscle 3-doc sets')."
+  ],
+  "rollback_plan": "Per-phase rollback: (A) git restore the renamed muscle's header + revert the doc_controller register edit; (B) git restore the 8 mismatched .py files' headers; (C) git restore DOCUMENT_REGISTER.md row edits for the 4 blank-path rows; (D) git rm the 8 muscle doc trees (they're new); (E) git restore the register annotation column; (F) revert the .env→.env.example rename + the .gitignore edit. Each phase is independently rollback-able; multi-phase rollback may require ordering (D and E first, A-C next, F last). cleanup-report.md should track which phase introduced which file so rollback is straightforward.",
+  "evidence_required": [
+    "Before-and-after compliance check summary lines (paste the headline counters from the muscle_compliance_check output for each phase).",
+    "validate_tool_docs.py OK output after each register edit.",
+    "Per-muscle test_record.md entries with REAL evidence for Phase D (not stubs).",
+    ".env disposition reasoning + diff of .env→.env.example rename if taken.",
+    "cleanup-report.md three-category file list."
+  ],
+  "blocker_policy": {
+    "stop_for": [
+      "Phase F reveals real secrets requiring git history rewrite — escalate as separate operator-only WO",
+      "doc_controller.py errors during ref allocation",
+      "validate_tool_docs.py returns non-OK after any register edit",
+      "Header/register mismatch reveals that the source file has been refactored beyond a simple rename (deep restructuring requires a separate review packet, not an inline fix)",
+      "A muscle in Phase D requires real test fixtures that don't exist (Google API creds, Drive folders, etc) — author blueprint+guidance, mark test_record.md as 'PENDING REAL TEST EVIDENCE' and surface as partial",
+      "Any conflict with the locked doctrine v1.0-PROVISIONAL (e.g. a register row that contradicts doctrine §0 conflict precedence)"
+    ],
+    "blocker_report_fields": [
+      "Exact blocker (which phase, which file/ref)",
+      "Whether it blocks the entire WO or just one phase (most blockers should be per-phase)",
+      "Lowest-friction resolution + estimated effort",
+      "Safe fallback path (often: 'leave WARN in place, document as accepted residual')",
+      "What can continue independently (most phases are independent of each other; A-C-D-F can run in parallel)"
+    ]
+  },
+  "promotion_provenance": {
+    "playbook": "docs/APEX_PARALLEL_MERGE_PLAYBOOK.md",
+    "playbook_step": "post-step-3 follow-up + cited indirectly by step 3 ('absorb unique checks into validate_tool_docs.py' is an alternative; this WO takes the 'fix the estate' path)",
+    "user_order_priority": "operator-relayed 2026-05-26 ~18:38Z: 'Estate cleanup for Batch 1 blockers remains open.'",
+    "prior_batch": "Batch 1 (WO-APEX-PROMOTE-COMPLIANCE-CHECK-001, codex committed in 2bcf242 with muscle_compliance_check left BLOCKED pending estate cleanup) + Batch 3 (cc267b9, locked doctrine — now references doctrine §10/§11)",
+    "next_batch": "Batch 4: triage hub/WO-APEX-* + docs/spec/SPEC-SP-A.0* per playbook step 6 (Claude's lane; can run in parallel with this WO since cleanup is Codex's lane).",
+    "independence_assertion": "This WO is independent of Batch 4 (work-order/spec triage). They share no input files."
+  },
+  "doctrine_notes": [
+    "Per APEX_CONTEXT_INDEX.md operating contract: Claude owns architecture/docs/reviews; Codex owns code edits + scripts + tests + configs. Estate hygiene is code+script+register work — Codex's lane.",
+    "Per doctrine §10 R7: cleanup-report.md MUST list files in three categories (Created / Modified / Deleted-or-reconciled). Each category is non-empty or explicitly states 'none in this category'.",
+    "Per doctrine §0 conflict precedence: APEX_CONTEXT_INDEX.md operating contract is canonical; any fix that contradicts it surfaces as a doctrine finding rather than a unilateral fix.",
+    "Per operator relay 2026-05-25: 'Codex left muscle_compliance_check correctly blocked because it correctly reports real estate issues.' This WO closes those issues; codex may then flip the tool's APPROVED status in a follow-up minimal commit.",
+    "Per doctrine A4: 'No Claude self-review fallback when Codex review is required.' This WO is Codex's work; Claude does NOT execute the cleanup unilaterally."
+  ],
+  "codex_result": {
+    "status": "PARTIAL_BLOCKED",
+    "updated_at": "2026-05-28T09:35:00Z",
+    "completed_phases": [
+      "Phase A - duplicate ref APEX-MB-PY-00015 closed by aligning legacy muscle headers to existing register refs",
+      "Phase B - 8 header/register mismatches closed",
+      "Phase C - 4 external/session rows no longer report as registered_missing",
+      "Phase D - authored 4-doc sets for the 8 legacy muscles; muscles_missing_docs dropped from 8 to 0",
+      "Phase E - 26 cross-project stale path warnings closed by external classification in muscle_compliance_check"
+    ],
+    "open_phases": [
+      "Phase F - blocked by real secret-bearing .env file"
+    ],
+    "validation": {
+      "py_compile_phase_abce_scripts": "PASS",
+      "py_compile_phase_d_scripts": "PASS",
+      "cli_help_phase_d_scripts": "PASS for all CLI scripts except muscle_classify_document, which has no inspected CLI in the loaded header",
+      "validate_tool_docs": "PASS {\"status\":\"OK\",\"findings\":[]}",
+      "compliance_after_phase_d": "audit/compliance/2026-05-27T11-14-08Z.json",
+      "compliance_after_phase_abce": "audit/compliance/2026-05-28T09-29-58Z.json",
+      "compliance_summary_after_phase_abce": {
+        "duplicate_refs": 0,
+        "header_register_mismatches": 0,
+        "registered_missing": 0,
+        "registered_stale_path": 0,
+        "muscles_missing_docs": 0,
+        "muscles_unapproved": 8,
+        "secrets_on_disk": 1
+      }
+    },
+        "cleanup_report": "audit/compliance/cleanup-report.md",
+        "blocker": "active_projects/bermcoin/.env contains real secret-bearing keys. Values were not printed. Operator-approved secret handling is required before Phase F can close.",
+        "phase_f_operator_runbook": {
+            "safe_facts": [
+                "The local .env exists on disk.",
+                "git ls-files confirms apex/active_projects/bermcoin/.env is not tracked.",
+                "apex/.gitignore already blocks .env and .env.* patterns.",
+                "Secret values were not printed, copied, staged, or committed."
+            ],
+            "operator_only_completion_path": [
+                "Move required values into an approved secret store such as environment variables, a platform secret manager, or an approved credential vault.",
+                "Rotate all credentials that were present in the local .env, prioritizing service-role/API/admin keys.",
+                "Stop local services that still depend on the repo-local .env.",
+                "Move the local .env outside the repository or delete it only after replacement secret injection is verified.",
+                "Verify the file is absent or ignored and not staged.",
+                "Run python registry\\muscle_compliance_check.py --strict.",
+                "If the file was ever committed in any branch, perform a separate approved history rewrite with git-filter-repo or BFG, then rotate affected credentials again."
+            ],
+            "safe_fallback": "Leave Phase F blocked, keep the file untracked and ignored, and do not run production automation that depends on secrets from a repo-local .env."
+        }
+    }
+}

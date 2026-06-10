@@ -1,0 +1,37 @@
+{
+  "phase": "ANIM-02",
+  "tool": "kohya_ss",
+  "root": "C:\\Users\\Owner\\Tools\\kohya_ss",
+  "install": {
+    "steps": [
+      {
+        "cmd": [
+          "git",
+          "clone",
+          "--recursive",
+          "https://github.com/bmaltais/kohya_ss",
+          "C:\\Users\\Owner\\Tools\\kohya_ss"
+        ],
+        "cwd": null,
+        "exit": 0,
+        "stdout_tail": "Submodule path 'sd-scripts': checked out '3e6935a07edcb944407840ef74fcaf6fcad352f7'\n",
+        "stderr_tail": "Cloning into 'C:\\Users\\Owner\\Tools\\kohya_ss'...\nSubmodule 'sd-scripts' (https://github.com/kohya-ss/sd-scripts.git) registered for path 'sd-scripts'\nCloning into 'C:/Users/Owner/Tools/kohya_ss/sd-scripts'...\n"
+      }
+    ],
+    "verify": {
+      "ok": false,
+      "probe": {
+        "cmd": [
+          "C:\\Program Files\\Python313\\python.exe",
+          "-c",
+          "import sys; sys.path.insert(0, r'C:\\Users\\Owner\\Tools\\kohya_ss\\sd-scripts'); import library.train_util as t; print('OK', t.__file__)"
+        ],
+        "cwd": null,
+        "exit": 1,
+        "stdout_tail": "",
+        "stderr_tail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n    import sys; sys.path.insert(0, r'C:\\Users\\Owner\\Tools\\kohya_ss\\sd-scripts'); import library.train_util as t; print('OK', t.__file__)\n                                                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Owner\\Tools\\kohya_ss\\sd-scripts\\library\\train_util.py\", line 17, in <module>\n    from accelerate import Accelerator, InitProcessGroupKwargs, DistributedDataParallelKwargs, PartialState\nModuleNotFoundError: No module named 'accelerate'\n"
+      }
+    }
+  },
+  "timestamp": "2026-06-07T05-02-09Z"
+}

@@ -1,0 +1,149 @@
+{
+  "version": "1.0",
+  "generated_at": "2026-05-30T04:45:21Z",
+  "roots": [
+    "C:\\Users\\Owner\\Repos"
+  ],
+  "project_count": 4,
+  "projects": [
+    {
+      "name": "code-artifacts",
+      "path": "C:\\Users\\Owner\\Repos\\code-artifacts",
+      "root": "C:\\Users\\Owner\\Repos",
+      "relative_path": "code-artifacts",
+      "class": "DOCUMENTED_REPO",
+      "key_files": [
+        "README.md",
+        "docs/DOCUMENT_REGISTER.md"
+      ],
+      "git": {
+        "is_git": true,
+        "branch": "apex/estate-seed-00004",
+        "dirty": true,
+        "dirty_count": 34,
+        "status_preview": [
+          "M apex/docs/doc_controller.py",
+          "?? apex/.claude/",
+          "?? apex/audit/claude_codex_loop/AGEN-architecture-agent-post-migration/",
+          "?? apex/audit/claude_codex_loop/AGEN-architecture-agent-v2/",
+          "?? apex/audit/claude_codex_loop/AGEN-architecture-agent/",
+          "?? apex/audit/claude_codex_loop/AGEN-migration-coordinator/",
+          "?? apex/audit/claude_codex_loop/AGEN-verification-agent/",
+          "?? apex/audit/claude_codex_loop/SMOKE-001/attempt_01_claude_builder.txt",
+          "?? apex/audit/codex_review/",
+          "?? apex/audit/compliance/2026-05-04T15-37-48Z.json",
+          "?? apex/audit/compliance/2026-05-04T15-38-30Z.json",
+          "?? apex/audit/compliance/2026-05-04T15-39-00Z.json"
+        ]
+      },
+      "extension_counts": {
+        ".md": 166,
+        ".json": 129,
+        ".txt": 52,
+        ".py": 33,
+        ".sql": 27,
+        ".html": 18,
+        ".ps1": 8,
+        ".ts": 8
+      },
+      "recommended_entry": "README.md",
+      "next_action": "Consider adding low-token AGENTS.md or llms.txt."
+    },
+    {
+      "name": "AGENT_BUILD_SYSTEM",
+      "path": "C:\\Users\\Owner\\Repos\\code-artifacts\\AGENT_BUILD_SYSTEM",
+      "root": "C:\\Users\\Owner\\Repos",
+      "relative_path": "code-artifacts\\AGENT_BUILD_SYSTEM",
+      "class": "DOCUMENTED_REPO",
+      "key_files": [
+        "README.md"
+      ],
+      "git": {
+        "is_git": true,
+        "branch": "apex/estate-seed-00004",
+        "dirty": false,
+        "dirty_count": 0,
+        "status_preview": []
+      },
+      "extension_counts": {
+        ".md": 23,
+        ".sql": 1,
+        ".json": 1
+      },
+      "recommended_entry": "README.md",
+      "next_action": "Consider adding low-token AGENTS.md or llms.txt."
+    },
+    {
+      "name": "apex",
+      "path": "C:\\Users\\Owner\\Repos\\code-artifacts\\apex",
+      "root": "C:\\Users\\Owner\\Repos",
+      "relative_path": "code-artifacts\\apex",
+      "class": "APEX_GOVERNED",
+      "key_files": [
+        "AGENTS.md",
+        "CLAUDE.md",
+        "llms.txt",
+        "docs/APEX_CONTEXT_INDEX.md",
+        "docs/APEX_TOOL_MENU.md",
+        "docs/APEX_WORKSPACE_MENU.md",
+        "docs/DOCUMENT_REGISTER.md",
+        "registry/TOOL_INDEX.md"
+      ],
+      "git": {
+        "is_git": true,
+        "branch": "apex/estate-seed-00004",
+        "dirty": true,
+        "dirty_count": 34,
+        "status_preview": [
+          "M docs/doc_controller.py",
+          "?? .claude/",
+          "?? audit/claude_codex_loop/AGEN-architecture-agent-post-migration/",
+          "?? audit/claude_codex_loop/AGEN-architecture-agent-v2/",
+          "?? audit/claude_codex_loop/AGEN-architecture-agent/",
+          "?? audit/claude_codex_loop/AGEN-migration-coordinator/",
+          "?? audit/claude_codex_loop/AGEN-verification-agent/",
+          "?? audit/claude_codex_loop/SMOKE-001/attempt_01_claude_builder.txt",
+          "?? audit/codex_review/",
+          "?? audit/compliance/2026-05-04T15-37-48Z.json",
+          "?? audit/compliance/2026-05-04T15-38-30Z.json",
+          "?? audit/compliance/2026-05-04T15-39-00Z.json"
+        ]
+      },
+      "extension_counts": {
+        ".md": 132,
+        ".json": 111,
+        ".txt": 52,
+        ".py": 31,
+        ".sql": 12,
+        ".html": 9,
+        ".ps1": 8,
+        "[none]": 4
+      },
+      "recommended_entry": "docs/APEX_CONTEXT_INDEX.md",
+      "next_action": "Use Apex context/menu files before deeper reads."
+    },
+    {
+      "name": "jesse-project",
+      "path": "C:\\Users\\Owner\\Repos\\code-artifacts\\jesse-project",
+      "root": "C:\\Users\\Owner\\Repos",
+      "relative_path": "code-artifacts\\jesse-project",
+      "class": "DOCUMENTED_REPO",
+      "key_files": [
+        "README.md"
+      ],
+      "git": {
+        "is_git": true,
+        "branch": "apex/estate-seed-00004",
+        "dirty": false,
+        "dirty_count": 0,
+        "status_preview": []
+      },
+      "extension_counts": {
+        ".md": 3,
+        ".json": 1
+      },
+      "recommended_entry": "README.md",
+      "next_action": "Consider adding low-token AGENTS.md or llms.txt."
+    }
+  ]
+}

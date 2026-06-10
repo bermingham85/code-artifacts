@@ -1,0 +1,58 @@
+{
+  "meta": {
+    "wo_id": "WO-APEX-SP-A.0-SPLIT-001",
+    "type": "structural",
+    "severity": "high",
+    "created_at": "2026-05-04T02:30:00Z",
+    "sender": "claude_orchestrator",
+    "receiver": "michael",
+    "project": "APEX",
+    "phase_origin": "SP-A.0",
+    "supersedes_resolution_in": "WO-APEX-SP-A.0-STUCK-001 (Option A attempted; further iteration deemed structurally non-converging at pass M)"
+  },
+  "title": "Formally split SP-A.0 into SP-A.0a (inventory only) + SP-A.0b (operational policy contributions, feeder to SP-A.2)",
+  "rationale": "Option A's tightened spec underwent 12 adversarial-review passes without reaching silent-twice. Each pass produced 2-4 fresh substantive findings; severities oscillated around medium with occasional highs; the spec ratcheted in real improvements at every step but never reached zero residual. Diagnosis: codex adversarial-review is structurally non-converging on a paper spec carrying any operational density (locking, drift, hashing rules, rescue counters, restart cycles, no-deferral DoDs). Silent-twice is reachable only on artifacts the reviewer cannot find a fresh angle on \u00e2\u20ac\u201d a SHA-pinned inventory of nine files is that artifact; a 100-line operational spec is not.",
+  "split_target": {
+    "SP-A.0a": {
+      "title": "Authority-chain inventory (SHA-pinned)",
+      "scope": "Load the 9 authority-chain files listed in 00_KICKOFF.md Step 1; capture full SHA-256 over raw bytes; verify by re-hash on read; ship the inventory file as the sole substantive artifact.",
+      "spec_path": "apex/docs/spec/SPEC-SP-A.0a.md",
+      "spec_size_target": "\u00e2\u2030\u00a45 lines (identity, inputs, output, DoD)",
+      "inventory_path": "apex/docs/spec/SPEC-SP-A.0.preflight-inventory.md (already authored under SP-A.0; carried over verbatim with full 64-hex SHAs)",
+      "expected_convergence": "silent-twice in \u00e2\u2030\u00a42 passes; the inventory itself is binary-verifiable",
+      "cert_path": "apex_governance/certs/PHASE-SP-A.0a.codex.md",
+      "pr_strategy": "local cert tag now; PR deferred via WO-APEX-REPO-RECONCILE-001"
+    },
+    "SP-A.0b": {
+      "title": "Operational policy contributions (feeder to SP-A.2)",
+      "scope": "Single doc at apex/docs/policy/SP-A.0b-policy-contributions.md aggregating the operational rules generated during SP-A.0 passes A-M (locking, drift, hashing, rescue-counter, restart-cycle, no-deferral DoD norms, etc.). NOT reviewed as a per-phase spec; not subject to its own silent-twice loop.",
+      "feeder_target": "SP-A.2 (Doctrine validation + lock v1.0). The silent-twice loop runs against the locked v1.0 doctrine after these contributions are merged in, not against this policy doc itself.",
+      "policy_doc_path": "apex/docs/policy/SP-A.0b-policy-contributions.md",
+      "cert_close_dependency": "SP-A.0b cert closes when SP-A.2 cert closes \u00e2\u20ac\u201d SP-A.0b is a feeder, not a terminal phase. Its INDEX status reflects this (IN-PROGRESS-FEEDER until SP-A.2 closes, then DONE).",
+      "source_material": "The 14 findings logged during SP-A.0 passes A-M (CDX-SP-A.0-* + AV-* + F-* + SP-A.0-* + SP-A0-* under various IDs across the 13 transcripts in apex_governance/codex_runs/SP-A.0/). Each finding becomes a policy bullet in the contributions doc with its rule-shape extracted."
+    }
+  },
+  "index_changes": [
+    "SP-A.0 row \u00e2\u2020\u2019 CLOSED-SPLIT, with cert column = 'see WO-APEX-SP-A.0-SPLIT-001'",
+    "Add SP-A.0a row (TODO at split, IN-PROGRESS while running, DONE on cert)",
+    "Add SP-A.0b row (IN-PROGRESS-FEEDER; closes with SP-A.2)"
+  ],
+  "follow_on_obligations": [
+    "SP-A.2 must absorb SP-A.0b's contributions when locking the doctrine v1.0; the silent-twice loop at SP-A.2 runs against the merged ruleset.",
+    "PHASE_TEMPLATE.md and PLAN_CRITERIA.md may receive amendments via the SP-A.2 doctrine lock to formalise the 'paper-primary phase exemption' for the QA-doc requirement and the 'spec-complexity ceiling for silent-twice' rule discovered empirically here."
+  ],
+  "supersedes_actions": "WO-APEX-SP-A.0-STUCK-001 closes with this WO as the resolution. The earlier 'Option A' attempt is preserved in the codex_runs transcripts as evidence; it did not converge but produced the policy material that SP-A.0b now carries.",
+  "status": "OPEN",
+  "blocks_phases": [],
+  "triage_note": {
+    "observed_at": "2026-05-30T04:50:00Z",
+    "observer": "Claude (Opus 4.7) per WO-APEX-CLAUDE-CONTINUE-005",
+    "observation": "follow_on_obligation \"SP-A.2 must absorb SP-A.0b's contributions when locking the doctrine v1.0\" was substantively met by 2026-05-25 lock of docs/doctrine/APEX_DOCTRINE_v1.0.md (v1.0-PROVISIONAL). SP-A.0b-policy-contributions.md was annotated SUPERSEDED-BY-LOCK by Codex during WO-APEX-PROMOTE-DOCTRINE-003. Formal status flip to CLOSED is deferred until SP-A.2 silent-twice loop ratifies the lock to v1.0-LOCKED; until then status remains OPEN as a tracking record.",
+    "cross_refs": [
+      "docs/doctrine/APEX_DOCTRINE_v1.0.md",
+      "docs/policy/SP-A.0b-policy-contributions.md",
+      "hub/WO-APEX-PROMOTE-DOCTRINE-003.json"
+    ],
+    "not_a_status_flip": true
+  }
+}

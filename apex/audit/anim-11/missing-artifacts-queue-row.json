@@ -1,0 +1,27 @@
+{
+  "_comment": "Tracked in-repo mirror of the MA queue row appended to the external apex_governance/MISSING_SECRETS.queue.json during ANIM-11. The external file is outside the code-artifacts git tree; this in-repo audit satisfies the SPEC DoD durability claim (per ANIM-09 round-1 fix pattern).",
+  "external_queue_path": "C:/Users/Owner/apex_governance/MISSING_SECRETS.queue.json",
+  "external_queue_is_in_repo": false,
+  "appended_at": "2026-06-07T10:32:00Z",
+  "row": {
+    "id": "MA-AGEN-001-ARCH-SPEC",
+    "raised_at": "2026-06-07T10:32:00Z",
+    "phase": "ANIM-11",
+    "asset": "AGEN-SPEC-architecture-integration-v1.md (Architecture agent integration spec)",
+    "location_checked": [
+      "apex_governance/codex_runs/AGEN-architecture-agent/ (8 review transcripts; only HANDOVER+PROJECT_INSTRUCTIONS inline)",
+      "apex_governance/codex_runs/AGEN-architecture-agent-build-2026-05-24/ (11 review transcripts; WKFL+PRMPT only inline)",
+      "apex_governance/codex_runs/AGEN-architecture-agent-post-migration/ (5 review transcripts; WKFL+PRMPT+TEST+SCRPT inline — used for ANIM-11 restore — but NO SPEC)",
+      "apex_governance/codex_runs/AGEN-architecture-prompt-v1-20260524/ (1 advisory transcript; PRMPT only)",
+      "apex_governance/codex_runs/AGEN-architecture-prompt-v1-retry-20260524/ (1 advisory transcript; PRMPT only)",
+      "apex_governance/codex_runs/AGEN-architecture-workflow-v1-20260524/ (1 advisory transcript; WKFL only)",
+      "apex_governance/codex_runs/AGEN-architecture-workflow-v1-retry-20260524/ (1 advisory transcript; WKFL only)",
+      "AGENT_BUILD_SYSTEM/05_ARCHITECTURE_AGENT/ live path (only HANDOVER+PROJECT_INSTRUCTIONS before ANIM-11)"
+    ],
+    "symptom": "AGEN-SPEC-architecture-integration-v1.md is not inline in any of the 28 architecture codex transcripts across 7 subdirectories. ANIM-11 verbatim recovery therefore restored 4 of 5 architecture artifacts (WKFL+PRMPT+TEST+SCRPT) and left SPEC unrecovered.",
+    "impact": "Architecture agent restored without an integration spec. Cert covers correctness of 4 restored bytes, not full agent R15 closure. Downstream Architecture runtime can proceed using WKFL+PRMPT+TEST+SCRPT (the deployable artifacts); SPEC is a doc-control gap.",
+    "resolution_required": "Operator picks: (a) locate from prompt registry / X clone snapshots predating May deletion; (b) draft fresh under separate ANIM phase reviewed adversarially against restored WKFL/PRMPT/TEST/SCRPT; (c) declare out-of-scope.",
+    "owner": "Michael",
+    "status": "OPEN"
+  }
+}

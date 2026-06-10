@@ -1,0 +1,64 @@
+{
+  "phase": "PH-05",
+  "name": "The Foreman",
+  "ref_code": "APEX-MB-PY-00002",
+  "status": "CERTIFIED_COMPLETE",
+  "certified_at": "2026-03-03T11:14:09Z",
+  "certified_by": "SYS",
+  "evidence": {
+    "test_job_id": "PH05-TEST-f65794e6",
+    "test_action": "muscle_health_check",
+    "test_result": "PASS",
+    "duration_seconds": 5.92,
+    "qa_gate_passed": true,
+    "qa_checks": [
+      "FILE_EXISTS",
+      "JSON_VALID"
+    ],
+    "archive_created": true,
+    "completion_report_created": true,
+    "heartbeat_updated": true,
+    "idempotency_verified": true
+  },
+  "steps_verified": {
+    "STEP_0_IDEMPOTENCY": "PASS - duplicate job correctly rejected on re-run",
+    "STEP_1_INGEST": "PASS - schema validated, task folder created",
+    "STEP_2_DOC_CONTROL": "PASS - muscle_health_check verified in register",
+    "STEP_3_MANIFEST_LOOKUP": "PASS - found in manifest.json",
+    "STEP_4_PREREQUISITES": "PASS - all inputs and requirements OK",
+    "STEP_5_EXECUTION": "PASS - exit 0 in 5.92s, retry/timeout logic present",
+    "STEP_6_QA_GATE": "PASS - MULTI rule with 2 checks both passed",
+    "STEP_7_CHAIN": "PASS - chain_next=null, no chain triggered",
+    "STEP_8_ARCHIVE": "PASS - task archived to audit/2026-03-03/",
+    "STEP_9_HEARTBEAT": "PASS - heartbeat + PID file updated",
+    "STEP_10_DEAD_LETTER": "PASS - not triggered (success path)"
+  },
+  "tests": [
+    {
+      "test": "foreman --ticket WO-PH05-TEST",
+      "result": "PASS",
+      "output": "COMPLETE in 5.92s"
+    },
+    {
+      "test": "idempotency re-run",
+      "result": "PASS",
+      "output": "Job already processed - skipping"
+    },
+    {
+      "test": "CompletionReport.json created",
+      "result": "PASS"
+    },
+    {
+      "test": "task archived to audit/",
+      "result": "PASS"
+    },
+    {
+      "test": "heartbeat updated",
+      "result": "PASS"
+    },
+    {
+      "test": "DiagnosticTicket on duplicate",
+      "result": "PASS"
+    }
+  ]
+}

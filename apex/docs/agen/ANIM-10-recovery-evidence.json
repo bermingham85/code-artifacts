@@ -1,0 +1,72 @@
+{
+  "phase": "ANIM-10",
+  "agent": "AGEN-Specification",
+  "issued": "2026-06-07T10:15:00Z",
+  "live_out_dir": "C:/Users/Owner/Repos/code-artifacts/AGENT_BUILD_SYSTEM/03_SPECIFICATION_AGENT/",
+  "extractor": {
+    "id": "APEX-MB-PY-00116",
+    "path": "apex/registry/agen_recovery_extract.py",
+    "mode": "BYTE-MODE",
+    "frozen_since": "ANIM-08 (head 8be8daf)",
+    "modified_in_this_phase": false
+  },
+  "source_transcript": {
+    "path": "C:/Users/Owner/apex_governance/codex_runs/agen-spec-build/agen-spec-build-review-20260505T043244Z-d5b8c121.txt",
+    "size_bytes": 119756,
+    "sha256": "94929417c8ec150c60c8d880378438466cf077e98b8cd57cc6593deae7d5ce95",
+    "marker_balance": {"FILE_markers": 5, "END_FILE_markers": 5, "balanced": true},
+    "role": "Single source-of-record for all 5 Specification artifacts (full set inline)."
+  },
+  "restored_files": [
+    {
+      "basename": "AGEN-WKFL-spec-workflow-v1.json",
+      "size_bytes": 45237,
+      "sha256": "8a4e86973ae595b739269467640a1e61931c99e9984e86eeb79b7e0d6fe248ed",
+      "src_path_in_transcript_header": "apex/registry/clones/code-artifacts/AGENT_BUILD_SYSTEM/03_SPECIFICATION_AGENT/AGEN-WKFL-spec-workflow-v1.json",
+      "live_dst": "AGENT_BUILD_SYSTEM/03_SPECIFICATION_AGENT/AGEN-WKFL-spec-workflow-v1.json",
+      "parses_as_json": true,
+      "json_node_count": 33,
+      "json_workflow_name": "Specification Agent",
+      "path_reconciled_from_clones_to_live": true,
+      "known_findings_carried_forward": ["F-001 (HIGH): workflow inline prompt is strict subset of canonical PRMPT (per MA-AGEN-002)", "F-002 (HIGH): T5 refinement test non-deterministic (per MA-AGEN-002)"]
+    },
+    {
+      "basename": "AGEN-PRMPT-spec-system-prompt-v1.md",
+      "size_bytes": 13300,
+      "sha256": "29040602f343328355177ce0f2d42f7c8f1f1b441eb7173cd880c6473a37f6fd",
+      "src_path_in_transcript_header": "apex/registry/clones/code-artifacts/AGENT_BUILD_SYSTEM/03_SPECIFICATION_AGENT/AGEN-PRMPT-spec-system-prompt-v1.md",
+      "live_dst": "AGENT_BUILD_SYSTEM/03_SPECIFICATION_AGENT/AGEN-PRMPT-spec-system-prompt-v1.md",
+      "path_reconciled_from_clones_to_live": true
+    },
+    {
+      "basename": "AGEN-SPEC-spec-integration-v1.md",
+      "size_bytes": 16828,
+      "sha256": "bc1b9289f4ac115e2ee6cc30503f26b0bb167399fa798bdcf14e9b3517c26e87",
+      "src_path_in_transcript_header": "apex/registry/clones/code-artifacts/AGENT_BUILD_SYSTEM/03_SPECIFICATION_AGENT/AGEN-SPEC-spec-integration-v1.md",
+      "live_dst": "AGENT_BUILD_SYSTEM/03_SPECIFICATION_AGENT/AGEN-SPEC-spec-integration-v1.md",
+      "path_reconciled_from_clones_to_live": true
+    },
+    {
+      "basename": "AGEN-TEST-spec-test-plan-v1.md",
+      "size_bytes": 14126,
+      "sha256": "7129209168efbba9e30faba9fb3e341ba44048881dd273d3cfc6b2c077d23428",
+      "src_path_in_transcript_header": "apex/registry/clones/code-artifacts/AGENT_BUILD_SYSTEM/03_SPECIFICATION_AGENT/AGEN-TEST-spec-test-plan-v1.md",
+      "live_dst": "AGENT_BUILD_SYSTEM/03_SPECIFICATION_AGENT/AGEN-TEST-spec-test-plan-v1.md",
+      "path_reconciled_from_clones_to_live": true
+    },
+    {
+      "basename": "AGEN-SCRPT-spec-supabase-migration-v1.sql",
+      "size_bytes": 24449,
+      "sha256": "449a4d210735b82ee81d9fa1e9c9487c72c04d84482907f8bd275f2a334e3509",
+      "src_path_in_transcript_header": "apex/registry/clones/code-artifacts/AGENT_BUILD_SYSTEM/03_SPECIFICATION_AGENT/AGEN-SCRPT-spec-supabase-migration-v1.sql",
+      "live_dst": "AGENT_BUILD_SYSTEM/03_SPECIFICATION_AGENT/AGEN-SCRPT-spec-supabase-migration-v1.sql",
+      "path_reconciled_from_clones_to_live": true,
+      "sql_lines": 525
+    }
+  ],
+  "missing_from_transcript": [],
+  "known_findings_carried_forward": {
+    "MA-AGEN-002": "F-001 (HIGH workflow prompt drift) + F-002 (HIGH T5 non-determinism). Pre-existing review findings, remain OPEN. ANIM-10 verbatim restore does NOT alter the findings or attempt resolution — per WO §3 + R20 we restore as-was. Operator-actionable per MA queue."
+  },
+  "doctrine_anchors": ["R15", "R19 (REUSE)", "R20 (verbatim)", "P1", "P2", "O2", "O6", "WO_clause_3"]
+}

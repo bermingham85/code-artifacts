@@ -1,0 +1,58 @@
+{
+  "phase": "ANIM-02",
+  "tool": "HunyuanVideoWrapper",
+  "install": {
+    "steps": [
+      {
+        "cmd": [
+          "git",
+          "clone",
+          "https://github.com/kijai/ComfyUI-HunyuanVideoWrapper",
+          "C:\\ComfyUI\\custom_nodes\\ComfyUI-HunyuanVideoWrapper"
+        ],
+        "cwd": null,
+        "exit": 0,
+        "stdout_tail": "",
+        "stderr_tail": "Cloning into 'C:\\ComfyUI\\custom_nodes\\ComfyUI-HunyuanVideoWrapper'...\n"
+      },
+      {
+        "cmd": [
+          "C:\\Program Files\\Python313\\python.exe",
+          "-m",
+          "pip",
+          "install",
+          "-r",
+          "C:\\ComfyUI\\custom_nodes\\ComfyUI-HunyuanVideoWrapper\\requirements.txt"
+        ],
+        "cwd": null,
+        "exit": 0,
+        "stdout_tail": "---------------------- 64.8/64.8 MB 22.4 MB/s  0:00:02\nDownloading timm-1.0.27-py3-none-any.whl (2.6 MB)\n   ---------------------------------------- 2.6/2.6 MB 37.7 MB/s  0:00:00\nDownloading ml_dtypes-0.5.4-cp313-cp313-win_amd64.whl (212 kB)\nDownloading regex-2026.5.9-cp313-cp313-win_amd64.whl (277 kB)\nDownloading safetensors-0.8.0rc1-cp310-abi3-win_amd64.whl (355 kB)\nDownloading torch-2.12.0-cp313-cp313-win_amd64.whl (123.0 MB)\n   ---------------------------------------- 123.0/123.0 MB 28.8 MB/s  0:00:04\nDownloading setuptools-81.0.0-py3-none-any.whl (1.1 MB)\n   ---------------------------------------- 1.1/1.1 MB 41.3 MB/s  0:00:00\nUsing cached sympy-1.14.0-py3-none-any.whl (6.3 MB)\nUsing cached mpmath-1.3.0-py3-none-any.whl (536 kB)\nDownloading importlib_metadata-9.0.0-py3-none-any.whl (27 kB)\nDownloading zipp-4.1.0-py3-none-any.whl (10 kB)\nDownloading opt_einsum-3.4.0-py3-none-any.whl (71 kB)\nUsing cached psutil-7.2.2-cp37-abi3-win_amd64.whl (137 kB)\nDownloading torchvision-0.27.0-cp313-cp313-win_amd64.whl (4.1 MB)\n   ---------------------------------------- 4.1/4.1 MB 57.9 MB/s  0:00:00\nInstalling collected packages: mpmath, zipp, sympy, setuptools, safetensors, regex, psutil, opt_einsum, ml_dtypes, torch, jaxlib, importlib_metadata, torchvision, jax, tokenizers, timm, diffusers, accelerate, transformers\n  Attempting uninstall: setuptools\n    Found existing installation: setuptools 82.0.1\n    Uninstalling setuptools-82.0.1:\n      Successfully uninstalled setuptools-82.0.1\n  Attempting uninstall: tokenizers\n    Found existing installation: tokenizers 0.23.1\n    Uninstalling tokenizers-0.23.1:\n      Successfully uninstalled tokenizers-0.23.1\n\nSuccessfully installed accelerate-1.13.0 diffusers-0.38.0 importlib_metadata-9.0.0 jax-0.10.1 jaxlib-0.10.1 ml_dtypes-0.5.4 mpmath-1.3.0 opt_einsum-3.4.0 psutil-7.2.2 regex-2026.5.9 safetensors-0.8.0rc1 setuptools-81.0.0 sympy-1.14.0 timm-1.0.27 tokenizers-0.22.2 torch-2.12.0 torchvision-0.27.0 transformers-5.10.2 zipp-4.1.0\n",
+        "stderr_tail": "  WARNING: The script isympy.exe is installed in 'C:\\Users\\Owner\\AppData\\Roaming\\Python\\Python313\\Scripts' which is not on PATH.\n  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.\n  WARNING: The scripts torchfrtrace.exe and torchrun.exe are installed in 'C:\\Users\\Owner\\AppData\\Roaming\\Python\\Python313\\Scripts' which is not on PATH.\n  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.\n  WARNING: The script diffusers-cli.exe is installed in 'C:\\Users\\Owner\\AppData\\Roaming\\Python\\Python313\\Scripts' which is not on PATH.\n  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.\n  WARNING: The scripts accelerate-config.exe, accelerate-estimate-memory.exe, accelerate-launch.exe, accelerate-merge-weights.exe and accelerate.exe are installed in 'C:\\Users\\Owner\\AppData\\Roaming\\Python\\Python313\\Scripts' which is not on PATH.\n  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.\n  WARNING: The script transformers.exe is installed in 'C:\\Users\\Owner\\AppData\\Roaming\\Python\\Python313\\Scripts' which is not on PATH.\n  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.\n\n[notice] A new release of pip is available: 26.1.1 -> 26.1.2\n[notice] To update, run: python.exe -m pip install --upgrade pip\n"
+      }
+    ],
+    "verify": {
+      "ok": true,
+      "node_dir": "C:\\ComfyUI\\custom_nodes\\ComfyUI-HunyuanVideoWrapper",
+      "has_init_py": true,
+      "has_nodes_py": true
+    }
+  },
+  "weights_deferred": {
+    "reason": "operator-gated; rerun with --download-weights",
+    "urls": [
+      {
+        "name": "hunyuan_video_720_cfgdistill_fp8_e4m3fn.safetensors",
+        "url": "https://huggingface.co/Kijai/HunyuanVideo_comfy/resolve/main/hunyuan_video_720_cfgdistill_fp8_e4m3fn.safetensors",
+        "dest_subdir": "diffusion_models",
+        "approx_size_gb": 13
+      },
+      {
+        "name": "hunyuan_video_vae_bf16.safetensors",
+        "url": "https://huggingface.co/Kijai/HunyuanVideo_comfy/resolve/main/hunyuan_video_vae_bf16.safetensors",
+        "dest_subdir": "vae",
+        "approx_size_gb": 1
+      }
+    ]
+  },
+  "timestamp": "2026-06-07T05-02-49Z"
+}

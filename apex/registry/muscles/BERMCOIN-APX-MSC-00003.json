@@ -1,0 +1,32 @@
+{
+  "id": "BERMCOIN-APX-MSC-00003",
+  "name": "multichannel-member-dispatch",
+  "project": "BERMCOIN",
+  "version": "1.0.0",
+  "description": "Dispatches rate nudge notifications to members via their preferred channels (Telegram, Email, WhatsApp). Respects monthly nudge limits per plan tier, increments counters, and logs each dispatch to nudge_log.",
+  "trigger": "rate threshold crossed (called by WF-02)",
+  "inputs": [
+    "watch_id",
+    "current_rate",
+    "member_channels[]"
+  ],
+  "outputs": [
+    "nudge_log entry",
+    "nudges_this_month increment"
+  ],
+  "dependencies": [
+    "telegram_bot",
+    "brevo",
+    "supabase"
+  ],
+  "n8n_workflows": [
+    "WF-02 Bermcoin Rate Watchdog"
+  ],
+  "tables": [
+    "nudge_log",
+    "rate_watches",
+    "members"
+  ],
+  "created": "2026-04-11",
+  "status": "active"
+}

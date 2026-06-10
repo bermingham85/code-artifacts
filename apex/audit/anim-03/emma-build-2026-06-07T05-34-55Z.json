@@ -1,0 +1,13 @@
+{
+  "character": "emma",
+  "brand": "Jesse-Adventures",
+  "bible_path": "apex/docs/anim/bibles/ANIM_Jesse-Adventures_Emma_bible_v1.md",
+  "manifest_path": "apex/docs/anim/ANIM-03-reference-pack-manifest.json",
+  "render_count": 12,
+  "pack_size": 6,
+  "findings": [
+    "F-ANIM03-02: emma has no status.json under X:\\Automations\\apex\\projects\\jesse_animate\\characters\\emma; bible built from PROJECT_SPEC + render-set inference."
+  ],
+  "timestamp": "2026-06-07T05-34-55Z",
+  "status": "OK"
+}

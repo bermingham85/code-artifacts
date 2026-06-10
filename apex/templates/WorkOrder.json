@@ -1,0 +1,51 @@
+{
+  "meta": {
+    "job_id":          "UUID-v4",
+    "ref_code":        "APEX-SYS-WF-00000",
+    "created_at":      "ISO-8601",
+    "sender":          "brian | human | parent_job_id",
+    "receiver":        "foreman",
+    "project":         "APEX | CLAW | BERM | JESS | TALE | BALP",
+    "chain_next":      null,
+    "idempotency_key": null,
+    "retry_count":     0,
+    "max_retries":     3,
+    "priority":        "NORMAL | HIGH | LOW"
+  },
+  "sop": {
+    "action":          "muscle_name_from_TOOL_INDEX",
+    "inputs":          [],
+    "parameters":      {},
+    "requirements":    [],
+    "timeout_seconds": 300
+  },
+  "qa_gate": {
+    "rule": "MULTI",
+    "checks": [
+      {
+        "_comment":  "Q1 COMPLETENESS — did the muscle produce something?",
+        "rule":      "FILE_EXISTS | SIZE_GT_ZERO | JSON_VALID | CONTAINS_STRING",
+        "target":    "path/to/expected/output"
+      },
+      {
+        "_comment":        "Q2 SPEC COMPLIANCE — is it the right output?",
+        "rule":            "SPEC_MATCH | SPEC_FIELD_EXISTS | SPEC_STATUS_OK",
+        "target":          "path/to/output.json",
+        "expected_field":  "status",
+        "expected_value":  "OK"
+      }
+    ]
+  },
+  "status": {
+    "state":            "PENDING",
+    "started_at":       null,
+    "completed_at":     null,
+    "duration_seconds": null,
+    "diagnostic":       null,
+    "traceback":        null,
+    "qa_result":        null,
+    "qa_checks":        [],
+    "exit_code":        null,
+    "output_summary":   null
+  }
+}

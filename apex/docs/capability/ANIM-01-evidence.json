@@ -1,0 +1,323 @@
+{
+  "phase_id": "ANIM-01",
+  "wo_id": "APEX-ANIM-MB-WO-00001",
+  "authored_utc": "2026-06-07T03:58:00Z",
+  "author": "APEX orchestrator (Claude Opus 4.7) acting on operator WO APEX-ANIM-MB-WO-00001",
+  "branch": "phase/ANIM-01",
+  "method": "Every row is grounded in a directly-observed filesystem listing, file read, or quote from an upstream-of-record JSON. Negative-presence claims (e.g. 'not installed') are backed by a recursive name search returning zero matches.",
+  "wo_quotes": {
+    "wo_path": "C:/Users/Owner/Documents/Claude/Projects/breaking down complex tasks/APEX-ANIM-Production-System.md",
+    "section_4_hardware_mapping_quote": "Models present: SDXL base, IP-Adapter FaceID, kontext turnaround LoRA. To add (gated install): FLUX.1 Kontext, Wan 2.2 I2V, LTX-Video, HunyuanVideo, kohya for LoRA training.",
+    "section_3_6_core_five_quote": "Plus finish the in-flight core five (Specification/Verification/Architecture/Builder/Router) — recover from the saved build prompts at X:\\Automations\\apex\\spawned_prompts\\AGEN-* and Codex review transcripts (verbatim recovery, not invention), then commit + PR this time (the May gap was a missing commit step, not a deletion).",
+    "section_0_authority_quote": "Authority: `apex_governance/PLAN_CRITERIA.md` §0 hierarchy, `CLAUDE_CODEX_DOCTRINE` (Codex = reviewer-of-record, no Claude self-review), R20 (no guessing / preserve detail).",
+    "section_s1_quote": "Character Bible (per character). Structured doc: visual identity (face, hair, default outfit, palette from brand tokens), personality/behaviour cues, do/don't. Source descriptors from X:\\characters (galinda, MJ sessions, casting_pool.html) — extract verbatim, do not rewrite. Naming ANIM_<Brand>_<Character>_bible_v<n>.md.",
+    "section_s2_quote": "Model / turnaround sheet. FLUX.1 Kontext + the kontext-turnaround-sheet LoRA you already have (front / 3-4 / side / back on clean white). Gold-standard reference. De-dupe the 3 extra LoRA copies first. Naming ANIM_<Brand>_<Character>_turnaround_v<n>.png.",
+    "section_s6_quote": "Image-to-video (local on the RTX 5090, 32GB VRAM). Tiered by need: Wan 2.2 I2V — primary, cinematic/best human quality. LTX-Video — fast iteration / previews (~90s/clip). HunyuanVideo — physics-heavy shots (water/cloth/fire). fal.ai (animation-agent) — cloud fallback for scale/burst. Existing scene-director already wraps ComfyUI + LTXV — extend it for Wan 2.2.",
+    "section_s7_quote": "Assembly. Cut clips to the existing lyrics via music_video_pipeline/assemble_video.py.",
+    "section_s8_quote": "QC gate. Approvals tracked in Supabase (scene #, status, file). Standard: ≥3/4 generations consistent; selective re-render of failures. No chasing 100%.",
+    "wo_named_aspirational_labels_in_source": [
+      "from §S6: \"Existing scene-director already wraps ComfyUI + LTXV — extend it for Wan 2.2.\"",
+      "from §S6: \"fal.ai (animation-agent) — cloud fallback for scale/burst.\"",
+      "from §S7: \"Cut clips to the existing lyrics via music_video_pipeline/assemble_video.py.\""
+    ]
+  },
+  "pipeline_to_wan22_animate_linkage": {
+    "method": "Two PHASE_STATE.json quotes (under the same session_2026_04_01_mv key) collectively show: (1) the music-video pipeline is muscle_music_video.py with keyframes+animate+stitch modes, and (2) that same session's shot generation used Wan 2.2 i2v two-stage MoE for 19 of the 20 shots. The PHASE_STATE.json quotes do NOT directly state that `--mode animate` is the Wan 2.2 implementation; that linkage is inferred from the two quotes belonging to the same session entry. ANIM-02 should confirm by inspecting muscle_music_video.py source.",
+    "phase_state_pipeline_quoted": "muscle_music_video.py (keyframes + animate + stitch modes). stitch_video.py (setpts speed-adjust + concat demuxer + audio overlay).",
+    "phase_state_shots_quoted": "20/20 complete — 19 Wan2.2 i2v two-stage MoE + 1 skip (existing). Zero errors.",
+    "phase_state_pipeline_field_path": "X:/Automations/apex/projects/jesse_animate/PHASE_STATE.json session_2026_04_01_mv.pipeline",
+    "phase_state_shots_field_path": "X:/Automations/apex/projects/jesse_animate/PHASE_STATE.json session_2026_04_01_mv.shots"
+  },
+  "evidence": {
+    "pipelines": [
+      {
+        "wo_label": "scene-director",
+        "real_path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/muscle_music_video.py",
+        "exists": true,
+        "presence_check": "ls listing showed this filename present 2026-06-07",
+        "register_id": null,
+        "register_status": "PENDING (file header self-declares 'Ref: APEX-MB-PY-XXXXX (pending governance)')",
+        "modes_declared_in_header": ["keyframes", "animate", "stitch", "full"],
+        "comfyui_url_declared_in_header": "http://127.0.0.1:8189"
+      },
+      {
+        "wo_label": "animation-agent",
+        "wo_definition_source": "§S6: 'fal.ai (animation-agent) — cloud fallback for scale/burst' (quoted in wo_quotes.section_s6_quote)",
+        "real_path": null,
+        "exists": false,
+        "status": "NOT WIRED — gap G9",
+        "note_local_i2v_is_separate_concern": "The local I2V step (muscle_music_video.py --mode animate calling Wan 2.2) is anchored under pipeline_to_wan22_animate_linkage; it is NOT the WO's 'animation-agent' label, which specifically names fal.ai cloud fallback."
+      },
+      {
+        "wo_label": "music_video_pipeline/assemble_video.py",
+        "real_path_primary": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/muscle_music_video.py (invoked with --mode stitch)",
+        "real_path_sibling": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/stitch_video.py",
+        "exists": true,
+        "presence_check": "ls listing 2026-06-07 returned both muscle_mv_regenerate.py and stitch_video.py",
+        "register_id": null
+      },
+      {
+        "name": "muscle_mv_regenerate.py",
+        "real_path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/muscle_mv_regenerate.py",
+        "exists": true,
+        "presence_check": "ls listing 2026-06-07"
+      }
+    ],
+    "wo_named_entities_not_found_as_first_class": {
+      "method": "Glob('**/scene_director*'), Glob('**/scene-director/**'), Glob('**/animation*/**'), Glob('**/animation-agent/**'), Glob('**/music_video_pipeline/**'), Glob('**/assemble_video*.py') against C:/Users/Owner/Repos/code-artifacts and X:/Automations/apex/projects/jesse_animate roots",
+      "results": "0 hits for scene-director / animation-agent / music_video_pipeline / assemble_video as first-class artifact names",
+      "conclusion": "WO labels are aspirational; the real names are listed under .pipelines above"
+    },
+    "muscles_per_phase_state_json": {
+      "upstream_source": "X:/Automations/apex/projects/jesse_animate/PHASE_STATE.json 'muscles_built' array (head verbatim)",
+      "rows": [
+        "muscle_comfyui_runner (APEX-MB-PY-00043)",
+        "muscle_character_catalogue (APEX-MB-PY-00044)",
+        "muscle_character_designer (APEX-MB-PY-00045)",
+        "muscle_char_consistency (APEX-MB-PY-00046)",
+        "run_character_pipeline (APEX-MB-PY-00047)",
+        "muscle_image_analyser (APEX-MB-PY-00048)"
+      ],
+      "additional_named_in_phase_state": [
+        "run_fictional_character_sheets.py (JESS-MB-PY-00000)"
+      ]
+    },
+    "adjacent_scripts": {
+      "path": "X:/Automations/apex/projects/jesse_animate/scripts/",
+      "presence_check": "ls 2026-06-07 returned the three files below",
+      "files": [
+        "batch_generate_galinda.py",
+        "prepare_lora_dataset.py",
+        "scan_batch_output.py"
+      ]
+    },
+    "comfyui_workflows_shipped": {
+      "path": "X:/Automations/apex/projects/jesse_animate/comfyui_workflows/",
+      "presence_check": "ls 2026-06-07",
+      "files": [
+        "character_gen_flux_v1.json",
+        "character_gen_flux_ipadapter_v1.json",
+        "character_gen_pulid_ipadapter_v1.json",
+        "character_pose_generator_v1.json",
+        "lumina_workflow_v1.json"
+      ]
+    },
+    "comfyui_models": {
+      "models_root": "C:/ComfyUI/models",
+      "loras_present_per_ls_2026_06_07": {
+        "path": "C:/ComfyUI/models/loras",
+        "canonical": "kontext-turnaround-sheet-v1.safetensors",
+        "ip_adapter": "ip-adapter-faceid-plusv2_sdxl_lora.safetensors",
+        "candidate_duplicates_pending_hash_verification": [
+          "kontext-turnaround-sheet-v1 (1).safetensors",
+          "kontext-turnaround-sheet-v1 (2).safetensors",
+          "kontext-turnaround-sheet-v1 (3).safetensors"
+        ]
+      },
+      "checkpoints_per_ls_2026_06_07": {
+        "path": "C:/ComfyUI/models/checkpoints",
+        "files": ["sd_xl_base_1.0.safetensors"]
+      },
+      "diffusion_models_per_ls_2026_06_07": {
+        "path": "C:/ComfyUI/models/diffusion_models",
+        "files_full": [
+          "Wan2_1-I2V-14B-480P_fp8_e4m3fn.safetensors",
+          "fantasytalking_fp16.safetensors",
+          "fantasytalking_model.ckpt",
+          "fantasytalking_model.safetensors",
+          "flux1-dev-fp8.safetensors",
+          "flux1-dev-kontext_fp8_scaled.safetensors",
+          "hidream_i1_dev_fp8.safetensors",
+          "wan2.1-i2v-14b-480p-Q5_K_M.gguf",
+          "wan2.1_i2v_480p_14B_fp8_scaled.safetensors",
+          "wan2.2_fun_camera_high_noise_14B_fp8_scaled.safetensors",
+          "wan2.2_fun_camera_low_noise_14B_fp8_scaled.safetensors",
+          "wan2.2_i2v_high_noise_14B_fp8_scaled.safetensors",
+          "wan2.2_i2v_low_noise_14B_fp8_scaled.safetensors",
+          "wan2.2_t2v_high_noise_14B_fp8_scaled.safetensors",
+          "wan2.2_t2v_low_noise_14B_fp8_scaled.safetensors"
+        ]
+      },
+      "unet_per_ls_2026_06_07": {
+        "path": "C:/ComfyUI/models/unet",
+        "files": [
+          "hidream_e1_1_bf16.safetensors",
+          "ltx-2-19b-dev-fp8.safetensors",
+          "neta-lumina-v1.0.safetensors"
+        ]
+      },
+      "controlnet_relevant": {
+        "path": "C:/ComfyUI/models/controlnet/flux-controlnet-union-pro.safetensors",
+        "purpose": "FLUX control net"
+      },
+      "pulid_relevant": {
+        "path": "C:/ComfyUI/models/pulid/pulid_flux_v0.9.0.safetensors",
+        "purpose": "Identity preservation for FLUX"
+      }
+    },
+    "models_resolved_for_wo_stages": [
+      {
+        "wo_stage": "S2 — Model/turnaround sheet (FLUX.1 Kontext + kontext-turnaround-sheet LoRA)",
+        "checkpoint_path": "C:/ComfyUI/models/diffusion_models/flux1-dev-kontext_fp8_scaled.safetensors",
+        "lora_path": "C:/ComfyUI/models/loras/kontext-turnaround-sheet-v1.safetensors",
+        "status": "PRESENT"
+      },
+      {
+        "wo_stage": "S3 — IP-Adapter FaceID",
+        "lora_path": "C:/ComfyUI/models/loras/ip-adapter-faceid-plusv2_sdxl_lora.safetensors",
+        "status": "PRESENT"
+      },
+      {
+        "wo_stage": "S6 — Wan 2.2 I2V (cinematic)",
+        "checkpoint_path_high": "C:/ComfyUI/models/diffusion_models/wan2.2_i2v_high_noise_14B_fp8_scaled.safetensors",
+        "checkpoint_path_low": "C:/ComfyUI/models/diffusion_models/wan2.2_i2v_low_noise_14B_fp8_scaled.safetensors",
+        "status": "PRESENT (two-stage MoE = high-noise + low-noise pair)"
+      },
+      {
+        "wo_stage": "S6 — LTX-Video (fast preview)",
+        "checkpoint_path": "C:/ComfyUI/models/unet/ltx-2-19b-dev-fp8.safetensors",
+        "status": "PRESENT (LTX-2 19B dev fp8; WO labelled the stage 'LTX-Video' generically)"
+      },
+      {
+        "wo_stage": "S6 — HunyuanVideo (physics-heavy)",
+        "checkpoint_path": null,
+        "negative_inventory": "find C:/ComfyUI/models -iname '*hunyuan*' returned 0 matches 2026-06-07",
+        "status": "INSTALL GAP"
+      },
+      {
+        "wo_stage": "S3 follow-on — per-character LoRA training (kohya)",
+        "checkpoint_path": null,
+        "negative_inventory": "no kohya_ss directory found in standard locations; not in C:/ComfyUI/models or C:/Users/Owner/Repos",
+        "status": "INSTALL GAP"
+      }
+    ],
+    "install_gaps_confirmed": [
+      {"name": "HunyuanVideo", "evidence": "find C:/ComfyUI/models -iname '*hunyuan*' -> 0 hits 2026-06-07", "source": "hf.co/tencent/HunyuanVideo"},
+      {"name": "kohya_ss", "evidence": "no presence in C:/ComfyUI/models or C:/Users/Owner/Repos 2026-06-07", "source": "github.com/bmaltais/kohya_ss"}
+    ],
+    "delivered_artifacts": [
+      {
+        "name": "grog_too_big_for_playground_mv.mp4",
+        "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/grog_too_big_for_playground_mv.mp4",
+        "size_bytes_stat_2026_06_07": 47983724,
+        "size_phase_state_claim": "34.8MB (PHASE_STATE.json session_2026_04_01_mv) — DISCREPANCY: stat reports 47,983,724 bytes = 47.98 MB decimal = 45.76 MiB binary",
+        "phase_state_quote": "DELIVERED — grog_too_big_for_playground_mv.mp4 (34.8MB, 225.4s, h264+AAC192k)",
+        "phase_state_session": "session_2026_04_01_mv"
+      }
+    ],
+    "shot_pipeline_details_quoted_from_shot_list_json": {
+      "path": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/shot_list.json",
+      "project": "grog_too_big_for_playground_mv",
+      "version": 3,
+      "song_duration_s": 238.9,
+      "tempo_bpm": 152,
+      "character": "grog",
+      "primary_ref_quoted": "X:/Automations/apex/projects/jesse_animate/characters/grog/primary_ref.png",
+      "style_anchor_quoted": "Pixar 3D animated feature film, vibrant warm colours, smooth stylized CGI, expressive character design",
+      "grog_identifiers_quoted": "massive ogre with warm beige skin and rugged texture, smooth clean-shaven face, warm brown eyes, teal roughspun vest, fraying rope belt, patched fringe brown trousers",
+      "scale_rule_quoted": "Grog is ALWAYS proportionally oversized vs all objects, props, furniture, people, children. Every shot must include a normal-sized anchor object for scale contrast. No exceptions.",
+      "young_grog_rule_quoted": "Young Grog = toddler proportions: round oversized head, chubby smooth clean-shaven cheeks, wide innocent warm brown eyes, stubby thick fingers, 4 years old but already twice the height of any full-grown adult."
+    },
+    "shot_counts_quoted_from_phase_state_json": {
+      "path": "X:/Automations/apex/projects/jesse_animate/PHASE_STATE.json session_2026_04_01_mv.shots",
+      "quote": "20/20 complete — 19 Wan2.2 i2v two-stage MoE + 1 skip (existing). Zero errors."
+    },
+    "character_renders_quoted_from_phase_state_json": {
+      "path": "X:/Automations/apex/projects/jesse_animate/PHASE_STATE.json session_2026_04_01",
+      "grog_quote": "DONE — 15/15 renders (3 turnarounds + 6 poses + 6 expressions). Ref: midjourney ogre a944. characters/grog/kontext_sheets/",
+      "lirian_quote": "DONE — 15/15 renders (3 turnarounds + 6 poses + 6 expressions). Ref: generated seed1337. characters/lirian/kontext_sheets/",
+      "background_cast_quote": "DONE — 6/6 complete, 90 renders total (0 errors)",
+      "background_cast_characters": ["bg_bart", "bg_camille", "bg_iris", "bg_marco", "bg_mena", "bg_olive"],
+      "background_cast_db_registered": true,
+      "background_cast_assets_registered": true
+    },
+    "character_source_assets": {
+      "source_root": "X:/characters",
+      "presence_check": "ls 2026-06-07",
+      "items": [
+        {"name": "galinda", "path": "X:/characters/galinda", "type": "directory"},
+        {"name": "casting_pool.html", "path": "X:/characters/casting_pool.html", "type": "file"},
+        {"name": "midjourney_session_1", "path": "X:/characters/midjourney_session_1", "type": "directory", "sibling_zip": "X:/characters/midjourney_session_1.zip"},
+        {"name": "midjourney_session_2", "path": "X:/characters/midjourney_session_2", "type": "directory", "sibling_zip": "X:/characters/midjourney_session_2.zip"},
+        {"name": "midjourney_session_3", "path": "X:/characters/midjourney_session_3", "type": "directory", "sibling_zip": "X:/characters/midjourney_session_3.zip"},
+        {"name": "midjourney_session_4", "path": "X:/characters/midjourney_session_4", "type": "directory", "sibling_zip": "X:/characters/midjourney_session_4.zip"},
+        {"name": "midjourney_session_5", "path": "X:/characters/midjourney_session_5", "type": "directory", "sibling_zip": "X:/characters/midjourney_session_5.zip"}
+      ]
+    },
+    "governance": {
+      "doctrine_dir": "C:/Users/Owner/Repos/code-artifacts/apex/docs/doctrine",
+      "doctrine_files_per_ls_2026_06_07": [
+        "APEX_DOCTRINE_v1.0.md",
+        "CLAUDE_CODEX_DOCTRINE.md",
+        "CLAUDE_CODEX_DOCTRINE.rules.json",
+        "DOCTRINE_v1.0_LOCK_PROPOSAL.md",
+        "NOTE_FOR_CODEX.md",
+        "conformance-checklist.md",
+        "media"
+      ],
+      "plan_criteria": {
+        "path": "C:/Users/Owner/apex_governance/PLAN_CRITERIA.md",
+        "header_line_quoted": "# APEX Auto-Ingest — Plan Criteria (master)"
+      },
+      "subprojects_md": {
+        "path": "C:/Users/Owner/apex_governance/SUBPROJECTS.md",
+        "sp_rows_quoted_from_h2_headings": [
+          "## SP-A. Plugin and doctrine foundation",
+          "## SP-B. Governance and registry hardening",
+          "## SP-C. Ingest watchers (Drive + Photos)",
+          "## SP-D. Classifier (multimodal, GPU-first)",
+          "## SP-E. Routing rules",
+          "## SP-F. Receipts and invoices ledger",
+          "## SP-G. Document filing",
+          "## SP-H. Photo organization",
+          "## SP-I. Orchestration and self-healing",
+          "## SP-J. Reporting"
+        ],
+        "sp_anim_row_present": false,
+        "sp_anim_row_presence_method": "grep -E '^## SP-' returned 10 SP-A..SP-J headings; no ANIM heading"
+      },
+      "phase_template": "C:/Users/Owner/apex_governance/PHASE_TEMPLATE.md",
+      "codex_cli_version_per_codex_dash_dash_version_2026_06_07": "codex-cli 0.135.0",
+      "codex_cli_path": "C:/Users/Owner/AppData/Local/Programs/OpenAI/Codex/bin/codex.exe",
+      "codex_model_for_anim": "gpt-5.5 (ChatGPT-account auth, per feedback_codex_bridge_openai_key_conflict)",
+      "codex_sandbox_state_observed_in_this_phase": "FAIL — every codex-spawned shell read returned 'windows sandbox: spawn setup refresh'. Worked around by feeding documents inline via stdin.",
+      "work_gate": {
+        "path": "C:/Users/Owner/Repos/code-artifacts/apex/registry/muscle_work_gate.py",
+        "this_gate_audit_path": "C:/Users/Owner/Repos/code-artifacts/apex/audit/work_gate/2026-06-07T03-57-46Z-APEX.json",
+        "this_gate_audit_status_quoted": "WARN",
+        "this_gate_official_write_allowed_quoted": true,
+        "this_gate_blockers_quoted": [],
+        "this_gate_warnings_quoted": ["working tree is dirty; inspect user changes before editing"]
+      }
+    },
+    "agen_recovery_context": {
+      "handover_path": "C:/Users/Owner/apex_governance/handovers/AGEN-completion.handover.md",
+      "presence_check": "head -25 returned content 2026-06-07",
+      "status_quoted_from_handover_line_3": "BLOCKED — build artifacts deleted/missing from canonical source-of-truth; signed-off baseline is stale; programme cannot reach cert without artifact restoration or rebuild.",
+      "spawn_prompts_root_per_handover": "X:/Automations/apex/spawned_prompts/AGEN-*",
+      "deletion_note_quoted": "the build artifacts those transcripts reviewed have since been deleted from both the C: working tree and the X: canonical mirror"
+    },
+    "findings": [
+      {"id": "F1", "issue": "PHASES.md table row says Phase 2.2 PENDING; PHASE_STATE.json next_action says signed off", "phases_md_row_quoted": "| 2.2 | Galinda Proof | ⬜ PENDING | One character end-to-end through factory. Pipeline validated. |", "phase_state_next_action_quoted_fragment": "Phase 2.2 ✅ FORMAL SIGN-OFF DONE — galinda.animation_status=production_ready in Supabase, kontext_validated=PRODUCTION_READY, 15/15 renders 0 failures, identity confirmed.", "phase_state_current_step_quoted": "2.2_GATE_MET_FORMALIZED_2026-04-07", "phase_state_last_checkpoint_quoted": "PHASE2.2_GATE_MET_2026-04-07", "resolve_in": "ANIM-03 pre-flight"},
+      {"id": "F2", "issue": "apex_governance/SUBPROJECTS.md has no SP-ANIM row (10 H2 headings SP-A..SP-J only)", "resolve_in": "ANIM-02 amend via Codex 6.1 loop"},
+      {"id": "F3", "issue": "Untracked apex/audit/work_gate/*Z-APEX.json files on working tree from prior auto-loop scheduled task; should be .gitignored", "count_via_git_status_porcelain_grep_untracked_2026_06_07": 177, "count_via_ls_wc_l_2026_06_07": 181, "method_note": "Untracked count is from git status porcelain; total dir count is from ls. Difference (4) not enumerated — could be tracked, ignored, or named outside the *Z-APEX.json pattern.", "resolve_in": "infrastructure follow-on WO (not ANIM)"},
+      {"id": "F6", "issue": "WO §0 labels doctrine rule R20 as 'no guessing / preserve detail'; CLAUDE_CODEX_DOCTRINE.rules.json actually defines R20 as 'Stuck-loop re-research'.", "wo_section_0_authority_quote": "Authority: `apex_governance/PLAN_CRITERIA.md` §0 hierarchy, `CLAUDE_CODEX_DOCTRINE` (Codex = reviewer-of-record, no Claude self-review), R20 (no guessing / preserve detail).", "doctrine_rules_json_r20_quoted": "Stuck-loop re-research. When R16 caps fire, before R17 arbiter, automatically re-run internal+external research scoped to the artifact's stuck point. Arbiter receives the re-research output as additional context.", "doctrine_path": "C:/Users/Owner/Repos/code-artifacts/apex/docs/doctrine/CLAUDE_CODEX_DOCTRINE.rules.json", "resolve_in": "ANIM-02: correct WO citation or locate correct doctrine rule ID for 'no guessing'"},
+      {"id": "F4", "issue": "PHASE_STATE.json claims Grog MP4 is 34.8MB; stat reports 47,983,724 bytes = 47.98 MB decimal = 45.76 MiB binary", "resolve_in": "ANIM-02 reconcile PHASE_STATE.json with disk truth"},
+      {"id": "F5", "issue": "WO §4 says FLUX.1 Kontext + Wan 2.2 I2V + LTX-Video are 'to add' but all three are PRESENT on C:/ComfyUI/models", "resolve_in": "ANIM-02 narrow its scope per this map"}
+    ],
+    "gap_list_for_anim_02_plus": [
+      {"id": "G1", "phase": "ANIM-02", "task": "Verify (by hash/size) the 3 candidate-duplicate kontext-turnaround-sheet-v1 (N).safetensors files; delete or quarantine confirmed duplicates"},
+      {"id": "G2", "phase": "CLOSED", "task": "FLUX.1 Kontext checkpoint resolved at C:/ComfyUI/models/diffusion_models/flux1-dev-kontext_fp8_scaled.safetensors. Closed during ANIM-01 inventory. ANIM-02 wires path into muscle config but no locating work needed."},
+      {"id": "G3", "phase": "CLOSED", "task": "Wan 2.2 i2v MoE pair resolved at C:/ComfyUI/models/diffusion_models/wan2.2_i2v_{high,low}_noise_14B_fp8_scaled.safetensors. Closed during ANIM-01 inventory."},
+      {"id": "G3b", "phase": "CLOSED", "task": "LTX-2 resolved at C:/ComfyUI/models/unet/ltx-2-19b-dev-fp8.safetensors. Closed during ANIM-01 inventory."},
+      {"id": "G4", "phase": "ANIM-02", "task": "Install HunyuanVideo (negative inventory confirmed)"},
+      {"id": "G5", "phase": "ANIM-02", "task": "Install kohya_ss for LoRA training (negative inventory confirmed)"},
+      {"id": "G6", "phase": "ANIM-02", "task": "Register muscle_music_video.py + muscle_mv_regenerate.py + stitch_video.py in apex/docs/DOCUMENT_REGISTER.md (header says 'APEX-MB-PY-XXXXX pending')"},
+      {"id": "G7", "phase": "ANIM-03", "task": "Resolve Galinda Phase 2.2 sign-off discrepancy before reusing galinda as ANIM-03 lead character"},
+      {"id": "G8", "phase": "ANIM-02", "task": "Add SP-ANIM section to apex_governance/SUBPROJECTS.md with ANIM-01..ANIM-07+ enumerated"},
+      {"id": "G9", "phase": "ANIM-05 follow-on", "task": "Wire fal.ai cloud fallback. Key-resolution route TBD by ANIM-05 follow-on; ANIM-01 did not collect evidence of route."},
+      {"id": "G10", "phase": "ANIM-04 / NEEDS_OPERATOR", "task": "Supabase tracking/write for QC per WO §S8 (schema migration if needed). Operator-gated before any Supabase write or migration. ANIM-04 to scope."},
+      {"id": "G11", "phase": "ANIM-07 parallel", "task": "Recover + commit AGEN core-five from X:/Automations/apex/spawned_prompts/AGEN-* per AGEN-completion handover (handover declares C+X drive artifacts deleted)"}
+    ]
+  }
+}

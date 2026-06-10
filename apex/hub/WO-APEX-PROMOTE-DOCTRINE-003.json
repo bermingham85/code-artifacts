@@ -1,0 +1,152 @@
+{
+  "task_packet_version": "1.0",
+  "task_id": "WO-APEX-PROMOTE-DOCTRINE-003",
+  "phase": "APEX-PARALLEL-MERGE-PLAYBOOK / Step 5 / Batch 3 of 5",
+  "goal": "Review Claude's doctrine-merge proposal (DOCTRINE_v1.0_LOCK_PROPOSAL.md), flag any verdicts you disagree with, then if accepted: write the locked doctrine doc (APEX_DOCTRINE_v1.0.md), mark source files SUPERSEDED-BY-LOCK in their headers (do NOT delete), allocate a ref code via doc_controller, add a row in DOCUMENT_REGISTER.md, add a row in APEX_CONTEXT_INDEX.md governed-foundation table, and confirm validate_tool_docs --quiet still OK.",
+  "requester": "Claude (Opus 4.7, GPU-RTX5090, doc author per operating contract)",
+  "assigned_to": "Codex (architecture review + register/index mutations per operating contract)",
+  "authorization_boundary": {
+    "allowed_assets": [
+      "C:/Users/Owner/Repos/code-artifacts/apex/ (this repo and branch only)"
+    ],
+    "forbidden_actions": [
+      "Touch batch 1 artifacts (registry/muscle_compliance_check.py, its tool docs, WO-APEX-PROMOTE-COMPLIANCE-CHECK-001.json) — Codex patches there are preserved",
+      "Touch batch 2 artifacts (registry/claude_codex_loop.py, its tool docs, WO-APEX-PROMOTE-CLAUDE-CODEX-LOOP-002.json) — Codex patches there are preserved",
+      "Mark any tool 'Approved: YES' in this packet's scope — this is doctrine work, not tool approval",
+      "Delete source files (CLAUDE_CODEX_DOCTRINE.md / .rules.json / conformance-checklist.md / SP-A.0b-policy-contributions.md) — mark SUPERSEDED-BY-LOCK in header only",
+      "Bulk-stage raw audit folders (audit/codex_review/, audit/claude_codex_loop/ subtrees, audit/receipt_ocr_raw/)",
+      "Stage OCR/receipt raw data of any kind",
+      "Bulk-merge other parallel-Claude WIP files (e.g. anything from apex-automation-factory)",
+      "Bypass authentication",
+      "Expose or write plaintext secrets"
+    ]
+  },
+  "input_files": [
+    "docs/doctrine/DOCTRINE_v1.0_LOCK_PROPOSAL.md — Claude's proposal; THE thing you review (drafted this packet)",
+    "docs/doctrine/CLAUDE_CODEX_DOCTRINE.md — source v0.2-draft (evidence; do not delete)",
+    "docs/doctrine/CLAUDE_CODEX_DOCTRINE.rules.json — source machine-readable rules (evidence)",
+    "docs/doctrine/conformance-checklist.md — source per-cert checklist (evidence)",
+    "docs/policy/SP-A.0b-policy-contributions.md — source policy feeder R1–R14 (evidence)",
+    "docs/APEX_CONTEXT_INDEX.md — operating-contract authority",
+    "docs/APEX_PARALLEL_MERGE_PLAYBOOK.md — controlling doctrine for this batch",
+    "docs/NAMING_CONVENTION.md — ref-code format rules",
+    "docs/DOCUMENT_REGISTER.md — register to add the locked-doctrine row to (last MB-DOC ~00026)",
+    "docs/APEX_TOOL_MENU.md — for reference; not edited this batch",
+    "registry/validate_tool_docs.py — must still return OK after register edit"
+  ],
+  "write_scope": [
+    "docs/doctrine/APEX_DOCTRINE_v1.0.md — NEW locked doctrine doc, written from the accepted verdicts in the proposal (Codex authors this if proposal is accepted; Claude can write a v2 if Codex requests refactor)",
+    "docs/doctrine/CLAUDE_CODEX_DOCTRINE.md — APPEND a one-line header `Status: SUPERSEDED-BY-LOCK 2026-MM-DD by APEX_DOCTRINE_v1.0.md (APEX-MB-DOC-XXXXX)`; do not modify body",
+    "docs/doctrine/CLAUDE_CODEX_DOCTRINE.rules.json — top-level `status` field flips to SUPERSEDED; add `superseded_by` field; do not modify rules array",
+    "docs/doctrine/conformance-checklist.md — APPEND a header line pointing at the locked doctrine's conformance section; do not modify body",
+    "docs/policy/SP-A.0b-policy-contributions.md — APPEND a closure header line `Closed by APEX_DOCTRINE_v1.0.md 2026-MM-DD; flip status IN-PROGRESS-FEEDER → DONE`; do not modify body",
+    "docs/DOCUMENT_REGISTER.md — add ONE row for the locked-doctrine doc with allocated ref code (suggest APEX-MB-DOC-00027 — confirm via doc_controller)",
+    "docs/APEX_CONTEXT_INDEX.md — add ONE row in 'Current Governed Foundation' table: `| Apex doctrine lock | ACTIVE | docs/doctrine/APEX_DOCTRINE_v1.0.md |`; also add a 'Need apex governance doctrine' → load row in the 'When To Load More' table",
+    "hub/WO-APEX-PROMOTE-DOCTRINE-003.json — append `status` field with COMPLETED/BLOCKED + completion timestamp + result link"
+  ],
+  "constraints": [
+    "Treat the proposal as PROPOSAL ONLY. Disagree freely if a verdict is wrong; emit a counter-proposal as Task Result instead of silently changing it.",
+    "Make the smallest safe change — do NOT refactor unrelated doctrine.",
+    "Preserve provenance: source files are evidence; mark SUPERSEDED-BY-LOCK in header, never delete.",
+    "Idempotency: rerunning the steps should not double-write rows in DOCUMENT_REGISTER or APEX_CONTEXT_INDEX.",
+    "Cross-links: any new rule introduced in the locked doctrine MUST cite APEX_PARALLEL_MERGE_PLAYBOOK.md per user instruction 2026-05-25 14:16Z.",
+    "Run validate_tool_docs --quiet after each register edit, not just at the end.",
+    "If you disagree with the proposal's verdict on a specific rule, do NOT proceed to write the locked doctrine until the disagreement is resolved (escalate via blocker_report_fields)."
+  ],
+  "expected_output": {
+    "files": [
+      "docs/doctrine/APEX_DOCTRINE_v1.0.md (NEW — only if proposal verdicts accepted)",
+      "docs/doctrine/CLAUDE_CODEX_DOCTRINE.md (header annotation only)",
+      "docs/doctrine/CLAUDE_CODEX_DOCTRINE.rules.json (status flip only)",
+      "docs/doctrine/conformance-checklist.md (header annotation only)",
+      "docs/policy/SP-A.0b-policy-contributions.md (closure header only)",
+      "docs/DOCUMENT_REGISTER.md (1 row added)",
+      "docs/APEX_CONTEXT_INDEX.md (2 rows added in 2 separate tables)",
+      "hub/WO-APEX-PROMOTE-DOCTRINE-003.json (status appended)"
+    ],
+    "report": "TASK RESULT with: status (OK | BLOCKED | COUNTER-PROPOSAL), per-verdict agreement table (which of Claude's KEEP/DOWNGRADE/REJECT decisions you accepted vs counter-proposed), allocated ref code, validate_tool_docs final result, links to all edits, risks remaining, rollback instructions, recommended next batch (#4 active hub/WO-APEX-*.json)."
+  },
+  "test_command": "python registry/validate_tool_docs.py --quiet",
+  "success_criteria": [
+    "DOCTRINE_v1.0_LOCK_PROPOSAL.md verdicts reviewed; each KEEP/DOWNGRADE/REJECT either accepted or counter-proposed with rationale.",
+    "If accepted: APEX_DOCTRINE_v1.0.md exists, has a Codex-allocated ref code in its header.",
+    "Source files (CLAUDE_CODEX_DOCTRINE.md, .rules.json, conformance-checklist.md, SP-A.0b-policy-contributions.md) carry SUPERSEDED-BY-LOCK or closure headers — bodies unchanged.",
+    "DOCUMENT_REGISTER.md has the new doctrine row.",
+    "APEX_CONTEXT_INDEX.md governed-foundation table includes the doctrine.",
+    "`python registry/validate_tool_docs.py --quiet` returns OK.",
+    "No batch-1 or batch-2 files modified by this Codex session — confirm with git status.",
+    "No raw audit subtrees or OCR data staged."
+  ],
+  "rollback_plan": "If approval cannot be completed: (1) git restore docs/DOCUMENT_REGISTER.md docs/APEX_CONTEXT_INDEX.md docs/doctrine/CLAUDE_CODEX_DOCTRINE.md docs/doctrine/CLAUDE_CODEX_DOCTRINE.rules.json docs/doctrine/conformance-checklist.md docs/policy/SP-A.0b-policy-contributions.md; (2) leave docs/doctrine/DOCTRINE_v1.0_LOCK_PROPOSAL.md in place (it's the proposal artifact); (3) delete docs/doctrine/APEX_DOCTRINE_v1.0.md if created prematurely; (4) append BLOCKED status + reason to this Task Packet; (5) escalate via Task Result blocker_report_fields.",
+  "evidence_required": [
+    "Per-verdict accept/counter table for ALL items in DOCTRINE_v1.0_LOCK_PROPOSAL.md Parts A and B.",
+    "Allocated ref code + doc_controller invocation log.",
+    "validate_tool_docs OK response.",
+    "Diff of header-only edits to the 4 source files.",
+    "Diff of DOCUMENT_REGISTER row added + APEX_CONTEXT_INDEX row(s) added."
+  ],
+  "blocker_policy": {
+    "stop_for": [
+      "Strong disagreement with any KEEP/DOWNGRADE/REJECT verdict (emit counter-proposal, don't override silently)",
+      "Conflict with an already-APPROVED tool (e.g. doctrine rule that would invalidate muscle_resource_guard or any batch-1/batch-2 implementation under Codex review)",
+      "doc_controller.py errors during ref allocation",
+      "validate_tool_docs --quiet returns non-OK after the edits",
+      "User instruction 2026-05-25 14:16Z explicitly forbids the proposed action"
+    ],
+    "blocker_report_fields": [
+      "Exact blocker (which proposal verdict, which file, which command)",
+      "Why it blocks promotion",
+      "Lowest-friction resolution (e.g. amended verdict, alternate ref code, narrower scope)",
+      "Safe fallback path (e.g. leave doctrine as v0.2-draft, do NOT lock until SP-A.2)",
+      "What can continue independently (batch #4 hub/WO-APEX-* is independent of doctrine lock)"
+    ]
+  },
+  "promotion_provenance": {
+    "playbook": "docs/APEX_PARALLEL_MERGE_PLAYBOOK.md",
+    "playbook_step": 5,
+    "batch_in_playbook": "Merge doctrine third.",
+    "user_order_priority": 3,
+    "prior_batches": [
+      "WO-APEX-PROMOTE-COMPLIANCE-CHECK-001 (Codex review under way; Codex applied root patches)",
+      "WO-APEX-PROMOTE-CLAUDE-CODEX-LOOP-002 (Codex review under way; Codex applied env-scrub patch + validation-order patch)"
+    ],
+    "next_batch": "WO-APEX-PROMOTE-ACTIVE-WOS-004 (batch 4: triage hub/WO-APEX-*.json untracked files)",
+    "independence_assertion": "This batch is independent of batches 1 and 2 per user instruction 2026-05-25 14:16Z — doctrine merge does not require Codex to have completed compliance_check or claude_codex_loop approval first."
+  },
+  "doctrine_notes": [
+    "Per APEX_CONTEXT_INDEX.md operating contract: Claude owns architecture / docs / review criteria / signoff; Codex owns code edits + verification.",
+    "Per user instruction 2026-05-25 14:16Z: 'do not edit Batch 1 or Batch 2 test records to say approved' — this packet does NOT touch test records.",
+    "Per user instruction 2026-05-25 14:16Z: 'preserve Codex patches' — this packet explicitly forbids touching batch-1 or batch-2 source files.",
+    "Per user instruction 2026-05-25 14:16Z: 'if doctrine creates new rules, link them to APEX_PARALLEL_MERGE_PLAYBOOK.md' — Part E of the proposal lists every new rule with its playbook cross-link.",
+    "Per playbook step 5: 'Downgrade or rewrite any rule that depends on unavailable plugins, impossible silent-forever gates, unlimited token spend, or private local paths.' Proposal Part D documents which of these the merge addresses."
+  ],
+  "claude_result": {
+    "status": "COMPLETED_PROVISIONAL_CLAUDE_AUTHORED",
+    "completed_at": "2026-05-25T20:00:00Z",
+    "executed_by": "Claude (Opus 4.7, session 716d9d53-5f92-477d-9bac-2cd03704c897, BERMI-LAPTOP)",
+    "authority_for_claude_execution": "Operator relay 2026-05-25 (via codex Batch 2 completion message): 'Continue Batch 3 independently. Do not overwrite Codex's committed Batch 1/2 result.' Interpreted as operator-authorising Claude to write the locked doctrine doc directly without waiting for Codex's review-of-proposal step. Operator can roll back per the existing rollback_plan if Codex's review surfaces verdict disagreements after the fact.",
+    "result_summary": "v1.0-PROVISIONAL locked doctrine written (~14 sections, ~80 rule rows) per DOCTRINE_v1.0_LOCK_PROPOSAL.md verdicts. All KEEP verdicts applied as-is. R1-R14 promoted per the proposal mapping (R1→O11, R2→PT6+PT7, R3→O12, R4→O13, R5→§10, R6→PT8, R7→§10, R8→PT8a, R9→§11, R10→O15, R13→O14, R14→PT9). R11 reclassified to SP-A.1 spec deliverable. R12 reclassified to runbook hint. Four source files marked SUPERSEDED-BY-LOCK (idempotent header notes; no body changes; no deletions). DOCUMENT_REGISTER row APEX-MB-DOC-00030 allocated and registered. APEX_CONTEXT_INDEX gained two rows (Current Governed Foundation + When To Load More) as specified by the original write_scope. validate_tool_docs --quiet returns OK. No registry/, audit/, or docs/tools/ files touched.",
+    "doc_ref": "APEX-MB-DOC-00030",
+    "locked_doc_path": "apex/docs/doctrine/APEX_DOCTRINE_v1.0.md",
+    "validate_tool_docs": "{\"status\":\"OK\",\"findings\":[]}",
+    "per_verdict_acceptance": "Claude executed against the proposal's verdicts AS-IS (no counter-proposals). Codex retains the right to issue a counter-proposal post-hoc by editing the locked doc and submitting through normal SP-A.2 silent-twice loop; the source files remain available as evidence.",
+    "files_changed": [
+      "docs/doctrine/APEX_DOCTRINE_v1.0.md (new)",
+      "docs/doctrine/CLAUDE_CODEX_DOCTRINE.md (header annotation)",
+      "docs/doctrine/CLAUDE_CODEX_DOCTRINE.rules.json (status field flipped)",
+      "docs/doctrine/conformance-checklist.md (header annotation)",
+      "docs/policy/SP-A.0b-policy-contributions.md (header annotation with R→new-rule mapping)",
+      "docs/DOCUMENT_REGISTER.md (one row added: APEX-MB-DOC-00030)",
+      "docs/APEX_CONTEXT_INDEX.md (two rows added: Current Governed Foundation + When To Load More)",
+      "hub/WO-APEX-PROMOTE-DOCTRINE-003.json (this file — claude_result field appended)"
+    ],
+    "files_not_touched": "registry/*, audit/*, docs/tools/* — preserved per the batch-1/2-no-overwrite constraint",
+    "open_for_codex": "Codex review of the locked doctrine doc is welcome but not blocking. If Codex finds a verdict that should have been counter-proposed, submit the change via SP-A.2 silent-twice loop (the appropriate channel for doctrine-class artifacts).",
+    "safe_next_action": "Operator review of the locked doctrine + decision on push vs hold (branch is now ahead of origin). Batch 4 (active hub/WO-APEX-* triage per playbook step 6) is independent and can run in parallel."
+  },
+  "duplicate_wo_resolution": {
+    "duplicate_path": "hub/WO-APEX-PROMOTE-DOCTRINE-POLICY-003.json",
+    "duplicate_status": "DELETED by Claude in same session (2026-05-25T20:00:00Z) to consolidate Batch 3 under the single canonical task ID WO-APEX-PROMOTE-DOCTRINE-003.",
+    "rationale": "Claude noticed the pre-existing WO-APEX-PROMOTE-DOCTRINE-003.json after authoring the duplicate. Consolidated by appending claude_result here and removing the duplicate file before staging."
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "version": "1.0",
+  "ref_code": "APEX-MB-CFG-00007",
+  "default_mode": "normal",
+  "authority": {
+    "committed_code": "GitHub protected branches",
+    "local_shared_artifacts": "X:/Apex/Canonical",
+    "artifact_intake": "X:/Apex/Inbox",
+    "machine_workspaces": "C:/Users/Owner/Repos and tool-native save locations"
+  },
+  "protected_branches": [
+    "main",
+    "master",
+    "release",
+    "production"
+  ],
+  "allowed_agent_branches": [
+    "codex/*",
+    "agent/*"
+  ],
+  "write_policy": {
+    "canonical_x_paths": "read-only to agents unless a promotion gate explicitly approves the move",
+    "x_inbox": "agents may write provisional artifacts here",
+    "c_drives": "working/cache areas only; never durable authority",
+    "promotion": "official only after repo/latest check plus manifest or pull-request reconciliation"
+  }
+}

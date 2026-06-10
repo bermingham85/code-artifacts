@@ -1,0 +1,62 @@
+{
+  "phase": "ANIM-06",
+  "wo_id": "APEX-ANIM-MB-WO-00001",
+  "issued_utc": "2026-06-07T06:24:00Z",
+  "author": "APEX orchestrator (Claude Opus 4.7)",
+  "anchor_policy": "Every claim cites an audit JSON, filesystem read, or verbatim PHASE_STATE/shot_list/lyrics quote. Inherits ANIM-05 trust assumption (operator-controlled QNAP NAS share).",
+  "wo_milestone": {
+    "quote": "ANIM-06 — Assembly; first clip cut to existing lyrics. This is the first visible deliverable.",
+    "deliverable_at": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/grog_too_big_for_playground_mv.mp4",
+    "registered_in_manifest": "apex/docs/anim/ANIM-06-assembly-manifest.json:scenes.MagicalRealmPlayground"
+  },
+  "agent_build": {
+    "muscle": "APEX-MB-PY-00115 (apex/registry/muscle_assembly_agent.py)",
+    "modes": ["--list-deliverables", "--catalog-deliverable <slug> [--force]", "--plan-concat <slug>"],
+    "wraps": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/muscle_music_video.py --mode stitch (APEX-MB-PY-00106) + stitch_video.py (APEX-MB-PY-00108)",
+    "wo_aspirational_label_not_used": "music_video_pipeline/assemble_video.py — does not exist on disk; ANIM-01 §0.1 closed this naming mismatch. ANIM-06 binds to the real on-disk names.",
+    "safety_pattern": "Reuses ANIM-05's handle-bound hash with pre+post resolve+commonpath; same QNAP NAS trust assumption applies.",
+    "safety_tests_verified": {
+      "slug_regex": "INVALID_SLUG exit 6 on --catalog-deliverable '../etc'",
+      "deliverable_missing": "DELIVERABLE_MISSING exit 8 if MP4 absent",
+      "rerun_guard": "WILL_OVERWRITE_REFUSED exit 5 on second catalog without --force",
+      "concat_plan_order": "production clips sorted by ANIM-05 manifest `index` (canonical playback order); shot_id reported only for cross-reference + inversion audit; 20 entries (production_count) for Grog"
+    }
+  },
+  "grog_deliverable_registration": {
+    "deliverable_mp4": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/grog_too_big_for_playground_mv.mp4",
+    "resolved_path": "//192.168.50.246/Extra/Automations/apex/projects/jesse_animate/music_video/grog_playground/grog_too_big_for_playground_mv.mp4",
+    "sha256": "dbd657f511f0bc46be6aa7ff9185fe6c23bef6c3939945a3fd8eaf85845ecdb8",
+    "size_bytes": 47983724,
+    "size_human": "47.98 MB decimal / 45.76 MiB binary",
+    "duration_seconds_ffprobe": 238.875,
+    "duration_source": "ffprobe format.duration",
+    "production_clip_count_from_anim05_manifest": 20,
+    "lyrics_total_duration_seconds": 238.94,
+    "duration_delta_mp4_minus_lyrics_seconds": -0.065,
+    "duration_delta_note": "MP4 is 0.065s shorter than the last lyric end — within expected encoder/stitch tolerance. No drift flagged.",
+    "phase_state_anchor_quote": "session_2026_04_01_mv.shots = '20/20 complete — 19 Wan2.2 i2v two-stage MoE + 1 skip (existing). Zero errors.'",
+    "phase_state_phase_2_2_signoff_quote": "phase2_2_signoff.consistency_score = 0.95; gate_met_at = 2026-04-07T10:32:00Z (Galinda's pipeline-validation work that proved the route Grog later took)",
+    "F4_acknowledgement_from_anim_02_corrections": "PHASE_STATE.json claims 34.8MB for this file; actual is 47.98MB. ANIM-06 records the actual size (47,983,724 bytes); the PHASE_STATE.json discrepancy remains a jesse_animate housekeeping item per ANIM-02-WO-corrections.md."
+  },
+  "concat_plan_anchor": {
+    "audit_path": "apex/audit/anim-06/plan-concat-magicalrealmplayground-2026-06-07T06-20-37Z.json",
+    "expected_concat_length": 20,
+    "ordering_rule": "ANIM-05 manifest `index` is canonical playback order (ls-sorted clip files); shot_id reported but informational; inversions logged in shot_id_monotonic_inversions (empty for Grog manifest = monotonic).",
+    "anim05_manifest_sha256_at_plan_time": "31abe22c8b5f10a78080b2a4172095273e69ad6e71c13c4ff20b6c09c72d744c",
+    "shot_id_inversions": 0,
+    "first_three_concat_lines_from_audit": [
+      "file 'X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_001.mp4'  # index 0 shot_id 1 duration 5.5s",
+      "file 'X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_002.mp4'  # index 1 shot_id 2 duration 6.0s",
+      "file 'X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips/clip_003.mp4'  # index 2 shot_id 3 duration 5.5s"
+    ]
+  },
+  "trust_assumption_inheritance": {
+    "from_phase": "ANIM-05",
+    "spec_section": "SPEC-ANIM-05.md §Trust assumption (operator-owned QNAP NAS share at 192.168.50.246, no untrusted writers, agent runs interactively as operator on workstation on same LAN)",
+    "policy_pattern": "platform-windows-python-fs-toctou (absorbed in SP-ANIM)"
+  },
+  "operator_gated_blockers": [
+    "MA-ANIM-001..006 (PRs #7, #8, #9, #10, #11, ANIM-06 PR)",
+    "G10 Supabase QC schema migration — still operator-gated; assembly manifest serves as the QC ledger for now"
+  ]
+}

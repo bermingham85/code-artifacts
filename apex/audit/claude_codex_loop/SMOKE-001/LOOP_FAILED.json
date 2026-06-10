@@ -1,0 +1,21 @@
+{
+  "phase": "SMOKE-001",
+  "prompt_file": "C:\\tmp\\apex_loop_smoke_prompt.md",
+  "repo": "C:\\Users\\Owner\\Repos\\code-artifacts\\apex",
+  "started": "2026-05-25T14:22:44Z",
+  "attempts": [
+    {
+      "attempt": 1,
+      "builder_returncode": 0,
+      "builder_log": "audit\\claude_codex_loop\\SMOKE-001\\attempt_01_claude_builder.txt",
+      "changed_manifest": "audit\\claude_codex_loop\\SMOKE-001\\attempt_01_changed_files.json",
+      "changed_files": [
+        "C:\\Users\\Owner\\Repos\\code-artifacts\\apex\\audit\\claude_codex_loop\\SMOKE\\marker.txt",
+        "C:\\Users\\Owner\\Repos\\code-artifacts\\apex\\audit\\claude_codex_loop\\SMOKE-001\\attempt_01_claude_builder.txt"
+      ],
+      "reviewed_files": []
+    }
+  ],
+  "status": "no_reviewable_changes",
+  "completed": "2026-05-25T14:22:56Z"
+}

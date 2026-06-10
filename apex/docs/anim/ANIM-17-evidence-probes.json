@@ -1,0 +1,167 @@
+{
+  "phase": "ANIM-17",
+  "harness": "apex/audit/anim-17/key_probe_negatives.py",
+  "doctrine_evidence_class": "O9 (auditable probe trail) + secret-handling",
+  "probes": [
+    {
+      "probe_id": "env_sync_path_missing",
+      "harness": "apex/audit/anim-17/key_probe_negatives.py",
+      "function_under_test": "resolve_env_key_from_env_sync(env_sync_path, field)",
+      "mutation": "env_sync_path is a directory child that has never been created",
+      "expected_status": "ENV_SYNC_PATH_MISSING",
+      "actual_status": "ENV_SYNC_PATH_MISSING",
+      "pass": true,
+      "result": {
+        "status": "ENV_SYNC_PATH_MISSING",
+        "env_sync_path": "C:\\Users\\Owner\\AppData\\Local\\Temp\\anim17-20s82dgb\\does-not-exist.json"
+      },
+      "timestamp_utc": "2026-06-07T13:43:54+00:00"
+    },
+    {
+      "probe_id": "env_sync_unparseable",
+      "harness": "apex/audit/anim-17/key_probe_negatives.py",
+      "function_under_test": "resolve_env_key_from_env_sync(env_sync_path, field)",
+      "mutation": "env_sync file contains plain text, not JSON",
+      "expected_status": "ENV_SYNC_UNPARSEABLE",
+      "actual_status": "ENV_SYNC_UNPARSEABLE",
+      "pass": true,
+      "result": {
+        "status": "ENV_SYNC_UNPARSEABLE",
+        "env_sync_path": "C:\\Users\\Owner\\AppData\\Local\\Temp\\anim17-20s82dgb\\unparseable.json",
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      "timestamp_utc": "2026-06-07T13:43:54+00:00"
+    },
+    {
+      "probe_id": "env_sync_non_object",
+      "harness": "apex/audit/anim-17/key_probe_negatives.py",
+      "function_under_test": "resolve_env_key_from_env_sync(env_sync_path, field)",
+      "mutation": "env_sync file is a valid JSON array (top-level non-object)",
+      "expected_status": "ENV_SYNC_UNPARSEABLE",
+      "actual_status": "ENV_SYNC_UNPARSEABLE",
+      "pass": true,
+      "result": {
+        "status": "ENV_SYNC_UNPARSEABLE",
+        "env_sync_path": "C:\\Users\\Owner\\AppData\\Local\\Temp\\anim17-20s82dgb\\array_top_level.json",
+        "error": "top-level JSON must be an object; got list"
+      },
+      "timestamp_utc": "2026-06-07T13:43:54+00:00"
+    },
+    {
+      "probe_id": "env_key_missing",
+      "harness": "apex/audit/anim-17/key_probe_negatives.py",
+      "function_under_test": "resolve_env_key_from_env_sync(env_sync_path, field)",
+      "mutation": "env_sync object exists but does not contain FAL_AI_API_KEY field",
+      "expected_status": "ENV_KEY_MISSING",
+      "actual_status": "ENV_KEY_MISSING",
+      "pass": true,
+      "result": {
+        "status": "ENV_KEY_MISSING",
+        "env_sync_path": "C:\\Users\\Owner\\AppData\\Local\\Temp\\anim17-20s82dgb\\no_field.json",
+        "field": "FAL_AI_API_KEY"
+      },
+      "timestamp_utc": "2026-06-07T13:43:54+00:00"
+    },
+    {
+      "probe_id": "env_key_not_string",
+      "harness": "apex/audit/anim-17/key_probe_negatives.py",
+      "function_under_test": "resolve_env_key_from_env_sync(env_sync_path, field)",
+      "mutation": "env_sync field value is an integer, not a string",
+      "expected_status": "ENV_KEY_NOT_STRING",
+      "actual_status": "ENV_KEY_NOT_STRING",
+      "pass": true,
+      "result": {
+        "status": "ENV_KEY_NOT_STRING",
+        "env_sync_path": "C:\\Users\\Owner\\AppData\\Local\\Temp\\anim17-20s82dgb\\not_string.json",
+        "field": "FAL_AI_API_KEY",
+        "actual_type": "int"
+      },
+      "timestamp_utc": "2026-06-07T13:43:54+00:00"
+    },
+    {
+      "probe_id": "env_key_empty",
+      "harness": "apex/audit/anim-17/key_probe_negatives.py",
+      "function_under_test": "resolve_env_key_from_env_sync(env_sync_path, field)",
+      "mutation": "env_sync field value is the empty string",
+      "expected_status": "ENV_KEY_EMPTY",
+      "actual_status": "ENV_KEY_EMPTY",
+      "pass": true,
+      "result": {
+        "status": "ENV_KEY_EMPTY",
+        "env_sync_path": "C:\\Users\\Owner\\AppData\\Local\\Temp\\anim17-20s82dgb\\empty.json",
+        "field": "FAL_AI_API_KEY"
+      },
+      "timestamp_utc": "2026-06-07T13:43:54+00:00"
+    },
+    {
+      "probe_id": "env_key_ok_live",
+      "harness": "apex/audit/anim-17/key_probe_negatives.py",
+      "function_under_test": "resolve_env_key_from_env_sync(env_sync_path, field)",
+      "mutation": "live env_sync file with registered FAL_AI_API_KEY (verified at spec time)",
+      "expected_status": "OK",
+      "actual_status": "OK",
+      "pass": true,
+      "result": {
+        "status": "OK",
+        "fingerprint": "95de:0714",
+        "key_sha256_first_12": "be61d3851aac",
+        "key_length": 69,
+        "env_sync_path": "X:/env_sync/user_portable.json",
+        "field": "FAL_AI_API_KEY"
+      },
+      "timestamp_utc": "2026-06-07T13:43:54+00:00"
+    },
+    {
+      "probe_id": "effective_tier_status_pending_shim",
+      "harness": "apex/audit/anim-17/key_probe_negatives.py",
+      "function_under_test": "effective_tier_status(tier_name, cfg)",
+      "mutation": "FalCloud tier cfg with shim_status=PENDING; expects effective_status=KEY_OK_SHIM_PENDING and fingerprint exposed",
+      "expected_effective_status": "KEY_OK_SHIM_PENDING",
+      "actual_effective_status": "KEY_OK_SHIM_PENDING",
+      "pass": true,
+      "result": {
+        "effective_status": "KEY_OK_SHIM_PENDING",
+        "key_resolution": {
+          "status": "OK",
+          "fingerprint": "95de:0714",
+          "key_sha256_first_12": "be61d3851aac",
+          "key_length": 69,
+          "env_sync_path": "X:/env_sync/user_portable.json",
+          "field": "FAL_AI_API_KEY"
+        },
+        "shim_blocker": "shim not built",
+        "tier_static_status": "ENV_KEY_GATED"
+      },
+      "timestamp_utc": "2026-06-07T13:43:54+00:00"
+    },
+    {
+      "probe_id": "effective_tier_status_shim_ready",
+      "harness": "apex/audit/anim-17/key_probe_negatives.py",
+      "function_under_test": "effective_tier_status(tier_name, cfg)",
+      "mutation": "FalCloud tier cfg with shim_status=READY; expects effective_status=READY",
+      "expected_effective_status": "READY",
+      "actual_effective_status": "READY",
+      "pass": true,
+      "result": {
+        "effective_status": "READY",
+        "key_resolution": {
+          "status": "OK",
+          "fingerprint": "95de:0714",
+          "key_sha256_first_12": "be61d3851aac",
+          "key_length": 69,
+          "env_sync_path": "X:/env_sync/user_portable.json",
+          "field": "FAL_AI_API_KEY"
+        },
+        "tier_static_status": "ENV_KEY_GATED"
+      },
+      "timestamp_utc": "2026-06-07T13:43:54+00:00"
+    }
+  ],
+  "summary": {
+    "total_probes": 9,
+    "pass": 9,
+    "fail": 0
+  },
+  "leak_check": "no probe result dict in this file should carry a 'key' field with the raw secret; resolver strips it before record",
+  "built_at": "2026-06-07T13:43:54+00:00"
+}

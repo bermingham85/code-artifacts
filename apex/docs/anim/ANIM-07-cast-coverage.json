@@ -1,0 +1,96 @@
+{
+  "phase": "ANIM-07",
+  "schema_version": 1,
+  "brand": "Jesse-Adventures",
+  "generated_at": "2026-06-07T08:45:00+00:00",
+  "cast_total": 9,
+  "built_total": 4,
+  "blocked_total": 5,
+  "cast": {
+    "galinda": {
+      "disposition": "BUILT-IN-ANIM-03",
+      "phase": "ANIM-03",
+      "bible_path": "apex/docs/anim/bibles/ANIM_Jesse-Adventures_Galinda_bible_v1.md",
+      "render_count": 211,
+      "pack_size": 5,
+      "has_status_json": true,
+      "built_at": "2026-06-07T05:34:55+00:00"
+    },
+    "emma": {
+      "disposition": "BUILT-IN-ANIM-03",
+      "phase": "ANIM-03",
+      "bible_path": "apex/docs/anim/bibles/ANIM_Jesse-Adventures_Emma_bible_v1.md",
+      "render_count": 12,
+      "pack_size": 6,
+      "has_status_json": false,
+      "built_at": "2026-06-07T05:34:55+00:00"
+    },
+    "grog": {
+      "disposition": "BUILT-IN-ANIM-07",
+      "phase": "ANIM-07",
+      "bible_path": "apex/docs/anim/bibles/ANIM_Jesse-Adventures_Grog_bible_v1.md",
+      "render_count": 45,
+      "pack_size": 7,
+      "has_status_json": false,
+      "built_at": "2026-06-07T08:44:46+00:00",
+      "audit_path": "apex/audit/anim-03/grog-build-2026-06-07T08-44-46Z.json"
+    },
+    "lirian": {
+      "disposition": "BUILT-IN-ANIM-07",
+      "phase": "ANIM-07",
+      "bible_path": "apex/docs/anim/bibles/ANIM_Jesse-Adventures_Lirian_bible_v1.md",
+      "render_count": 18,
+      "pack_size": 7,
+      "has_status_json": false,
+      "built_at": "2026-06-07T08:44:47+00:00",
+      "audit_path": "apex/audit/anim-03/lirian-build-2026-06-07T08-44-47Z.json"
+    },
+    "jesse": {
+      "disposition": "NO_RENDERS",
+      "phase": null,
+      "blocker": "MA-ANIM-07-RENDERS-EMPTY",
+      "render_count": 0,
+      "pack_size": 0,
+      "exit_status": "PACK_TOO_SMALL (exit 7)"
+    },
+    "kevin": {
+      "disposition": "NO_RENDERS",
+      "phase": null,
+      "blocker": "MA-ANIM-07-RENDERS-EMPTY",
+      "render_count": 0,
+      "pack_size": 0,
+      "exit_status": "PACK_TOO_SMALL (exit 7)"
+    },
+    "laura": {
+      "disposition": "NO_RENDERS",
+      "phase": null,
+      "blocker": "MA-ANIM-07-RENDERS-EMPTY",
+      "render_count": 0,
+      "pack_size": 0,
+      "exit_status": "PACK_TOO_SMALL (exit 7)"
+    },
+    "ann": {
+      "disposition": "NO_RENDERS",
+      "phase": null,
+      "blocker": "MA-ANIM-07-RENDERS-EMPTY",
+      "render_count": 0,
+      "pack_size": 0,
+      "exit_status": "PACK_TOO_SMALL (exit 7)"
+    },
+    "amy": {
+      "disposition": "MIDJOURNEY_RAW_ONLY",
+      "phase": null,
+      "blocker": "MA-ANIM-07-MIDJOURNEY-RAW",
+      "render_count": 52,
+      "pack_size": 0,
+      "exit_status": "PACK_TOO_SMALL (exit 7)",
+      "note": "52 PNGs in midjourney_refs/; UUID filenames excluded from picker by ANIM-07 anti-needle"
+    }
+  },
+  "notes": [
+    "PROJECT_SPEC \u00a71.8 Character Canon (Confirmed) lists 8 named characters at jesse_animate/PROJECT_SPEC.md:122-132.",
+    "The 9th entry (galinda) is built outside the \u00a71.8 table from her status.json on the QNAP NAS share \u2014 see ANIM-03 cert.",
+    "Pack size is capped at PACK_MAX=7. PACK_MIN=4 is the lower bound for a buildable bible.",
+    "Disposition vocabulary: BUILT-IN-ANIM-<n> = bible authored in that phase; NO_RENDERS = empty render dir; MIDJOURNEY_RAW_ONLY = renders present but only as raw UUID-named midjourney refs (anti-matched by ANIM-07 picker)."
+  ]
+}

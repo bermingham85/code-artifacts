@@ -1,0 +1,85 @@
+{
+  "phase": "ANIM-09",
+  "agent": "AGEN-Builder",
+  "issued": "2026-06-07T10:00:00Z",
+  "live_out_dir": "C:/Users/Owner/Repos/code-artifacts/AGENT_BUILD_SYSTEM/06_BUILDER_AGENT/",
+  "extractor": {
+    "id": "APEX-MB-PY-00116",
+    "path": "apex/registry/agen_recovery_extract.py",
+    "mode": "BYTE-MODE",
+    "frozen_since": "ANIM-08 (head 8be8daf)"
+  },
+  "sources": [
+    {
+      "label": "transcript_A_latest_for_WKFL_PRMPT_TEST",
+      "path": "C:/Users/Owner/apex_governance/codex_runs/AGEN-builder-agent/AGEN-builder-agent-review-20260525T125754Z-ed0ee8d2.txt",
+      "size_bytes": 123019,
+      "sha256": "e9f74bc668ff358771af18851112efd0891bd49bb76317453a8c45798ad1e318",
+      "role": "Final-iteration bytes for WKFL/PRMPT/TEST. Latest of 6 builder review transcripts (2026-05-25 series). Picked because reviewer-iterated artifacts are at their operationally-final byte form here."
+    },
+    {
+      "label": "transcript_B_first_for_SCRPT",
+      "path": "C:/Users/Owner/apex_governance/codex_runs/AGEN-builder-agent/AGEN-builder-agent-review-20260525T115148Z-3da95056.txt",
+      "size_bytes": 130834,
+      "sha256": "e9fc817013bc5a4e1b851a240d848bb578237bfbce7ebae131b725196e3f712c",
+      "role": "SCRPT (Supabase migration) is inline ONLY in this first transcript. Later transcripts dropped it because the SQL did not change across review iterations (reviewer convention: only re-inline files that changed). Verbatim bytes match the canonical builder migration at review-loop start."
+    }
+  ],
+  "restored_files": [
+    {
+      "basename": "AGEN-WKFL-builder-agent-v1.json",
+      "source_transcript_label": "transcript_A_latest_for_WKFL_PRMPT_TEST",
+      "size_bytes": 75182,
+      "sha256": "0e91fbbb52293c997ba572ca1f520282b938ad1202154e2f69cb3571f3e8b018",
+      "transcript_byte_start": 1735,
+      "transcript_byte_end": 76917,
+      "src_path_in_transcript_header": "C:/Users/Owner/Repos/code-artifacts/apex/registry/clones/code-artifacts/AGENT_BUILD_SYSTEM/06_BUILDER_AGENT/AGEN-WKFL-builder-agent-v1.json",
+      "live_dst": "AGENT_BUILD_SYSTEM/06_BUILDER_AGENT/AGEN-WKFL-builder-agent-v1.json",
+      "parses_as_json": true,
+      "json_node_count": 40,
+      "path_reconciled_from_clones_to_live": true
+    },
+    {
+      "basename": "AGEN-PRMPT-builder-system-prompt-v1.md",
+      "source_transcript_label": "transcript_A_latest_for_WKFL_PRMPT_TEST",
+      "size_bytes": 17496,
+      "sha256": "04f405ccd87ed935388fd8c936d47ca420e661d4949c11f86e9e837b74b65529",
+      "transcript_byte_start": 77101,
+      "transcript_byte_end": 94597,
+      "src_path_in_transcript_header": "C:/Users/Owner/Repos/code-artifacts/apex/registry/clones/code-artifacts/AGENT_BUILD_SYSTEM/06_BUILDER_AGENT/AGEN-PRMPT-builder-system-prompt-v1.md",
+      "live_dst": "AGENT_BUILD_SYSTEM/06_BUILDER_AGENT/AGEN-PRMPT-builder-system-prompt-v1.md",
+      "path_reconciled_from_clones_to_live": true
+    },
+    {
+      "basename": "AGEN-TEST-builder-test-plan-v1.md",
+      "source_transcript_label": "transcript_A_latest_for_WKFL_PRMPT_TEST",
+      "size_bytes": 11156,
+      "sha256": "d72243dbc6cd9b2ce804dd82bbe88cafa208a2739da230b5f9ab7460027681d7",
+      "transcript_byte_start": 94776,
+      "transcript_byte_end": 105932,
+      "src_path_in_transcript_header": "C:/Users/Owner/Repos/code-artifacts/apex/registry/clones/code-artifacts/AGENT_BUILD_SYSTEM/06_BUILDER_AGENT/AGEN-TEST-builder-test-plan-v1.md",
+      "live_dst": "AGENT_BUILD_SYSTEM/06_BUILDER_AGENT/AGEN-TEST-builder-test-plan-v1.md",
+      "path_reconciled_from_clones_to_live": true
+    },
+    {
+      "basename": "AGEN-SCRPT-builder-supabase-migration-v1.sql",
+      "source_transcript_label": "transcript_B_first_for_SCRPT",
+      "size_bytes": 28351,
+      "sha256": "d9dfb5818c10d1efa346b62fdb9be6897e5f2a2730ca37a76f071e817539dd75",
+      "transcript_byte_start": 94776,
+      "transcript_byte_end": 123127,
+      "src_path_in_transcript_header": "C:/Users/Owner/Repos/code-artifacts/apex/registry/clones/code-artifacts/AGENT_BUILD_SYSTEM/06_BUILDER_AGENT/AGEN-SCRPT-builder-supabase-migration-v1.sql",
+      "live_dst": "AGENT_BUILD_SYSTEM/06_BUILDER_AGENT/AGEN-SCRPT-builder-supabase-migration-v1.sql",
+      "path_reconciled_from_clones_to_live": true
+    }
+  ],
+  "missing_from_transcripts": [
+    {
+      "basename_expected": "AGEN-SPEC-builder-integration-v1.md",
+      "reason": "Not inline in any of the 6 builder review transcripts under apex_governance/codex_runs/AGEN-builder-agent/. Builder SPEC was not part of the reviewed file set during the May 2026 loop.",
+      "tracked_as": "MA-AGEN-001-BUILDER-SPEC in apex_governance/MISSING_ARTIFACTS.queue.json",
+      "operator_action_required": "Locate the original Builder integration spec from a different source (e.g., agen-spec-build transcripts under codex_runs, or the prompt registry). If irrecoverable, draft fresh under a separate ANIM phase with adversarial review."
+    }
+  ],
+  "doctrine_anchors": ["R15", "R19 (REUSE)", "R20 (verbatim recovery / no invention)", "P1", "P2", "O2", "O6"]
+}

@@ -1,0 +1,31 @@
+{
+  "id": "BERMCOIN-APX-MSC-00002",
+  "name": "rate-fetch-3source-fallback",
+  "project": "BERMCOIN",
+  "version": "1.0.0",
+  "description": "Fetches exchange rates from Frankfurter (ECB) as primary source with fallback to ExchangeRate-API and Open Exchange Rates. Writes to rate_cache and rates_history. Detects stale data and triggers self-healing alert if all sources fail.",
+  "trigger": "cron (every 15 minutes) via WF-02",
+  "inputs": [
+    "currency_pairs[]"
+  ],
+  "outputs": [
+    "rate_cache rows",
+    "rates_history rows",
+    "staleness_flag"
+  ],
+  "dependencies": [
+    "frankfurter_api",
+    "exchangerate_api",
+    "openexchangerates_api",
+    "supabase"
+  ],
+  "n8n_workflows": [
+    "WF-02 Bermcoin Rate Watchdog"
+  ],
+  "tables": [
+    "rate_cache",
+    "rates_history"
+  ],
+  "created": "2026-04-11",
+  "status": "active"
+}

@@ -1,0 +1,61 @@
+{
+  "audit_id": "anim-09-builder-restore-2026-06-07T10-00-00Z",
+  "phase": "ANIM-09",
+  "agent_restored": "AGEN-Builder",
+  "live_out_dir": "C:/Users/Owner/Repos/code-artifacts/AGENT_BUILD_SYSTEM/06_BUILDER_AGENT/",
+  "extractor_used": {
+    "id": "APEX-MB-PY-00116",
+    "path": "apex/registry/agen_recovery_extract.py",
+    "modified_in_this_phase": false,
+    "frozen_since": "ANIM-08 (head 8be8daf)"
+  },
+  "sources_consumed": [
+    {
+      "transcript": "C:/Users/Owner/apex_governance/codex_runs/AGEN-builder-agent/AGEN-builder-agent-review-20260525T125754Z-ed0ee8d2.txt",
+      "size_bytes": 123019,
+      "sha256": "e9f74bc668ff358771af18851112efd0891bd49bb76317453a8c45798ad1e318",
+      "used_for": ["AGEN-WKFL-builder-agent-v1.json", "AGEN-PRMPT-builder-system-prompt-v1.md", "AGEN-TEST-builder-test-plan-v1.md"]
+    },
+    {
+      "transcript": "C:/Users/Owner/apex_governance/codex_runs/AGEN-builder-agent/AGEN-builder-agent-review-20260525T115148Z-3da95056.txt",
+      "size_bytes": 130834,
+      "sha256": "e9fc817013bc5a4e1b851a240d848bb578237bfbce7ebae131b725196e3f712c",
+      "used_for": ["AGEN-SCRPT-builder-supabase-migration-v1.sql"]
+    }
+  ],
+  "transcript_marker_balance_check": {
+    "transcript_A_FILE_markers": 3,
+    "transcript_A_END_FILE_markers": 3,
+    "transcript_B_FILE_markers": 4,
+    "transcript_B_END_FILE_markers": 4,
+    "balanced": true
+  },
+  "files_written": [
+    {"basename": "AGEN-WKFL-builder-agent-v1.json", "size_bytes": 75182, "sha256": "0e91fbbb52293c997ba572ca1f520282b938ad1202154e2f69cb3571f3e8b018"},
+    {"basename": "AGEN-PRMPT-builder-system-prompt-v1.md", "size_bytes": 17496, "sha256": "04f405ccd87ed935388fd8c936d47ca420e661d4949c11f86e9e837b74b65529"},
+    {"basename": "AGEN-TEST-builder-test-plan-v1.md", "size_bytes": 11156, "sha256": "d72243dbc6cd9b2ce804dd82bbe88cafa208a2739da230b5f9ab7460027681d7"},
+    {"basename": "AGEN-SCRPT-builder-supabase-migration-v1.sql", "size_bytes": 28351, "sha256": "d9dfb5818c10d1efa346b62fdb9be6897e5f2a2730ca37a76f071e817539dd75"}
+  ],
+  "files_not_recovered": [
+    {
+      "basename_expected": "AGEN-SPEC-builder-integration-v1.md",
+      "reason": "Not inline in any of the 6 builder review transcripts.",
+      "tracked_as": "MA-AGEN-001-BUILDER-SPEC"
+    }
+  ],
+  "post_restore_checks": {
+    "wkfl_json_parses": true,
+    "wkfl_node_count": 40,
+    "wkfl_name": "Builder Agent",
+    "scrpt_sql_lines": 602
+  },
+  "doctrine_conformance": {
+    "R15_silent_twice": "pending_codex_loop",
+    "R19_REUSE_decision": "REUSE of APEX-MB-PY-00116 over greenfield (cited)",
+    "R20_verbatim_recovery": "yes (BYTE-MODE extractor, no normalization)",
+    "P1_codex_audits": "pending",
+    "P2_claude_builds": "yes",
+    "O2_model_logged": "gpt-5.5",
+    "O6_transcripts_persisted": "apex_governance/codex_runs/ANIM-09/ (pending)"
+  }
+}

@@ -1,0 +1,165 @@
+{
+  "name": "BERM — Receipt OCR Pipeline",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [{"field": "hours", "hoursInterval": 1}]
+        }
+      },
+      "id": "node-schedule",
+      "name": "Every Hour",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "command": "python \"C:\\Users\\bermi\\Projects\\apex\\registry\\muscle_gdrive_watcher.py\" --folder-id \"={{ $env.RECEIPT_FOLDER_ID }}\" --state-file \"C:\\Users\\bermi\\Projects\\apex\\data\\receipt_watcher_state.json\" --credentials \"C:\\Users\\bermi\\Projects\\apex\\data\\google_service_account.json\""
+      },
+      "id": "node-watcher",
+      "name": "Drive Watcher",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.first().json.stdout || '{}';\nlet result;\ntry { result = JSON.parse(raw); } catch(e) { return []; }\nif (result.status !== 'OK') return [];\nconst files = result.new_files || [];\nif (!files.length) return [];\nreturn files.map(f => ({ json: f }));"
+      },
+      "id": "node-parse-files",
+      "name": "Parse New Files",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "command": "python \"C:\\Users\\bermi\\Projects\\apex\\registry\\muscle_receipt_dedup.py\" --file-id \"={{ $json.id }}\" --db-file \"C:\\Users\\bermi\\Projects\\apex\\data\\receipt_dedup.db\" --action check"
+      },
+      "id": "node-dedup-check",
+      "name": "Dedup Check",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "strict"},
+          "conditions": [
+            {
+              "id": "cond-not-processed",
+              "leftValue": "={{ JSON.parse($json.stdout).already_processed }}",
+              "rightValue": false,
+              "operator": {"type": "boolean", "operation": "equals"}
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "node-filter-new",
+      "name": "Skip If Already Done",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1120, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Merge file metadata from upstream into a single item\nconst dedupRaw = $input.first().json.stdout;\nconst dedup = JSON.parse(dedupRaw);\n// Get the file info from 2 nodes back (Dedup Check has it in binary context)\n// We store the file info in the item before the dedup check node\nconst file = $('Parse New Files').first().json;\nreturn [{ json: { ...file, _dedup: dedup } }];"
+      },
+      "id": "node-prep-ocr",
+      "name": "Prep OCR Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1340, 220]
+    },
+    {
+      "parameters": {
+        "command": "python \"C:\\Users\\bermi\\Projects\\apex\\registry\\muscle_ocr_receipt.py\" --file-id \"={{ $json.id }}\" --image-url \"={{ $json.webViewLink }}\" --credentials \"C:\\Users\\bermi\\Projects\\apex\\data\\google_service_account.json\" --output-file \"C:\\Users\\bermi\\Projects\\apex\\data\\ocr_result_{{ $json.id }}.json\""
+      },
+      "id": "node-ocr",
+      "name": "OCR Receipt",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [1560, 220]
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.first().json.stdout || '{}';\nconst result = JSON.parse(raw);\nif (result.status === 'ERROR') {\n  throw new Error('OCR failed: ' + (result.error || 'unknown'));\n}\n// Read the OCR output file\nconst fs = require('fs');\nconst outputPath = result.output;\nconst ocrData = JSON.parse(fs.readFileSync(outputPath, 'utf8'));\n\nconst now = new Date().toISOString();\nconst year = (ocrData.invoice_date || now).substring(0, 4);\nconst tabName = `Receipts_${year}`;\nconst receiptId = `REC-${ocrData.file_id}-${Date.now()}`;\n\nif (ocrData.receipt_type === 'not_a_receipt') {\n  return [{ json: { _skip: true, _reason: 'not_a_receipt', file_id: ocrData.file_id, tab: 'Receipts_ERRORS' } }];\n}\n\nconst lines = ocrData.lines && ocrData.lines.length ? ocrData.lines : [{ line_no: 1, description: 'Unitemized receipt', quantity: null, unit_price_ex_vat: null, vat_rate_pct: null, vat_amount: null, line_total_inc_vat: null }];\n\n// Build one row per line item — header fields repeated on each row\nconst rows = lines.map(line => [\n  receiptId,\n  ocrData.receipt_type || '',\n  now,\n  ocrData.image_url || '',\n  ocrData.invoice_date || '',\n  ocrData.supplier_name || '',\n  ocrData.supplier_address || '',\n  ocrData.supplier_vat_reg_no || '',\n  ocrData.invoice_number || '',\n  line.line_no || '',\n  line.description || '',\n  line.quantity !== null ? line.quantity : '',\n  line.unit_price_ex_vat !== null ? line.unit_price_ex_vat : '',\n  line.vat_rate_pct !== null ? line.vat_rate_pct : '',\n  line.vat_amount !== null ? line.vat_amount : '',\n  line.line_total_inc_vat !== null ? line.line_total_inc_vat : '',\n  ocrData.subtotal_ex_vat !== null ? ocrData.subtotal_ex_vat : '',\n  ocrData.total_vat !== null ? ocrData.total_vat : '',\n  ocrData.total_inc_vat !== null ? ocrData.total_inc_vat : '',\n  ocrData.currency || 'EUR',\n  '',\n  result.status,\n  ocrData.ocr_confidence || '',\n  ocrData.notes || ''\n]);\n\nreturn [{ json: { rows, tab_name: tabName, receipt_id: receiptId, file_id: ocrData.file_id } }];"
+      },
+      "id": "node-build-rows",
+      "name": "Build Sheet Rows",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1780, 220]
+    },
+    {
+      "parameters": {
+        "jsCode": "const fs = require('fs');\nconst data = $input.first().json;\nif (data._skip) return [{ json: data }];\nconst rowsFile = `C:\\\\Users\\\\bermi\\\\Projects\\\\apex\\\\data\\\\rows_${data.file_id}.json`;\nfs.writeFileSync(rowsFile, JSON.stringify(data.rows));\nreturn [{ json: { ...data, rows_file: rowsFile } }];"
+      },
+      "id": "node-write-rows-file",
+      "name": "Write Rows File",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2000, 220]
+    },
+    {
+      "parameters": {
+        "command": "python \"C:\\Users\\bermi\\Projects\\apex\\registry\\muscle_sheets_append.py\" --spreadsheet-id \"={{ $env.RECEIPT_SHEET_ID }}\" --tab-name \"={{ $json.tab_name }}\" --rows-file \"={{ $json.rows_file }}\" --credentials \"C:\\Users\\bermi\\Projects\\apex\\data\\google_service_account.json\""
+      },
+      "id": "node-sheets-append",
+      "name": "Append to Sheet",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [2220, 220]
+    },
+    {
+      "parameters": {
+        "command": "python \"C:\\Users\\bermi\\Projects\\apex\\registry\\muscle_receipt_dedup.py\" --file-id \"={{ $json.file_id }}\" --db-file \"C:\\Users\\bermi\\Projects\\apex\\data\\receipt_dedup.db\" --action mark --receipt-id \"={{ $json.receipt_id }}\""
+      },
+      "id": "node-mark-done",
+      "name": "Mark Processed",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [2440, 220]
+    },
+    {
+      "parameters": {
+        "command": "python \"C:\\Users\\bermi\\Projects\\apex\\registry\\muscle_sheets_append.py\" --spreadsheet-id \"={{ $env.RECEIPT_SHEET_ID }}\" --tab-name \"Receipts_ERRORS\" --rows-file \"={{ $json._error_rows_file }}\" --credentials \"C:\\Users\\bermi\\Projects\\apex\\data\\google_service_account.json\""
+      },
+      "id": "node-error-sheet",
+      "name": "Log Error to Sheet",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [1340, 420]
+    }
+  ],
+  "connections": {
+    "Every Hour": {"main": [[{"node": "Drive Watcher", "type": "main", "index": 0}]]},
+    "Drive Watcher":   {"main": [[{"node": "Parse New Files", "type": "main", "index": 0}]]},
+    "Parse New Files": {"main": [[{"node": "Dedup Check", "type": "main", "index": 0}]]},
+    "Dedup Check":     {"main": [[{"node": "Skip If Already Done", "type": "main", "index": 0}]]},
+    "Skip If Already Done": {
+      "main": [
+        [{"node": "Prep OCR Input", "type": "main", "index": 0}],
+        []
+      ]
+    },
+    "Prep OCR Input":      {"main": [[{"node": "OCR Receipt", "type": "main", "index": 0}]]},
+    "OCR Receipt":         {"main": [[{"node": "Build Sheet Rows", "type": "main", "index": 0}]]},
+    "Build Sheet Rows":    {"main": [[{"node": "Write Rows File", "type": "main", "index": 0}]]},
+    "Write Rows File":     {"main": [[{"node": "Append to Sheet", "type": "main", "index": 0}]]},
+    "Append to Sheet":     {"main": [[{"node": "Mark Processed", "type": "main", "index": 0}]]}
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "meta": {"templateCredsSetupCompleted": true},
+  "tags": [{"name": "BERM"}, {"name": "receipts"}, {"name": "OCR"}],
+  "_comment": "Import into n8n via Settings > Import Workflow. Set env vars RECEIPT_FOLDER_ID and RECEIPT_SHEET_ID in n8n environment settings."
+}

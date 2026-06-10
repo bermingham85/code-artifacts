@@ -1,0 +1,54 @@
+{
+  "version": "1.0",
+  "updated": "2026-05-29",
+  "rules": {
+    "prompt_code": {
+      "pattern": "^[0-9]{4,}(\\.[0-9]+){0,2}(\\.[A-Z]+)*$",
+      "examples": ["1001", "1001.4", "1001.4.3", "1001.4.3.A", "1001.4.3.A.B"],
+      "start_at": 1000
+    },
+    "slug": {
+      "pattern": "^[a-z][a-z0-9_]{2,39}$",
+      "max_length": 40,
+      "banned_in_slug": ["temp", "test", "new", "final"]
+    },
+    "archive_version_suffix": {
+      "pattern": "^_v[0-9]+$",
+      "examples": ["_v1", "_v2", "_v10"],
+      "note": "Applied to archived filenames only. NOT a slug — slug bans do not apply here."
+    },
+    "filename": {
+      "pattern": "^[0-9]{4,}(\\.[0-9]+){0,2}(\\.[A-Z]+)*_[a-z][a-z0-9_]{2,39}\\.[a-z0-9]+$",
+      "examples": ["1001.4.3_receipt_schema.sql"]
+    },
+    "archive_filename": {
+      "pattern": "^[0-9]{4,}(\\.[0-9]+){0,2}(\\.[A-Z]+)*_[a-z][a-z0-9_]{2,39}_v[0-9]+\\.[a-z0-9]+$",
+      "examples": ["1001.4.3_receipt_schema_v1.sql"]
+    },
+    "project_folder": {
+      "pattern": "^[0-9]{4,}_[a-z][a-z0-9_]{2,39}$",
+      "examples": ["1001_ocr_receipt_extractor"]
+    },
+    "phase_folder": {
+      "pattern": "^[0-8]_[A-Z]+$",
+      "examples": ["0_REUSE", "4_BUILD", "8_HANDOVER"]
+    },
+    "apex_register_code": {
+      "pattern": "^[A-Z]{4,5}-[A-Z]{4,5}-[A-Z]{4}-[0-9]{5}$",
+      "examples": ["CRIC-MICH-MUSC-00001", "PRMT-BERM-MUSC-00002"],
+      "note": "Existing APEX format, preserved"
+    },
+    "supabase_table": {
+      "pattern": "^[a-z]+\\.[a-z][a-z0-9_]*$",
+      "examples": ["microprompter.prompt_tasks"]
+    },
+    "n8n_workflow": {
+      "pattern": "^Microprompter-[A-Z][A-Za-z0-9 -]+$",
+      "examples": ["Microprompter-Master Watcher", "Microprompter-LLM Mailbox Sync"]
+    },
+    "git_branch": {
+      "pattern": "^(feat|fix|chore|docs)/[0-9]{4,}-[a-z][a-z0-9-]+$",
+      "examples": ["feat/1001-receipt-schema"]
+    }
+  }
+}

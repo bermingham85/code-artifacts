@@ -1,0 +1,127 @@
+{
+  "task_packet_version": "1.0",
+  "task_id": "WO-APEX-PROMOTE-CLAUDE-CODEX-LOOP-002",
+  "phase": "APEX-PARALLEL-MERGE-PLAYBOOK / Step 4 / Batch 2 of 5",
+  "goal": "Approve registry/claude_codex_loop.py as an Apex tool by running TC-001..TC-009, completing docs/tools/claude_codex_loop/test_record.md with real evidence and the Approved YES stamp, adding the tool to APEX_TOOL_MENU.json + regenerating the menu + ensuring TOOL_INDEX.md + manifest.json reflect approval. (Register row already exists: APEX-MB-PY-00023.)",
+  "requester": "Claude (Opus 4.7, GPU-RTX5090, doc author per operating contract)",
+  "assigned_to": "Codex (code review + test execution + index/menu mutations per operating contract)",
+  "authorization_boundary": {
+    "allowed_assets": [
+      "C:/Users/Owner/Repos/code-artifacts/apex/ (this repo and branch only)"
+    ],
+    "forbidden_actions": [
+      "Promote any OTHER batch-#3..#5 artifacts in this packet — one batch at a time per playbook",
+      "Bulk-merge other parallel-Claude WIP files outside the claude_codex_loop scope",
+      "Edit claude_codex_loop.py beyond what TC failures demand (attach diff to Task Result if any edit needed)",
+      "Bypass authentication or restore API-key auth in the safe_env_for_* functions — these are deliberate safety scrubs",
+      "Run TC-006 (smoke loop) against a path that contains uncommitted user changes the user cannot afford to lose",
+      "Expose or write plaintext secrets"
+    ]
+  },
+  "input_files": [
+    "registry/claude_codex_loop.py — APEX-MB-PY-00023, 386 lines, stdlib only, builder+reviewer loop",
+    "docs/APEX_PARALLEL_MERGE_PLAYBOOK.md — controlling doctrine",
+    "docs/APEX_CONTEXT_INDEX.md — canonical baseline",
+    "docs/NAMING_CONVENTION.md — ref-code + 3-doc rule",
+    "docs/APEX_TOOL_MENU.json — current approved catalogue (8 tools)",
+    "docs/DOCUMENT_REGISTER.md — claude_codex_loop already at row APEX-MB-PY-00023",
+    "docs/tools/claude_codex_loop/blueprint.md — drafted by Claude this packet",
+    "docs/tools/claude_codex_loop/guidance.md — drafted by Claude this packet",
+    "docs/tools/claude_codex_loop/test_record.md — STUB; Codex fills",
+    "docs/tools/claude_codex_loop/troubleshoot.md — drafted by Claude this packet",
+    "docs/tools/muscle_resource_guard/*.md — reference for format/style consistency",
+    "audit/claude_codex_loop/AGEN-migration-coordinator/SIGNED_OFF.json — TC-009 evidence target",
+    "audit/claude_codex_loop/AGEN-architecture-agent-post-migration/LOOP_FAILED.json — TC-009 evidence target",
+    "registry/validate_tool_docs.py — must still return OK after this batch",
+    "registry/generate_tool_menu.py — used to regenerate the human menu"
+  ],
+  "write_scope": [
+    "docs/tools/claude_codex_loop/test_record.md — REPLACE stub with real test evidence + Approved stamp",
+    "docs/APEX_TOOL_MENU.json — add entry under approved_tools[] with category 'ai' (or 'governance' if you prefer); use exact_call from blueprint",
+    "docs/APEX_TOOL_MENU.md — REGENERATE from JSON via generate_tool_menu.py (do not hand-edit)",
+    "docs/DOCUMENT_REGISTER.md — verify existing APEX-MB-PY-00023 row is correct (path apex/registry/claude_codex_loop.py, status ACTIVE). NO new row needed unless verification reveals drift.",
+    "registry/manifest.json — refresh entry to reflect approved state",
+    "registry/TOOL_INDEX.md — REGENERATE per approve_tool.py / indexer policy",
+    "audit/claude_codex_loop/SMOKE-001/ — natural side-effect of TC-006; commit only the final SIGNED_OFF.json or LOOP_FAILED.json + the changed_files manifest, NOT the full builder/reviewer transcripts (per playbook constraint)",
+    "hub/WO-APEX-PROMOTE-CLAUDE-CODEX-LOOP-002.json — append `status` field with COMPLETED/BLOCKED + completion timestamp + result link"
+  ],
+  "constraints": [
+    "Make the smallest safe change that completes the task — do NOT refactor the loop for style.",
+    "TC-005 (env scrub) is non-negotiable. Run it. Do NOT skip even if other TCs pass.",
+    "TC-006 (smoke loop) requires Claude CLI + codex_bridge.py both available. If either is missing on the test machine, file a BLOCKER, do not silently mark PASS.",
+    "Use distinct phase labels for any test runs (e.g. SMOKE-001, SMOKE-002) so prior runs aren't overwritten.",
+    "Idempotency: rerunning the promotion steps should not double-write the register row, menu entry, or manifest entry.",
+    "No secrets in any committed artifact — and DEFINITELY not in any audit transcript Codex commits.",
+    "Run validate_tool_docs --quiet after EACH menu/manifest edit, not just at the end."
+  ],
+  "expected_output": {
+    "files": [
+      "docs/tools/claude_codex_loop/test_record.md (completed with real test evidence)",
+      "docs/APEX_TOOL_MENU.json (entry added)",
+      "docs/APEX_TOOL_MENU.md (regenerated)",
+      "docs/DOCUMENT_REGISTER.md (verified — likely no change since row exists)",
+      "registry/manifest.json (entry refreshed)",
+      "registry/TOOL_INDEX.md (entry added/refreshed)",
+      "audit/claude_codex_loop/SMOKE-001/SIGNED_OFF.json OR LOOP_FAILED.json (whichever is the deterministic outcome)",
+      "hub/WO-APEX-PROMOTE-CLAUDE-CODEX-LOOP-002.json (status appended)"
+    ],
+    "report": "TASK RESULT with: status (OK|BLOCKED|FAIL), all TC commands run with exit codes and log paths, validate_tool_docs final result, links to SIGNED_OFF/LOOP_FAILED evidence, risks remaining, rollback instructions, recommended next batch (#3 doctrine + policy)."
+  },
+  "test_command": "python registry/validate_tool_docs.py --quiet && python -c \"import ast; ast.parse(open('registry/claude_codex_loop.py').read())\" && python registry/claude_codex_loop.py --help > NUL",
+  "success_criteria": [
+    "All 9 TCs in test_record.md have actual results (no remaining `_pending_`).",
+    "test_record.md ends with `**Approved:** YES — YYYY-MM-DD`.",
+    "`python registry/validate_tool_docs.py --quiet` returns {\"status\": \"OK\", \"findings\": []}.",
+    "TC-005 (env scrub) explicitly verified: ANTHROPIC_API_KEY, CLAUDE_API_KEY, OPENAI_API_KEY all absent from the returned env dicts even when set in the parent shell.",
+    "APEX_TOOL_MENU.json has a claude_codex_loop entry under approved_tools[].",
+    "APEX_TOOL_MENU.md regenerated from JSON (mtime newer than JSON).",
+    "DOCUMENT_REGISTER.md row for APEX-MB-PY-00023 is consistent with the current file path; if drift found, fix and note in the Task Result.",
+    "No secrets committed (run `python registry/muscle_compliance_check.py --quiet --strict` if batch #1 has already approved compliance_check; otherwise grep audit transcripts for `ANTHROPIC_API_KEY`, `OPENAI_API_KEY` to confirm clean)."
+  ],
+  "rollback_plan": "If approval cannot be completed: (1) git restore docs/APEX_TOOL_MENU.json docs/APEX_TOOL_MENU.md registry/manifest.json registry/TOOL_INDEX.md to undo registry mutations; (2) leave the four docs/tools/claude_codex_loop/*.md in place (they're harmless DRAFTs); (3) DO NOT delete `audit/claude_codex_loop/` evidence (existing or new); (4) append BLOCKED status + reason to this Task Packet; (5) escalate via Task Result `blocker_report_fields`. If the loop tool itself has a discovered regression, follow the rollback steps in docs/tools/claude_codex_loop/troubleshoot.md (disable schedules → keep evidence → git checkout prior sha).",
+  "evidence_required": [
+    "Exact commands run for each TC plus stdout / exit code (paste into test_record.md per template format).",
+    "TC-005 env-scrub mechanism (code snippet + observed env dict contents).",
+    "TC-006 smoke loop final JSON path (SIGNED_OFF or LOOP_FAILED — either is acceptable; the test is that the LOOP terminates deterministically).",
+    "TC-009 linked SIGNED_OFF and LOOP_FAILED JSON paths with status confirmation.",
+    "validate_tool_docs.py final OK response.",
+    "Diff of any source edit beyond stub-to-real test_record edits."
+  ],
+  "blocker_policy": {
+    "stop_for": [
+      "TC-005 env-scrub FAILS (one of the three keys leaks into a subprocess env)",
+      "TC-006 smoke loop hangs past timeout AND no log file written (loop is genuinely broken, not just slow)",
+      "Claude CLI not installed/authenticated on the test machine",
+      "codex_bridge.py not present at default path AND no override path available",
+      "validate_tool_docs.py returns non-OK after the menu/register edits"
+    ],
+    "blocker_report_fields": [
+      "Exact blocker (which TC, which command)",
+      "Why it blocks promotion (vs. being a pre-existing unrelated FAIL)",
+      "Lowest-friction resolution",
+      "Safe fallback path (e.g. mark tool DRAFT, do not add to TOOL_MENU until blocker resolved)",
+      "What can continue independently (batch #3 doctrine/policy is independent of this tool)"
+    ]
+  },
+  "promotion_provenance": {
+    "playbook": "docs/APEX_PARALLEL_MERGE_PLAYBOOK.md",
+    "playbook_step": 4,
+    "batch_in_playbook": "Promote the Claude/Codex loop second.",
+    "user_order_priority": 2,
+    "prior_batch": "WO-APEX-PROMOTE-COMPLIANCE-CHECK-001",
+    "next_batch": "WO-APEX-PROMOTE-DOCTRINE-POLICY-003 (batch #3, doctrine/policy merge, queued)"
+  },
+  "doctrine_notes": [
+    "Per APEX_CONTEXT_INDEX.md operating contract: Claude owns architecture/docs/reviews; Codex owns code edits/tests/configs. This packet honors that split.",
+    "Per APEX_PARALLEL_MERGE_PLAYBOOK: 'Link only selected transcript evidence from `audit/claude_codex_loop/`; do not require future contexts to read the whole audit tree.' Test record TC-009 links exactly two transcripts, not the whole tree.",
+    "Per user instruction 2026-05-25 13:53Z: 'Do not self-review around Codex where Codex review is required.' Claude must NOT mark this tool APPROVED — the YES stamp is Codex's gate."
+  ],
+  "codex_result": {
+    "status": "COMPLETED_APPROVED",
+    "completed_at": "2026-05-25T14:45:00Z",
+    "result_summary": "Codex fixed env scrub, negative-test log creation, and max-attempt terminal status. Live smoke and controlled cap tests ran. The invalid TC-009 failure evidence was replaced with AGEN-verification-agent/LOOP_FAILED.json, and the tool was promoted to the approved menu, manifest, and tool index.",
+    "test_record": "docs/tools/claude_codex_loop/test_record.md",
+    "smoke_evidence": "audit/claude_codex_loop/SMOKE-001/LOOP_FAILED.json",
+    "safe_next_action": "Use only through the documented guidance and keep scheduled production use disabled unless a specific Task Packet authorizes it."
+  }
+}

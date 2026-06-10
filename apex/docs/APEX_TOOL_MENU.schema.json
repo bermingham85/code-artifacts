@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "apex-tool-menu.schema.json",
+  "title": "Apex Tool Menu",
+  "type": "object",
+  "required": ["version", "generated_at", "approved_tools", "pending_tools"],
+  "properties": {
+    "version": {
+      "type": "string"
+    },
+    "generated_at": {
+      "type": "string"
+    },
+    "approved_tools": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/tool"
+      }
+    },
+    "pending_tools": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/pending_tool"
+      }
+    }
+  },
+  "$defs": {
+    "tool": {
+      "type": "object",
+      "required": [
+        "need",
+        "name",
+        "ref_code",
+        "category",
+        "state",
+        "exact_call",
+        "how_to",
+        "troubleshoot"
+      ],
+      "properties": {
+        "need": {"type": "string"},
+        "name": {"type": "string"},
+        "ref_code": {"type": "string"},
+        "category": {"type": "string"},
+        "state": {"type": "string", "enum": ["APPROVED"]},
+        "exact_call": {"type": "string"},
+        "how_to": {"type": "string"},
+        "troubleshoot": {"type": "string"}
+      }
+    },
+    "pending_tool": {
+      "type": "object",
+      "required": ["name", "state", "missing"],
+      "properties": {
+        "name": {"type": "string"},
+        "state": {"type": "string", "enum": ["PENDING"]},
+        "missing": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      }
+    }
+  }
+}

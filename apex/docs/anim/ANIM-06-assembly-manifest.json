@@ -1,0 +1,26 @@
+{
+  "phase": "ANIM-06",
+  "schema_version": 1,
+  "scenes": {
+    "MagicalRealmPlayground": {
+      "scene_slug": "MagicalRealmPlayground",
+      "brand": "Jesse-Adventures",
+      "character": "grog",
+      "song": "Grog Too Big For Playground (music video)",
+      "deliverable_mp4": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/grog_too_big_for_playground_mv.mp4",
+      "resolved_path": "//192.168.50.246/Extra/Automations/apex/projects/jesse_animate/music_video/grog_playground/grog_too_big_for_playground_mv.mp4",
+      "sha256": "dbd657f511f0bc46be6aa7ff9185fe6c23bef6c3939945a3fd8eaf85845ecdb8",
+      "size_bytes": 47983724,
+      "duration_seconds": 238.875,
+      "duration_seconds_source": "ffprobe (format.duration)",
+      "production_clip_count_from_anim05": 20,
+      "lyrics_json": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/lyrics_timestamped.json",
+      "lyrics_total_duration_seconds": 238.94,
+      "duration_delta_mp4_minus_lyrics_seconds": -0.065,
+      "stitch_wrapper_invocation": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/muscle_music_video.py --mode stitch --shot-list <shot_list.json>",
+      "stitch_sibling": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/stitch_video.py",
+      "phase_state_anchor": "session_2026_04_01_mv.shots = '20/20 complete \u2014 19 Wan2.2 i2v two-stage MoE + 1 skip'",
+      "built_at": "2026-06-07T06:20:37+00:00"
+    }
+  }
+}

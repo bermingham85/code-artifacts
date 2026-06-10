@@ -1,0 +1,15 @@
+{
+  "local_paths": [
+    "\\\\192.168.50.246\\Automations\\apex\\registry"
+  ],
+  "github_repos": [],
+  "exclude_patterns": [
+    "**/node_modules/**",
+    "**/__pycache__/**",
+    "**/.git/**",
+    "**/venv/**",
+    "**/.venv/**",
+    "**/clones/**"
+  ],
+  "index_interval_minutes": 30
+}

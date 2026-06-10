@@ -1,0 +1,58 @@
+{
+  "status": "OK",
+  "dry_run": false,
+  "force": false,
+  "transcript": "C:\\Users\\Owner\\apex_governance\\codex_runs\\AGEN-verification-agent\\AGEN-verification-agent-review-20260523T012003Z-b0bd298e.txt",
+  "transcript_sha256": "a2682c9090324cde2ad98bc076d8dbc80d4bca45e492a0306c7638e63c1c6a7f",
+  "out_dir": "C:\\Users\\Owner\\Repos\\code-artifacts\\AGENT_BUILD_SYSTEM\\07_VERIFICATION_AGENT",
+  "written": [],
+  "no_op_idempotent": [
+    {
+      "basename": "AGEN-SCRPT-verification-supabase-migration-v1.sql",
+      "dst": "C:\\Users\\Owner\\Repos\\code-artifacts\\AGENT_BUILD_SYSTEM\\07_VERIFICATION_AGENT\\AGEN-SCRPT-verification-supabase-migration-v1.sql",
+      "size_bytes": 23827,
+      "sha256": "e391cb953913d62be08230786c617bc0eeb51b8aaf1acc0286b13efcc4c63452",
+      "note": "Destination already byte-identical to transcript slice; no write performed."
+    },
+    {
+      "basename": "AGEN-PRMPT-verification-system-prompt-v1.md",
+      "dst": "C:\\Users\\Owner\\Repos\\code-artifacts\\AGENT_BUILD_SYSTEM\\07_VERIFICATION_AGENT\\AGEN-PRMPT-verification-system-prompt-v1.md",
+      "size_bytes": 12257,
+      "sha256": "dde918dce986885935fe5e696623795f222ce3578fa1ae6cfe0a19ea84a223bb",
+      "note": "Destination already byte-identical to transcript slice; no write performed."
+    },
+    {
+      "basename": "AGEN-SPEC-verification-integration-v1.md",
+      "dst": "C:\\Users\\Owner\\Repos\\code-artifacts\\AGENT_BUILD_SYSTEM\\07_VERIFICATION_AGENT\\AGEN-SPEC-verification-integration-v1.md",
+      "size_bytes": 21927,
+      "sha256": "ddfade20342909784f155caa13429f0448ae76025ce4c0ad2d03a14286d49bb7",
+      "note": "Destination already byte-identical to transcript slice; no write performed."
+    },
+    {
+      "basename": "AGEN-TEST-verification-test-plan-v1.md",
+      "dst": "C:\\Users\\Owner\\Repos\\code-artifacts\\AGENT_BUILD_SYSTEM\\07_VERIFICATION_AGENT\\AGEN-TEST-verification-test-plan-v1.md",
+      "size_bytes": 16158,
+      "sha256": "a4711f15c18cfce743d2ea2aa758e96b599acb77fc3dae45439f5348b082bf2a",
+      "note": "Destination already byte-identical to transcript slice; no write performed."
+    },
+    {
+      "basename": "AGEN-WKFL-verification-workflow-v1.json",
+      "dst": "C:\\Users\\Owner\\Repos\\code-artifacts\\AGENT_BUILD_SYSTEM\\07_VERIFICATION_AGENT\\AGEN-WKFL-verification-workflow-v1.json",
+      "size_bytes": 74336,
+      "sha256": "20a4ebc6ff96716b3f42ee4f688e0384c5d24c5617800068f4a66b26f2ffeead",
+      "note": "Destination already byte-identical to transcript slice; no write performed."
+    }
+  ],
+  "skipped": [
+    {
+      "basename": "HANDOVER.md",
+      "reason": "not in --restore set"
+    },
+    {
+      "basename": "PROJECT_INSTRUCTIONS.md",
+      "reason": "not in --restore set"
+    }
+  ],
+  "rejected": [],
+  "missing_from_transcript": []
+}

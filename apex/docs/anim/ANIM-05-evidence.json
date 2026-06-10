@@ -1,0 +1,58 @@
+{
+  "phase": "ANIM-05",
+  "wo_id": "APEX-ANIM-MB-WO-00001",
+  "issued_utc": "2026-06-07T05:56:00Z",
+  "author": "APEX orchestrator (Claude Opus 4.7)",
+  "anchor_policy": "Every claim cites an audit JSON path, a filesystem read, or a verbatim quote from PHASE_STATE.json / shot_list.json.",
+  "agent_build": {
+    "muscle": "APEX-MB-PY-00114 (apex/registry/muscle_video_agent.py)",
+    "modes": ["--list-tiers", "--catalog <slug> [--force]", "--plan-tier <Wan22|LTX|Hunyuan|FalCloud> --shot <id> [--scene <slug>]"],
+    "safety_tests_live_audit": "apex/audit/anim-05/safety-tests-live.json (actual cmd / exit / stdout-tail per case, captured 2026-06-07T05:59Z)",
+    "safety_tests_summary": {
+      "slug_regex_rejection": "INVALID_SLUG exit 6 on '../etc'",
+      "tier_regex_rejection": "INVALID_TIER exit 6 on BadTier",
+      "shot_id_regex_rejection": "INVALID_SHOT_ID exit 6 on '*'",
+      "tier_not_ready_hunyuan": "TIER_NOT_READY exit 7 — Hunyuan NODES_INSTALLED_WEIGHTS_DEFERRED never returns PLAN (F-1 r1 fix)",
+      "tier_not_ready_fal": "TIER_NOT_READY exit 7 — FalCloud OPERATOR_GATED",
+      "rerun_guard": "WILL_OVERWRITE_REFUSED exit 5 — confirmed in live capture",
+      "symlink_outright_refusal": "discover_clips() lstat()-checks p.is_symlink() and skips before resolve/hash (F-4 r1 fix: closes TOCTOU window)",
+      "wrapper_required": "plan_tier returns TIER_NOT_CONFIGURED when wrapper_invocation is missing/empty even for READY tier (F-2 r1 fix)"
+    }
+  },
+  "tier_config": {
+    "path": "apex/docs/anim/ANIM-05-tier-config.json",
+    "tiers": {
+      "Wan22": {"status": "READY", "approx_seconds_per_clip": 180, "vram_gb": 24},
+      "LTX": {"status": "READY", "approx_seconds_per_clip": 90, "vram_gb": 16},
+      "Hunyuan": {"status": "NODES_INSTALLED_WEIGHTS_DEFERRED", "approx_download_gb": 14},
+      "FalCloud": {"status": "OPERATOR_GATED", "blocker": "G9 fal.ai key route TBD"}
+    },
+    "default_route": "Wan22"
+  },
+  "magical_realm_playground_catalog": {
+    "audit_path": "apex/audit/anim-05/catalog-magicalrealmplayground-2026-06-07T06-00-55Z.json",
+    "clip_root": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/clips",
+    "shot_list_json": "X:/Automations/apex/projects/jesse_animate/music_video/grog_playground/shot_list.json",
+    "total_clips_on_disk": 38,
+    "production_count": 20,
+    "extras_count": 18,
+    "mapped_durations": 38,
+    "per_clip_schema_v2_fields": ["path", "sha256", "size", "role", "index", "shot_id", "character", "scene_slug", "brand", "source", "duration_seconds", "duration_source"],
+    "phase_state_anchor_quote": "session_2026_04_01_mv.shots = '20/20 complete — 19 Wan2.2 i2v two-stage MoE + 1 skip (existing). Zero errors.'",
+    "production_set_rule": "First 20 ls-sorted MP4s are the production shipment per PHASE_STATE; remaining 18 are extras/alts (cataloged but not promoted)."
+  },
+  "operator_gated_blockers": [
+    "MA-ANIM-001..005 (PRs #7, #8, #9, #10, and the upcoming ANIM-05 PR)",
+    "G9 fal.ai key-resolution route — not pursuable autonomously",
+    "Hunyuan weights download — operator runs `python apex/registry/muscle_install_hunyuanvideo.py --download-weights` (~14GB)"
+  ],
+  "policy_contribution_under_r15": {
+    "pattern": "platform-windows-python-fs-toctou",
+    "absorbing_sp": "SP-ANIM",
+    "finding_summary": "On Windows + pure Python, the open()-to-handle binding window for symlink/reparse-point detection is not atomically closable without Win32 CreateFile ctypes shims. The agent uses pre-resolve+commonpath + lstat symlink refusal + handle-bound os.open/fstat/os.read + post-read resolve+commonpath re-check; the residual TOCTOU is the single open() call between pre-check and kernel-acquired handle.",
+    "trust_assumption_recorded_in_spec": "SPEC-ANIM-05.md §Trust assumption (refined round 6 after Codex correctly noted manifest resolved_path surfaces //192.168.50.246/Extra/... UNC form): clip root is a Windows drive-letter mapping to an SMB share on the operator's home-LAN QNAP NAS (station QNAP-NAS / 192.168.50.246), operator-owned, behind operator's home router/firewall, no untrusted writers, agent runs interactively as operator on workstation on the same LAN.",
+    "codex_resolution_path_quoted": "Codex round 5 explicitly named 'treat the catalog root as trusted-only and document that assumption explicitly' as the acceptable resolution.",
+    "r17_accept_as_is_rationale": "Documented trust assumption + recorded mitigation path for future untrusted-root use (Win32 CreateFile + GetFileInformationByHandle).",
+    "swap_to_untrusted_clip_root_followup": "When ANIM-* later targets an untrusted clip root, replace os.open with ctypes CreateFile(FILE_FLAG_OPEN_REPARSE_POINT) and validate file-id via GetFileInformationByHandle."
+  }
+}

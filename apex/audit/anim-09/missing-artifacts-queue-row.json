@@ -1,0 +1,26 @@
+{
+  "_comment": "Tracked, in-repo mirror of the MA queue row appended to the external apex_governance/MISSING_SECRETS.queue.json during ANIM-09. The external file sits at C:/Users/Owner/apex_governance/MISSING_SECRETS.queue.json which is outside the code-artifacts git tree, so this in-repo audit captures the row verbatim to satisfy the SPEC DoD claim of durable logging.",
+  "external_queue_path": "C:/Users/Owner/apex_governance/MISSING_SECRETS.queue.json",
+  "external_queue_is_in_repo": false,
+  "appended_at": "2026-06-07T10:00:00Z",
+  "row": {
+    "id": "MA-AGEN-001-BUILDER-SPEC",
+    "raised_at": "2026-06-07T10:00:00Z",
+    "phase": "ANIM-09",
+    "asset": "AGEN-SPEC-builder-integration-v1.md (Builder agent integration spec)",
+    "location_checked": [
+      "apex_governance/codex_runs/AGEN-builder-agent/AGEN-builder-agent-review-20260525T115148Z-3da95056.txt (no SPEC inline)",
+      "apex_governance/codex_runs/AGEN-builder-agent/AGEN-builder-agent-review-20260525T120059Z-c04572a4.txt (no SPEC inline)",
+      "apex_governance/codex_runs/AGEN-builder-agent/AGEN-builder-agent-review-20260525T121612Z-c809d62b.txt (no SPEC inline)",
+      "apex_governance/codex_runs/AGEN-builder-agent/AGEN-builder-agent-review-20260525T122444Z-c14bab00.txt (no SPEC inline)",
+      "apex_governance/codex_runs/AGEN-builder-agent/AGEN-builder-agent-review-20260525T125336Z-d7032f42.txt (no SPEC inline)",
+      "apex_governance/codex_runs/AGEN-builder-agent/AGEN-builder-agent-review-20260525T125754Z-ed0ee8d2.txt (no SPEC inline)",
+      "AGENT_BUILD_SYSTEM/06_BUILDER_AGENT/ live path (only HANDOVER.md + PROJECT_INSTRUCTIONS.md before ANIM-09; no SPEC)"
+    ],
+    "symptom": "Across all six 2026-05-25 builder review transcripts, the file set inlined between `=== FILE: <path> ===` markers consists of WKFL/PRMPT/TEST in every transcript plus SCRPT in the first transcript only. No transcript inlines AGEN-SPEC-builder-integration-v1.md. ANIM-09 verbatim recovery therefore restored 4-of-5 builder artifacts.",
+    "impact": "Builder agent restored without an integration spec. Restoration cert (ANIM-09) covers correctness of the 4 restored bytes, not the agent's R15 closure. Downstream Builder operation can proceed using the WKFL + PRMPT + TEST + SCRPT set (the runtime artifacts); the SPEC is a doc-control gap rather than a runtime blocker.",
+    "resolution_required": "Operator picks one of: (a) locate the builder integration spec from a different source (prompt registry, earlier WO drop, X clone snapshots predating the May deletion); (b) draft a fresh SPEC under a separate ANIM phase reviewed adversarially against the restored WKFL/PRMPT/TEST/SCRPT; (c) declare the SPEC out-of-scope for the AGEN-Builder agent.",
+    "owner": "Michael",
+    "status": "OPEN"
+  }
+}

@@ -1,0 +1,137 @@
+{
+  "status": "OK",
+  "dry_run": false,
+  "force": false,
+  "transcript": "C:\\Users\\Owner\\apex_governance\\codex_runs\\AGEN-migration-coordinator\\AGEN-migration-coordinator-review-20260523T052539Z-3dd63aeb.txt",
+  "transcript_sha256": "0cad3c58f5825dbb486ffd4606a9220b301fc71583dda8eace9eef554f54b078",
+  "out_dir": "AGENT_BUILD_SYSTEM\\04_ROUTER_AGENT",
+  "written": [
+    {
+      "basename": "AGEN-SCRPT-router-supabase-migration-v1.sql",
+      "dst": "AGENT_BUILD_SYSTEM\\04_ROUTER_AGENT\\AGEN-SCRPT-router-supabase-migration-v1.sql",
+      "size_bytes": 21019,
+      "sha256": "e0ac899ff1f3cd5095ea5117e4a5659ff4d97d3ae40ee4908d613dbf34d1d9b4",
+      "transcript_byte_start": 26564,
+      "transcript_byte_end": 47583,
+      "src_path_in_transcript": "C:\\Users\\Owner\\Repos\\code-artifacts\\apex\\registry\\clones\\code-artifacts\\AGENT_BUILD_SYSTEM\\04_ROUTER_AGENT\\AGEN-SCRPT-router-supabase-migration-v1.sql",
+      "action": "write"
+    }
+  ],
+  "no_op_idempotent": [],
+  "skipped": [
+    {
+      "basename": "settings.local.json",
+      "reason": "not in --restore set"
+    },
+    {
+      "basename": "DOCUMENT_REGISTER.md",
+      "reason": "not in --restore set"
+    },
+    {
+      "basename": "AGEN-SCRPT-architecture-supabase-migration-v1.sql",
+      "reason": "not in --restore set"
+    },
+    {
+      "basename": "AGEN-SCRPT-builder-supabase-migration-v1.sql",
+      "reason": "not in --restore set"
+    },
+    {
+      "basename": "pass1_prompt.md",
+      "reason": "not in --restore set"
+    },
+    {
+      "basename": "pass1_prompt_inline.md",
+      "reason": "not in --restore set"
+    },
+    {
+      "basename": "pass1_response.txt",
+      "reason": "not in --restore set"
+    },
+    {
+      "basename": "pass2_prompt_inline.md",
+      "reason": "not in --restore set"
+    },
+    {
+      "basename": "pass2_response.txt",
+      "reason": "not in --restore set"
+    },
+    {
+      "basename": "pass3_prompt_inline.md",
+      "reason": "not in --restore set"
+    },
+    {
+      "basename": "pass3_response.txt",
+      "reason": "not in --restore set"
+    },
+    {
+      "basename": "pass4_prompt_inline.md",
+      "reason": "not in --restore set"
+    },
+    {
+      "basename": "pass4_response.txt",
+      "reason": "not in --restore set"
+    },
+    {
+      "basename": "pass5_prompt_inline.md",
+      "reason": "not in --restore set"
+    },
+    {
+      "basename": "pass5_response.txt",
+      "reason": "not in --restore set"
+    },
+    {
+      "basename": "HANDOVER.md",
+      "reason": "not in --restore set"
+    },
+    {
+      "basename": "PROJECT_INSTRUCTIONS.md",
+      "reason": "not in --restore set"
+    },
+    {
+      "basename": "HANDOVER.md",
+      "reason": "not in --restore set"
+    },
+    {
+      "basename": "PROJECT_INSTRUCTIONS.md",
+      "reason": "not in --restore set"
+    },
+    {
+      "basename": "HANDOVER.md",
+      "reason": "not in --restore set"
+    },
+    {
+      "basename": "PROJECT_INSTRUCTIONS.md",
+      "reason": "not in --restore set"
+    },
+    {
+      "basename": "AGEN-PRMPT-verification-system-prompt-v1.md",
+      "reason": "not in --restore set"
+    },
+    {
+      "basename": "AGEN-SCRPT-verification-supabase-migration-v1.sql",
+      "reason": "not in --restore set"
+    },
+    {
+      "basename": "AGEN-SPEC-verification-integration-v1.md",
+      "reason": "not in --restore set"
+    },
+    {
+      "basename": "AGEN-TEST-verification-test-plan-v1.md",
+      "reason": "not in --restore set"
+    },
+    {
+      "basename": "AGEN-WKFL-verification-workflow-v1.json",
+      "reason": "not in --restore set"
+    },
+    {
+      "basename": "HANDOVER.md",
+      "reason": "not in --restore set"
+    },
+    {
+      "basename": "PROJECT_INSTRUCTIONS.md",
+      "reason": "not in --restore set"
+    }
+  ],
+  "rejected": [],
+  "missing_from_transcript": []
+}

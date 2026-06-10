@@ -1,0 +1,34 @@
+{
+  "status": "OK",
+  "dry_run": false,
+  "force": false,
+  "transcript": "C:\\Users\\Owner\\apex_governance\\codex_runs\\AGEN-builder-agent\\AGEN-builder-agent-review-20260525T115148Z-3da95056.txt",
+  "transcript_sha256": "e9fc817013bc5a4e1b851a240d848bb578237bfbce7ebae131b725196e3f712c",
+  "out_dir": "AGENT_BUILD_SYSTEM\\06_BUILDER_AGENT",
+  "written": [],
+  "no_op_idempotent": [
+    {
+      "basename": "AGEN-SCRPT-builder-supabase-migration-v1.sql",
+      "dst": "AGENT_BUILD_SYSTEM\\06_BUILDER_AGENT\\AGEN-SCRPT-builder-supabase-migration-v1.sql",
+      "size_bytes": 28351,
+      "sha256": "d9dfb5818c10d1efa346b62fdb9be6897e5f2a2730ca37a76f071e817539dd75",
+      "note": "Destination already byte-identical to transcript slice; no write performed."
+    }
+  ],
+  "skipped": [
+    {
+      "basename": "AGEN-WKFL-builder-agent-v1.json",
+      "reason": "not in --restore set"
+    },
+    {
+      "basename": "AGEN-PRMPT-builder-system-prompt-v1.md",
+      "reason": "not in --restore set"
+    },
+    {
+      "basename": "AGEN-TEST-builder-test-plan-v1.md",
+      "reason": "not in --restore set"
+    }
+  ],
+  "rejected": [],
+  "missing_from_transcript": []
+}

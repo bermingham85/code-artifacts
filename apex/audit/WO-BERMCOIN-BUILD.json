@@ -1,0 +1,75 @@
+{
+  "id": "WO-BERMCOIN-BUILD",
+  "project": "BERMCOIN",
+  "status": "COMPLETE",
+  "started": "2026-04-02T10:00:00Z",
+  "phases": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
+  "phase_status": {
+    "1": "COMPLETE",
+    "2": "COMPLETE",
+    "3": "COMPLETE",
+    "4": "COMPLETE",
+    "5": "COMPLETE",
+    "6": "COMPLETE",
+    "7": "COMPLETE",
+    "8": "COMPLETE",
+    "9": "COMPLETE",
+    "10": "COMPLETE",
+    "11": "COMPLETE",
+    "12": "COMPLETE"
+  },
+  "owner": "Michael Bermingham",
+  "company": "Bermech Limited",
+  "session": "BERMCOIN-BCK-SES-00001",
+  "completed": "2026-04-02T16:00:00Z",
+  "files_created": 25,
+  "supabase_migrations": 13,
+  "muscles_registered": 5,
+  "n8n_workflows": {
+    "WF-01-ONBOARDING": "ffY1acQctZIhQHrG",
+    "WF-02-RATE-WATCHDOG": "dBV8Hhxd8ZteljJ6",
+    "WF-03-MONTHLY-RESET": "kT6Au3xBLyPZIUE9",
+    "WF-04-OFFBOARDING": "ES7Zb8MoHvOQ8qnm",
+    "WF-05-SELF-HEALING": "V8g00Hb9XTyY6adj"
+  },
+  "n8n_api_key_stored": true,
+  "stripe_products": {
+    "standard": "prod_UGM3UQBGOSHyRK",
+    "pro": "prod_UGM3WtLnnlDhvU"
+  },
+  "stripe_prices": {
+    "standard_monthly": "price_1THpLA1uQFW0ikZnBtghTSai",
+    "standard_annual": "price_1THpLA1uQFW0ikZn0hbsXM8J",
+    "pro_monthly": "price_1THpLB1uQFW0ikZncANQYC6r",
+    "pro_annual": "price_1THpLB1uQFW0ikZnpxIbWYKs"
+  },
+  "rate_sources": [
+    "revolut_public",
+    "frankfurter_ecb",
+    "exchangerate-api",
+    "cache"
+  ],
+  "rate_backfill": {
+    "rows": 637,
+    "pairs": 7,
+    "interpolated": 182,
+    "missing_pairs": [
+      "EUR/NGN",
+      "EUR/UAH",
+      "GBP/NGN"
+    ]
+  }
+}
