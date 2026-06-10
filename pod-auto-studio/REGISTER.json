@@ -1,0 +1,87 @@
+{
+  "schema": "podas.register/v1",
+  "generated_at": "2026-06-09T23:22:04.742261+00:00",
+  "project": "POD Auto Studio",
+  "authority": "AGEN-GOVN-001 v4.0",
+  "approval_authority": "Codex (second-opinion) \u2014 fail-closed",
+  "purpose": "Central locator for the automation. Read THIS file first to find every PODAS artifact.",
+  "canonical_location": {
+    "type": "github",
+    "repo": "bermingham85/code-artifacts",
+    "path": "pod-auto-studio/",
+    "branch": "main",
+    "raw_base": "https://raw.githubusercontent.com/bermingham85/code-artifacts/main/pod-auto-studio/",
+    "note": "Source of truth. Live after publish_to_github.py merges PR to main."
+  },
+  "mirror_location": {
+    "type": "google_drive",
+    "folder": "POD_AUTO_STUDIO",
+    "folder_id": "1iWRcytlR8lLwVfM6-F3F_wSGHXFGEf-A",
+    "url": "https://drive.google.com/drive/folders/1iWRcytlR8lLwVfM6-F3F_wSGHXFGEf-A",
+    "contains": [
+      "pod-auto-studio-bundle.zip",
+      "REGISTER.json",
+      "README.md"
+    ],
+    "note": "Live now. Immediate access while PR is pending."
+  },
+  "memory_pointer": {
+    "PROJECT_MEMORY_BANK.json": "file_locations.pod_auto_studio",
+    "context_server": "POST/GET http://localhost:8765/context -> add pathway 'pod_auto_studio' -> this REGISTER"
+  },
+  "artifacts": [
+    {
+      "ref": "BERM-SPEC-PODAS-00001",
+      "name": "Build package (61 tasks/347 microtasks, Codex-gated)",
+      "repo_path": "pod-auto-studio/tasks/pod_auto_studio_build_package.json",
+      "raw": "https://raw.githubusercontent.com/bermingham85/code-artifacts/main/pod-auto-studio/tasks/pod_auto_studio_build_package.json",
+      "status": "READY",
+      "ingest": "feed to GPU auto-completion queue"
+    },
+    {
+      "ref": "BERM-SPEC-PODAS-00001.md",
+      "name": "Build package (human-readable)",
+      "repo_path": "pod-auto-studio/tasks/pod_auto_studio_build_package.md",
+      "raw": "https://raw.githubusercontent.com/bermingham85/code-artifacts/main/pod-auto-studio/tasks/pod_auto_studio_build_package.md",
+      "status": "READY"
+    },
+    {
+      "ref": "POD-MICH-MUSC-00017",
+      "name": "drop_orchestrator n8n skeleton",
+      "repo_path": "pod-auto-studio/n8n/n8n_POD-MICH-MUSC-00017_drop_orchestrator.json",
+      "raw": "https://raw.githubusercontent.com/bermingham85/code-artifacts/main/pod-auto-studio/n8n/n8n_POD-MICH-MUSC-00017_drop_orchestrator.json",
+      "status": "SKELETON",
+      "ingest": "import INACTIVE; run n8n-mcp validate_workflow; complete TODO@build from vendor docs"
+    },
+    {
+      "ref": "POD-MICH-MUSC-00018",
+      "name": "batch_spawner meta-muscle n8n skeleton",
+      "repo_path": "pod-auto-studio/n8n/n8n_POD-MICH-MUSC-00018_batch_spawner.json",
+      "raw": "https://raw.githubusercontent.com/bermingham85/code-artifacts/main/pod-auto-studio/n8n/n8n_POD-MICH-MUSC-00018_batch_spawner.json",
+      "status": "SKELETON"
+    },
+    {
+      "ref": "BERM-DOC-PODAS-00001",
+      "name": "Report + this register",
+      "repo_path": "pod-auto-studio/README.md",
+      "raw": "https://raw.githubusercontent.com/bermingham85/code-artifacts/main/pod-auto-studio/README.md",
+      "status": "ACTIVE"
+    }
+  ],
+  "ingestion_order": [
+    "BERM-SPEC-PODAS-00001 (foundation WO-PODAS-0001..0008)",
+    "POD-MICH-MUSC-00017 + 00018 import inactive",
+    "build muscles 00001-00016",
+    "activate 00017 smoke 1 theme",
+    "activate 00018 weekly"
+  ],
+  "publish": {
+    "script": "pod-auto-studio/publish_to_github.py",
+    "method": "gh auth token -> REST contents API -> PR to main",
+    "also_commits": [
+      "docs/DOCUMENT_REGISTER.md",
+      "PROJECT_MEMORY_BANK.json"
+    ]
+  },
+  "guardrails": "Codex cert fail-closed; wave cap 4; content_hash dedup; backup .bak before live edits; keys from ENV only; no guessed params (TODO@build + n8n-mcp validate)."
+}
