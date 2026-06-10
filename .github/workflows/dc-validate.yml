@@ -1,0 +1,52 @@
+name: Document Control Validation
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    name: Validate DC Compliance
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Check every worker has a MANIFEST
+        run: |
+          FAIL=0
+          for dir in workers/*/; do
+            # Skip _base folder
+            if [[ "$dir" == "workers/_base/" ]]; then continue; fi
+            if [ ! -f "${dir}MANIFEST.json" ]; then
+              echo "❌ MISSING MANIFEST: ${dir}MANIFEST.json"
+              FAIL=1
+            else
+              echo "✅ Found MANIFEST: ${dir}MANIFEST.json"
+            fi
+          done
+          exit $FAIL
+
+      - name: Check MANIFEST has required fields
+        run: |
+          FAIL=0
+          for manifest in workers/*/MANIFEST.json; do
+            if [[ "$manifest" == "workers/_base/MANIFEST.json" ]]; then continue; fi
+            for field in ref_code worker_id own_paths naming_convention; do
+              if ! python3 -c "import json,sys; d=json.load(open('$manifest')); assert '$field' in d, '$field missing'" 2>/dev/null; then
+                echo "❌ $manifest is missing required field: $field"
+                FAIL=1
+              fi
+            done
+          done
+          exit $FAIL
+
+      - name: Check no file at root level (must be in a folder)
+        run: |
+          FAIL=0
+          for f in *.py *.json; do
+            if [ -f "$f" ] && [[ "$f" != "PROJECT_MEMORY_BANK.json" ]]; then
+              echo "⚠️  WARNING: $f is at root level — should be in workers/, workflows/, templates/ or schema/"
+            fi
+          done
+          exit 0
