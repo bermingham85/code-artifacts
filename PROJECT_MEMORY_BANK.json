@@ -214,6 +214,7 @@
   },
 
   "file_locations": {
+    "pod_auto_studio": {"canonical": "pod-auto-studio/", "register": "pod-auto-studio/REGISTER.json", "raw_base": "https://raw.githubusercontent.com/bermingham85/code-artifacts/main/pod-auto-studio/", "note": "POD Auto Studio build package + n8n skeletons. Read REGISTER.json first."},
     "laptop_projects": "C:\\Users\\bermi\\Projects\\",
     "apex": "C:\\Users\\bermi\\Projects\\apex\\",
     "claudeclaw_source": "C:\\Users\\bermi\\Projects\\claudeclaw\\ (not in GitHub)",

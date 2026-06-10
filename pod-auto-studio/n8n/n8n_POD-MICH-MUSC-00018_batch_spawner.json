@@ -1,0 +1,335 @@
+{
+  "name": "POD-MICH-MUSC-00018 batch_spawner",
+  "active": false,
+  "nodes": [
+    {
+      "id": "3f239b71d1ad",
+      "name": "Weekly Schedule",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        300
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "weeksInterval": 1,
+              "triggerAtDay": [
+                1
+              ],
+              "triggerAtHour": 6
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "5d1e11f010cd",
+      "name": "Theme-List Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        520
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "podas-spawn",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "id": "a6e5668fbb0d",
+      "name": "Build Theme Batch",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        240,
+        400
+      ],
+      "parameters": {
+        "command": "python3 X:\\Automations\\podas\\adapters\\theme_intake.py --source={{$json.source||\"trends\"}}"
+      }
+    },
+    {
+      "id": "fd3445343c30",
+      "name": "Split To Items",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        400
+      ],
+      "parameters": {
+        "jsCode": "const r=$input.first().json; return (r.themes||[]).map(t=>({json:t}));"
+      }
+    },
+    {
+      "id": "e07214315126",
+      "name": "Wave Cap 4",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        680,
+        400
+      ],
+      "parameters": {
+        "batchSize": 4,
+        "options": {}
+      },
+      "notes": "Wave cap 4 HARD: SplitInBatches v3 loop; second output is the loop body, first is done."
+    },
+    {
+      "id": "a8dde4c86f7f",
+      "name": "Fan-out -> 00017",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        900,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.N8N_BASE}}/webhook/podas-orchestrate",
+        "sendBody": true,
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 4,
+              "batchInterval": 1000
+            }
+          }
+        }
+      },
+      "notes": "Calls 00017 per theme; n8n HTTP built-in batching also caps concurrency."
+    },
+    {
+      "id": "59b4dac0d6d6",
+      "name": "Loop Back",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        900,
+        520
+      ],
+      "parameters": {
+        "jsCode": "return $input.all();"
+      }
+    },
+    {
+      "id": "fa157ae13f4a",
+      "name": "Aggregate Batch",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        400
+      ],
+      "parameters": {
+        "jsCode": "const runs=$input.all().map(i=>i.json);return [{json:{batch_id:String(Date.now()),count:runs.length,runs}}];"
+      }
+    },
+    {
+      "id": "16e732c1f789",
+      "name": "Codex Batch Review",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1340,
+        400
+      ],
+      "parameters": {
+        "command": "python3 \"X:\\Automations\\podas\\skills\\second-opinion\\scripts\\review.py\" --packet=outputs/.second-opinion/packet_batch_{{$json.batch_id}}.json"
+      },
+      "notes": "Cert authority over the batch. Fail-closed."
+    },
+    {
+      "id": "52011eea6e2f",
+      "name": "Persist pod.drops (batch)",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1560,
+        400
+      ],
+      "parameters": {
+        "operation": "upsert",
+        "tableId": "pod.drops"
+      },
+      "notes": "TODO@build: complete params from docs via n8n-mcp; do not guess. Doc: https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.supabase/"
+    },
+    {
+      "id": "a49b73737be1",
+      "name": "Telegram Batch Digest (notify)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1780,
+        400
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "sendMessage",
+        "chatId": "={{$env.BRIAN_CHAT_ID}}",
+        "text": "=PODAS batch {{$json.batch_id}}: {{$json.count}} drops"
+      },
+      "notes": "TODO@build: complete params from docs via n8n-mcp; do not guess. Doc: https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/"
+    },
+    {
+      "id": "0aac6de80b49",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        2000,
+        400
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Weekly Schedule": {
+      "main": [
+        [
+          {
+            "node": "Build Theme Batch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Theme-List Webhook": {
+      "main": [
+        [
+          {
+            "node": "Build Theme Batch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Theme Batch": {
+      "main": [
+        [
+          {
+            "node": "Split To Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split To Items": {
+      "main": [
+        [
+          {
+            "node": "Wave Cap 4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wave Cap 4": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Batch",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fan-out -> 00017",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fan-out -> 00017": {
+      "main": [
+        [
+          {
+            "node": "Loop Back",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Back": {
+      "main": [
+        [
+          {
+            "node": "Wave Cap 4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Batch": {
+      "main": [
+        [
+          {
+            "node": "Codex Batch Review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Codex Batch Review": {
+      "main": [
+        [
+          {
+            "node": "Persist pod.drops (batch)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Persist pod.drops (batch)": {
+      "main": [
+        [
+          {
+            "node": "Telegram Batch Digest (notify)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Batch Digest (notify)": {
+      "main": [
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "note": "SKELETON v3. SplitInBatches v3 loop = wave cap 4 HARD (output[0]=done, output[1]=loop body). Schedule Trigger v1.2. Weekly tick OR theme webhook -> fan-out to 00017 -> Codex batch review (cert, fail-closed) -> single Telegram digest (notify-only). Validate via n8n-mcp before activating."
+  }
+}
