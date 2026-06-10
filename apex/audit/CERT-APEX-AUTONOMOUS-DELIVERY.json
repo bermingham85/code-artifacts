@@ -59,7 +59,7 @@
     "tool_menu_generator": "apex/registry/generate_tool_menu.py",
     "tool_docs_validator": "apex/registry/validate_tool_docs.py",
     "ai_facing_root_map": "apex/llms.txt",
-    "vcs_commit": "48fdc45d27be67e831a089bd5c04ca037121cf01",
+    "vcs_commit": "b897019",
     "troubleshoot_template": "apex/docs/templates/troubleshoot_template.md",
     "codex_agent_boot_file": "apex/AGENTS.md",
     "claude_boot_file": "apex/CLAUDE.md",
@@ -161,11 +161,11 @@
     "credentials": "No credentials were created, changed, read, or stored."
   },
   "known_issues": [
-    "The foundation package is committed locally at evidence.vcs_commit. It has not been pushed to a remote in this pass.",
+    "The Architecture Agent build artifacts are committed at evidence.vcs_commit and are ready for remote push evidence.",
     "Actual deployment to a physical headless laptop still requires user-authorized access, credential binding, and BIOS/UEFI verification.",
     "Wake-on-LAN, smart plug, fingerbot, and UPS behavior are designed but not physically tested in this foundation pass.",
     "The worktree contained unrelated modified and untracked files before this completion pass; no broad cleanup or reset was performed."
   ],
   "reviewer_decision": "APPROVED_FOR_FOUNDATION_USE",
-  "next_action": "Push the committed package to the origin remote if cross-machine availability is required. Then create implementation Task Packets for physical laptop discovery, remote access binding, WOL verification, backup target binding, and n8n workflow deployment when authorized credentials and device access are available."
+  "next_action": "Push the committed package to the origin remote, then run Codex ship-gate review over the Architecture Agent artifacts and this certificate."
 }
