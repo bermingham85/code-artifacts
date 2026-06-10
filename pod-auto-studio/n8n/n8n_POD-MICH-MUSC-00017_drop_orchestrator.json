@@ -1,0 +1,620 @@
+{
+  "name": "POD-MICH-MUSC-00017 drop_orchestrator",
+  "active": false,
+  "nodes": [
+    {
+      "id": "18ec23c28e3e",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        400
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "podas-orchestrate",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "id": "a08d5d220b3f",
+      "name": "P0 Normalise",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        400
+      ],
+      "parameters": {
+        "jsCode": "const i=$input.first().json;return [{json:{request_id:i.request_id||String(Date.now()),theme:i.theme,brand:i.brand||'mickey-bubbles'}}];"
+      }
+    },
+    {
+      "id": "35935c2a28c2",
+      "name": "P2 Brand Conditioner",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        440,
+        400
+      ],
+      "parameters": {
+        "command": "python3 X:\\Automations\\podas\\adapters\\brand_loader.py --brand={{$json.brand}}"
+      }
+    },
+    {
+      "id": "d137fcf79c55",
+      "name": "P3 Concept (PromptGate+LLM)",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        660,
+        400
+      ],
+      "parameters": {
+        "command": "python3 X:\\Automations\\podas\\adapters\\gen_adapter.py --mode=concept --theme=\"{{$json.theme}}\""
+      },
+      "notes": "Governance Block + 12-check Prompt Gate enforced INSIDE gen_adapter.py before any LLM call."
+    },
+    {
+      "id": "4ac0210e8f60",
+      "name": "P3 Image Generate",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        880,
+        400
+      ],
+      "parameters": {
+        "command": "python3 X:\\Automations\\podas\\adapters\\gen_adapter.py --mode=image --input={{$json.conceptFile}}"
+      }
+    },
+    {
+      "id": "b170db6e63ec",
+      "name": "P4 Copyright Risk",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1100,
+        400
+      ],
+      "parameters": {
+        "command": "python3 X:\\Automations\\podas\\adapters\\gen_adapter.py --mode=risk --image={{$json.imageFile}}"
+      }
+    },
+    {
+      "id": "6423edb3e294",
+      "name": "P4 BG Remove (remove.bg)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1320,
+        400
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.remove.bg/v1.0/removebg",
+        "sendHeaders": true,
+        "sendBody": true,
+        "options": {}
+      },
+      "notes": "TODO@build: complete params from docs via n8n-mcp; do not guess. Doc: https://www.remove.bg/api (X-Api-Key header, image_file/ image_url body)"
+    },
+    {
+      "id": "f36eb4c138de",
+      "name": "P4 Vision QC Score",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1540,
+        400
+      ],
+      "parameters": {
+        "command": "python3 X:\\Automations\\podas\\adapters\\gen_adapter.py --mode=qc --image={{$json.cleanPng}}"
+      }
+    },
+    {
+      "id": "f451f77cc684",
+      "name": "QC>=7?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1760,
+        400
+      ],
+      "parameters": {
+        "options": {},
+        "conditions": {
+          "options": {
+            "version": 2,
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "37c418969d4d",
+              "leftValue": "={{ $json.qc_score }}",
+              "rightValue": "7",
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "e7ff1bccc75b",
+      "name": "P5 Mockups (Cloudinary)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1980,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.cloudinary.com/v1_1/{{$env.CLOUDINARY_CLOUD}}/image/upload",
+        "sendBody": true,
+        "options": {}
+      },
+      "notes": "TODO@build: complete params from docs via n8n-mcp; do not guess. Doc: https://cloudinary.com/documentation/image_upload_api_reference"
+    },
+    {
+      "id": "7431fc786ed2",
+      "name": "P5 Copy+Price",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        2200,
+        300
+      ],
+      "parameters": {
+        "command": "python3 X:\\Automations\\podas\\adapters\\gen_adapter.py --mode=listing --brand={{$json.brand}}"
+      }
+    },
+    {
+      "id": "9d1f4629a85a",
+      "name": "P6 Printify Upload Image",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2420,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.printify.com/v1/uploads/images.json",
+        "authentication": "genericCredentialType",
+        "sendBody": true,
+        "options": {}
+      },
+      "notes": "TODO@build: complete params from docs via n8n-mcp; do not guess. Doc: https://developers.printify.com/#upload-an-image (Bearer; {file_name,url|contents})"
+    },
+    {
+      "id": "2dcb8c95989c",
+      "name": "P7 Printify Create Product",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2640,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.printify.com/v1/shops/{{$env.PRINTIFY_SHOP_ID}}/products.json",
+        "authentication": "genericCredentialType",
+        "sendBody": true,
+        "options": {}
+      },
+      "notes": "TODO@build: complete params from docs via n8n-mcp; do not guess. Doc: https://developers.printify.com/#create-a-new-product (title,description,blueprint_id,print_provider_id,variants[],print_areas[])"
+    },
+    {
+      "id": "2ffde13f4766",
+      "name": "P7 Printify Publish -> Shopify",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2860,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.printify.com/v1/shops/{{$env.PRINTIFY_SHOP_ID}}/products/{{$json.id}}/publish.json",
+        "authentication": "genericCredentialType",
+        "sendBody": true,
+        "options": {}
+      },
+      "notes": "Printify pushes to the CONNECTED Shopify store. Do NOT call Shopify Admin product write (REST product create is deprecated). https://developers.printify.com/#publish-a-product"
+    },
+    {
+      "id": "2a5a6f1bbdb8",
+      "name": "Codex 2nd-Opinion Gate",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        3080,
+        300
+      ],
+      "parameters": {
+        "command": "python3 \"X:\\Automations\\podas\\skills\\second-opinion\\scripts\\review.py\" --packet=outputs/.second-opinion/packet_{{$json.request_id}}.json"
+      },
+      "notes": "Cert authority. PASS->keep published; REVISE->unpublish+iterate(max2); REJECT->unpublish+hold. Fail-closed if no third-party provider."
+    },
+    {
+      "id": "86795f28c408",
+      "name": "Codex PASS?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3300,
+        300
+      ],
+      "parameters": {
+        "options": {},
+        "conditions": {
+          "options": {
+            "version": 2,
+            "caseSensitive": false,
+            "typeValidation": "loose"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "affa51f49fcb",
+              "leftValue": "={{ $json.provider }}",
+              "rightValue": "persona-fallback",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "2586f716e230",
+              "leftValue": "={{ ($json.review||'').toUpperCase() }}",
+              "rightValue": "PASS",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "98bcad4585fa",
+      "name": "Keep Published (PASS)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3520,
+        200
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "21022f401712",
+              "name": "status",
+              "type": "string",
+              "value": "published"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "985c7d3031d9",
+      "name": "Unpublish + needs_revision",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3520,
+        440
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.printify.com/v1/shops/{{$env.PRINTIFY_SHOP_ID}}/products/{{$json.id}}/unpublish.json",
+        "authentication": "genericCredentialType",
+        "options": {}
+      },
+      "notes": "Codex non-PASS -> revert to draft."
+    },
+    {
+      "id": "6f21b702d366",
+      "name": "P6 Persist pod.drops",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        3740,
+        300
+      ],
+      "parameters": {
+        "operation": "upsert",
+        "tableId": "pod.drops"
+      },
+      "notes": "TODO@build: complete params from docs via n8n-mcp; do not guess. Doc: https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.supabase/ (map columns request_id,theme,brand,qc_score,status,content_hash)"
+    },
+    {
+      "id": "3dfe416f47e0",
+      "name": "P8 Telegram Notify (no block)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3960,
+        300
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "sendMessage",
+        "chatId": "={{$env.BRIAN_CHAT_ID}}",
+        "text": "=PODAS {{$json.request_id}} -> {{$json.status}}"
+      },
+      "notes": "TODO@build: complete params from docs via n8n-mcp; do not guess. Doc: https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/"
+    },
+    {
+      "id": "ea0bc0649356",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        4180,
+        300
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "P0 Normalise",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "P0 Normalise": {
+      "main": [
+        [
+          {
+            "node": "P2 Brand Conditioner",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "P2 Brand Conditioner": {
+      "main": [
+        [
+          {
+            "node": "P3 Concept (PromptGate+LLM)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "P3 Concept (PromptGate+LLM)": {
+      "main": [
+        [
+          {
+            "node": "P3 Image Generate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "P3 Image Generate": {
+      "main": [
+        [
+          {
+            "node": "P4 Copyright Risk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "P4 Copyright Risk": {
+      "main": [
+        [
+          {
+            "node": "P4 BG Remove (remove.bg)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "P4 BG Remove (remove.bg)": {
+      "main": [
+        [
+          {
+            "node": "P4 Vision QC Score",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "P4 Vision QC Score": {
+      "main": [
+        [
+          {
+            "node": "QC>=7?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "QC>=7?": {
+      "main": [
+        [
+          {
+            "node": "P5 Mockups (Cloudinary)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Unpublish + needs_revision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "P5 Mockups (Cloudinary)": {
+      "main": [
+        [
+          {
+            "node": "P5 Copy+Price",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "P5 Copy+Price": {
+      "main": [
+        [
+          {
+            "node": "P6 Printify Upload Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "P6 Printify Upload Image": {
+      "main": [
+        [
+          {
+            "node": "P7 Printify Create Product",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "P7 Printify Create Product": {
+      "main": [
+        [
+          {
+            "node": "P7 Printify Publish -> Shopify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "P7 Printify Publish -> Shopify": {
+      "main": [
+        [
+          {
+            "node": "Codex 2nd-Opinion Gate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Codex 2nd-Opinion Gate": {
+      "main": [
+        [
+          {
+            "node": "Codex PASS?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Codex PASS?": {
+      "main": [
+        [
+          {
+            "node": "Keep Published (PASS)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Unpublish + needs_revision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Keep Published (PASS)": {
+      "main": [
+        [
+          {
+            "node": "P6 Persist pod.drops",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Unpublish + needs_revision": {
+      "main": [
+        [
+          {
+            "node": "P6 Persist pod.drops",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "P6 Persist pod.drops": {
+      "main": [
+        [
+          {
+            "node": "P8 Telegram Notify (no block)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "P8 Telegram Notify (no block)": {
+      "main": [
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "note": "SKELETON v3. Node types/typeVersions VERIFIED vs n8n docs + 2061 real exports (Code v2/jsCode, HTTP 4.2, IF 2.2, Webhook 2, Respond 1.1, Set 3.4, Supabase 1, Telegram 1.2). POD path uses Printify create+publish (Printify syncs to Shopify); NO direct Shopify REST product write. Run n8n-mcp validate_workflow before activating; complete every TODO@build param from the linked docs \u2014 do not guess."
+  }
+}
