@@ -20,7 +20,7 @@ Missing/invalid token → `401 unauthorized`.
 
 - **Project (live):** `5f59c200-62cd-44e8-8852-bcbb9dcd27a9`
 - **Reviewed spec (live):** `fc400853-13df-4205-a091-e7d6b82ffd1a` (status=reviewed, 2 requirements with binary AC)
-- **Idempotency key for E2E:** `arch-e2e-2026-05-24-<random>` — never reuse across runs
+- **Idempotency key for E2E:** generate once per run as `arch-e2e-<UTC timestamp>-<random>`; capture it as `RUN_IDEMPOTENCY_KEY`. Never commit or reuse a concrete key across runs.
 
 ## Test cases
 
@@ -31,13 +31,13 @@ Missing/invalid token → `401 unauthorized`.
   "action": "decompose",
   "project_id": "5f59c200-62cd-44e8-8852-bcbb9dcd27a9",
   "spec_id": "fc400853-13df-4205-a091-e7d6b82ffd1a",
-  "idempotency_key": "arch-e2e-2026-05-24-T1"
+  "idempotency_key": "${RUN_IDEMPOTENCY_KEY}"
 }
 ```
 **Expected:** HTTP 200, body contains `architecture_id` (uuid), `version=1`, `status="draft"`, non-empty `components`, non-empty `tasks`, valid `build_order`, every task `estimated_hours ∈ [0.5, 2.0]`, every task `component` is in `components[].name`.
 
 ### T2 — safe replay
-Re-POST T1's exact body. **Expected:** HTTP 200, identical `architecture_id`, `replayed: true` somewhere in response, no new DB row.
+Re-POST T1's exact captured request body from the same run, including the same `${RUN_IDEMPOTENCY_KEY}`. **Expected:** HTTP 200, identical `architecture_id`, `replayed: true` somewhere in response, no new DB row.
 
 ### T3 — idempotency conflict
 Re-POST with same `idempotency_key` but a different `notes` field. **Expected:** HTTP 409, `error="idempotency_conflict"`.
