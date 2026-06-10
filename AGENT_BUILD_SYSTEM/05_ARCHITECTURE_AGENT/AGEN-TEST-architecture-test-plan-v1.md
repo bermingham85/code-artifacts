@@ -96,10 +96,10 @@ SELECT version, status FROM agent_architectures
 WHERE project_id='5f59c200-...' AND spec_id='fc400853-...';
 -- expect v1=superseded, v2 in {draft, reviewed}
 
--- T6 get_latest matches DB
+-- T6 get_latest matches the T1 v1 architecture when no refine has run
 SELECT get_latest_architecture('5f59c200-...'::uuid, 'fc400853-...'::uuid);
 ```
 
 ## E2E gate (RULE 4)
 
-The shipped agent passes when **T1, T2, T6, T8, T9, T10, T11, T12** all return the expected status. T3/T4/T5/T7/T13 are regression tests for the refine/conflict paths and are run in a follow-up regression session.
+The shipped agent passes when **T1, T2, T6, T8, T9, T10, T11, T12** all return the expected status. For this gate, T6 validates `get_latest` against the T1 v1 architecture because no refine has run. T3/T4/T5/T7/T13 are regression tests for the refine/conflict paths and are run in a follow-up regression session.
