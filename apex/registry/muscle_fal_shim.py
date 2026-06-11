@@ -679,13 +679,19 @@ def _http_post_json(url: str, body: bytes, headers: dict, raw_key: str | None,
                     str(getattr(e, "reason", "")), raw_key),
                 "body_excerpt": body_text}
     except urllib.error.URLError as e:
+        # ANIM-18 R13 MED-1 fix: URLError subclasses (e.g. HTTPError) have
+        # attacker-influenceable __name__; collapse through stdlib allowlist
+        # so raw_key bytes cannot reach stderr via a dynamic class name.
         return {"status": "FAL_ENDPOINT_UNREACHABLE",
                 "error": _redact_key_from_text(
-                    f"{type(e).__name__}: {e}", raw_key)}
+                    f"{_coarse_exception_name(type(e))}: {e}", raw_key)}
     except (TimeoutError, OSError) as e:
+        # ANIM-18 R13 MED-1 fix: OSError subclass family is wide and
+        # extensible; collapse via _coarse_exception_name() against the
+        # raw_key-adjacent HTTP boundary, same defense as URLError above.
         return {"status": "FAL_ENDPOINT_UNREACHABLE",
                 "error": _redact_key_from_text(
-                    f"{type(e).__name__}: {e}", raw_key)}
+                    f"{_coarse_exception_name(type(e))}: {e}", raw_key)}
     except Exception as e:
         # ANIM-18 R11 MED-3 fix: broad-except backstop at the live HTTP
         # boundary. raw_key is in scope as the Authorization header value
@@ -791,9 +797,12 @@ def poll_job(job_id: str) -> dict:
                           str(getattr(e, "reason", "")), raw_key),
                       "key_fingerprint": fingerprint_only(key_probe)})
     except (urllib.error.URLError, TimeoutError, OSError) as e:
+        # ANIM-18 R13 MED-1 fix (poll path): same defense as
+        # _http_post_json's R13 fix — URLError/OSError subclass __name__
+        # values are not trustworthy at the raw_key-adjacent boundary.
         return _seal({"status": "FAL_ENDPOINT_UNREACHABLE",
                       "error": _redact_key_from_text(
-                          f"{type(e).__name__}: {e}", raw_key),
+                          f"{_coarse_exception_name(type(e))}: {e}", raw_key),
                       "key_fingerprint": fingerprint_only(key_probe)})
     except Exception as e:
         # ANIM-18 R11 MED-3 fix: broad-except backstop at the live HTTP
