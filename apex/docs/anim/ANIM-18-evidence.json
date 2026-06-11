@@ -1,0 +1,274 @@
+{
+  "phase": "ANIM-18",
+  "schema_version": 1,
+  "title": "fal.ai animation-agent wrapper shim — closes WO §1.4 FalCloud write side",
+  "built_at": "2026-06-07T14:30:00Z",
+  "files_under_seal": {
+    "apex/registry/muscle_fal_shim.py": "6a551e957d9cc05f076881291ab725725043e7429c8f2e2e94ec9388b0456c08",
+    "apex/docs/spec/SPEC-ANIM-18.md": "115000f424f41f757b1f23b7c7459638c4e4bf4a59cefc17daf8832914fb7ce5",
+    "apex/audit/anim-18/probe_negatives.py": "9a15a83d1e307f2be4b3a92c72c3ad9dac0a554548600da4360ab25db97c37f3",
+    "apex/docs/anim/ANIM-05-tier-config.json": "0e44a2ff93da9ba3be28b05a6d03aa5fd5807f2b8eeb5ca907a1c1ae5fa1925e"
+  },
+  "tier_config_change": {
+    "schema_version": "2 -> 3",
+    "FalCloud.shim_status": "PENDING -> READY",
+    "FalCloud.wrapper_invocation": "null -> python apex/registry/muscle_fal_shim.py --submit --shot-id <id> --tier-plan <path> --live",
+    "FalCloud.shim_blocker": "non-null prose -> null"
+  },
+  "fal_endpoint_schema": {
+    "queue_base": "https://queue.fal.run",
+    "model_id": "fal-ai/animation-agent",
+    "submit_url": "https://queue.fal.run/fal-ai/animation-agent",
+    "poll_url_template": "https://queue.fal.run/fal-ai/animation-agent/requests/{job_id}/status",
+    "auth_header": "Authorization: Key <FAL_AI_API_KEY>",
+    "content_type": "application/json",
+    "request_body_shape": {
+      "input.prompt": "string (from tier-plan shot.kontext_prompt_template)",
+      "input.image_url": "string (anchor image; pass-through from tier-plan shot.anchor_image_url, may be empty until ANIM-03 reference packs populate it)",
+      "input.aspect_ratio": "string (default 16:9)",
+      "input.duration": "float seconds (from tier-plan shot.duration_seconds)",
+      "input.needs_fill": "bool (from tier-plan shot.needs_fill)",
+      "metadata.shot_id": "string",
+      "metadata.tier_plan_phase": "string",
+      "metadata.tier_plan_project": "string",
+      "metadata.scene_slug": "string",
+      "metadata.character_markers": "string | null (from tier-plan shot.character_markers)",
+      "metadata.character_markers_source": "string | null"
+    },
+    "response_body_shape_documented": {
+      "request_id": "string (fal.ai job_id; format ANIM-18 JOB_ID_RE: ^[A-Za-z0-9-]{8,128}$)",
+      "status_url": "string (poll URL)",
+      "response_url": "string (final-result URL when status=COMPLETED)"
+    },
+    "source_note": "fal.ai queue endpoint schema pinned in shim constants (FAL_QUEUE_BASE/FAL_MODEL_ID) so an API rename is a one-line change rather than a redesign."
+  },
+  "happy_path_dry_run": {
+    "command": "APEX_REPO=. python apex/registry/muscle_fal_shim.py --submit --shot-id 1 --tier-plan apex/docs/anim/ANIM-16-tier-plan-grog_playground-falcloud.json",
+    "expected_status": "DRY_RUN",
+    "actual_status": "DRY_RUN",
+    "payload_sha256": "0b55098b7f330a8cef649bac03fe656ccabfe8956388ad22c47190aa5a087424",
+    "key_fingerprint": {
+      "fingerprint": "95de:0714",
+      "key_sha256_first_12": "be61d3851aac",
+      "key_length": 69,
+      "env_sync_path": "X:/env_sync/user_portable.json",
+      "field": "FAL_AI_API_KEY"
+    },
+    "fingerprint_matches_anim17_cert": true,
+    "http_calls_made": 0,
+    "note": "Default --submit (no --live) issued zero HTTP calls. Same fingerprint as ANIM-17 cert evidence (95de:0714)."
+  },
+  "determinism_property_test": {
+    "method": "build_payload(shot=1, tier_plan=falcloud.json) called twice; SHA256 of json.dumps(payload, sort_keys=True) compared",
+    "sha_run_1": "0b55098b7f330a8cef649bac03fe656ccabfe8956388ad22c47190aa5a087424",
+    "sha_run_2": "0b55098b7f330a8cef649bac03fe656ccabfe8956388ad22c47190aa5a087424",
+    "bytes_equal": true,
+    "passed": true
+  },
+  "negative_probe_results": {
+    "harness": "apex/audit/anim-18/probe_negatives.py",
+    "probe_count": 41,
+    "passed": 41,
+    "failed": 0,
+    "global_leak_check": "CLEAN",
+    "snapshot_at": "post-R11-fix (commit pending)",
+    "probe_ids": [
+      "TIER_PLAN_NOT_FOUND",
+      "TIER_PLAN_UNPARSEABLE",
+      "TIER_PLAN_INVALID_PHASE",
+      "SHOT_NOT_IN_TIER_PLAN",
+      "SHOT_NOT_ROUTED_TO_FALCLOUD",
+      "INVALID_SHOT_ID",
+      "FAL_KEY_UNRESOLVED",
+      "DRY_RUN_URLOPEN_SUPPRESSED",
+      "MOCK_LIVE_VALUE_REDACTED",
+      "MOCK_LIVE_DICT_KEY_REDACTED",
+      "MOCK_LIVE_HTTP_ERROR_BODY_REDACTED",
+      "RESOLVER_LEAK_PROBE",
+      "RESOLVER_LEAK_BUILD_PAYLOAD",
+      "RESOLVER_LEAK_DRY_RUN",
+      "RESOLVER_LEAK_NO_KEY_PROBE",
+      "RESOLVER_LEAK_NO_KEY_BUILD_PAYLOAD",
+      "RESOLVER_LEAK_NO_KEY_DRY_RUN",
+      "REDIRECT_REFUSED_AND_AUTH_UNREDIRECTED",
+      "VALUE_SHAPE_SUPPRESSES_FIELD_STUFFING",
+      "TIER_CFG_NON_DICT_RESOLVE",
+      "TIER_CFG_NON_DICT_PROBE",
+      "TIER_CFG_MISSING_RESOLVE",
+      "RESOLVER_RETURNS_NON_DICT",
+      "RESOLVER_DICT_WITHOUT_STATUS",
+      "RESOLVER_OK_MISSING_KEY",
+      "RESOLVER_OK_NONSTRING_KEY",
+      "FINGERPRINT_REGEX_STRICT_HEX",
+      "ENV_SYNC_PATH_CREDENTIAL_STUFFING",
+      "TIER_CFG_ENV_PATH_NOT_ALLOWED",
+      "TIER_CFG_FIELD_NOT_ALLOWED",
+      "STATUS_ENUM_BYPASS_SUPPRESSED",
+      "FIELD_ENUM_BYPASS_SUPPRESSED",
+      "RESOLVER_FINGERPRINT_RECOMPUTED",
+      "RESOLVER_BROAD_EXCEPT_FAIL_CLOSED",
+      "IMPORT_VIDEO_AGENT_BROAD_EXCEPT_META",
+      "NON_OK_DIAG_FIELDS_STRIPPED",
+      "NON_OK_DIAG_FIELDS_STRIPPED_DOWNSTREAM_PROBE",
+      "MALICIOUS_RESOLVER_CLASSNAME_COARSE_ENUMED",
+      "MALICIOUS_EXCEPTION_CLASSNAME_COARSE_ENUMED",
+      "HTTP_POST_BROAD_EXCEPT_REDACTS",
+      "POLL_JOB_BROAD_EXCEPT_REDACTS"
+    ]
+  },
+  "leak_check": {
+    "method": "Read live FAL_AI_API_KEY into process memory for assertion only; never persisted; grep against (a) shim source, (b) tier-config JSON, (c) probe harness output, (d) this evidence file",
+    "scope": [
+      "apex/registry/muscle_fal_shim.py",
+      "apex/docs/spec/SPEC-ANIM-18.md",
+      "apex/docs/anim/ANIM-05-tier-config.json",
+      "apex/docs/anim/ANIM-18-evidence.json",
+      "apex/audit/anim-18/probe_negatives.py"
+    ],
+    "outcome": "CLEAN",
+    "note": "Raw key bytes do not appear in any persisted file. Fingerprint-only exposure preserved per ANIM-17 R20."
+  },
+  "live_safety_proof": {
+    "claim": "Default --submit invocation issues ZERO HTTP calls",
+    "method": "Probe harness exercises 6 negative paths without any urllib.request.urlopen call; happy-path dry-run prints 'DRY-RUN — no HTTP call made.' and returns exit 0 without contacting fal.ai. Live POST requires explicit --live flag.",
+    "argparse_default": "args.live is False by default; submit_shot() branches to DRY_RUN before any urlopen call when live=False"
+  },
+  "reuse_compliance": {
+    "anim17_handover_rules": [
+      "Do not introduce a new env-key resolution helper.",
+      "Do not store the resolved key bytes anywhere outside X:/env_sync/user_portable.json.",
+      "Do not relax the leak check."
+    ],
+    "shim_compliance": [
+      "resolve_fal_key() imports muscle_video_agent.resolve_env_key_from_env_sync() (no new resolver).",
+      "Key bytes held in process memory only; written nowhere; passed to Authorization header live, then dropped.",
+      "Every probe + every audit JSON pass through fingerprint_only() which strips 'key' field; defensive json round-trip in --submit path."
+    ]
+  },
+  "codex_round_ledger": [
+    {
+      "round": 1,
+      "model": "gpt-5.5",
+      "auth_mode": "ChatGPT-account subscription",
+      "transcript_path": "apex_governance/codex_runs/ANIM-18/round1.txt",
+      "findings": {"high": 1, "med": 4, "low": 0,
+                    "F-1 HIGH": "HTTPError body raw-key leak — _http_post_json prints unredacted body_excerpt",
+                    "F-2 MED": "validate_tier_plan crashes on non-UTF8 (UnicodeDecodeError)",
+                    "F-3 MED": "pick_shot AttributeError on malformed shots[] entries",
+                    "F-4 MED": "probe harness reimplements env_sync lookup instead of reusing ANIM-17 resolver",
+                    "F-5 MED": "probes never assert dry-run urlopen suppression / key-unresolved regression"},
+      "fixed_in_commit": "b072a75"
+    },
+    {
+      "round": 2,
+      "transcript_path": "apex_governance/codex_runs/ANIM-18/round2.txt",
+      "findings": {"high": 1, "med": 1,
+                    "F-1 HIGH": "HTTPError body truncated BEFORE redaction (raw key prefix could survive boundary)",
+                    "F-2 MED": "parsed JSON redacted via json.dumps()->replace()->json.loads() round-trip misses JSON-escaped key forms"},
+      "fixed_in_commit": "0930fc3"
+    },
+    {
+      "round": 3,
+      "transcript_path": "apex_governance/codex_runs/ANIM-18/round3.txt",
+      "findings": {"high": 1, "med": 1,
+                    "F-1 HIGH": "_redact_key_from_obj missed dict KEYS (only redacted values) + submit_shot final json round-trip was no-op",
+                    "F-2 MED": "poll_job lacks final redaction pass before return"},
+      "fixed_in_commit": "2818cf6"
+    },
+    {
+      "round": 4,
+      "transcript_path": "apex_governance/codex_runs/ANIM-18/round4.txt",
+      "findings": {"high": 1, "med": 1,
+                    "F-1 HIGH": "fingerprint_only was a denylist (only dropped 'key'); resolver could leak through any other field name or nested position",
+                    "F-2 MED": "no final sealing pass on probe/build_payload paths that touched the resolved key"},
+      "fixed_in_commit": "a065bbf"
+    },
+    {
+      "round": 5,
+      "transcript_path": "apex_governance/codex_runs/ANIM-18/round5.txt",
+      "findings": {"high": 1, "med": 1,
+                    "F-1 HIGH": "harness printed real_key / sentinel to stdout when a regression was detected (fail-open)",
+                    "F-2 MED": "redaction-regression probes depended on env_sync availability; coverage was conditional"},
+      "fixed_in_commit": "b613ec6"
+    },
+    {
+      "round": 6,
+      "transcript_path": "apex_governance/codex_runs/ANIM-18/round6.txt",
+      "findings": {"high": 1, "med": 2,
+                    "F-1 HIGH": "fingerprint_only passed free-form 'error' field through unscrubbed when no raw key was in scope to seal against",
+                    "F-2 MED": "harness P12-P14 only tested leaky resolver with key in scope; missed no-key-in-scope leak path",
+                    "F-3 MED": "load_tier_config + _import_video_agent raised tracebacks on I/O / parse failure"},
+      "fixed_in_commit": "d0a22c6"
+    },
+    {
+      "round": 7,
+      "transcript_path": "apex_governance/codex_runs/ANIM-18/round7.txt",
+      "findings": {"high": 1, "med": 2,
+                    "F-1 HIGH": "30x redirect could resubmit Authorization header to attacker-controlled host (no-redirect-opener missing; auth added via add_header which survives redirects)",
+                    "F-2 MED": "fingerprint_only safe-shape allowlist was name-only; resolver could stuff raw key into permitted field NAME (e.g. status=<raw_key>); needed value-shape validators",
+                    "F-3 MED": "non-dict FalCloud tier cfg (e.g. 'FalCloud': 'tampered') passed truthy guard then crashed at cfg.get() AttributeError"},
+      "fixed_in_commit": "394d7f6"
+    },
+    {
+      "round": 8,
+      "transcript_path": "apex_governance/codex_runs/ANIM-18/round8.txt",
+      "findings": {"high": 0, "med": 2,
+                    "F-1 MED": "_FINGERPRINT_RE was [A-Za-z0-9]{1,16}:{1,16} — allowed non-hex up to 33 chars; ANIM-17 fingerprint is first4_hex:last4_hex so any other shape lets a tampered resolver leak substantial raw-key bytes through fingerprint when no key is in scope to scrub against",
+                    "F-2 MED": "resolve_fal_key trusted resolver-supplied probe shape; non-dict / OK-without-key / missing-status / non-string-key paths unguarded; could reach Authorization formatting without a raw_key for the seal pass"},
+      "fixed_in_commit": "dc3b60a"
+    },
+    {
+      "round": 9,
+      "transcript_path": "apex_governance/codex_runs/ANIM-18/round9.txt",
+      "findings": {"high": 0, "med": 1,
+                    "F-1 MED": "fingerprint_only env_sync_path regex accepted any path body ending in .json — let a tampered resolver smuggle raw key inside an otherwise-syntactically-valid path (e.g. X:/env_sync/<raw_key>.json); replace regex with exact-match allowlist of canonical values"},
+      "fixed_in_commit": "0e8b96c"
+    },
+    {
+      "round": 10,
+      "transcript_path": "apex_governance/codex_runs/ANIM-18/round10.txt",
+      "findings": {"high": 0, "med": 3,
+                    "F-1 MED": "resolve_fal_key did not enforce _ALLOWED_ENV_SYNC_PATHS BEFORE dereferencing tier config; allowlist was consulted only by fingerprint_only output sealing. Tampered ANIM-05-tier-config.json could point requires_env_key_from_env_sync_path at any local/UNC JSON path, still resolve OK, and allow live submit from a non-canonical credential source while the output merely suppressed the path. Add env_path + env_field allowlist check at trust boundary before resolver invocation",
+                    "F-2 MED": "fingerprint_only safe-shape validators for status / field were regex-shape (`^[A-Z][A-Z0-9_]{0,63}$` / `^[A-Z_][A-Z0-9_]{0,63}$`) — admit arbitrary uppercase identifiers, so a tampered resolver could stuff planted strings into either field name. Also shim never recomputes fingerprint / key_sha256_first_12 / key_length from probe['key'] — a tampered resolver could plant attacker-controlled 12-hex substrings that pass the syntactic value-shape validator. Replace with exact-enum allowlists for status + field; derive diagnostic fields inside the shim from validated key bytes",
+                    "F-3 MED": "_import_video_agent and resolve_fal_key resolver call caught only selected exception classes (OSError, ImportError, SyntaxError) and (OSError, AttributeError, TypeError) respectively; RuntimeError / ValueError / json.JSONDecodeError / etc could still escape as a traceback on CLI stderr. If a resolver raised with raw key bytes in its exception message, stderr would leak. Broad-except at both trust boundaries; return only type(e).__name__"},
+      "fixed_in_commit": "1807976"
+    },
+    {
+      "round": 11,
+      "transcript_path": "apex_governance/codex_runs/ANIM-18/round11.txt",
+      "findings": {"high": 0, "med": 3,
+                    "F-1 MED": "R10 recomputed fingerprint / key_sha256_first_12 / key_length only on OK path. For non-OK paths the resolver could still return planted well-shaped values for those fields (e.g. status=ENV_KEY_MISSING + fingerprint='abcd:1234' + key_sha256_first_12='deadbeefcafe'); they pass the syntactic value-shape validators and _seal_outward has no raw_key in scope to scrub against. Strip those three fields on non-OK paths",
+                    "F-2 MED": "actual_type = type(probe).__name__ is attacker-controlled via dynamic subclass creation (`type('95de0714SECRET', (), {})()`); the planted class name passes _ACTUAL_TYPE_RE and reaches output as a 'structured' diagnostic. Same for exception class names returned by broad-except (`raise type('SECRET', (Exception,), {})()`). Map known stdlib types/exceptions to coarse allowlist; default 'other' / 'OtherException'",
+                    "F-3 MED": "_http_post_json + poll_job caught only HTTPError / URLError / TimeoutError / OSError. raw_key is in scope as the Authorization header value; any other Exception (RuntimeError / ValueError / library-internal class / test-seam raiser) could escape as a traceback on CLI stderr with the key bytes in its message. Add broad-except backstop at both HTTP boundaries, redact message against raw_key, coarse-enum the class name"},
+      "fixed_in_commit": "68e826a"
+    },
+    {
+      "round": 12,
+      "transcript_path": "apex_governance/codex_runs/ANIM-18/round12.txt",
+      "findings": "BLOCKED_CHATGPT_USAGE_CAP",
+      "fixed_in_commit": null,
+      "note": "codex exec attempted 2026-06-07T18:54Z against R11 fix (commit 68e826a) with bundle-r12.txt (91kB) and -m gpt-5.5; ChatGPT-account usage cap returned 'You\\u2019ve hit your usage limit. Try again at Jun 11th, 2026 3:28 PM.' Per feedback_codex_chatgpt_cap_hardstop memory: OPENAI_API_KEY does NOT bypass. Per CLAUDE_CODEX_DOCTRINE: no Claude self-review fallback. Resumption: rerun bundle-r12.txt with same invocation after 2026-06-11T15:28 local."
+    }
+  ],
+  "silent_twice_progress": {
+    "target_rounds": "two consecutive empty",
+    "current_state": "PAUSED_CHATGPT_CAP_RESET_2026-06-11T15-28 (R11 fix landed; R12 cap-blocked)",
+    "fix_round_cap_R16": 5,
+    "overage_justification": "ANIM-13/14 precedent: overage permitted when each round delivers a real fix and findings converge. R1-R11 each surfaced and fixed real defects on the credential-trust-boundary surface; convergence accelerating (R11's three findings are all refinements of R10's 'trust the resolver less' insight — extending it to non-OK paths, dynamic class names, and HTTP backstops). R12 pause is not a doctrine breach — codex was the gate, codex was unreachable, no Claude self-review attempted.",
+    "next_action_when_unblocked": "cd C:/Users/Owner/Repos/code-artifacts && unset OPENAI_API_KEY && cat C:/Users/Owner/apex_governance/codex_runs/ANIM-18/bundle-r12.txt | codex exec -m gpt-5.5 -s read-only --skip-git-repo-check -o C:/Users/Owner/apex_governance/codex_runs/ANIM-18/round12.last.txt > C:/Users/Owner/apex_governance/codex_runs/ANIM-18/round12.txt 2>&1"
+  },
+  "exit_code_map": {
+    "0": ["PAYLOAD","DRY_RUN","FAL_OK","READY"],
+    "4": "default unrecognized status",
+    "6": ["INVALID_SHOT_ID","INVALID_JOB_ID","MISSING_ARGS","MULTIPLE_MODES"],
+    "7": ["FAL_KEY_UNRESOLVED","KEY_UNRESOLVED"],
+    "10": ["TIER_PLAN_NOT_FOUND","TIER_PLAN_UNPARSEABLE","TIER_PLAN_INVALID_PHASE","TIER_PLAN_EMPTY","TIER_PLAN_UNREADABLE","SHOT_NOT_IN_TIER_PLAN","SHOT_NOT_ROUTED_TO_FALCLOUD"],
+    "11": "FAL_HTTP_ERROR",
+    "12": "FAL_ENDPOINT_UNREACHABLE",
+    "13": "FAL_UNPARSEABLE_RESPONSE",
+    "14": "KEY_OK_SHIM_PENDING (legacy code retained for backward compat in case operator downgrades tier-config)"
+  },
+  "ledger_convention": {
+    "rule": "each round-N's fixed_in_commit is unknowable inside its own commit; the value is backfilled by the next commit. Final un-backfilled placeholder is resolved at cert-mint time. Documented as the chain-ledger convention in ANIM-14-evidence.json:ledger_convention."
+  }
+}
