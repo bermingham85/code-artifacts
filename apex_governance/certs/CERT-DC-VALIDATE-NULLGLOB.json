@@ -1,0 +1,65 @@
+{
+  "cert_id": "CERT-DC-VALIDATE-NULLGLOB",
+  "title": "dc-validate workflow nullglob hardening",
+  "scope": ".github/workflows/dc-validate.yml",
+  "authority_chain": [
+    "apex/docs/doctrine/CLAUDE_CODEX_DOCTRINE.md",
+    "apex_governance/PLAN_CRITERIA.md",
+    "apex/docs/spec/SPEC-DC-VALIDATE-NULLGLOB.md"
+  ],
+  "wo_link": "APEX-ANIM-MB-WO-00001 (ANIM-18 merge unblock dependency)",
+  "introduced_bug_pr": 25,
+  "primary_blocked_pr": 27,
+  "fix_branch": "fix/dc-validate-nullglob",
+  "base_commit": "4fd97d911d1735626817622c7e86220a8f30c495",
+  "diff_summary": "Added `shopt -s nullglob` at the top of three `run:` blocks in dc-validate.yml.",
+  "spec_acceptance_criteria_met": {
+    "AC1_empty_workers_passes": "verified — local bash test with shopt -s nullglob iterates zero times",
+    "AC2_valid_manifest_passes": "asserted by inspection — nullglob only affects empty-match case",
+    "AC3_missing_manifest_still_fails": "asserted by inspection — step 1 checks per-dir, dir loop unchanged",
+    "AC4_missing_field_still_fails": "asserted by inspection — python field check unchanged",
+    "AC5_minimal_additive": "verified — three +1 line additions, no semantic change to existing logic"
+  },
+  "codex_adversarial_review": {
+    "model": "gpt-5.5",
+    "auth": "ChatGPT subscription",
+    "rounds": [
+      {
+        "round": 1,
+        "transcript": "apex_governance/codex_runs/DC-VALIDATE-NULLGLOB/round-01.txt",
+        "verdict": "NO FINDINGS",
+        "note": "sandbox helper errors during file-listing exec calls did not block verdict"
+      },
+      {
+        "round": 2,
+        "transcript": "apex_governance/codex_runs/DC-VALIDATE-NULLGLOB/round-02.txt",
+        "verdict": "NO FINDINGS"
+      }
+    ],
+    "silent_twice_satisfied": true
+  },
+  "verification": {
+    "local_nullglob_pass": {
+      "command": "bash -c 'shopt -s nullglob; FAIL=0; for manifest in workers/*/MANIFEST.json; do echo ITER: $manifest; FAIL=2; done; echo EXIT_CODE=$FAIL (expect 0)'",
+      "result": "EXIT_CODE=0 (expect 0) — PASS"
+    },
+    "local_baseline_no_nullglob_fail": {
+      "command": "bash -c 'FAIL=0; for manifest in workers/*/MANIFEST.json; do echo ITER: $manifest; FAIL=2; done; echo EXIT_CODE=$FAIL (no nullglob -> expect 2)'",
+      "result": "ITER: workers/*/MANIFEST.json; EXIT_CODE=2 — confirms diagnosis"
+    },
+    "ci_dc_validate_on_fix_pr": "PENDING (gate clears on PR open)",
+    "pr_27_recheck_after_merge": "PENDING (operator gate)"
+  },
+  "doctrine_rules_cited": [
+    "P (process gating)",
+    "S (scope)",
+    "D (doctrine reviewer-of-record)",
+    "O (observability via certs+codex transcripts)",
+    "E (evidence)",
+    "A (additive change)",
+    "C (consistency)"
+  ],
+  "rollback": "git revert <merge-commit-on-main>",
+  "minted_at": "2026-06-12T13:35Z",
+  "minted_by": "APEX orchestrator (Claude Code session 70 / handover 11x)"
+}

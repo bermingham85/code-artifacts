@@ -14,6 +14,7 @@ jobs:
       
       - name: Check every worker has a MANIFEST
         run: |
+          shopt -s nullglob
           FAIL=0
           for dir in workers/*/; do
             # Skip _base folder
@@ -29,6 +30,7 @@ jobs:
 
       - name: Check MANIFEST has required fields
         run: |
+          shopt -s nullglob
           FAIL=0
           for manifest in workers/*/MANIFEST.json; do
             if [[ "$manifest" == "workers/_base/MANIFEST.json" ]]; then continue; fi
@@ -43,6 +45,7 @@ jobs:
 
       - name: Check no file at root level (must be in a folder)
         run: |
+          shopt -s nullglob
           FAIL=0
           for f in *.py *.json; do
             if [ -f "$f" ] && [[ "$f" != "PROJECT_MEMORY_BANK.json" ]]; then
