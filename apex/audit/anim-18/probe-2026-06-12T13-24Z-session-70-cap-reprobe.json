@@ -1,0 +1,79 @@
+{
+  "session": 70,
+  "session_handover": "11x",
+  "wo_id": "APEX-ANIM-MB-WO-00001",
+  "ts_utc": "2026-06-12T13:24:31Z",
+  "intent": "WO re-issue (70th) — execute APEX-ANIM Production System WO end-to-end. Empirical re-probe + delta scan vs handover 11w.",
+  "doctrine_anchors": [
+    "PLAN_CRITERIA.md §0 hierarchy",
+    "CLAUDE_CODEX_DOCTRINE: Codex = reviewer-of-record",
+    "feedback_codex_chatgpt_cap_hardstop",
+    "feedback_close_window_on_completion",
+    "feedback_definition_of_done_always_on"
+  ],
+  "checkout_state": {
+    "cwd": "C:\\Users\\Owner\\Repos\\code-artifacts",
+    "branch_local": "phase/ANIM-18-fal-shim",
+    "head_local": "3a4c9d399b11722a21946312fb6ee9f4db9b2597",
+    "head_local_unchanged_vs_11w": true,
+    "dirty_files_unrelated": [
+      "apex/docs/DOCUMENT_REGISTER.md",
+      "apex/docs/NAMING_CONVENTION.md",
+      "bermcoin/frontend/app/index.html",
+      "bermcoin/frontend/landing/index.html",
+      "bermcoin/frontend/waitlist/index.html"
+    ]
+  },
+  "origin_main": {
+    "head": "4fd97d911d1735626817622c7e86220a8f30c495",
+    "delta_vs_11w": "MAIN MOVED: 8ed7871 -> 4fd97d91 via merge of PR #25 (doc-control templates + dc-validate workflow, additive)",
+    "delta_classification": "material — introduces new CI gate"
+  },
+  "pr_27": {
+    "number": 27,
+    "head_ref": "phase/ANIM-18-fal-shim-recut",
+    "head_oid": "3418d0c14c42ea5b914b7f61abaa752dd6627d26",
+    "base_ref": "main",
+    "state": "OPEN",
+    "mergeable": "MERGEABLE",
+    "merge_state_status": "BLOCKED",
+    "review_decision": "REVIEW_REQUIRED",
+    "check_runs": {
+      "Validate DC Compliance": "FAILURE",
+      "Socket Security: Project Report": "SUCCESS",
+      "Socket Security: Pull Request Alerts": "SUCCESS"
+    },
+    "delta_vs_11w": "PR #27 unchanged in head_oid + state, but newly-merged dc-validate.yml workflow now runs against it and FAILS (this is a NEW blocker on top of the operator-review gate)"
+  },
+  "codex_cap": {
+    "model": "gpt-5.5",
+    "auth": "ChatGPT subscription",
+    "probe_result": "PONG (reachable)",
+    "cap_open": true,
+    "delta_vs_11w": "Cap still OPEN — codex usable; no idle-wait dependency."
+  },
+  "dc_validate_diagnosis": {
+    "workflow": ".github/workflows/dc-validate.yml",
+    "introduced_by_pr": 25,
+    "merged_to_main_at_commit": "4fd97d911d1735626817622c7e86220a8f30c495",
+    "failing_step": "Check MANIFEST has required fields",
+    "root_cause": "Bash `for manifest in workers/*/MANIFEST.json` falls back to the literal glob pattern when no files match (default bash semantics — `nullglob` not set). The literal `workers/*/MANIFEST.json` then fails the python json.load, but stderr is muted, and the script proceeds to print `❌ workers/*/MANIFEST.json is missing required field: <field>` and exit 1.",
+    "repo_state_that_triggers": "PR #27 has only `workers/_base/README.md`; no real worker directories with MANIFEST.json exist. Same is true on main itself — every PR will fail this check until the workflow is fixed OR real worker MANIFESTs are added.",
+    "scope": "Repository-wide. Affects EVERY PR targeting main, not just PR #27.",
+    "fix": "Add `shopt -s nullglob` (or equivalent guard) before the `for manifest in ...` loop so the empty glob expands to zero iterations."
+  },
+  "doctrine_action": {
+    "decision": "Open surgical fix PR against main for the workflow bug. This is pre-authorized under feedback_standing_stack_improvement_approval (scoped, reversible, additive, improves reliability, unblocks the ANIM-18 merge path and every future PR). PR #27 remains operator-merge-gated by review_decision; the workflow fix lets the CI gate clear once #27 rebases / re-runs.",
+    "exclusion": "Do not touch PR #27 branch directly; do not bypass review; do not force-merge protected main."
+  },
+  "next_actions": [
+    "Stash unrelated dirty edits",
+    "Branch fix/dc-validate-nullglob from origin/main",
+    "Edit .github/workflows/dc-validate.yml (add nullglob + iteration guard)",
+    "Write SPEC + cert (CERT-DC-VALIDATE-FIX)",
+    "Codex adversarial-review silent-twice",
+    "PR via REST mirror of _make_pr_api.py",
+    "Write handover 11x and supersede 11w",
+    "Pop stash"
+  ]
+}

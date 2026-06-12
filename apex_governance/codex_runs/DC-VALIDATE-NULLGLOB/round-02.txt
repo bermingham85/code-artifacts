@@ -1,0 +1,240 @@
+Reading additional input from stdin...
+OpenAI Codex v0.139.0
+--------
+workdir: C:\Users\Owner\Repos\code-artifacts
+model: gpt-5.5
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR]
+reasoning effort: high
+reasoning summaries: none
+session id: 019ebc0b-a27d-7062-bfad-8cbe3774bc8a
+--------
+user
+Round 2 adversarial review per silent-twice rule.
+
+<stdin>
+ADVERSARIAL REVIEW — ROUND 2 (silent-twice rule).
+
+Same diff under review as round 1. Round 1 returned NO FINDINGS. Per APEX doctrine, you must independently re-attempt to refute.
+
+Diff:
+
+diff --git a/.github/workflows/dc-validate.yml b/.github/workflows/dc-validate.yml
+@@ jobs:
+       - name: Check every worker has a MANIFEST
+         run: |
++          shopt -s nullglob
+           FAIL=0
+           for dir in workers/*/; do
+@@
+       - name: Check MANIFEST has required fields
+         run: |
++          shopt -s nullglob
+           FAIL=0
+           for manifest in workers/*/MANIFEST.json; do
+@@
+       - name: Check no file at root level (must be in a folder)
+         run: |
++          shopt -s nullglob
+           FAIL=0
+           for f in *.py *.json; do
+
+Independent vectors to consider this round:
+- Does `shopt -s nullglob` change semantics when manifests DO exist? (No — nullglob only affects empty-match case.)
+- Does it break the `[[ "$dir" == "workers/_base/" ]]` skip check? (No — the literal string equality still works when the glob expands.)
+- Does it affect step 3's `[ -f "$f" ]` guard? (No — the guard becomes redundant under nullglob but harmless.)
+- Is there a doctrine-violation in editing a workflow file via Edit tool on the fix branch? (No — branch is fix/dc-validate-nullglob from origin/main, not a protected push.)
+- Is there a more surgical / less invasive alternative? (Could use a single `set -o nullglob` per file, but Actions runs each `run:` in its own bash subshell, so per-block is required.)
+
+If you find ANY defect, list as SEVERITY — claim — refutation. Otherwise reply with EXACTLY:
+NO FINDINGS
+</stdin>
+exec
+"C:\\Program Files\\WindowsApps\\Microsoft.PowerShell_7.6.2.0_x64__8wekyb3d8bbwe\\pwsh.exe" -Command "Get-Content -LiteralPath 'C:\\Users\\Owner\\.codex\\memories\\MEMORY.md'" in C:\Users\Owner\Repos\code-artifacts
+exec
+"C:\\Program Files\\WindowsApps\\Microsoft.PowerShell_7.6.2.0_x64__8wekyb3d8bbwe\\pwsh.exe" -Command 'python X:/Automations/apex/registry/apex_status.py --terse' in C:\Users\Owner\Repos\code-artifacts
+ succeeded in 374ms:
+# Shared Memory Index
+
+Principle: Work with each platform's natural memory and search flow, not against it. Let each tool use its native path while that path points in the background to the shared, backed-up memory source.
+
+Central memory for Claude, Codex, Oz, and other agent platforms.
+
+Location:
+
+`C:/Users/Owner/.agents/skills/memory/references/`
+
+Use this file as the menu. Open detail files only when needed.
+
+## Core Routes
+
+- [Natural Memory Paths](feedback_natural_memory_paths.md) - use each platform's normal memory path; backend links it to the shared source.
+- [Global Route Index](global_route_index.md) - top-level paths for projects, source-of-truth, storage, controls, and platform entry points.
+- [Memory Operating Model](memory_operating_model.md) - why native memory folders point to one central memory source.
+- [Codex ↔ Claude Shared Memory](project_codex_claude_shared_memory.md) - junction wiring (2026-06-05), AGENTS.md "Project Memory" section, write/read protocols, restore procedure, loss-on-reorg note.
+- [APEX Canonical Docs Path + Read Order](reference_apex_canonical_docs.md) - canonical Apex docs and read order.
+- [APEX Two-Repo Layout](reference_apex_repo_layout.md) - operational X repo vs canonical docs repo.
+- [APEX Governance Paths](reference_apex_governance_paths.md) - `apex_governance/` runtime evidence, Codex bridge, certs, and spawn launchers.
+- [Supabase Shared Boundary](project_supabase_shared_boundary.md) - shared Supabase instance and cross-project boundary.
+- [APEX Protected Project Codes](reference_apex_protected_codes.md) - APEX, shared-gated, and protected project codes.
+- [APEX Critical Rules](reference_apex_critical_rules.md) - compact source-anchored lookup of doctrine critical rules.
+- [APEX Inbox to Canonical Route](reference_apex_inbox_canonical_route.md) - artifact intake and promotion route.
+- [APEX Autonomous Chain v1 (2026-06-05)](project_apex_autonomous_chain_v1.md) - architecture reference: 8 chain components, governance enforcer, operator-command channel, dashboard, coverage.
+- [**APEX Handover 2026-06-06**](handover_apex_session_2026-06-06.md) - **READ FIRST** — verified live state: foreman/supervisor recovered, queue-hygiene fixed, work-gate fix pending merge, ChatGPT ingest done, ClaudeClaw down, the routine-sync gap, operator prefs. VERIFY live state before acting on any contract.
+- [APEX Handover 2026-06-05](handover_apex_session_2026-06-05.md) - historical (superseded by 2026-06-06).
+- 🚩 [**Session Handover 2026-06-07**](handover_session_2026-06-07.md) - **READ FIRST (latest)** — Conversation/Project dashboard on :8765/board; APEX Codex-gate fix + prompt-optimizer hook; **Bermcoin near-launch prep** (plan/strategy/legal/tooling done, `.env` partly filled); pending: Stripe TEST keys + autonomy/legal decisions, then build-to-staging. Verify live state.
+
+## System References
+
+- [Conversation Exports Corpus](reference_conversation_exports_corpus.md) - full ChatGPT/Claude conversation exports live on G:/H: Google Drive (~364MB, not Downloads/repo — repo pointers are stale); mined by `muscle_conversation_task_miner.py` (APEX-SYS-PY-00003) into per-topic `mined_tasks_*.md` reports; transcript_miner now also scans `conv_inbox`.
+- [Master Task Ledger](reference_task_ledger.md) - cross-platform task tracker (APEX-MB-PY-00119): dual-format codes {PROJECT}-{PLATFORM}-TSK-{SEQ}, RAG status, dedup no-redo gate; SoT SQLite on NAS, views + :8765/board.
+
+- [Supabase Facts](reference_supabase_facts.md) - schemas, project ref, RLS facts, SQL patterns.
+- [n8n Facts](reference_n8n_facts.md) - URLs, API patterns, workflow IDs.
+- [CONV-PROC Pipeline](reference_conv_proc_pipeline.md) - feeder, ingest, extract, router, env knobs.
+- [Environment Keys](reference_env_keys.md) - paid/free API env status and probe discipline, without storing secrets.
+- [Archived CC Runbook](reference_cc_runbook_archived.md) - notes that `cc_runbook/INDEX.md` phase table is archived, while bridge tools remain usable.
+- [Memory Auto-Sync](reference_memory_autosync.md) - memory/references auto-pushes to main (sync-memory.ps1; APEX_MemorySync task every 10min + Claude Stop hook). Skills still use review branches.
+- [APEX Dual-Register Drift](reference_apex_dual_register_drift.md) - two DOCUMENT_REGISTER.md files (operational X + canonical docs-repo); enforcer reads canonical only — add canonical row before writing `registry/*.py`. Audit: `muscle_register_drift_audit.py`.
+- [APEX Register Dedup Route](reference_apex_register_dedup_route.md) - `apex_bulk_register.py` is append-only (can't dedup/renumber); root cause = muscles self-declaring colliding docstring codes; resolve duplicate APEX-MB-PY codes via gated working-tree edit (canonical + operational + docstring together) and verify with `muscle_compliance_check` `duplicate_refs:0`. Done 2026-06-10 (00122/00123).
+- [GitHub Protected-Merge (code-artifacts)](reference_github_protected_merge.md) - `main` needs 1 approving review (admins included, auto-merge off); owner can't self-approve → approve via 2nd account `rentaslingie-star` (Write collab), then merge. Unblocks the ANIM #7–#22 backlog.
+- [Bermech Ltd Company Details](reference_bermech_ltd_company_details.md) - Irish CRO no. **757365**, incorporated 09 Feb 2024, registered office 6 Fern Road Sandyford Dublin D18 FP98 (Workhub virtual office — confirm still active before publishing). Statutory docs filed in `G:\My Drive\Bermech Ltd\Company Register`. For Bermcoin legal disclaimers/invoices/filings.
+- 🧹 [Repo Consolidation Audit (2026-06-10)](reference_repo_consolidation_audit.md) - read-only audit of ~56 git repos: only 2 true dup clusters (code-artifacts ×3, n8n ×2), jesse already a monorepo, ~13 zero-commit local-only repos = data-loss risk, cleartext secrets flagged. Tiered gated consolidation plan. Operator wants to stop making near-copies.
+- 🚩 [APEX-ANIM WO Handover 2026-06-07](handover_apex_anim_wo_2026-06-07.md) — **Read FIRST when resuming ANIM track.** WO APEX-ANIM-MB-WO-00001 executed ANIM-01..06; 6 PRs (#7–#12) OPEN_FOR_OPERATOR_MERGE; ANIM-06 = first visible deliverable (Grog MP4); ANIM-07+ scaling + AGEN recovery pending.
+- 🚩 [APEX-ANIM Session B 2026-06-07](handover_apex_anim_session_2026-06-07b.md) — **Read AFTER the above when resuming.** ANIM-07 (PR #13, Grog+Lirian bibles) and ANIM-08 (PR #14, AGEN-Verification verbatim recovery) both closed end-to-end same day. New reusable extractor APEX-MB-PY-00116 unblocks ANIM-09..12 (Builder/Specification/Architecture/Router recoveries).
+- 🚩 [APEX-ANIM Session C 2026-06-07](handover_apex_anim_session_2026-06-07c.md) — ANIM-13 closed: Shot/Storyboard agent (S5, WO §3 agent 3 gap-fill); PR #19 head `eda310d`; CERT-ANIM-13 silent-twice rounds 6+7. All 6 WO §3 agents built.
+- 🚩 [APEX-ANIM Session D 2026-06-07](handover_apex_anim_session_2026-06-07d.md) — Three more phases closed: ANIM-14 (marker schema, PR #20), ANIM-17 (fal.ai key resolution, PR #21), ANIM-16 (storyboard→tier-plan bulk-plan, PR #22).
+- 🚩 [APEX-ANIM Session E 2026-06-07](handover_apex_anim_session_2026-06-07e.md) — ANIM-18 freeze at R12; reachable 2026-06-11T15:28. Superseded by Session F (no state change).
+- 🚩 [APEX-ANIM Session F 2026-06-07](handover_apex_anim_session_2026-06-07f.md) — WO re-issued autonomous-mode; empirical re-probe confirms cap still 2026-06-11T15:28, all 16 PRs (#7–#22) still OPEN, branch HEAD unchanged at R12. Doctrine-conformant action = operator merge train + cap wait or alt-account.
+- 🚩 [APEX-ANIM Session 2026-06-08](handover_apex_anim_session_2026-06-08.md) — WO re-re-issued; same state confirmed. Produced operator runbook `apex_governance/MERGE_TRAIN_ANIM_ACTION_PACKET.md` (per-PR approve+squash sequence, post-merge tag commands, ANIM-18 resume packet).
+- 🚩 [APEX-ANIM Session 2026-06-08b](handover_apex_anim_session_2026-06-08b.md) — WO re-issued FOURTH time same day; cap unmoved (2026-06-11T15:28), 16 PRs unmoved, packet unread. Stand-down per [[feedback-codex-chatgpt-cap-hardstop]]. Pattern: "do not idle" wrapper does not override hard-stop gates.
+- 🚩 [APEX-ANIM Session 2026-06-08c](handover_apex_anim_session_2026-06-08c.md) — WO re-issued FIFTH time same day; same cap/PRs/HEAD. Superseded by 08d (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-08d](handover_apex_anim_session_2026-06-08d.md) — WO re-issued SIXTH time same day; re-probe identical (cap 2026-06-11T15:28, 16 PRs OPEN, HEAD `b62ae12`). Honors 08c standing rule.
+- 🚩 [APEX-ANIM Session 2026-06-08e](handover_apex_anim_session_2026-06-08e.md) — WO re-issued SEVENTH time same day; identical re-probe. Superseded by 08f (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-08f](handover_apex_anim_session_2026-06-08f.md) — WO re-issued EIGHTH time same day; identical empirical re-probe. Superseded by 08g (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-08g](handover_apex_anim_session_2026-06-08g.md) — WO re-issued NINTH time same day under orchestrator-engineer framing; identical re-probe. Superseded by 08h (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-08h](handover_apex_anim_session_2026-06-08h.md) — WO re-issued TENTH time same day (orchestrator-engineer + "verify codex status" suffix); identical empirical re-probe. Superseded by 08i (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-08i](handover_apex_anim_session_2026-06-08i.md) — WO re-issued ELEVENTH time same day; identical re-probe. Superseded by 08j (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-08j](handover_apex_anim_session_2026-06-08j.md) — WO re-issued TWELFTH time same day; identical re-probe. Superseded by 08k (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-08k](handover_apex_anim_session_2026-06-08k.md) — WO re-issued THIRTEENTH time same day; identical re-probe. Superseded by 08l (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-08l](handover_apex_anim_session_2026-06-08l.md) — WO re-issued FOURTEENTH time same day under identical orchestrator-engineer framing; identical empirical re-probe. Superseded by 08m (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-08m](handover_apex_anim_session_2026-06-08m.md) — WO re-issued FIFTEENTH time same day; identical empirical re-probe. Superseded by 08n (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-08n](handover_apex_anim_session_2026-06-08n.md) — WO re-issued SIXTEENTH time same day; cap message captured verbatim. Superseded by 08o (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-08o](handover_apex_anim_session_2026-06-08o.md) — WO re-issued SEVENTEENTH time same day; identical empirical re-probe. Superseded by 08p (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-08p](handover_apex_anim_session_2026-06-08p.md) — WO re-issued EIGHTEENTH time same day; identical empirical re-probe. Superseded by 08q (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-08q](handover_apex_anim_session_2026-06-08q.md) — WO re-issued NINETEENTH time same day; identical re-probe. Superseded by 08r (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-08r](handover_apex_anim_session_2026-06-08r.md) — WO re-issued TWENTIETH time same day; identical re-probe. Superseded by 08s.
+- 🚩 [APEX-ANIM Session 2026-06-08s](handover_apex_anim_session_2026-06-08s.md) — TWENTY-FIRST WO re-issue. Superseded by 08t (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-08t](handover_apex_anim_session_2026-06-08t.md) — TWENTY-SECOND WO re-issue. Superseded by 08u (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-08u](handover_apex_anim_session_2026-06-08u.md) — TWENTY-THIRD WO re-issue 2026-06-08. Superseded by 2026-06-10 (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-10](handover_apex_anim_session_2026-06-10.md) — TWENTY-FOURTH WO re-issue (day boundary crossed). Superseded by 2026-06-10b (state has materially changed).
+- 🚩 [APEX-ANIM Session 2026-06-10b](handover_apex_anim_session_2026-06-10b.md) — TWENTY-FIFTH WO re-issue, +day3. Material changes captured (ANIM #7-#22 bundled into merged PR #24, branch orphan, codex v0.139.0). Superseded by 2026-06-10c (no state change in 24 min).
+- 🚩 [APEX-ANIM Session 2026-06-10c](handover_apex_anim_session_2026-06-10c.md) — TWENTY-SIXTH WO re-issue. Superseded by 2026-06-10d (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-10d](handover_apex_anim_session_2026-06-10d.md) — TWENTY-SEVENTH WO re-issue, 19:54Z. Superseded by 2026-06-10e (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-10e](handover_apex_anim_session_2026-06-10e.md) — TWENTY-EIGHTH WO re-issue, 20:25Z. Superseded by 10f (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-10f](handover_apex_anim_session_2026-06-10f.md) — TWENTY-NINTH WO re-issue, 20:55Z. Superseded by 10g (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-10g](handover_apex_anim_session_2026-06-10g.md) — THIRTIETH WO re-issue, 21:24Z. Superseded by 10h (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-10h](handover_apex_anim_session_2026-06-10h.md) — THIRTY-FIRST WO re-issue, 21:54Z. Superseded by 10i (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-10i](handover_apex_anim_session_2026-06-10i.md) — THIRTY-SECOND WO re-issue, 23:24Z. Superseded by 10j (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-10j](handover_apex_anim_session_2026-06-10j.md) — THIRTY-THIRD WO re-issue, 22:54Z. Superseded by 10k (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-10k](handover_apex_anim_session_2026-06-10k.md) — THIRTY-FOURTH WO re-issue, 23:54Z. Superseded by 10l (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-10l](handover_apex_anim_session_2026-06-10l.md) — THIRTY-FIFTH WO re-issue, 2026-06-11T00:24Z. Superseded by 10m (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-10m](handover_apex_anim_session_2026-06-10m.md) — THIRTY-SIXTH WO re-issue, 2026-06-11T00:54Z. Superseded by 10n (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-10n](handover_apex_anim_session_2026-06-10n.md) — THIRTY-SEVENTH WO re-issue, 2026-06-11T01:24Z. Superseded by 10o (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-10o](handover_apex_anim_session_2026-06-10o.md) — THIRTY-EIGHTH WO re-issue, 2026-06-11T01:54Z. Superseded by 10p (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-10p](handover_apex_anim_session_2026-06-10p.md) — THIRTY-NINTH WO re-issue, 2026-06-11T02:24Z. Superseded by 10q (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-10q](handover_apex_anim_session_2026-06-10q.md) — FORTIETH WO re-issue, 2026-06-11T02:54Z. Superseded by 10r (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-10r](handover_apex_anim_session_2026-06-10r.md) — FORTY-FIRST WO re-issue, 2026-06-11T03:24Z. Superseded by 10s (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-10s](handover_apex_anim_session_2026-06-10s.md) — FORTY-SECOND WO re-issue, 2026-06-11T03:54Z. Superseded by 10t (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-10t](handover_apex_anim_session_2026-06-10t.md) — FORTY-THIRD WO re-issue, 2026-06-11T04:24Z. Superseded by 10u (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-10u](handover_apex_anim_session_2026-06-10u.md) — FORTY-FOURTH WO re-issue, 2026-06-11T04:54Z. Superseded by 10v (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-10v](handover_apex_anim_session_2026-06-10v.md) — FORTY-FIFTH WO re-issue, 2026-06-11T05:24Z. Superseded by 10w (no material state change).
+- 🚩 [APEX-ANIM Session 2026-06-10w](handover_apex_anim_session_2026-06-10w.md) — FORTY-SIXTH WO re-issue, 2026-06-11T05:56Z. Superseded by 2026-06-11 (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-11](handover_apex_anim_session_2026-06-11.md) — FORTY-SEVENTH WO re-issue, 2026-06-11T06:24Z. Superseded by 11b (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-11b](handover_apex_anim_session_2026-06-11b.md) — FORTY-EIGHTH WO re-issue, 2026-06-11T06:55Z. Superseded by 11c (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-11c](handover_apex_anim_session_2026-06-11c.md) — FORTY-NINTH WO re-issue, 2026-06-11T07:30Z. Superseded by 11d (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-11d](handover_apex_anim_session_2026-06-11d.md) — FIFTIETH WO re-issue, 2026-06-11T07:54Z. Superseded by 11e (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-11e](handover_apex_anim_session_2026-06-11e.md) — FIFTY-FIRST WO re-issue, 2026-06-11T08:24Z. Superseded by 11f (HEAD moved + PRs all merged).
+- 🚩 [APEX-ANIM Session 2026-06-11f](handover_apex_anim_session_2026-06-11f.md) — FIFTY-SECOND WO re-issue, 2026-06-11T08:55Z. Superseded by 11g (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-11g](handover_apex_anim_session_2026-06-11g.md) — FIFTY-THIRD WO re-issue, 2026-06-11T09:24Z. Superseded by 11h (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-11h](handover_apex_anim_session_2026-06-11h.md) — FIFTY-FOURTH WO re-issue, 2026-06-11T09:54Z. Superseded by 11i (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-11i](handover_apex_anim_session_2026-06-11i.md) — FIFTY-FIFTH WO re-issue, 2026-06-11T10:24Z. Superseded by 11j (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-11j](handover_apex_anim_session_2026-06-11j.md) — FIFTY-SIXTH WO re-issue, 2026-06-11T10:54Z. Superseded by 11k (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-11k](handover_apex_anim_session_2026-06-11k.md) — FIFTY-SEVENTH WO re-issue, 2026-06-11T11:24Z. Superseded by 11l (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-11l](handover_apex_anim_session_2026-06-11l.md) — FIFTY-EIGHTH WO re-issue, 2026-06-11T11:54Z. Superseded by 11m (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-11m](handover_apex_anim_session_2026-06-11m.md) — FIFTY-NINTH WO re-issue, 2026-06-11T12:24Z. Superseded by 11n (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-11n](handover_apex_anim_session_2026-06-11n.md) — SIXTIETH WO re-issue, 2026-06-11T12:54Z. Superseded by 11o (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-11o](handover_apex_anim_session_2026-06-11o.md) — SIXTY-FIRST WO re-issue, 2026-06-11T13:24Z. Superseded by 11p (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-11p](handover_apex_anim_session_2026-06-11p.md) — SIXTY-SECOND WO re-issue, 2026-06-11T13:54Z. Superseded by 11q (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-11q](handover_apex_anim_session_2026-06-11q.md) — SIXTY-THIRD WO re-issue, 2026-06-11T14:25Z. Superseded by 11r (cap reset @ 15:28; productive run).
+- 🚩 [APEX-ANIM Session 2026-06-11r](handover_apex_anim_session_2026-06-11r.md) — SIXTY-FOURTH WO re-issue, 2026-06-11T15:35Z. R13 fix + R14/R15 silent-twice, tag `cert/ANIM-18@3a4c9d3`. **Overstated PR-merged; PR #26 was orphan-to-main + unmergeable.** Superseded by 11s.
+- 🚩 [APEX-ANIM Session 2026-06-11s](handover_apex_anim_session_2026-06-11s.md) — SIXTY-FIFTH WO re-issue, 2026-06-11T16:35Z. Recut ANIM-18 onto post-#24 main as PR #27 (MERGEABLE+BLOCKED); byte-identical code, R14/R15 evidence preserved; tag `cert/ANIM-18@3418d0c`; PR #26 closed superseded. Superseded by 11t (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-11t](handover_apex_anim_session_2026-06-11t.md) — SIXTY-SIXTH WO re-issue, 2026-06-11T16:25Z. Superseded by 11u (no state change).
+- 🚩 [APEX-ANIM Session 2026-06-11u](handover_apex_anim_session_2026-06-11u.md) — SIXTY-SEVENTH WO re-issue, 2026-06-11T17:00Z. Cap OPEN. Superseded by 11v (main moved to 8ed7871, non-ANIM Bermcoin frontend commit).
+- 🚩 [APEX-ANIM Session 2026-06-11v](handover_apex_anim_session_2026-06-11v.md) — SIXTY-EIGHTH WO re-issue, 2026-06-11T~18:00Z. Superseded by 11w (no state change).
+- 🏁 [**APEX-ANIM Session 2026-06-11w**](handover_apex_anim_session_2026-06-11w.md) — **LATEST.** SIXTY-NINTH WO re-issue, 2026-06-12T00:30Z. Cap OPEN; PR #27 MERGEABLE+BLOCKED unchanged; branch HEAD `3a4c9d3` unchanged; main `8ed7871` unchanged. Doctrine stand-down pending operator merge of PR #27.
+
+- [Claude Harness Apex Layer](reference_claude_harness_apex_layer.md) - hooks/statusline/subagents/commands/workflow under ~/.claude that orchestrate Apex (added 2026-06-07); don't rebuild, extend.
+
+## Process Notes
+
+- [Gate Loop Playbook](feedback_gate_loop_playbook.md) - established gate/check/audit loop.
+- [Codex Is the Primary Gate](feedback_codex_primary_gate.md) - Codex review route.
+- [Stop Repeating Completed Jobs](feedback_stop_repeating_jobs.md) - check destination before redoing work.
+- [Process and Approval Rules](feedback_process.md) - user process preferences.
+- [Route Fix, Not Patch](feedback_route_fix_not_patch.md) - fix the route instead of isolated symptoms.
+- [Iterate via Codex, Not User](feedback_iterate_via_codex_not_user.md) - use Codex review before bouncing decisions back.
+- [No MCQ for Facts Already Given](feedback_no_mcq_for_facts_already_given.md) — when the operator has explained something in plain text, code the change directly; don't re-ask it as A/B/C.
+- [Telegram Plain English](feedback_telegram_plain_english.md) - Telegram alerts should be simple phone-readable English.
+- [APEX Spawn Already In-Flight](feedback_apex_spawn_already_inflight.md) - before re-launching an AGEN agent-build, check process tree + agent_tasks status; prior session may have already fired the next launcher.
+- [APEX Spawn Hung After Rate-Limit](feedback_apex_spawn_hung_after_ratelimit.md) - orchestrator claude.exe stays alive idle after codex_bridge builder hits Claude Code session-limit cap; check `LOOP_FAILED.json` before assuming progress.
+- [Codex Bridge OpenAI Key Conflict](feedback_codex_bridge_openai_key_conflict.md) - `gpt-5-codex` default model rejects ChatGPT-account auth when `OPENAI_API_KEY` env is set; prepend `CODEX_MODEL=gpt-5.5` to codex_bridge invocations.
+- [Codex ChatGPT Cap Hard-Stop](feedback_codex_chatgpt_cap_hardstop.md) - ChatGPT-account usage cap hard-blocks `codex exec` until printed wall-clock time; `OPENAI_API_KEY` does NOT bypass; smoke-test reachability before loop launch; pause-don't-self-review on mid-loop hit.
+- [Settings Secrets Hygiene](feedback_settings_secrets_hygiene.md) - never inline secrets in `settings.local.json` approvals; `X:` is NAS-backed (`\\192.168.50.246\Extra`) so they leak to the QNAP in cleartext. Scrubbed 2026-06-07; rotation is manual.
+- [APEX Full Protocol — No Scope Questions](feedback_apex_full_protocol_no_scope_questions.md) - when operator says "full APEX protocol", don't pause for AskUserQuestion; gates surface scope (manifest → OSS → auto_builder → register → test). Run the gates.
+- [No Clarify on Derivable Contracts](feedback_no_clarify_on_derivable_contracts.md) - if a build contract is derivable from sibling muscles + blueprints + flow_state, draft the blueprint and proceed; the blueprint itself is where contract revision happens (not a multiple-choice question).
+- [Codex Prompt Optimizer](feedback_codex_prompt_optimizer.md) - rewrite rough operator prompts into explicit execution contracts before actioning, mirroring Claude's prompt_optimizer_reminder hook.
+- [Standing Stack-Improvement Approval](feedback_standing_stack_improvement_approval.md) - automatically proceed on safe approvals that build on current systems/code and improve the overall stack; hard-stops still gated.
+- [Close Window on Full Completion](feedback_close_window_on_completion.md) — when a discrete task is fully done, give a tight closure line and stop; do not chain into adjacent work or another verifier round.
+- [Definition of Done (always on)](feedback_definition_of_done_always_on.md) — every task/project needs an explicit DoD (acceptance + scope + tests + deliverables) and a completion sign-off ("complete, window may be closed"); the plan alone should suffice. Stops spiralling. Enforced via CLAUDE.md block + `definition_of_done_reminder.py` hook.
+- [Naming Must Be Unmistakeable](feedback_naming_must_be_unmistakeable.md) — identifiers (file names, ref codes, WO slugs, folder taxonomies, repo refs) must use ONE organizing principle per namespace; mixed grammar = future mis-identification; before allocating an identifier check it can't be confused for something else.
+
+- [Apex Build Standing Authorization](feedback_apex_build_standing_authorization.md) - operator granted standing permission to build local Apex tooling without per-action approval; hard-stops still gated.
+
+## Project Continuity
+
+- [Supercomputer Tasking Layer](project_supercomputer_tasking.md) - master task ledger (APEX-MB-PY-00119) + per-station runner (APEX-MB-PY-00127): global hardware-agnostic IDs, capability routing, claim/lease, auto-run-allowlisted autonomy. Build on these, don't rebuild.
+- [APEX Station Fleet](reference_apex_station_fleet.md) - definitive 5-station identity: friendly name <-> Tailscale IP <-> node <-> OS <-> capabilities, + routing & shared NAS. Confirmed 2026-06-10.
+
+- 🚩 [**Bermcoin Restart Packet 2026-06-06**](handover_bermcoin_2026-06-06.md) — **FLAGSHIP money-maker.** Near-launch FX-rate-alert SaaS (ex-SHEGOO, bermcoin.com): full stack on disk, frontend edited 2026-06-05 but **uncommitted/undeployed**. Restart plan + next actions. Verify live state.
+- 🚩 [**Jesse-in-Oz Animation Restart Packet 2026-06-06**](handover_jesse_animate_2026-06-06.md) — **FLAGSHIP money-maker.** Proven pipeline (audiobook recorded, Grog MV delivered, 9 chars production-ready); parked on a **1-line lip-sync bug** + audiobook moved off its recorded path. Restart plan + next actions.
+- 📖 [**Jesse in Oz — Story State 2026-06-08**](handover_jesse_oz_2026-06-08.md) — the WRITTEN prose/script (not animation): root `X:\Projects\jesse-novel-factory\`, canonical `jesse_oz_canonical.txt`. Book 2; Ch1-2 written, Toto drafted, Ch3-28 outlined/gap. Sealed 28-ch storyline + celebrity-Oz twist. **No-fabrication rule.** Ch3 draft delivered in-chat.
+- 🗺️ [**Jesse-Oz Source Map & Repo Sweep**](reference_jesse_oz_source_map.md) — durable cross-agent index: where ALL Jesse/Oz material lives (prose, ChatGPT history in `CHAT_ANALYZER_MASTER`, produced Toto audio in `media-toolkit`, 243-file export in `code-artifacts/jesse-project`) + reusable git-sweep commands. Flags prose-not-in-git risk + abandoned early outline. Re-run the sweep to extend.
+- [APEX Governance Compliance Status](project_apex_governance.md)
+- [APEX Index/Menu Concept](project_apex_index_menu_concept.md)
+- [BERM Financial Archive](project_financial_archive.md) - multi-entity accounting (personal_mb / sole_trade_mb / bermech_ltd). Phase 0 done: 1,475 Pro EUR transactions in `bank_transactions`, perfect reconciliation. Parser `APEX-MB-PY-00071`, principles `APEX-MB-DOC-00024`. Backlog items 8–16 open.
+- [ComfyUI Character Generation Rules](feedback_comfyui_character_gen.md)
+- [Galinda Phase 2.2 State](project_galinda_phase2_2.md)
+- [Jesse Audio State](project_jesse_audio.md)
+- [Jesse Audio Pipeline](project_jesse_audio_pipeline.md)
+- [Jesse Adventures Voice Structure](project_jesse_adventures_voice_structure.md) — Beanstalk narrator-only; Oz multi-voice + narrator-as-character (humour device); first 3 Oz chapters voiced in ElevenLabs. Use `--narrator-only` on audit for Beanstalk.
+- [Audiobook QA Pipeline Architecture](project_audiobook_qa_pipeline_architecture.md) — two-stage pattern: Whisper transcripts + Claude CLI extracts cached on disk once; all analyses are cheap reads. New audit muscles must follow this split, not re-run heavy work.
+- [Video Grabber Downloader](project_video_downloader.md) - bulk + topic-search video downloader (APEX-MB-PY-00072), GUI on Desktop.
+- 🚩 [POD Auto Studio](project_pod_auto_studio.md) — auto print-on-demand → Shopify (Codex-gated, 61 WO/424 microtasks + n8n skeletons). **MERGED to code-artifacts `main` (PR #23, commit f6978b0, 2026-06-10)**; autonomous queue-feed still HELD pending operator go (paid/live). Note: auto-completion does NOT watch Downloads.
+- [APEX Queue Hygiene](project_apex_queue_hygiene.md) - bridge-REJECTED items aren't auto-swept; awaiting_claude counts inflate with stale noise. Tally verdicts before assuming backlog.
+- [APEX No-Login Plugins](project_apex_no_login_plugins.md) - operator has no Fireflies/Klaviyo accounts; daily-tool-refresh keeps flagging them; not pursuable.
+- 🚩 [**AGEN Five-Agent State 2026-06-07**](project_agen_five_agent_state_2026-06-07.md) — **build artifacts deleted from canonical X drive AND C: tree AND all branch history**; SIGNED_OFF references missing files; silent-twice clock reset for all 5 agents. Reconcile (Option A rebuild / Option B transcript-restore) before further codex spend. Handover at `apex_governance/handovers/AGEN-completion.handover.md`; MA-AGEN-001..004 in `MISSING_SECRETS.queue.json`.
+
+## Add Rule
+
+Add only stable reusable routes with a source anchor. Keep this index short.
+
+ succeeded in 4787ms:
+APEX status: 20 ungoverned-scripts. Next: Project queue: Priority → Work
+
+codex
+NO FINDINGS
+tokens used
+42,597
+NO FINDINGS
